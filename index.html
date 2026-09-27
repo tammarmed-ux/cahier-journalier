@@ -190,7 +190,9 @@ table.grid td.c.S{background:#dff5f2;color:#0f766e}
 table.grid td.t.pts,table.grid th.pts{width:50px;min-width:50px}
 table.grid td.t.cap{background:var(--bad-soft);color:var(--bad)}
 .stbtns button[data-v=M].on{background:#f3e8ff;border-color:#7e22ce;color:#7e22ce}
-.stbtns button[data-v=ST].on{background:#dff5f2;border-color:#0f766e;color:#0f766e}
+.stbtns button[data-v=S].on{background:#dff5f2;border-color:#0f766e;color:#0f766e}
+.stbtns button[data-v=K].on{background:#faf5ff;border-color:#9333ea;color:#9333ea}
+.stbtns button[data-v=J].on{background:#e8f1fb;border-color:#2563a8;color:#2563a8}
 .chip.mchip{background:#f3e8ff;color:#7e22ce}.chip.schip{background:#dff5f2;color:#0f766e}
 #repTable td.ptsc{white-space:nowrap;line-height:1.2}
 #repTable td.capc{background:var(--bad-soft)!important;color:var(--bad);font-weight:700}
@@ -198,6 +200,19 @@ table.grid td.t.cap{background:var(--bad-soft);color:var(--bad)}
 .capin{flex:0 0 72px!important;width:72px;padding:8px!important;text-align:center}
 .clshead{font-size:12px;color:var(--muted);font-weight:650;border-bottom:1px solid var(--line)}
 table.grid td.c.K{background:#faf5ff;color:#9333ea}
+/* Dispensé (exempted from sport): purple cell struck by a vertical line; marks stay visible on top */
+table.grid td.c.dsp{background:linear-gradient(#6d28d9,#6d28d9) center/3px 100% no-repeat,#ddd6fe;text-shadow:0 0 2px #fff,0 0 3px #fff,0 0 4px #fff}
+table.grid td.c.dsp.nh,table.grid td.c.dsp.P{color:#6d28d9}
+table.grid td.c.dsp.A{box-shadow:inset 0 0 0 3px var(--bad)}table.grid td.c.dsp.J{box-shadow:inset 0 0 0 3px #2563a8}
+table.grid td.c.dsp.L{box-shadow:inset 0 0 0 3px var(--warn)}table.grid td.c.dsp.M{box-shadow:inset 0 0 0 3px #7e22ce}
+table.grid td.c.dsp.K{box-shadow:inset 0 0 0 3px #9333ea}table.grid td.c.dsp.S{box-shadow:inset 0 0 0 3px #0f766e}
+table.grid th.nm .dspb{font-size:12px;margin-right:2px}
+.lg.D{background:linear-gradient(#6d28d9,#6d28d9) center/3px 100% no-repeat,#ddd6fe;color:#6d28d9}
+.chip.dchip{background:#ede9fe;color:#6d28d9}
+.stbtns button.dsp{color:#6d28d9}.stbtns button.dsp.on{background:#ede9fe;border-color:#6d28d9;color:#6d28d9}
+#dspBtns{display:flex;flex-direction:column;gap:8px;margin-top:14px}#dspBtns .btn{width:100%}
+#dspBtns .btn.vio{background:#6d28d9}
+body.cj-ro #detDsp{display:none!important}
 .lg.K{background:#faf5ff;color:#9333ea}.chip.kchip{background:#faf5ff;color:#9333ea}
 /* v5: cycles, timetable, home */
 nav.tabs button{font-size:11.5px;padding:8px 2px 10px;min-width:0;letter-spacing:-.1px}
@@ -391,10 +406,10 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
     </div>
     <div class="pchips" id="attPeriods" role="tablist" aria-label="Cycle"></div>
     <div class="cyctitle" id="attCycle"></div>
-    <div class="legend2"><span><span class="lg P">P</span>Présent</span><span><span class="lg A">A</span>Absent</span><span><span class="lg J">AJ</span>Abs. justifiée</span><span><span class="lg L">R</span>Retard</span><span><span class="lg M">M</span>Maladie non just.</span><span><span class="lg K">MJ</span>Maladie just.</span><span><span class="lg S">ST</span>Sans tenue</span><span id="attInfo"></span></div>
+    <div class="legend2"><span><span class="lg P">P</span>Présent</span><span><span class="lg A">A</span>Absent</span><span><span class="lg S">ST</span>Sans tenue</span><span><span class="lg M">M</span>Maladie non just.</span><span><span class="lg L">R</span>Retard</span><span><span class="lg K">MJ</span>Maladie just.</span><span><span class="lg J">AJ</span>Abs. justifiée</span><span><span class="lg D">🩺</span>Dispensé</span><span id="attInfo"></span></div>
   </div>
   <div class="card gridcard" id="attCard"><div class="gridwrap" id="gridWrap"></div></div>
-  <p class="small muted" style="margin:0 4px">Touchez une case pour alterner Présent → Absent → Absence justifiée → Retard → Maladie → Maladie justifiée → Sans tenue. Appui long (ou mode « Détail ») pour ajouter un motif. Touchez l’en-tête d’une séance (S1…) pour saisir sa date. Touchez un nom pour voir le bilan annuel de l’élève. Enregistrement automatique.</p>
+  <p class="small muted" style="margin:0 4px">Touchez une case pour alterner Présent → Absent → Sans tenue → Maladie → Retard → Maladie justifiée → Absence justifiée. Appui long (ou mode « Détail ») pour ajouter un motif. Touchez l’en-tête d’une séance (S1…) pour saisir sa date. Touchez un nom pour voir le bilan annuel de l’élève. Élève dispensé de sport : appui long sur une de ses cases (ou mode « Détail ») puis 🩺 Dispensé ; ses cases deviennent violettes et barrées, les autres marques restent possibles. Enregistrement automatique.</p>
 </section>
 
 <!-- REPORTS -->
@@ -458,10 +473,10 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
     <p class="muted small" style="margin-top:0">Points retirés pour chaque séance marquée. Le total par élève et par cycle ne dépasse jamais le plafond de la classe (voir Classes).</p>
     <div class="pgrid">
       <div><label class="f" for="ptA">Absence non justifiée (A)</label><input type="number" id="ptA" data-pt="A" min="0" max="20" step="0.05" inputmode="decimal"></div>
-      <div><label class="f" for="ptL">Retard (R)</label><input type="number" id="ptL" data-pt="L" min="0" max="20" step="0.05" inputmode="decimal"></div>
-      <div><label class="f" for="ptM">Maladie non justifiée (M)</label><input type="number" id="ptM" data-pt="M" min="0" max="20" step="0.05" inputmode="decimal"></div>
-      <div><label class="f" for="ptK">Maladie justifiée (MJ)</label><input type="number" id="ptK" data-pt="K" min="0" max="20" step="0.05" inputmode="decimal"></div>
       <div><label class="f" for="ptS">Sans tenue (ST)</label><input type="number" id="ptS" data-pt="S" min="0" max="20" step="0.05" inputmode="decimal"></div>
+      <div><label class="f" for="ptM">Maladie non justifiée (M)</label><input type="number" id="ptM" data-pt="M" min="0" max="20" step="0.05" inputmode="decimal"></div>
+      <div><label class="f" for="ptL">Retard (R)</label><input type="number" id="ptL" data-pt="L" min="0" max="20" step="0.05" inputmode="decimal"></div>
+      <div><label class="f" for="ptK">Maladie justifiée (MJ)</label><input type="number" id="ptK" data-pt="K" min="0" max="20" step="0.05" inputmode="decimal"></div>
       <div><label class="f" for="ptJ">Absence justifiée (AJ)</label><input type="number" id="ptJ" data-pt="J" min="0" max="20" step="0.05" inputmode="decimal"></div>
     </div>
   </div>
@@ -544,9 +559,9 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
   <div class="sheet">
     <div class="sheet-head"><h2 id="cellTitle" dir="auto">Élève</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>
     <div class="small muted" id="cellSub"></div>
-    <div class="stbtns" id="cellStatus"><button type="button" data-v="P">Présent</button><button type="button" data-v="A">Absent</button><button type="button" data-v="L">Retard</button><button type="button" data-v="M">Maladie</button><button type="button" data-v="ST">Sans tenue</button></div>
+    <div class="stbtns" id="cellStatus"><button type="button" data-v="P">Présent</button><button type="button" data-v="A">Absent</button><button type="button" data-v="S">Sans tenue</button><button type="button" data-v="M">Maladie</button><button type="button" data-v="L">Retard</button><button type="button" data-v="K">Maladie just.</button><button type="button" data-v="J">Abs. justifiée</button><button type="button" class="dsp" id="cellDsp" title="Élève dispensé de sport">🩺 Dispensé</button></div>
     <div id="cellExtra">
-      <label class="chk" style="margin-top:12px" id="cellJustWrap"><input type="checkbox" id="cellJust"> <span id="cellJustTxt">Absence justifiée</span></label>
+      <label class="chk hidden" style="margin-top:12px" id="cellJustWrap"><input type="checkbox" id="cellJust"> <span id="cellJustTxt">Absence justifiée</span></label>
       <label class="f" for="cellReason">Motif (facultatif)</label>
       <input type="text" id="cellReason" dir="auto" maxlength="120" placeholder="ex. certificat médical">
     </div>
@@ -575,6 +590,15 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
 <!-- Student detail modal -->
 <div class="modal" id="detModal" role="dialog" aria-modal="true">
   <div class="sheet" id="detBody"></div>
+</div>
+
+<!-- Dispense modal (élève dispensé de sport) -->
+<div class="modal" id="dspModal" role="dialog" aria-modal="true" aria-labelledby="dspTitle">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="dspTitle">Dispense pour :</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>
+    <div class="small muted" id="dspSub" dir="auto"></div>
+    <div id="dspBtns"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -726,7 +750,7 @@ var TX={
  ]
 };
 /*TX-END*/
-var CYCLE={P:'A',A:'J',J:'L',L:'M',M:'K',K:'S',S:'P'};
+var CYCLE={P:'A',A:'S',S:'M',M:'L',L:'K',K:'J',J:'P'}; /* quick mode: P → A → ST → M → R → MJ → AJ */
 var CODE_TXT={P:'P',A:'A',J:'AJ',L:'R',M:'M',K:'MJ',S:'ST'};
 var CODE_CSV={P:'P',A:'A',J:'AJ',L:'R',M:'M',K:'MJ',S:'ST'};
 var CODE_LABEL={P:'Présent',A:'Absence non justifiée',J:'Absence justifiée',L:'Retard',M:'Maladie non justifiée',K:'Maladie justifiée',S:'Sans tenue'};
@@ -774,7 +798,9 @@ function normalize(d){
     if(!dc.asInit&&!b.cal.tt.some(function(t){return t.type==='as';}))b.cal.tt.push(defAS());}
   var spp=parseInt(d.spp,10);if(spp>0&&spp<=30)b.spp=spp;
   b.students=d.students.filter(function(s){return s&&s.id&&typeof s.name==='string'&&ids[s.classId];}).map(function(s){
-    return {id:String(s.id),classId:String(s.classId),name:String(s.name),dob:String(s.dob||''),sid:String(s.sid||''),parent:String(s.parent||''),phone:String(s.phone||''),notes:String(s.notes||''),created:s.created||Date.now()};
+    var o={id:String(s.id),classId:String(s.classId),name:String(s.name),dob:String(s.dob||''),sid:String(s.sid||''),parent:String(s.parent||''),phone:String(s.phone||''),notes:String(s.notes||''),created:s.created||Date.now()};
+    var dp=s.dispense;if(dp&&typeof dp==='object'&&(dp.type==='S1'||dp.type==='annee'))o.dispense={type:dp.type,since:/^\d{4}-\d{2}-\d{2}$/.test(dp.since||'')?dp.since:''};
+    return o;
   });
   Object.keys(d.sessions).forEach(function(k){
     var r=d.sessions[k];if(!r||typeof r!=='object'||!/^[^|]+\|\d+\|\d+$/.test(k))return;
@@ -841,6 +867,25 @@ function historyOf(sid){
   return out;
 }
 
+/* ===== Dispensé (exempted from sport) =====
+   student.dispense = {type:'S1'|'annee', since:'YYYY-MM-DD'} (optional field, synced with the whole state).
+   1er semestre = first half of the cycles (cycles 1–3 of 6); it ends on the end date of cycle 3
+   (Paramètres › dates des cycles; 2026-2027: 09/01/2027). A dispense applies to the séances dated on/after `since`. */
+function s1Cycles(){return Math.max(1,Math.ceil(DB.periods.length/2));}
+function s1End(){var c=DB.cal&&DB.cal.cycles&&DB.cal.cycles[s1Cycles()-1];return c&&isoOk(c.to)?c.to:DEFCYC[2][1];}
+function dspOf(st){if(typeof st==='string')st=byId(st);return st&&st.dispense&&(st.dispense.type==='S1'||st.dispense.type==='annee')?st.dispense:null;}
+/* is the dispense still in force on a given day (default today)? an S1 dispense expires after the end of semester 1 */
+function dspActive(st,day){var d=dspOf(st);if(!d)return false;day=day||todayStr();return d.type==='annee'||day<=s1End();}
+function dspCycleOf(day){if(!day)return 0;var cs=cal().cycles;for(var i=0;i<cs.length;i++)if(!cs[i].bad&&day<=cs[i].end)return i;return cs.length;}
+/* does the dispense cover séance s of cycle p? */
+function dspAt(st,cid,p,s){var d=dspOf(st);if(!d)return false;if(d.type==='S1'&&p>=s1Cycles())return false;
+  var sd=sessDate(cid,p,s);if(sd){if(d.since&&sd<d.since)return false;if(d.type==='S1'&&sd>s1End())return false;return true;}
+  return p>=dspCycleOf(d.since);}
+/* does the dispense cover (part of) cycle p? */
+function dspInCycle(st,p){var d=dspOf(st);if(!d)return false;if(d.type==='S1'&&p>=s1Cycles())return false;return p>=dspCycleOf(d.since);}
+function dspLabel(d){return !d?'':d.type==='annee'?'Toute l’année':'1er semestre (jusqu’au '+dmy(s1End())+')';}
+function dspShort(d){return !d?'':d.type==='annee'?'Toute l’année':'1er semestre';}
+
 /* ================= UI plumbing ================= */
 function classOptions(sel,value,allLabel){
   var h=allLabel?'<option value="">'+esc(allLabel)+'</option>':'';
@@ -901,7 +946,7 @@ function renderStudents(){
   if(!list.length){$('stuList').innerHTML='<li class="empty">Aucun élève ne correspond.</li>';return;}
   var html='';
   for(var i=0;i<list.length;i++){var s=list[i],y=yearStat(s.classId,s.id);
-    var chip=y.A?'<span class="chip '+(y.U>=th?'bad':'warn')+'" title="Absences cette année">'+y.A+' abs.</span>':'';
+    var chip=(dspActive(s)?'<span class="chip dchip" title="Dispensé de sport – '+esc(dspShort(dspOf(s)))+'">🩺 Dispensé</span> ':'')+(y.A?'<span class="chip '+(y.U>=th?'bad':'warn')+'" title="Absences cette année">'+y.A+' abs.</span>':'');
     html+='<li class="stu" data-id="'+esc(s.id)+'"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><div class="info"><div class="name" dir="auto">'+(isBroken(s)?'<span class="brk">⚠ '+esc(TX.noName)+'</span> ':'')+esc(s.name)+'</div><div class="meta"><span class="chip">'+esc(clsName(s.classId))+'</span> '+(s.sid?'<span dir="auto">#'+esc(s.sid)+'</span> ':'')+(s.parent?'· <span dir="auto">'+esc(s.parent)+'</span>':'')+'</div></div>'+chip+'</li>';}
   $('stuList').innerHTML=html;
 }
@@ -954,21 +999,22 @@ function openDetail(id){
   if(s.sid)h+='<dt>Code élève</dt><dd dir="auto">'+esc(s.sid)+'</dd>';
   if(s.dob)h+='<dt>Date de naissance</dt><dd>'+esc(fmtDate(s.dob))+'</dd>';
   if(s.parent)h+='<dt>Parent / tuteur</dt><dd dir="auto">'+esc(s.parent)+'</dd>';
+  var dp=dspOf(s);if(dp)h+='<dt>Dispense de sport</dt><dd><span class="chip dchip">🩺 '+esc(dspLabel(dp))+'</span>'+(dp.since?' <span class="small muted">depuis le '+esc(dmy(dp.since))+'</span>':'')+(dspActive(s)?'':' <span class="small muted">(terminée)</span>')+'</dd>';
   if(s.phone)h+='<dt>Téléphone</dt><dd><a class="tel" dir="ltr" href="tel:'+esc(tel)+'">'+esc(s.phone)+'</a></dd>';
   if(s.notes)h+='<dt>Remarques</dt><dd dir="auto" style="white-space:pre-wrap">'+esc(s.notes)+'</dd>';
   h+='</dl><h3>Année entière</h3><div class="stats">'+
     '<div class="stat bad"><b>'+y.A+'</b><span>Absences</span></div>'+
-    '<div class="stat ok"><b>'+y.J+'</b><span>Justifiées</span></div>'+
     '<div class="stat '+(y.U>=th?'bad':'')+'"><b>'+y.U+'</b><span>Non justifiées</span></div>'+
-    '<div class="stat warn"><b>'+y.L+'</b><span>Retards</span></div>'+
-    '<div class="stat"><b style="color:#7e22ce">'+y.M+'</b><span>Maladie non just.</span></div>'+
-    '<div class="stat"><b style="color:#9333ea">'+y.K+'</b><span>Maladie just.</span></div>'+
     '<div class="stat"><b style="color:#0f766e">'+y.S+'</b><span>Sans tenue</span></div>'+
+    '<div class="stat"><b style="color:#7e22ce">'+y.M+'</b><span>Maladie non just.</span></div>'+
+    '<div class="stat warn"><b>'+y.L+'</b><span>Retards</span></div>'+
+    '<div class="stat"><b style="color:#9333ea">'+y.K+'</b><span>Maladie just.</span></div>'+
+    '<div class="stat ok"><b>'+y.J+'</b><span>Justifiées</span></div>'+
     '<div class="stat bad"><b>'+fmtPts(y.ded)+'</b><span>Points retirés (année)</span></div></div>';
   if(y.U>=th)h+='<p class="small" style="color:var(--bad);font-weight:650">⚠ Seuil d’alerte atteint ('+th+' absences non justifiées).</p>';
-  h+='<h3>Par cycle</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Séances</th><th>Abs.</th><th>Just.</th><th>Non just.</th><th>Retards</th><th>M</th><th>'+CODE_TXT.K+'</th><th>'+CODE_TXT.S+'</th><th>Pts</th></tr></thead><tbody>';
+  h+='<h3>Par cycle</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Séances</th><th>Abs.</th><th>Non just.</th><th>'+CODE_TXT.S+'</th><th>M</th><th>Retards</th><th>'+CODE_TXT.K+'</th><th>Just.</th><th>Pts</th></tr></thead><tbody>';
   y.per.forEach(function(st,i){function c(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
-    h+='<tr><td>'+esc(cycleLabel(i))+'</td>'+c(st.held)+c(st.A)+c(st.J)+c(st.U,st.U>=th?'bad-t':'')+c(st.L)+c(st.M)+c(st.K)+c(st.S)+'<td class="'+(st.ded?(st.capped?'bad-t':''):'z')+'">'+fmtPts(st.ded)+(st.ded?' / '+fmtNum(st.cap):'')+'</td></tr>';});
+    h+='<tr><td>'+esc(cycleLabel(i))+'</td>'+c(st.held)+c(st.A)+c(st.U,st.U>=th?'bad-t':'')+c(st.S)+c(st.M)+c(st.L)+c(st.K)+c(st.J)+'<td class="'+(st.ded?(st.capped?'bad-t':''):'z')+'">'+fmtPts(st.ded)+(st.ded?' / '+fmtNum(st.cap):'')+'</td></tr>';});
   h+='</tbody></table></div>';
   var hist=historyOf(id);
   h+='<h3>Historique (absences, retards…)</h3>';
@@ -977,9 +1023,10 @@ function openDetail(id){
     var chip=x.code==='M'?'<span class="chip mchip">Maladie non justifiée</span>':x.code==='K'?'<span class="chip kchip">Maladie justifiée</span>':x.code==='S'?'<span class="chip schip">Sans tenue</span>':x.code==='L'?'<span class="chip warn">Retard</span>':(x.code==='J'?'<span class="chip ok">Justifiée</span>':'<span class="chip bad">Absent</span>');
     return '<li><span class="d">'+esc(cycleName(x.p))+' · S'+(x.s+1)+'<br><span class="small muted" style="font-weight:500">'+(x.date?esc(fmtDate(x.date)):'sans date')+'</span></span>'+chip+'<span class="r" dir="auto">'+esc(x.r)+(x.cid!==s.classId?' ('+esc(clsName(x.cid))+')':'')+'</span></li>';
   }).join('')+'</ul>';
-  h+='<div class="actions"><button class="btn sec" data-close>Fermer</button><button class="btn" id="detEdit">Modifier</button></div>';
+  h+='<div class="actions"><button class="btn sec" data-close>Fermer</button><button class="btn sec" id="detDsp">🩺 Dispensé</button><button class="btn" id="detEdit">Modifier</button></div>';
   $('detBody').innerHTML=h;
   $('detEdit').onclick=function(){closeModal('detModal');openForm(id);};
+  $('detDsp').onclick=function(){openDispense(id,'',function(){render();openDetail(id);});};
   openModal('detModal');
 }
 
@@ -1035,7 +1082,7 @@ function renderAttendance(){
   var on=$('attPeriods').querySelector('.on');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
   renderGrid();
 }
-function cellClass(code,held,hasReason){return 'c '+(held?code:'nh')+(hasReason?' r':'');}
+function cellClass(code,held,hasReason,dsp){return 'c '+(held?code:'nh')+(hasReason?' r':'')+(dsp?' dsp':'');}
 function renderGrid(){
   var cid=DB.ui.cls,p=DB.ui.per,list=studentsIn(cid),th=DB.settings.threshold,S=DB.spp,cols=cid?colsOf(cid,p):[];
   if(!cid){$('gridWrap').innerHTML='<div class="empty"><b>Aucune classe</b>Ajoutez une classe dans Paramètres.</div>';$('attInfo').textContent='';return;}
@@ -1043,10 +1090,10 @@ function renderGrid(){
   S=cols.n;var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
   var h='<table class="grid"><thead><tr><th class="nm">Élève</th>';
   cols.forEach(function(c){if(c.hol){h+='<th class="holh" title="'+esc(c.hol.label)+'">'+esc(holShort(c.hol)===TX.vacShort?TX.vacHead:TX.holHead)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';});
-  h+='<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t" title="Retards du cycle">R</th><th class="t pts" title="Points retirés sur le cycle (plafonnés)">Pts</th><th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';
+  h+='<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (plafonnés)">Pts</th><th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';
   list.forEach(function(st,i){
-    h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+'"><span class="n">'+(i+1)+'</span>'+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>';
-    cols.forEach(function(c){if(c.hol){if(!i)h+='<td class="holc" rowspan="'+list.length+'" aria-label="'+esc(c.hol.label+' – '+dmy(c.date))+'"><span class="holv">'+esc(holShort(c.hol))+'</span></td>';return;}var s=c.s,r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r)+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';});
+    h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+'"><span class="n">'+(i+1)+'</span>'+(dspInCycle(st,p)?'<span class="dspb" title="Dispensé – '+esc(dspShort(dspOf(st)))+'">🩺</span>':'')+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>';
+    cols.forEach(function(c){if(c.hol){if(!i)h+='<td class="holc" rowspan="'+list.length+'" aria-label="'+esc(c.hol.label+' – '+dmy(c.date))+'"><span class="holv">'+esc(holShort(c.hol))+'</span></td>';return;}var s=c.s,r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r,dspAt(st,cid,p,s))+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';});
     h+=totalsHtml(cid,st.id,p)+'</tr>';
   });
   h+='</tbody><tfoot><tr><th class="nm">Absents</th>';
@@ -1060,7 +1107,7 @@ function footVal(r){if(!r)return '';var n=0;for(var k in r.marks)if(r.marks[k].s
 function totalsHtml(cid,sid,p){
   var st=perStat(cid,sid,p),y=yearStat(cid,sid),th=DB.settings.threshold;
   function t(n,extra){return '<td class="t'+(n?'':' z')+(extra||'')+'">'+n+'</td>';}
-  return t(st.A,st.U>=th?' bad':'')+t(st.J)+t(st.L)+'<td class="t pts'+(st.ded?'':' z')+(st.capped?' cap':'')+'" title="'+fmtPts(st.raw)+' / '+fmtNum(st.cap)+'">'+fmtPts(st.ded)+'</td><td class="t yr'+(y.A?'':' z')+(y.U>=th?' bad':'')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';
+  return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class="t pts'+(st.ded?'':' z')+(st.capped?' cap':'')+'" title="'+fmtPts(st.raw)+' / '+fmtNum(st.cap)+'">'+fmtPts(st.ded)+'</td><td class="t yr'+(y.A?'':' z')+(y.U>=th?' bad':'')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';
 }
 function flagRows(){
   var th=DB.settings.threshold,cid=DB.ui.cls;
@@ -1081,7 +1128,7 @@ function refreshColumn(s){
   if(th){var hd=sessHead(s);th.className=hd.cls;th.innerHTML=hd.html;th.title='Séance '+(s+1)+hd.title;}
   var f=wrap.querySelector('td[data-f="'+s+'"]');if(f)f.textContent=footVal(r);
   wrap.querySelectorAll('td.c[data-s="'+s+'"]').forEach(function(td){
-    var m=r&&r.marks[td.parentNode.dataset.sid],code=codeOf(m);td.className=cellClass(code,!!r,m&&m.r);td.textContent=r?CODE_TXT[code]:'';
+    var sid=td.parentNode.dataset.sid,m=r&&r.marks[sid],code=codeOf(m);td.className=cellClass(code,!!r,m&&m.r,dspAt(sid,cid,p,s));td.textContent=r?CODE_TXT[code]:'';
   });
   updateInfo();
 }
@@ -1092,7 +1139,7 @@ function applyCode(td,code,reason){
   if(reason!=null&&r.marks[sid])r.marks[sid].r=reason;
   persist();
   if(!existed)refreshColumn(s);
-  else{var m=r.marks[sid];td.className=cellClass(code,true,m&&m.r);td.textContent=CODE_TXT[code];var f=$('gridWrap').querySelector('td[data-f="'+s+'"]');if(f)f.textContent=footVal(r);}
+  else{var m=r.marks[sid];td.className=cellClass(code,true,m&&m.r,dspAt(sid,cid,p,s));td.textContent=CODE_TXT[code];var f=$('gridWrap').querySelector('td[data-f="'+s+'"]');if(f)f.textContent=footVal(r);}
   refreshRow(tr);
 }
 var lpTimer=null,lpFired=false,lpStart=null;
@@ -1117,7 +1164,7 @@ grid.addEventListener('touchmove',function(e){if(!lpStart)return;var t=e.touches
 grid.addEventListener('touchend',function(){clearTimeout(lpTimer);lpStart=null;},{passive:true});
 $('attClass').addEventListener('change',function(){DB.ui.cls=this.value;persist();renderGrid();$('gridWrap').scrollTop=0;});
 $('attPeriods').addEventListener('click',function(e){var b=e.target.closest('[data-p]');if(!b)return;DB.ui.per=+b.dataset.p;persist();renderAttendance();});
-document.querySelectorAll('#view-attendance .seg button').forEach(function(b){b.addEventListener('click',function(){DB.ui.mode=b.dataset.mode;persist();renderAttendance();toast(DB.ui.mode==='edit'?'Touchez une case pour choisir le statut, la justification et le motif':'Touchez une case pour alterner P → A → AJ → R → M → MJ → ST');});});
+document.querySelectorAll('#view-attendance .seg button').forEach(function(b){b.addEventListener('click',function(){DB.ui.mode=b.dataset.mode;persist();renderAttendance();toast(DB.ui.mode==='edit'?'Touchez une case pour choisir le statut (A, ST, M, R, MJ, AJ), le motif ou 🩺 Dispensé':'Touchez une case pour alterner P → A → ST → M → R → MJ → AJ');});});
 
 /* cell editor */
 var cellTd=null,cellVal='P';
@@ -1125,16 +1172,43 @@ function openCell(td){
   cellTd=td;var sid=td.parentNode.dataset.sid,s=+td.dataset.s,r=rec(DB.ui.cls,DB.ui.per,s),m=r&&r.marks[sid];
   var st=byId(sid);$('cellTitle').textContent=st?st.name:'';
   var sd=sessDate(DB.ui.cls,DB.ui.per,s);$('cellSub').textContent=clsName(DB.ui.cls)+' · '+cycleName(DB.ui.per)+' · Séance '+(s+1)+(sd?' · '+fmtDate(sd):'');
-  cellVal=m?m.s:'P';$('cellJust').checked=!!(m&&m.j);$('cellReason').value=m?m.r:'';
+  cellVal=codeOf(m);$('cellJust').checked=!!(m&&m.j);$('cellReason').value=m?m.r:'';
   syncCell();openModal('cellModal');
 }
 function syncCell(){
-  document.querySelectorAll('#cellStatus button').forEach(function(b){b.classList.toggle('on',b.dataset.v===cellVal);});
-  $('cellExtra').classList.toggle('hidden',cellVal==='P');$('cellJustWrap').classList.toggle('hidden',cellVal!=='A'&&cellVal!=='M');$('cellJustTxt').textContent=cellVal==='M'?'Maladie justifiée':'Absence justifiée';
+  document.querySelectorAll('#cellStatus button[data-v]').forEach(function(b){b.classList.toggle('on',b.dataset.v===cellVal);});
+  var dsid=cellTd&&cellTd.parentNode.dataset.sid,dd=dspOf(dsid);$('cellDsp').classList.toggle('on',!!dd&&dspAt(dsid,DB.ui.cls,DB.ui.per,+cellTd.dataset.s));$('cellDsp').title=dd?'Dispensé – '+dspLabel(dd):'Élève dispensé de sport';
+  $('cellExtra').classList.toggle('hidden',cellVal==='P');
 }
-$('cellStatus').addEventListener('click',function(e){var b=e.target.closest('button');if(b){cellVal=b.dataset.v;syncCell();}});
+$('cellStatus').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+  if(b.id==='cellDsp'){if(!cellTd)return;var sid=cellTd.parentNode.dataset.sid,s=+cellTd.dataset.s;
+    openDispense(sid,sessDate(DB.ui.cls,DB.ui.per,s),function(){renderGrid();var tr=$('gridWrap').querySelector('tr[data-sid="'+(window.CSS&&CSS.escape?CSS.escape(sid):sid)+'"]');cellTd=tr?tr.querySelector('td.c[data-s="'+s+'"]'):null;if(cellTd)syncCell();else closeModal('cellModal');});return;}
+  cellVal=b.dataset.v;syncCell();});
+
+/* dispense dialog: first time → choose 1er semestre / Toute l'année; already dispensed → retirer / modifier la durée */
+function openDispense(sid,since,done){
+  var st=byId(sid);if(!st)return;
+  if(VIEW){toast('Lecture seule : la dispense ne peut pas être modifiée');return;}
+  var d=dspOf(st),box=$('dspBtns');
+  function finish(msg){persistNow();closeModal('dspModal');toast(msg);if(done)done();}
+  function choose(){
+    $('dspTitle').textContent='Dispense pour :';
+    $('dspSub').textContent=st.name+' · '+clsName(st.classId)+' – élève dispensé(e) de sport. 1er semestre = cycles 1 à '+s1Cycles()+' (jusqu’au '+dmy(s1End())+').';
+    box.innerHTML='<button type="button" class="btn vio" data-dt="S1">1er semestre</button><button type="button" class="btn vio" data-dt="annee">Toute l’année</button><button type="button" class="btn sec" data-close>Annuler</button>';
+  }
+  box.onclick=function(e){var b=e.target.closest('button');if(!b||b.hasAttribute('data-close'))return;
+    if(b.dataset.dt){var old=dspOf(st);st.dispense={type:b.dataset.dt,since:old&&old.since?old.since:(since||todayStr())};finish('🩺 '+st.name+' dispensé(e) – '+dspShort(st.dispense));return;}
+    if(b.dataset.da==='del'){delete st.dispense;finish('Dispense retirée – '+st.name);return;}
+    if(b.dataset.da==='mod')choose();};
+  if(d){
+    $('dspTitle').textContent='Élève dispensé(e)';
+    $('dspSub').textContent=st.name+' · '+clsName(st.classId)+' – dispense : '+dspLabel(d)+(d.since?', depuis le '+dmy(d.since):'')+(dspActive(st)?'':' (terminée)')+'.';
+    box.innerHTML='<button type="button" class="btn danger" data-da="del">Retirer la dispense</button><button type="button" class="btn vio" data-da="mod">Modifier la durée</button><button type="button" class="btn sec" data-close>Annuler</button>';
+  }else choose();
+  openModal('dspModal');
+}
 $('cellSave').addEventListener('click',function(){
-  if(!cellTd)return;var code=cellVal==='A'?($('cellJust').checked?'J':'A'):cellVal==='M'?($('cellJust').checked?'K':'M'):(cellVal==='ST'?'S':cellVal);
+  if(!cellTd)return;var code=CODE_TXT[cellVal]?cellVal:'P';
   applyCode(cellTd,code,code==='P'?null:$('cellReason').value.trim());closeModal('cellModal');
 });
 
@@ -1182,17 +1256,19 @@ function renderReports(){
   function C(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
   var h='<thead><tr>'+H('name','Élève')+H('ded',year?'Points retirés (année)':'Points retirés','Plafonné par cycle');
   if(year)DB.periods.forEach(function(n,i){h+=H('p'+i,TX.cyc+(i+1),cycleLabel(i)+' – points retirés');});
-  h+=H('A','Abs.')+H('J','Just.')+H('U','Non just.')+H('L','Retards')+H('M','M','Maladie non justifiée')+H('K',CODE_TXT.K,'Maladie justifiée')+H('S',CODE_TXT.S,'Sans tenue')+'</tr></thead><tbody>';
+  h+=H('A','Abs.')+H('U','Non just.')+H('S',CODE_TXT.S,'Sans tenue')+H('M','M','Maladie non justifiée')+H('L','Retards')+H('K',CODE_TXT.K,'Maladie justifiée')+H('J','Just.')+'</tr></thead><tbody>';
   var flagged=0,capN=0;
   d.rows.forEach(function(r){var f=r.st.U>=th;if(f)flagged++;
-    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>';
+    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+((year?dspOf(r.s):dspInCycle(r.s,+d.scope))?' <span class="chip dchip" title="Dispensé – '+esc(dspShort(dspOf(r.s)))+'">🩺</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>';
     if(year){h+='<td class="ptsc'+(r.y.ded?'':' z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';r.y.per.forEach(function(st){h+='<td class="'+(st.ded?(st.capped?'capc':''):'z')+'">'+fmtPts(st.ded)+'</td>';});}
     else{if(r.st.capped)capN++;h+='<td class="ptsc'+(r.st.capped?' capc':'')+(r.st.ded?'':' z')+'"><b>'+fmtPts(r.st.ded)+'</b> / '+fmtNum(r.st.cap)+(r.st.raw>r.st.cap?'<br><small>plafonné ('+fmtPts(r.st.raw)+')</small>':(r.st.capped?'<br><small>plafond atteint</small>':''))+'</td>';}
-    h+=C(r.st.A)+C(r.st.J)+C(r.st.U)+C(r.st.L)+C(r.st.M)+C(r.st.K)+C(r.st.S)+'</tr>';});
+    h+=C(r.st.A)+C(r.st.U)+C(r.st.S)+C(r.st.M)+C(r.st.L)+C(r.st.K)+C(r.st.J)+'</tr>';});
   if(!d.rows.length)h+='<tr><td colspan="16" class="empty">Aucun élève dans cette classe.</td></tr>';
   $('repTable').innerHTML=h+'</tbody>';
   $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.';
   if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' au plafond de points.</b>';
+  var dspN=d.rows.filter(function(r){return year?dspOf(r.s):dspInCycle(r.s,+d.scope);}).length;
+  if(dspN)$('repLegend').innerHTML+='<br><span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';
   $('repInfo').textContent+=' · plafond : '+fmtNum(capOf(d.cid))+' pts par cycle';
   // alerts across all classes
   var al=[];DB.students.forEach(function(s){var y=yearStat(s.classId,s.id);if(y.U>=th)al.push({s:s,y:y});});
@@ -1225,25 +1301,25 @@ function exportGrid(cid,p){
   if(!cls(cid)){toast('Choisissez une classe');return;}var list=studentsIn(cid);if(!list.length){toast('Aucun élève dans cette classe');return;}
   var head=['N°','Nom complet','Code élève'],dates=['','','Date'];
   var cols=colsOf(cid,p);cols.forEach(function(c){if(c.hol){head.push(holShort(c.hol)===TX.vacShort?TX.vacShort:TX.holHead);dates.push(dmy(c.date));return;}var s=c.s,r=rec(cid,p,s);head.push('S'+(s+1));var sd=sessDate(cid,p,s);dates.push(sd?dmy(sd):(r?'effectuée':''));});
-  head.push('Absences','Justifiées','Non justifiées','Retards','Maladie non justifiée','Maladie justifiée','Sans tenue','Points retirés','Plafond');
-  var rows=[['Classe',clsName(cid),'Cycle',cycleLabel(p),'Codes : P=présent A=absent AJ=absence justifiée R=retard M=maladie non justifiée MJ=maladie justifiée ST=sans tenue (vide = séance non effectuée)'],[],head,dates];
+  head.push('Absences','Non justifiées','Sans tenue','Maladie non justifiée','Retards','Maladie justifiée','Justifiées','Points retirés','Plafond','Dispense');
+  var rows=[['Classe',clsName(cid),'Cycle',cycleLabel(p),'Codes : P=présent A=absent ST=sans tenue M=maladie non justifiée R=retard MJ=maladie justifiée AJ=absence justifiée (vide = séance non effectuée) · Dispense = élève dispensé de sport'],[],head,dates];
   list.forEach(function(st,i){var row=[i+1,st.name,keepText(st.sid)];
     cols.forEach(function(c){if(c.hol){row.push(holMotif(c.hol));return;}var r=rec(cid,p,c.s);row.push(r?CODE_CSV[codeOf(r.marks[st.id])]:'');});
-    var t=perStat(cid,st.id,p);row.push(t.A,t.J,t.U,t.L,t.M,t.K,t.S,fmtPts(t.ded),fmtNum(t.cap));rows.push(row);});
+    var t=perStat(cid,st.id,p);row.push(t.A,t.U,t.S,t.M,t.L,t.K,t.J,fmtPts(t.ded),fmtNum(t.cap),dspInCycle(st,p)?dspShort(dspOf(st)):'');rows.push(row);});
   download('registre_'+slug(clsName(cid))+'_'+slug(cycleName(p))+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Registre CSV téléchargé');
 }
 function exportYear(cid){
   if(!cls(cid)){toast('Choisissez une classe');return;}var list=studentsIn(cid);if(!list.length){toast('Aucun élève dans cette classe');return;}
-  var head=['N°','Nom complet','Code élève'];DB.periods.forEach(function(n0,i){var n=cycleName(i);head.push(n+' – absences',n+' – non justifiées',n+' – retards',n+' – M',n+' – '+CODE_TXT.K,n+' – '+CODE_TXT.S,n+' – points retirés');});head.push('Absences (année)','Justifiées (année)','Non justifiées (année)','Retards (année)','Maladie non justifiée (année)','Maladie justifiée (année)','Sans tenue (année)','Points retirés (année)');
+  var head=['N°','Nom complet','Code élève'];DB.periods.forEach(function(n0,i){var n=cycleName(i);head.push(n+' – absences',n+' – non justifiées',n+' – '+CODE_TXT.S,n+' – M',n+' – retards',n+' – '+CODE_TXT.K,n+' – '+CODE_TXT.J,n+' – points retirés');});head.push('Absences (année)','Non justifiées (année)','Sans tenue (année)','Maladie non justifiée (année)','Retards (année)','Maladie justifiée (année)','Justifiées (année)','Points retirés (année)','Dispense');
   var rows=[['Classe',clsName(cid),'Année entière'],[],head];
-  list.forEach(function(st,i){var y=yearStat(cid,st.id),row=[i+1,st.name,keepText(st.sid)];y.per.forEach(function(t){row.push(t.A,t.U,t.L,t.M,t.K,t.S,fmtPts(t.ded));});row.push(y.A,y.J,y.U,y.L,y.M,y.K,y.S,fmtPts(y.ded));rows.push(row);});
+  list.forEach(function(st,i){var y=yearStat(cid,st.id),row=[i+1,st.name,keepText(st.sid)];y.per.forEach(function(t){row.push(t.A,t.U,t.S,t.M,t.L,t.K,t.J,fmtPts(t.ded));});row.push(y.A,y.U,y.S,y.M,y.L,y.K,y.J,fmtPts(y.ded),dspShort(dspOf(st)));rows.push(row);});
   download('bilan-annuel_'+slug(clsName(cid))+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Bilan annuel CSV téléchargé');
 }
 function exportStudents(cid){
   var list=studentsIn(cid);if(!list.length){toast('Aucun élève à exporter');return;}
   var ci={};DB.classes.forEach(function(c,i){ci[c.id]=i;});
-  var rows=[['Nom complet','Classe','Code élève','Date de naissance','Parent / tuteur','Téléphone du parent','Remarques','Absences (année)','Justifiées','Non justifiées','Retards']];
-  list.sort(function(a,b){return (ci[a.classId]-ci[b.classId])||cmp(a.name,b.name);}).forEach(function(s){var y=yearStat(s.classId,s.id);rows.push([s.name,clsName(s.classId),keepText(s.sid),dmy(s.dob),s.parent,keepText(s.phone),s.notes,y.A,y.J,y.U,y.L]);});
+  var rows=[['Nom complet','Classe','Code élève','Date de naissance','Parent / tuteur','Téléphone du parent','Remarques','Absences (année)','Non justifiées','Sans tenue','Maladie non justifiée','Retards','Maladie justifiée','Justifiées','Dispense']];
+  list.sort(function(a,b){return (ci[a.classId]-ci[b.classId])||cmp(a.name,b.name);}).forEach(function(s){var y=yearStat(s.classId,s.id);rows.push([s.name,clsName(s.classId),keepText(s.sid),dmy(s.dob),s.parent,keepText(s.phone),s.notes,y.A,y.U,y.S,y.M,y.L,y.K,y.J,dspShort(dspOf(s))]);});
   download('eleves_'+slug(cid?clsName(cid):'toutes-classes')+'_'+todayStr()+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Liste des élèves téléchargée (CSV)');
 }
 function exportRecords(cid){
@@ -1390,7 +1466,7 @@ function renderHome(){
   var S=homeStats(),T=S.tot;
   function tile(v,l,c){return '<div class="stat'+(c?' '+c:'')+'"><b>'+v+'</b><span>'+esc(l)+'</span></div>';}
   h+='<div class="card" id="homeStats"><h2>'+esc(TX.statsTitle)+'</h2><div class="stats s3">'+tile(S.students,TX.tStudents)+tile(S.classes,TX.tClasses)+tile(S.held,TX.tHeld)+'</div>'+
-    '<div class="stats s4" style="margin-top:8px">'+tile(T.A,TX.tAbs,'bad')+tile(T.J,TX.tJ,'ok')+tile(T.U,TX.tU,'bad')+tile(T.L,TX.tL,'warn')+tile(T.M,TX.tM)+tile(T.K,TX.tK)+tile(T.S,TX.tS)+'</div></div>';
+    '<div class="stats s4" style="margin-top:8px">'+tile(T.A,TX.tAbs,'bad')+tile(T.U,TX.tU,'bad')+tile(T.S,TX.tS)+tile(T.M,TX.tM)+tile(T.L,TX.tL,'warn')+tile(T.K,TX.tK)+tile(T.J,TX.tJ,'ok')+'</div></div>';
   /* comparison */
   var mx=0;S.per.forEach(function(r){if(r.rate>mx)mx=r.rate;});
   h+='<div class="card" id="homeCmp"><h2>'+esc(TX.cmpTitle)+'</h2><table class="cmp"><thead><tr>'+TX.cmpHead.map(function(x,i){return '<th'+(i?'':' style="text-align:left"')+'>'+esc(x)+'</th>';}).join('')+'</tr></thead><tbody>'+
