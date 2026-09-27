@@ -1,0 +1,56 @@
+rules_version = '2';
+// Cahier Journalier digital – règles Firestore (accès sur invitation + modérateur)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function myEmail() { return request.auth.token.get('email', '').lower(); }
+
+    // Modérateur : adresse fixe ET vérifiée (Google la vérifie d'office ;
+    // un compte e-mail/mot de passe doit passer par le lien de vérification).
+    function isMod() {
+      return signedIn()
+        && myEmail() == 'tammar.med@gmail.com'
+        && request.auth.token.get('email_verified', false) == true;
+    }
+
+    function memberPath() { return /databases/$(database)/documents/members/$(myEmail()); }
+
+    // Membre actif : members/{email en minuscules} avec active == true
+    // (et, si l'accès est lié à un compte, uid identique).
+    function isMember() {
+      return signedIn() && myEmail() != ''
+        && exists(memberPath())
+        && get(memberPath()).data.get('active', false) == true
+        && get(memberPath()).data.get('uid', request.auth.uid) == request.auth.uid;
+    }
+
+    function allowed() { return isMod() || isMember(); }
+
+    // Liste d'accès : écrite uniquement par le modérateur ; chacun peut lire la sienne.
+    match /members/{mid} {
+      allow read: if isMod() || (signedIn() && mid == myEmail());
+      allow create, update: if isMod()
+        && mid == mid.lower()
+        && request.resource.data.email == mid
+        && request.resource.data.active is bool
+        && (!('uid' in request.resource.data) || request.resource.data.uid is string);
+      allow delete: if isMod();
+    }
+
+    // Cahier de chaque utilisateur (meta + morceaux chunk_N) :
+    // lecture/écriture par le propriétaire autorisé ; le modérateur peut seulement LIRE.
+    match /users/{uid}/{document=**} {
+      allow read: if (signedIn() && request.auth.uid == uid && allowed()) || isMod();
+      allow write: if signedIn() && request.auth.uid == uid && allowed();
+    }
+
+    // Profil léger (compteurs, dernière synchro) pour la liste du modérateur.
+    match /profiles/{uid} {
+      allow read: if isMod() || (signedIn() && request.auth.uid == uid);
+      allow create, update: if signedIn() && request.auth.uid == uid && allowed()
+        && request.resource.data.email == myEmail();
+      allow delete: if signedIn() && request.auth.uid == uid && allowed();
+    }
+  }
+}
