@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1f5f8b">
+<title>Cahier Journalier digital v1.0</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
@@ -13,7 +14,6 @@
 <meta name="apple-mobile-web-app-title" content="Cahier">
 <meta name="application-name" content="Cahier">
 <meta name="format-detection" content="telephone=no">
-<title>Cahier journalier digital</title>
 <style>
 :root{
   --bg:#f3f5f8;--card:#fff;--ink:#1c2430;--muted:#667085;--line:#e3e7ee;
@@ -293,12 +293,39 @@ input[type=time]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border
 .card.remind b{color:var(--warn)}.card.remind p{margin:6px 0 10px}
 .svcdays{margin-top:4px;color:var(--muted);line-height:1.5}.svcdays span{white-space:nowrap}
 .ttgrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+.sc{display:block;font-size:10.5px;color:#98a2b3;font-weight:400;line-height:1.15;letter-spacing:.02em}
+table.grid th.nm .sc{margin-left:20px}
+.fixbox{border:1px solid #f5c26b;background:#fff8eb}
+.fixbox p{margin:0 0 6px}
+.fixbox .row2{display:flex;gap:8px;flex-wrap:wrap}.fixbox .row2 .btn{flex:1;min-width:140px}
+.brk{color:#b54708;font-size:12px;font-weight:600}
+.impmap{border:1px solid #e4e7ec;border-radius:10px;padding:8px;margin:6px 0;background:#fff}
+.impmap-r{display:flex;gap:6px;overflow-x:auto;padding:6px 0 2px}
+.impcol{flex:0 0 118px;display:flex;flex-direction:column;gap:2px;border:1px solid #d0d5dd;border-radius:8px;padding:5px;font-size:11.5px;background:#f9fafb}
+.impcol.ign{opacity:.6}
+.impcol .ih{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.impcol .is{color:#667085;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.impcol select{font-size:12px;padding:3px 4px;min-height:0;height:30px}
+.impg .names .muted{font-size:11px}
+.cycdates{display:flex;flex-direction:column;gap:6px}
+.cycrow{display:grid;grid-template-columns:62px 1fr 14px 1fr;gap:4px 6px;align-items:center}
+.cycrow b{font-size:13.5px}
+.cycrow input{min-width:0;padding:6px 6px;font-size:14px}
+.cycrow .arr{color:#98a2b3;text-align:center}
+.cycrow small{grid-column:2/5;font-size:11.5px;margin-top:-2px}
+.cycauto{margin-top:8px}.cycauto summary{cursor:pointer;color:var(--pri,#1d4f7a);font-weight:600;font-size:14px;padding:6px 0}
+table.grid th.holh{background:#eef0f3;color:#667085;font-weight:600;font-size:11px}
+table.grid td.holc{background:repeating-linear-gradient(135deg,#eceef2 0 6px,#f5f6f8 6px 12px);color:#475467;text-align:center;vertical-align:middle;padding:6px 0;cursor:not-allowed;border-left:1px solid #d0d5dd;border-right:1px solid #d0d5dd}
+table.grid td.holc .holv{display:inline-block;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-weight:700;font-size:13px;letter-spacing:.03em}
+table.grid td.holf{background:#eef0f3}
+table.grid th.holh,table.grid td.holc{min-width:42px}
 td.bad-t{color:var(--bad);font-weight:700}
 </style>
 </head>
 <body>
 <header class="top">
-  <h1>Cahier journalier digital</h1>
+  <h1>Cahier Journalier digital v1.0</h1>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -322,6 +349,7 @@ td.bad-t{color:var(--bad);font-weight:700}
       <button class="btn sec" id="bulkBtn">⇪ Import en masse (Excel / CSV)</button>
     </div>
   </div>
+  <div class="card fixbox hidden" id="stuFix"></div>
   <div class="card" style="padding:4px 12px"><ul class="list" id="stuList"></ul></div>
   <button class="fab" id="addStudentBtn" aria-label="Ajouter un élève" title="Ajouter un élève">+</button>
 </section>
@@ -566,12 +594,12 @@ var TX={
  impHelpClass:'Tous les élèves sont importés dans la classe choisie. Collez une liste ou choisissez un ou plusieurs fichiers Excel (.xlsx, .xls) ou CSV.',
  impHelpGlobal:'La classe de chaque élève est détectée automatiquement : colonne « Classe », nom de la feuille (une feuille par classe), en-tête d’une liste Massar (« Classe : … ») ou nom du fichier (un fichier par classe). Vous pouvez sélectionner plusieurs fichiers à la fois.',
  impFileBtn:'📄 Choisir des fichiers (Excel ou CSV)…',
- impTip:'Formats acceptés : Excel (.xlsx, .xls), CSV, ou copier-coller depuis Excel. Les listes Massar sont reconnues (en-tête au-dessus du tableau, colonnes Code élève, Nom, Prénom, النسب, الإسم, date de naissance). Les doublons (même code Massar, sinon même nom dans la classe) sont ignorés.',
+ impTip:'Formats acceptés : Excel (.xlsx, .xls), CSV, ou copier-coller depuis Excel. Les listes Massar sont reconnues (en-tête au-dessus du tableau, colonnes Code élève / رقم التلميذ, Nom, Prénom, إسم التلميذ, النسب, الإسم, date de naissance). Les doublons (même code Massar, sinon même nom dans la classe) sont ignorés.',
  impReading:'Lecture des fichiers…',
  impErr:function(f){return 'Impossible de lire « '+f+' ». Enregistrez-le au format .xlsx ou CSV UTF-8, puis réessayez.';},
  impFiles:function(n,t){return (n>1?n+' fichiers':'1 fichier')+' · '+(t>1?t+' tableaux lus':t+' tableau lu');},
  impCols:'Colonnes reconnues : ',impClear:'Retirer les fichiers',
- impColNames:{name:'Nom complet',first:'Prénom',last:'Nom',sid:'Code élève (Massar)',parent:'Parent',phone:'Téléphone',dob:'Date de naissance',notes:'Remarques'},
+ impColNames:{name:'Nom complet',first:'Prénom',last:'Nom',nameAr:'Nom complet (arabe)',firstAr:'Prénom (arabe)',lastAr:'Nom (arabe)',sid:'Code élève (Massar)',parent:'Parent',phone:'Téléphone',dob:'Date de naissance',notes:'Remarques'},
  impNothing:'Aucun élève trouvé. Vérifiez que le tableau contient une colonne Nom (ou Nom et Prénom).',
  impDetected:'Classe de destination',impUnknown:'Classe non détectée',
  impNew:function(n){return n>1?n+' nouveaux':n+' nouveau';},
@@ -580,7 +608,15 @@ var TX={
  impInto:function(n){return 'Importer dans '+n;},impSkip:'Ne pas importer',
  impHow:{col:'d’après la colonne Classe',block:'d’après l’en-tête Massar',sheet:'d’après le nom de la feuille',file:'d’après le nom du fichier',sel:'classe choisie'},
  impTotal:function(n,d,c){return 'Total : '+(n>1?n+' élèves à importer':n+' élève à importer')+(d?', '+(d>1?d+' doublons ignorés':'1 doublon ignoré'):'')+(c?', '+(c>1?c+' classes à créer':'1 classe à créer'):'')+'.';},
- impGo:function(n){return n?(n>1?'Importer '+n+' élèves':'Importer 1 élève'):'Importer';},
+ impGo:function(n,f){return n?(n>1?'Importer '+n+' élèves':'Importer 1 élève'):(f?'Corriger '+f+(f>1?' noms':' nom'):'Importer');},
+ impMapTitle:'Colonnes (touchez pour corriger)',impMapAuto:'Détection automatique',impColN:function(l){return 'Colonne '+l;},
+ impKeys:{ign:'— Ignorer —',name:'Nom complet',last:'Nom',first:'Prénom',nameAr:'Nom complet (arabe)',lastAr:'النسب (nom arabe)',firstAr:'الاسم (prénom arabe)',sid:'Code Massar',dob:'Date de naissance',phone:'Téléphone',parent:'Parent',notes:'Remarques',cls:'Classe',rank:'N° d’ordre'},
+ impNoName:function(n){return n+(n>1?' lignes ont':' ligne a')+' un code mais pas de nom : '+(n>1?'elles sont ignorées':'elle est ignorée')+'. Vérifiez la colonne « Nom ».';},
+ impFix:function(n){return n+(n>1?' noms corrigés':' nom corrigé');},
+ impFixed:function(n){return n+(n>1?' noms d’élèves corrigés (absences conservées)':' nom d’élève corrigé (absences conservées)');},
+ fixMsg:function(n){return n+(n>1?' élèves affichent':' élève affiche')+' un code Massar (ou un numéro) au lieu du nom.';},
+ fixHelp:'Réimportez la liste de la classe (Excel Massar) : les noms seront corrigés automatiquement d’après le code Massar, sans perdre les absences. Sinon, touchez l’élève puis Modifier pour saisir son nom.',
+ fixReimp:'Réimporter la liste',fixShow:'Afficher ces élèves',fixAll:'Afficher tous les élèves',noName:'Nom manquant',
  impDone:function(n,k,c){return (n>1?n+' élèves importés':'1 élève importé')+' dans '+(k>1?k+' classes':'1 classe')+(c?' ('+(c>1?c+' créées':'1 créée')+')':'');},
  add:'Ajouter',addStu:'Ajouter un élève',addStuSub:function(c){return c?'Dans la classe '+c:'Vous choisirez la classe dans la fiche';},
  addCls:'Ajouter une classe',addClsSub:'Nom, plafond de points, séances par semaine',addImp:'Importer une liste',addImpSub:'Excel (.xlsx, .xls), CSV ou liste Massar',
@@ -609,10 +645,26 @@ var TX={
  ttAdded:'Créneau ajouté',ttSaved:'Créneau modifié',ttDeleted:'Créneau supprimé',ttDelQ:'Supprimer ce créneau ?',ttNoClass:'Créez d’abord une classe (Paramètres).',
  cancel:'Annuler',del:'Supprimer',edit:'Modifier',
  calTitle:'Calendrier des cycles',
+ holHead:'Férié',vacHead:'Vac.',vacShort:'Vacances',holShortDef:'Jour férié',holMotif:function(x){return 'Férié – '+x;},
+ holCols:function(n){return n>1?n+' créneaux fériés ou de vacances (grisés)':'1 créneau férié (grisé)';},
+ cycNote2:'La grille de chaque cycle affiche tous les créneaux de l’emploi du temps compris entre le début et la fin du cycle. Un créneau qui tombe un jour férié ou pendant les vacances reste visible, grisé, avec le motif : il ne compte ni dans les absences, ni dans les points, ni dans les statistiques.',
+ calFixed:'Dates des cycles fixées (modifiables dans Paramètres).',
+ cycWk:function(n){return n>1?n+' semaines de cours':n+' semaine de cours';},
+ cycHol:function(n){return n>1?'dont '+n+' semaines de vacances':'dont 1 semaine de vacances';},
+ cycDatesLbl:'Dates des cycles (début → fin)',cycFrom:function(i){return 'Début du cycle '+i;},cycTo:function(i){return 'Fin du cycle '+i;},
+ cycNote:function(n){return 'Les dates des séances S1… sont les créneaux de l’emploi du temps compris entre le début et la fin de chaque cycle, jours fériés et vacances exclus. S’il y a plus de '+n+' dates, les suivantes sont signalées ; s’il y en a moins, les séances sans date sont signalées.';},
+ cycOfficial:'Rétablir les dates 2026-2027',cycOfficialQ:'Remplacer les dates des cycles par celles de 2026-2027 (14/09/2026 → 22/05/2027) ? Les absences déjà saisies sont conservées.',cycOfficialDone:'Dates des cycles 2026-2027 rétablies',
+ cycAutoLbl:'Recalculer automatiquement (semaines de cours)',cycAutoGo:'Recalculer les dates des cycles',
+ cycAutoQ:function(w){return 'Remplacer toutes les dates des cycles par un calcul automatique ('+w+' semaines de cours par cycle) ? Les absences déjà saisies sont conservées.';},
+ cycAutoDone:function(w){return 'Cycles recalculés ('+w+' semaines de cours chacun)';},
+ cycInvalid:'Dates invalides : la fin du cycle doit être après son début.',
+ cycSaved:function(i,a,b){return 'Cycle '+i+' : '+a+' → '+b;},
+ cycBad:function(i){return 'Cycle '+i+' : dates à compléter dans Paramètres';},
+ cycOverlap:function(i,j){return 'Le cycle '+i+' commence avant la fin du cycle '+j;},
  calStart:function(d){return 'Date de rentrée : '+d;},
  calWeeks:function(n){return n+' semaines de cours par cycle';},
  calExt:function(n){return n>1?'prolongé de '+n+' semaines (vacances)':'prolongé d’une semaine (vacances)';},
- calEdit:'Modifier dans Paramètres',calNone:'Indiquez la date de rentrée dans Paramètres.',
+ calEdit:'Modifier dans Paramètres',calNone:'Indiquez les dates des cycles dans Paramètres.',
  setStart:'Date de rentrée (début du cycle 1)',setWeeks:'Semaines de cours par cycle',
  setCalNote:'Semaines du lundi au samedi. Une semaine entièrement couverte par des vacances ou des jours fériés ne compte pas : le cycle est prolongé d’autant pour garder le même nombre de semaines de cours. Un jour férié isolé est simplement sauté.',
  startSet:function(d){return 'Date de rentrée : '+d;},weeksSet:function(n){return n+' semaines par cycle';},
@@ -668,11 +720,12 @@ function plural(n,w){return n+' '+w+(n>1?'s':'');}
 var toastT;function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2600);}
 
 /* ================= storage ================= */
+var DEFCYC=[['2026-09-14','2026-10-17'],['2026-10-26','2026-11-29'],['2026-11-30','2027-01-09'],['2027-02-01','2027-02-28'],['2027-03-01','2027-04-11'],['2027-04-12','2027-05-22']];
 function blank(){
   var d={app:'class-register',version:3,classes:[],periods:[],spp:10,students:[],sessions:{},settings:{threshold:3,teacher:'',autoDate:true,points:{A:0.5,L:0.25,M:0.25,K:0,S:0.5,J:0}},ui:{cls:'',per:0,mode:'cycle'},lastBackup:null};
   ['1BACLSH1','1BACLSH2','1BACLSH3','1BACLSH4','2BACSP4','2BACSP5','2BACSP6','2BACSSVT1','2BACSSVT2'].forEach(function(n,i){d.classes.push({id:'c'+(i+1)+uid(),name:n});});
   d.periods=[TX.act1,'','','','',''];
-  d.cal={start:'2026-09-07',weeks:5,oblig:21,perWeek:2,dayMin:2,dayMax:6,friMax:4,asInit:true,holidays:defHolidays(),tt:[defAS()]};
+  d.cal={start:DEFCYC[0][0],weeks:5,cycles:defCycles(),oblig:21,perWeek:2,dayMin:2,dayMax:6,friMax:4,asInit:true,holidays:defHolidays(),tt:[defAS()]};
   return d;
 }
 function isBackup(d){return d&&typeof d==='object'&&Array.isArray(d.classes)&&Array.isArray(d.students)&&d.sessions&&typeof d.sessions==='object';}
@@ -682,7 +735,9 @@ function normalize(d){
   b.classes=d.classes.filter(function(c){return c&&c.id&&!ids[c.id]&&(ids[c.id]=1);}).map(function(c){var o={id:String(c.id),name:String(c.name||'Classe')},cp=parseFloat(c.cap);if(c.cap!=null&&c.cap!==''&&cp>=0)o.cap=cp;var pw=parseInt(c.pw,10);if(pw>=1&&pw<=10)o.pw=pw;return o;});
   var ver=parseInt(d.version,10)||2;
   if(Array.isArray(d.periods)&&d.periods.length){b.periods=d.periods.slice(0,12).map(function(p){p=String(p==null?'':p).trim();if(ver<3&&/^(p[ée]riode|[p]eriod|cycle)\s*\d+$/i.test(p))p='';return p;});if(ver<3&&!b.periods[0])b.periods[0]=TX.act1;}
-  if(d.cal&&typeof d.cal==='object'){var dc=d.cal;b.cal.start=isoOk(dc.start)?dc.start:(dc.start===''?'':b.cal.start);var wk=parseInt(dc.weeks,10);if(wk>=1&&wk<=20)b.cal.weeks=wk;
+  if(d.cal&&typeof d.cal==='object'){var dc=d.cal;var wk=parseInt(dc.weeks,10);if(wk>=1&&wk<=20)b.cal.weeks=wk;
+    if(Array.isArray(dc.cycles))b.cal.cycles=dc.cycles.slice(0,12).map(function(c){c=c||{};var f=isoOk(c.from)?c.from:'',t=isoOk(c.to)?c.to:'';if(f&&t&&t<f)t='';return {from:f,to:t};});
+    b.cal.start=(b.cal.cycles[0]&&b.cal.cycles[0].from)||'';
     if(Array.isArray(dc.holidays))b.cal.holidays=dc.holidays.filter(function(h){return h&&isoOk(h.from);}).map(function(h,i){return {id:String(h.id||('h'+i+uid())),from:h.from,to:isoOk(h.to)&&h.to>h.from?h.to:'',label:String(h.label||'').slice(0,80),approx:!!h.approx,off:!!h.off&&!h.approx};});
     var ob=parseFloat(dc.oblig);if(ob>0&&ob<=60)b.cal.oblig=ob;var pw=parseInt(dc.perWeek,10);if(pw>=1&&pw<=10)b.cal.perWeek=pw;['dayMin','dayMax','friMax'].forEach(function(k){var v=parseFloat(dc[k]);if(v>=0&&v<=12)b.cal[k]=v;});
     if(Array.isArray(dc.tt))b.cal.tt=dc.tt.filter(function(t){return t&&(t.type==='as'||ids[t.classId])&&+t.day>=1&&+t.day<=6&&/^\d\d:\d\d$/.test(t.start)&&/^\d\d:\d\d$/.test(t.end);}).map(function(t,i){var as=t.type==='as';return {id:String(t.id||('t'+i+uid())),type:as?'as':'class',day:+t.day,start:t.start,end:t.end,classId:as?'':String(t.classId),room:String(t.room||'').slice(0,40)};});
@@ -703,10 +758,10 @@ function normalize(d){
   b.lastBackup=d.lastBackup||null;
   return b;
 }
-function load(){try{var raw=localStorage.getItem(KEY);if(!raw)return blank();var o=JSON.parse(raw),d=normalize(o);if((parseInt(o.version,10)||2)<3||!(o.cal&&o.cal.asInit)){try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}}return d;}catch(e){return blank();}}
+function load(){try{var raw=localStorage.getItem(KEY);if(!raw)return blank();var o=JSON.parse(raw),d=normalize(o);if((parseInt(o.version,10)||2)<3||!(o.cal&&o.cal.asInit&&Array.isArray(o.cal.cycles))){try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}}return d;}catch(e){return blank();}}
 var DB=load();
 var saveT=null;
-function persistNow(){clearTimeout(saveT);saveT=null;try{localStorage.setItem(KEY,JSON.stringify(DB));return true;}catch(e){toast('⚠ Enregistrement impossible – stockage plein ou bloqué. Téléchargez une sauvegarde !');return false;}}
+function persistNow(){clearTimeout(saveT);saveT=null;if(CAL)CAL.mx=null,CAL.cols=null,CAL.auto={};try{localStorage.setItem(KEY,JSON.stringify(DB));return true;}catch(e){toast('⚠ Enregistrement impossible – stockage plein ou bloqué. Téléchargez une sauvegarde !');return false;}}
 function persist(){clearTimeout(saveT);saveT=setTimeout(persistNow,250);}
 window.addEventListener('pagehide',function(){if(saveT)persistNow();});
 document.addEventListener('visibilitychange',function(){if(document.hidden&&saveT)persistNow();});
@@ -736,10 +791,10 @@ function addPts(st,cid){var P=DB.settings.points;st.raw=r2(st.U*P.A+st.J*P.J+st.
 function fmtNum(x){return String(r2(x)).replace('.',DEC);}
 function fmtPts(x){x=r2(x);return x?'-'+fmtNum(x):'0';}
 /* stats of one student in one class for one period */
-function perStat(cid,sid,p){var st=emptyStat();for(var s=0;s<DB.spp;s++){var r=DB.sessions[skey(cid,p,s)];if(r){st.held++;addMark(st,r.marks[sid]);}}return addPts(st,cid);}
+function perStat(cid,sid,p){var st=emptyStat(),S=sessCount(cid,p);for(var s=0;s<S;s++){var r=DB.sessions[skey(cid,p,s)];if(r){st.held++;addMark(st,r.marks[sid]);}}return addPts(st,cid);}
 function yearStat(cid,sid){var y=emptyStat(),per=[];for(var p=0;p<DB.periods.length;p++){var st=perStat(cid,sid,p);per.push(st);y.A+=st.A;y.J+=st.J;y.U+=st.U;y.L+=st.L;y.M+=st.M;y.K+=st.K;y.S+=st.S;y.held+=st.held;y.ded=r2(y.ded+st.ded);y.raw=r2(y.raw+st.raw);}y.per=per;return y;}
-function heldCount(cid,p){var n=0;for(var s=0;s<DB.spp;s++)if(DB.sessions[skey(cid,p,s)])n++;return n;}
-function inRange(k){var a=k.split('|');return +a[1]<DB.periods.length&&+a[2]<DB.spp;}
+function heldCount(cid,p){var n=0,S=sessCount(cid,p);for(var s=0;s<S;s++)if(DB.sessions[skey(cid,p,s)])n++;return n;}
+function inRange(k){var a=k.split('|');return +a[1]<DB.periods.length&&+a[2]<sessCount(a[0],+a[1]);}
 /* all non-present marks of a student across every class (for history) */
 function historyOf(sid){
   var out=[];
@@ -792,7 +847,12 @@ function renderStudents(){
   classOptions($('stuClassFilter'),$('stuClassFilter').value,'Toutes les classes');
   var q=$('stuSearch').value.trim().toLowerCase(),f=$('stuClassFilter').value,sort=$('stuSort').value,th=DB.settings.threshold;
   var cn={};DB.classes.forEach(function(c,i){cn[c.id]=i;});
+  var brk=DB.students.filter(isBroken);if(!brk.length)stuBrokenOnly=false;
+  var fb=$('stuFix');fb.classList.toggle('hidden',!brk.length);
+  if(brk.length){var bc={};brk.forEach(function(s){bc[clsName(s.classId)]=1;});
+    fb.innerHTML='<p><b>⚠ '+esc(TX.fixMsg(brk.length))+'</b> <span class="small">'+esc(Object.keys(bc).join(', '))+'</span></p><p class="small">'+esc(TX.fixHelp)+'</p><div class="row2"><button type="button" class="btn" id="fixReimp">'+esc(TX.fixReimp)+'</button><button type="button" class="btn sec" id="fixShow">'+esc(stuBrokenOnly?TX.fixAll:TX.fixShow)+'</button></div>';}
   var list=DB.students.filter(function(s){
+    if(stuBrokenOnly&&!isBroken(s))return false;
     if(f&&s.classId!==f)return false;if(!q)return true;
     return (s.name+' '+s.sid+' '+s.parent+' '+s.phone+' '+clsName(s.classId)).toLowerCase().indexOf(q)>=0;
   });
@@ -803,9 +863,14 @@ function renderStudents(){
   var html='';
   for(var i=0;i<list.length;i++){var s=list[i],y=yearStat(s.classId,s.id);
     var chip=y.A?'<span class="chip '+(y.U>=th?'bad':'warn')+'" title="Absences cette année">'+y.A+' abs.</span>':'';
-    html+='<li class="stu" data-id="'+esc(s.id)+'"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><div class="info"><div class="name" dir="auto">'+esc(s.name)+'</div><div class="meta"><span class="chip">'+esc(clsName(s.classId))+'</span> '+(s.sid?'<span dir="auto">#'+esc(s.sid)+'</span> ':'')+(s.parent?'· <span dir="auto">'+esc(s.parent)+'</span>':'')+'</div></div>'+chip+'</li>';}
+    html+='<li class="stu" data-id="'+esc(s.id)+'"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><div class="info"><div class="name" dir="auto">'+(isBroken(s)?'<span class="brk">⚠ '+esc(TX.noName)+'</span> ':'')+esc(s.name)+'</div><div class="meta"><span class="chip">'+esc(clsName(s.classId))+'</span> '+(s.sid?'<span dir="auto">#'+esc(s.sid)+'</span> ':'')+(s.parent?'· <span dir="auto">'+esc(s.parent)+'</span>':'')+'</div></div>'+chip+'</li>';}
   $('stuList').innerHTML=html;
 }
+var stuBrokenOnly=false;
+$('stuFix').addEventListener('click',function(e){
+  if(e.target.closest('#fixShow')){stuBrokenOnly=!stuBrokenOnly;renderStudents();return;}
+  if(e.target.closest('#fixReimp')){var b=DB.students.filter(isBroken)[0];if(b)$('stuClassFilter').value=b.classId;bulkMode='class';$('bulkBtn').click();}
+});
 $('stuSearch').addEventListener('input',renderStudents);
 $('stuClassFilter').addEventListener('change',renderStudents);
 $('stuSort').addEventListener('change',renderStudents);
@@ -891,43 +956,16 @@ function parseDelimited(text,delim){
   if(f!==''||row.length){row.push(f);rows.push(row);}
   return rows.map(function(r){return r.map(function(x){return x.trim();});}).filter(function(r){return r.some(function(x){return x!=='';});});
 }
-function norm(s){s=String(s).toLowerCase();try{s=s.normalize('NFD').replace(/[\u0300-\u036f\u064b-\u065f\u0670]/g,'');}catch(e){}return s.trim();}
-var HEAD=[
- ['cls',/^(classe|class|groupe|division|section|القسم|الفوج)$/],
- ['first',/\b(prenom|first ?name|given ?name)\b|الاسم الشخصي|^الاسم$/],
- ['sid',/\b(id|code|massar|numero|num|matricule|number|no)\b|n°|رقم|الرمز/],
- ['phone',/\b(tel|telephone|phone|mobile|gsm|portable)\b|هاتف/],
- ['parent',/\b(parent|guardian|tuteur|pere|mere|father|mother)\b|ولي/],
- ['dob',/\b(naissance|birth|dob|date)\b|ازدياد/],
- ['notes',/\b(notes?|remarques?|observations?|comments?)\b|ملاحظ/],
- ['last',/\b(last ?name|surname|family ?name|nom de famille)\b|^nom$|النسب|العائلي/],
- ['name',/\b(name|nom|full ?name|eleve|student|pupil)\b|الاسم|التلميذ|اسم/]
-];
 function toISO(v){v=String(v||'').trim();var m;
   if(/^\d{4}-\d{2}-\d{2}$/.test(v))return v;
   if(/^\d{5}(\.\d+)?$/.test(v)){var n=Math.floor(+v);if(n>18000&&n<80000){var d=new Date(Date.UTC(1899,11,30)+n*864e5);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());}}
   if((m=v.match(/^(\d{4})-(\d{2})-(\d{2})[T ]/)))return m[1]+'-'+m[2]+'-'+m[3];
   if((m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/)))return m[3]+'-'+pad(+m[2])+'-'+pad(+m[1]);
   return '';}
-var bulkParsed=null;
-function bulkPreview(){
-  if(bulkEngine()){renderPlan();return;}
-  var cid=$('bulkClass').value,res=parseImport($('bulkText').value);
-  var seen={};studentsIn(cid).forEach(function(s){seen[s.name.toLowerCase()]=1;});
-  var add=[],dup=0;
-  res.items.forEach(function(x){var k=x.name.toLowerCase();if(seen[k])dup++;else{seen[k]=1;add.push(x);}});
-  bulkParsed=add;
-  $('bulkGo').disabled=!add.length;
-  $('bulkGo').textContent=add.length?'Importer '+plural(add.length,'élève'):'Importer';
-  if(!res.items.length){$('bulkPreview').textContent='Rien à importer pour l’instant.';return;}
-  var labels={name:'Nom',first:'Prénom',last:'Nom de famille',sid:'Code élève',parent:'Parent',phone:'Téléphone',dob:'Date de naissance',notes:'Remarques'};
-  $('bulkPreview').textContent=(res.header?'Ligne d’en-tête détectée. ':'')+'Colonnes : '+res.cols.map(function(k){return labels[k];}).join(', ')+'\n'+
-    (add.length>1?add.length+' nouveaux élèves':add.length+' nouvel élève')+' → '+(cls(cid)?cls(cid).name:'')+(dup?' ('+dup+' doublon'+(dup>1?'s':'')+' ignoré'+(dup>1?'s':'')+')':'')+'\n\n'+
-    add.slice(0,6).map(function(x,i){return (i+1)+'. '+x.name+(x.sid?'  #'+x.sid:'')+(x.phone?'  ☎ '+x.phone:'');}).join('\n')+(add.length>6?'\n…':'');
-}
+function bulkPreview(){renderPlan();}
 $('bulkBtn').addEventListener('click',function(){
   if(!DB.classes.length){toast('Créez d’abord une classe (Paramètres)');return;}
-  classOptions($('bulkClass'),$('stuClassFilter').value||DB.ui.cls);$('bulkText').value='';bulkFiles=[];bulkChoices={};bulkUi();bulkPreview();openModal('bulkModal');
+  classOptions($('bulkClass'),$('stuClassFilter').value||DB.ui.cls);$('bulkText').value='';bulkFiles=[];bulkChoices={};bulkMap={};$('bulkFile').value='';bulkUi();bulkPreview();openModal('bulkModal');
 });
 $('bulkText').addEventListener('input',bulkPreview);
 $('bulkClass').addEventListener('change',bulkPreview);
@@ -945,14 +983,7 @@ function readText(f,cb){
   rd.onerror=function(){alert('Impossible de lire le fichier.');};
   rd.readAsText(f,'utf-8');
 }
-$('bulkGo').addEventListener('click',function(){
-  if(bulkEngine()){doImportPlan();return;}
-  var cid=$('bulkClass').value;if(!bulkParsed||!bulkParsed.length||!cls(cid))return;
-  var now=Date.now();
-  bulkParsed.forEach(function(x,i){DB.students.push({id:uid()+i,classId:cid,name:x.name,sid:x.sid,dob:x.dob,parent:x.parent,phone:x.phone,notes:x.notes,created:now});});
-  DB.ui.cls=cid;persistNow();closeModal('bulkModal');toast(plural(bulkParsed.length,'élève')+' importé'+(bulkParsed.length>1?'s':'')+' dans '+clsName(cid));
-  $('stuClassFilter').value=cid;render();
-});
+$('bulkGo').addEventListener('click',doImportPlan);
 
 /* ================= Attendance grid ================= */
 function curCls(){if(!cls(DB.ui.cls)){var c=DB.classes.filter(function(c){return countIn(c.id);})[0]||DB.classes[0];DB.ui.cls=c?c.id:'';}return DB.ui.cls;}
@@ -967,20 +998,20 @@ function renderAttendance(){
 }
 function cellClass(code,held,hasReason){return 'c '+(held?code:'nh')+(hasReason?' r':'');}
 function renderGrid(){
-  var cid=DB.ui.cls,p=DB.ui.per,list=studentsIn(cid),th=DB.settings.threshold,S=DB.spp;
+  var cid=DB.ui.cls,p=DB.ui.per,list=studentsIn(cid),th=DB.settings.threshold,S=DB.spp,cols=cid?colsOf(cid,p):[];
   if(!cid){$('gridWrap').innerHTML='<div class="empty"><b>Aucune classe</b>Ajoutez une classe dans Paramètres.</div>';$('attInfo').textContent='';return;}
   if(!list.length){$('gridWrap').innerHTML='<div class="empty"><b>Aucun élève dans '+esc(clsName(cid))+'</b>Ajoutez-les dans l’onglet Élèves (l’import en masse est le plus rapide).</div>';$('attInfo').textContent='';return;}
-  var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
+  S=cols.n;var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
   var h='<table class="grid"><thead><tr><th class="nm">Élève</th>';
-  for(s=0;s<S;s++){var hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';}
+  cols.forEach(function(c){if(c.hol){h+='<th class="holh" title="'+esc(c.hol.label)+'">'+esc(holShort(c.hol)===TX.vacShort?TX.vacHead:TX.holHead)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';});
   h+='<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t" title="Retards du cycle">R</th><th class="t pts" title="Points retirés sur le cycle (plafonnés)">Pts</th><th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';
   list.forEach(function(st,i){
-    h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+'"><span class="n">'+(i+1)+'</span>'+esc(st.name)+'</th>';
-    for(var s=0;s<S;s++){var r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r)+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';}
+    h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+'"><span class="n">'+(i+1)+'</span>'+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>';
+    cols.forEach(function(c){if(c.hol){if(!i)h+='<td class="holc" rowspan="'+list.length+'" aria-label="'+esc(c.hol.label+' – '+dmy(c.date))+'"><span class="holv">'+esc(holShort(c.hol))+'</span></td>';return;}var s=c.s,r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r)+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';});
     h+=totalsHtml(cid,st.id,p)+'</tr>';
   });
   h+='</tbody><tfoot><tr><th class="nm">Absents</th>';
-  for(s=0;s<S;s++)h+='<td data-f="'+s+'">'+footVal(recs[s])+'</td>';
+  cols.forEach(function(c){h+=c.hol?'<td class="holf"></td>':'<td data-f="'+c.s+'">'+footVal(recs[c.s])+'</td>';});
   h+='<td></td><td></td><td></td><td></td><td class="yr"></td></tr></tfoot></table>';
   $('gridWrap').innerHTML=h;
   flagRows();
@@ -998,7 +1029,7 @@ function flagRows(){
 }
 function updateInfo(){
   var cid=DB.ui.cls,n=heldCount(cid,DB.ui.per);
-  $('attInfo').innerHTML='<b>'+n+'/'+DB.spp+'</b> séances effectuées · '+plural(countIn(cid),'élève');
+  $('attInfo').innerHTML='<b>'+n+'/'+sessCount(cid,DB.ui.per)+'</b> séances effectuées · '+plural(countIn(cid),'élève');
 }
 function refreshRow(tr){
   var sid=tr.dataset.sid,cells=tr.querySelectorAll('td.t');cells.forEach(function(c){c.remove();});
@@ -1115,7 +1146,7 @@ function renderReports(){
   h+=H('A','Abs.')+H('J','Just.')+H('U','Non just.')+H('L','Retards')+H('M','M','Maladie non justifiée')+H('K',CODE_TXT.K,'Maladie justifiée')+H('S',CODE_TXT.S,'Sans tenue')+'</tr></thead><tbody>';
   var flagged=0,capN=0;
   d.rows.forEach(function(r){var f=r.st.U>=th;if(f)flagged++;
-    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+'</td>';
+    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>';
     if(year){h+='<td class="ptsc'+(r.y.ded?'':' z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';r.y.per.forEach(function(st){h+='<td class="'+(st.ded?(st.capped?'capc':''):'z')+'">'+fmtPts(st.ded)+'</td>';});}
     else{if(r.st.capped)capN++;h+='<td class="ptsc'+(r.st.capped?' capc':'')+(r.st.ded?'':' z')+'"><b>'+fmtPts(r.st.ded)+'</b> / '+fmtNum(r.st.cap)+(r.st.raw>r.st.cap?'<br><small>plafonné ('+fmtPts(r.st.raw)+')</small>':(r.st.capped?'<br><small>plafond atteint</small>':''))+'</td>';}
     h+=C(r.st.A)+C(r.st.J)+C(r.st.U)+C(r.st.L)+C(r.st.M)+C(r.st.K)+C(r.st.S)+'</tr>';});
@@ -1154,11 +1185,11 @@ function slug(s){s=String(s||'tout');try{s=s.normalize('NFD').replace(/[\u0300-\
 function exportGrid(cid,p){
   if(!cls(cid)){toast('Choisissez une classe');return;}var list=studentsIn(cid);if(!list.length){toast('Aucun élève dans cette classe');return;}
   var head=['N°','Nom complet','Code élève'],dates=['','','Date'];
-  for(var s=0;s<DB.spp;s++){var r=rec(cid,p,s);head.push('S'+(s+1));var sd=sessDate(cid,p,s);dates.push(sd?dmy(sd):(r?'effectuée':''));}
+  var cols=colsOf(cid,p);cols.forEach(function(c){if(c.hol){head.push(holShort(c.hol)===TX.vacShort?TX.vacShort:TX.holHead);dates.push(dmy(c.date));return;}var s=c.s,r=rec(cid,p,s);head.push('S'+(s+1));var sd=sessDate(cid,p,s);dates.push(sd?dmy(sd):(r?'effectuée':''));});
   head.push('Absences','Justifiées','Non justifiées','Retards','Maladie non justifiée','Maladie justifiée','Sans tenue','Points retirés','Plafond');
   var rows=[['Classe',clsName(cid),'Cycle',cycleLabel(p),'Codes : P=présent A=absent AJ=absence justifiée R=retard M=maladie non justifiée MJ=maladie justifiée ST=sans tenue (vide = séance non effectuée)'],[],head,dates];
   list.forEach(function(st,i){var row=[i+1,st.name,keepText(st.sid)];
-    for(var s=0;s<DB.spp;s++){var r=rec(cid,p,s);row.push(r?CODE_CSV[codeOf(r.marks[st.id])]:'');}
+    cols.forEach(function(c){if(c.hol){row.push(holMotif(c.hol));return;}var r=rec(cid,p,c.s);row.push(r?CODE_CSV[codeOf(r.marks[st.id])]:'');});
     var t=perStat(cid,st.id,p);row.push(t.A,t.J,t.U,t.L,t.M,t.K,t.S,fmtPts(t.ded),fmtNum(t.cap));rows.push(row);});
   download('registre_'+slug(clsName(cid))+'_'+slug(cycleName(p))+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Registre CSV téléchargé');
 }
@@ -1179,7 +1210,7 @@ function exportStudents(cid){
 function exportRecords(cid){
   var rows=[['Classe','Cycle','Séance','Date','Nom complet','Code élève','Statut','Justifiée','Motif']];
   DB.classes.forEach(function(c){if(cid&&c.id!==cid)return;var list=studentsIn(c.id);
-    for(var p=0;p<DB.periods.length;p++)for(var s=0;s<DB.spp;s++){var r=rec(c.id,p,s);if(!r)continue;
+    for(var p=0;p<DB.periods.length;p++)for(var s=0,S=sessCount(c.id,p);s<S;s++){var r=rec(c.id,p,s);if(!r)continue;
       list.forEach(function(st){var m=r.marks[st.id],code=codeOf(m);var sd=sessDate(c.id,p,s);rows.push([c.name,cycleLabel(p),'S'+(s+1),sd?dmy(sd):'',st.name,keepText(st.sid),code==='M'?'Maladie non justifiée':code==='K'?'Maladie justifiée':code==='S'?'Sans tenue':code==='L'?'Retard':(code==='P'?'Présent':'Absent'),(code==='J'||code==='K')?'Oui':(code==='A'||code==='M'?'Non':''),m?m.r:'']);});}
   });
   if(rows.length<2){toast('Aucune séance enregistrée pour l’instant');return;}
@@ -1200,19 +1231,12 @@ function cal(){
   if(CAL)return CAL;
   var H={};
   DB.cal.holidays.forEach(function(h){var b=h.to&&h.to>=h.from?h.to:h.from;for(var x=h.from,n=0;x<=b&&n<370;x=addDays(x,1),n++)if(!H[x])H[x]=h;});
-  var st=DB.cal.start,cyc=[];
-  if(isoOk(st)){
-    var mon=addDays(st,1-wday(st)),W=DB.cal.weeks,guard=0;
-    for(var i=0;i<DB.periods.length;i++){
-      var c={i:i,weeks:[],skipped:[]};
-      while(c.weeks.length<W&&guard++<500){
-        var free=false;for(var k=0;k<6;k++){var dd=addDays(mon,k);if(dd>=st&&!H[dd]){free=true;break;}}
-        if(free)c.weeks.push(mon);else if(c.weeks.length)c.skipped.push(mon);
-        mon=addDays(mon,7);
-      }
-      c.start=c.weeks[0]<st?st:c.weeks[0];c.end=addDays(c.weeks[c.weeks.length-1],5);cyc.push(c);
-    }
-  }
+  var cyc=[];
+  for(var i=0;i<DB.periods.length;i++){var r=DB.cal.cycles[i]||{};
+    if(!isoOk(r.from)||!isoOk(r.to)||r.to<r.from){cyc.push({i:i,start:'',end:'',weeks:[],skipped:[],bad:true});continue;}
+    var c={i:i,start:r.from,end:r.to,weeks:[],skipped:[]},mon=addDays(r.from,1-wday(r.from)),g=0;
+    while(mon<=r.to&&g++<60){var free=false;for(var k=0;k<6;k++){var dd=addDays(mon,k);if(dd>=r.from&&dd<=r.to&&!H[dd]){free=true;break;}}(free?c.weeks:c.skipped).push(mon);mon=addDays(mon,7);}
+    cyc.push(c);}
   CAL={H:H,cycles:cyc,auto:{}};return CAL;
 }
 function defAS(){return {id:'tAS',type:'as',day:5,start:'15:00',end:'18:00',classId:'',room:''};}
@@ -1229,29 +1253,48 @@ function service(){var cm=0,am=0,cnt={};DB.cal.tt.forEach(function(t){var m=tmin
   return {cm:cm,am:am,tot:cm+am,warn:warn,dm:dm,da:da,dw:dw,ob:Math.round(DB.cal.oblig*60)};}
 function slotsOf(cid){return DB.cal.tt.filter(function(t){return t.classId===cid;}).sort(byStart);}
 function hasSlots(cid){return DB.cal.tt.some(function(t){return t.classId===cid;});}
+/* grid columns of a class/cycle: every timetable slot between the cycle's start and end, holidays included
+   (holiday columns carry no séance number and no record); real séances are numbered s=0..n-1 in date order;
+   séances already recorded beyond the timetable are kept as extra undated columns (data is never hidden). */
+function maxRecIdx(){var C=cal();if(C.mx)return C.mx;var mx={};Object.keys(DB.sessions).forEach(function(k){var i=k.lastIndexOf('|'),b=k.slice(0,i),s=+k.slice(i+1);if(!(mx[b]>=s))mx[b]=s;});return (C.mx=mx);}
+function colsOf(cid,p){
+  var C=cal();C.cols=C.cols||{};var key=cid+'|'+p;if(C.cols[key])return C.cols[key];
+  var c=C.cycles[p],out=[],sl=slotsOf(cid),k=0;
+  if(c&&!c.bad&&sl.length){for(var dd=c.start,g=0;dd<=c.end&&g<400;dd=addDays(dd,1),g++){var w=wday(dd),h=C.H[dd];sl.forEach(function(t){if(t.day!==w)return;if(h)out.push({hol:h,date:dd,slot:t});else out.push({s:k++,date:dd,slot:t});});}}
+  else for(;k<DB.spp;k++)out.push({s:k,date:''});
+  var mx=maxRecIdx()[key];if(mx!=null)while(k<=mx)out.push({s:k++,date:''});
+  out.n=k;return (C.cols[key]=out);
+}
+function sessCount(cid,p){return colsOf(cid,p).n;}
+function holShort(h){var l=String(h.label||'');if(h.to&&h.to>h.from&&/vacances|intermédiaire|break|mi-année|mid-year/i.test(l))return TX.vacShort;return l.replace(/\s*\([^)]*\)\s*/g,' ').replace(/^Anniversaire de (la |l’|l')?/i,'').trim()||TX.holShortDef;}
+function holMotif(h){var sh=holShort(h);return sh===TX.vacShort?sh:TX.holMotif(sh);}
 function autoDates(cid,p){
   var C=cal(),key=cid+'|'+p;if(C.auto[key])return C.auto[key];
-  var c=C.cycles[p],out=[],sl=slotsOf(cid);
-  if(c&&sl.length)c.weeks.forEach(function(mon){for(var k=0;k<6;k++){var dd=addDays(mon,k);if(dd<DB.cal.start||C.H[dd])continue;sl.forEach(function(t){if(t.day===k+1)out.push({date:dd,slot:t});});}});
-  return (C.auto[key]=out);
+  return (C.auto[key]=colsOf(cid,p).filter(function(x){return !x.hol&&x.date;}));
 }
 function autoDateOf(cid,p,s){var a=autoDates(cid,p)[s];return a?a.date:'';}
 function sessDate(cid,p,s){var r=rec(cid,p,s);return (r&&r.date)||autoDateOf(cid,p,s);}
 function isManual(cid,p,s){var r=rec(cid,p,s);return !!(r&&r.date&&r.date!==autoDateOf(cid,p,s)&&autoDateOf(cid,p,s));}
 function cycleName(i){return TX.cycle+' '+(i+1);}
 function cycleLabel(i){var a=String(DB.periods[i]||'').trim();return cycleName(i)+(a?' – '+a:'');}
-function cycleAt(day){var cs=cal().cycles;for(var i=0;i<cs.length;i++)if(day>=cs[i].start&&day<=cs[i].end)return cs[i];return null;}
+function cycleAt(day){var cs=cal().cycles;for(var i=0;i<cs.length;i++)if(!cs[i].bad&&day>=cs[i].start&&day<=cs[i].end)return cs[i];return null;}
+function defCycles(){return DEFCYC.map(function(c){return {from:c[0],to:c[1]};});}
+/* optional: old automatic rule (N teaching weeks per cycle, fully-holiday weeks skipped) */
+function autoCycles(st,W){var H=cal().H,out=[],mon=addDays(st,1-wday(st)),guard=0;
+  for(var i=0;i<DB.periods.length;i++){var wk=[];while(wk.length<W&&guard++<500){var free=false;for(var k=0;k<6;k++){var dd=addDays(mon,k);if(dd>=st&&!H[dd]){free=true;break;}}if(free)wk.push(mon);mon=addDays(mon,7);}
+    out.push({from:wk[0]<st?st:wk[0],to:addDays(wk[wk.length-1],5)});}
+  return out;}
+function cycWarn(){var w=[],cs=DB.cal.cycles;for(var i=0;i<DB.periods.length;i++){var c=cs[i]||{};if(!isoOk(c.from)||!isoOk(c.to))w.push(TX.cycBad(i+1));else if(i&&cs[i-1]&&isoOk(cs[i-1].to)&&c.from<=cs[i-1].to)w.push(TX.cycOverlap(i+1,i));}return w;}
 function sessHead(s){
   var cid=DB.ui.cls,p=DB.ui.per,r=rec(cid,p,s),d=sessDate(cid,p,s),man=isManual(cid,p,s);
   return {cls:(r?'effectuée':'')+(man?' man':''),html:'S'+(s+1)+'<small>'+(d?shortDate(d):(r?'✓':'–'))+'</small>',title:man?TX.manTitle:''};
 }
 function cycleInfoHtml(cid,p){
   var c=cal().cycles[p],ad=autoDates(cid,p),h='<b>'+esc(cycleLabel(p))+'</b>';
-  if(c)h+=' <span class="muted">· '+TX.cycRange(dmy(c.start),dmy(c.end))+'</span>';
+  if(c&&!c.bad)h+=' <span class="muted">· '+TX.cycRange(dmy(c.start),dmy(c.end))+'</span>';else h+='<div class="warnline">'+esc(TX.cycBad(p+1))+'</div>';
   if(!cid)return h;
   if(!hasSlots(cid))h+='<div class="warnline">'+esc(TX.noSlot)+'</div>';
-  else if(ad.length>DB.spp)h+='<div class="warnline">'+esc(TX.extraDates(ad.length-DB.spp,ad.slice(DB.spp).map(function(a){return shortDate(a.date);}).join(', ')))+'</div>';
-  else if(ad.length<DB.spp)h+='<div class="warnline">'+esc(TX.missingDates(DB.spp-ad.length))+'</div>';
+  else{var hc=colsOf(cid,p).filter(function(x){return x.hol;}).length;if(hc)h+=' <span class="muted">· '+esc(TX.holCols(hc))+'</span>';}
   return h;
 }
 function fmtRange(h){return h.to&&h.to!==h.from?dmy(h.from)+' → '+dmy(h.to):dmy(h.from);}
@@ -1338,7 +1381,7 @@ function renderHome(){
     '<div class="actions">'+(e?'<button type="button" class="btn danger" id="ttDel">'+esc(TX.del)+'</button><button type="button" class="btn sec" id="ttCancel">'+esc(TX.cancel)+'</button>':'')+'<button type="button" class="btn" id="ttSave">'+esc(e?TX.ttSaveEdit:TX.ttSaveNew)+'</button></div></div></div>';
   /* cycle calendar */
   h+='<div class="card" id="homeCal"><h2>'+esc(TX.calTitle)+'</h2>';
-  if(cs.length){h+='<p class="small muted" style="margin-top:0">'+esc(TX.calStart(dmy(DB.cal.start)))+' · '+esc(TX.calWeeks(DB.cal.weeks))+'</p><ul class="list cyclist">'+cs.map(function(c){var inside=c.skipped.length;return '<li class="'+(cur&&cur.i===c.i?'on':'')+'"><b>'+esc(cycleLabel(c.i))+'</b><span class="small muted">'+TX.cycRange(dmy(c.start),dmy(c.end))+(inside?' · '+esc(TX.calExt(inside)):'')+'</span></li>';}).join('')+'</ul>';}
+  if(cs.length){h+='<p class="small muted" style="margin-top:0">'+esc(TX.calFixed)+'</p><ul class="list cyclist">'+cs.map(function(c){if(c.bad)return '<li><b>'+esc(cycleLabel(c.i))+'</b><span class="small warnline">'+esc(TX.cycBad(c.i+1))+'</span></li>';var inside=c.skipped.length;return '<li class="'+(cur&&cur.i===c.i?'on':'')+'"><b>'+esc(cycleLabel(c.i))+'</b><span class="small muted">'+TX.cycRange(dmy(c.start),dmy(c.end))+' · '+esc(TX.cycWk(c.weeks.length))+(inside?' · '+esc(TX.cycHol(inside)):'')+'</span></li>';}).join('')+'</ul>';}
   else h+='<p class="muted small">'+esc(TX.calNone)+'</p>';
   h+='<button type="button" class="btn sec" data-goset="1">'+esc(TX.calEdit)+'</button></div>';
   $('homeBody').innerHTML=h;
@@ -1377,9 +1420,13 @@ $('homeBody').addEventListener('click',function(e){
 /* ================= Settings: calendar + holidays ================= */
 var holEdit=null;
 function renderCalSettings(){
-  $('calSettings').innerHTML='<label class="f" for="setStart">'+esc(TX.setStart)+'</label><input type="date" id="setStart" value="'+esc(DB.cal.start)+'">'+
-    '<label class="f" for="setWeeks">'+esc(TX.setWeeks)+'</label><input type="number" id="setWeeks" min="1" max="20" inputmode="numeric" value="'+DB.cal.weeks+'">'+
-    '<p class="small muted">'+esc(TX.setCalNote)+'</p>'+
+  var C=cal(),cw=cycWarn();
+  $('calSettings').innerHTML='<label class="f">'+esc(TX.cycDatesLbl)+'</label><div class="cycdates" id="cycDates">'+DB.periods.map(function(p,i){var r=DB.cal.cycles[i]||{},c=C.cycles[i];
+      return '<div class="cycrow" data-i="'+i+'"><b>'+esc(cycleName(i))+'</b><input type="date" class="cf" aria-label="'+esc(TX.cycFrom(i+1))+'" value="'+esc(r.from||'')+'"><span class="arr">→</span><input type="date" class="ct" aria-label="'+esc(TX.cycTo(i+1))+'" value="'+esc(r.to||'')+'"><small class="muted">'+(c&&!c.bad?esc(TX.cycWk(c.weeks.length))+(c.skipped.length?' · '+esc(TX.cycHol(c.skipped.length)):''):'')+'</small></div>';}).join('')+'</div>'+
+    (cw.length?'<div class="warnline" id="cycWarn">'+esc(cw.join(' · '))+'</div>':'')+
+    '<p class="small muted">'+esc(TX.cycNote2)+'</p>'+
+    '<div class="row2"><button type="button" class="btn sec" id="cycOfficial">'+esc(TX.cycOfficial)+'</button></div>'+
+    '<details class="cycauto"><summary>'+esc(TX.cycAutoLbl)+'</summary><div class="ttgrid"><div><label class="f" for="cycAutoStart">'+esc(TX.setStart)+'</label><input type="date" id="cycAutoStart" value="'+esc((DB.cal.cycles[0]||{}).from||'')+'"></div><div><label class="f" for="cycAutoW">'+esc(TX.setWeeks)+'</label><input type="number" id="cycAutoW" min="1" max="20" inputmode="numeric" value="'+DB.cal.weeks+'"></div></div><p class="small muted">'+esc(TX.setCalNote)+'</p><button type="button" class="btn sec" id="cycAutoGo">'+esc(TX.cycAutoGo)+'</button></details>'+
     '<div class="ttgrid"><div><label class="f" for="setOblig">'+esc(TX.setOblig)+'</label><input type="number" id="setOblig" min="1" max="60" step="0.5" inputmode="decimal" value="'+DB.cal.oblig+'"></div><div><label class="f" for="setPerWeek">'+esc(TX.setPerWeek)+'</label><input type="number" id="setPerWeek" min="1" max="10" inputmode="numeric" value="'+DB.cal.perWeek+'"></div></div>'+
     '<p class="small muted">'+esc(TX.setSvcNote)+'</p>'+
     '<div class="ttgrid three"><div><label class="f" for="setDayMin">'+esc(TX.setDayMin)+'</label><input type="number" id="setDayMin" min="0" max="12" step="0.5" inputmode="decimal" value="'+DB.cal.dayMin+'"></div><div><label class="f" for="setDayMax">'+esc(TX.setDayMax)+'</label><input type="number" id="setDayMax" min="0" max="12" step="0.5" inputmode="decimal" value="'+DB.cal.dayMax+'"></div><div><label class="f" for="setFriMax">'+esc(TX.setFriMax)+'</label><input type="number" id="setFriMax" min="0" max="12" step="0.5" inputmode="decimal" value="'+DB.cal.friMax+'"></div></div>'+
@@ -1398,11 +1445,21 @@ function renderCalSettings(){
   if(e){$('holFrom').value=e.from;$('holTo').value=e.to||'';$('holLabel').value=e.label;$('holApprox').checked=!!e.approx;}
 }
 $('calSettings').addEventListener('change',function(e){
+  var cr=e.target.closest&&e.target.closest('.cycrow');
+  if(cr&&(e.target.classList.contains('cf')||e.target.classList.contains('ct'))){var i=+cr.dataset.i,f=cr.querySelector('.cf').value,t=cr.querySelector('.ct').value,old=DB.cal.cycles[i]||{};
+    if(!isoOk(f)||!isoOk(t)||t<f){if(isoOk(f)&&isoOk(t)){toast(TX.cycInvalid);e.target.value=e.target.classList.contains('cf')?(old.from||''):(old.to||'');return;}}
+    while(DB.cal.cycles.length<=i)DB.cal.cycles.push({from:'',to:''});DB.cal.cycles[i]={from:isoOk(f)?f:'',to:isoOk(t)&&(!isoOk(f)||t>=f)?t:''};DB.cal.start=DB.cal.cycles[0].from||'';
+    persistNow();calReset();renderCalSettings();if(isoOk(f)&&isoOk(t))toast(TX.cycSaved(i+1,dmy(f),dmy(t)));return;}
   if(e.target.id==='setStart'){var v=e.target.value;if(!isoOk(v)){e.target.value=DB.cal.start;return;}DB.cal.start=v;persistNow();calReset();toast(TX.startSet(dmy(v)));}
   if(e.target.id==='setOblig'){var ob=parseFloat(String(e.target.value).replace(',','.'));if(!(ob>0&&ob<=60)){e.target.value=DB.cal.oblig;return;}DB.cal.oblig=ob;persistNow();toast(TX.obligSet(fmtH(Math.round(ob*60))));}
   if(e.target.id==='setPerWeek'){var pw=parseInt(e.target.value,10);if(!(pw>=1&&pw<=10)){e.target.value=DB.cal.perWeek;return;}DB.cal.perWeek=pw;persistNow();toast(TX.perWeekSet(pw));}
   var dk={setDayMin:'dayMin',setDayMax:'dayMax',setFriMax:'friMax'}[e.target.id];if(dk){var dv=parseFloat(String(e.target.value).replace(',','.'));if(!(dv>=0&&dv<=12)){e.target.value=DB.cal[dk];return;}DB.cal[dk]=dv;persistNow();toast(TX.dayLimSet);}
   if(e.target.id==='setWeeks'){var n=parseInt(e.target.value,10);if(!(n>=1&&n<=20)){e.target.value=DB.cal.weeks;return;}DB.cal.weeks=n;persistNow();calReset();toast(TX.weeksSet(n));}
+});
+$('calSettings').addEventListener('click',function(e){
+  if(e.target.id==='cycOfficial'){if(!confirm(TX.cycOfficialQ))return;DB.cal.cycles=defCycles();DB.cal.start=DB.cal.cycles[0].from;persistNow();calReset();renderCalSettings();toast(TX.cycOfficialDone);return;}
+  if(e.target.id==='cycAutoGo'){var st=$('cycAutoStart').value,w=parseInt($('cycAutoW').value,10);if(!isoOk(st)||!(w>=1&&w<=20)){toast(TX.cycInvalid);return;}if(!confirm(TX.cycAutoQ(w)))return;
+    DB.cal.weeks=w;DB.cal.cycles=autoCycles(st,w);DB.cal.start=st;persistNow();calReset();renderCalSettings();toast(TX.cycAutoDone(w));}
 });
 $('holCard').addEventListener('click',function(e){
   var b;
@@ -1454,16 +1511,17 @@ function readXlsx(buf){
     var wb=xmlDoc(a[0]),rels={},ss=[];
     if(a[1])tagsNS(xmlDoc(a[1]),'Relationship').forEach(function(r){rels[r.getAttribute('Id')]=r.getAttribute('Target');});
     if(a[2])tagsNS(xmlDoc(a[2]),'si').forEach(function(si){ss.push(tagsNS(si,'t').filter(function(t){return !(t.parentNode&&t.parentNode.localName==='rPh');}).map(function(t){return t.textContent;}).join(''));});
-    var sheets=tagsNS(wb,'sheet').map(function(s){var id=s.getAttribute('r:id')||s.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');var t=rels[id]||'';t=t.charAt(0)==='/'?t.slice(1):'xl/'+t.replace(/^\.\//,'');return {name:s.getAttribute('name')||'',path:t};});
+    var sheets=tagsNS(wb,'sheet').map(function(s){var id=s.getAttribute('r:id')||s.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');var t=rels[id]||'';t=t.charAt(0)==='/'?t.slice(1):'xl/'+t.replace(/^\.\//,'');return {name:s.getAttribute('name')||'',path:t,hidden:/hidden/i.test(s.getAttribute('state')||'')};});
     return Promise.all(sheets.map(function(s){return get(s.path).then(function(x){
-      var rows=[];if(!x)return {name:s.name,rows:rows};
-      tagsNS(xmlDoc(x),'row').forEach(function(r,ri){var rn=parseInt(r.getAttribute('r'),10);rn=rn>0?rn-1:ri;var row=rows[rn]=rows[rn]||[];var ci=0;
+      var rows=[],hid={};if(!x)return {name:s.name,rows:rows,hidden:s.hidden,hid:hid};var xd=xmlDoc(x);
+      tagsNS(xd,'col').forEach(function(c){if(/^(1|true)$/.test(c.getAttribute('hidden')||'')){for(var k=(+c.getAttribute('min')||1);k<=(+c.getAttribute('max')||0)&&k<200;k++)hid[k-1]=1;}});
+      tagsNS(xd,'row').forEach(function(r,ri){var rn=parseInt(r.getAttribute('r'),10);rn=rn>0?rn-1:ri;if(/^(1|true)$/.test(r.getAttribute('hidden')||'')){rows[rn]=[];return;}var row=rows[rn]=rows[rn]||[];var ci=0;
         tagsNS(r,'c').forEach(function(c){var ix=colIdx(c.getAttribute('r'));if(ix<0)ix=ci;ci=ix+1;var t=c.getAttribute('t'),v=tagsNS(c,'v')[0],val='';
           if(t==='s')val=v?ss[+v.textContent]||'':'';else if(t==='inlineStr')val=tagsNS(c,'t').map(function(e){return e.textContent;}).join('');
           else if(t==='b')val=v&&v.textContent==='1'?'VRAI':'';else if(t==='e')val='';else if(v){val=v.textContent;if(!t||t==='n'){var f=parseFloat(val);if(!isNaN(f))val=xlNum(f);}}
           row[ix]=String(val);});});
       for(var i=0;i<rows.length;i++){rows[i]=rows[i]||[];for(var j=0;j<rows[i].length;j++)if(rows[i][j]==null)rows[i][j]='';}
-      return {name:s.name,rows:rows};});}));
+      return {name:s.name,rows:rows,hidden:s.hidden,hid:hid};});}));
   });
 }
 function cfbWorkbook(u8){
@@ -1492,7 +1550,7 @@ function readXls(buf){
   function rk(v){var n;if(v&2)n=v>>2;else{var b=new DataView(new ArrayBuffer(8));b.setUint32(4,(v&0xFFFFFFFC)>>>0,true);b.setUint32(0,0,true);n=b.getFloat64(0,true);}return (v&1)?n/100:n;}
   var sst=[],sheets=[],bofMap={},cur=-1,pendingF=null;
   recs.forEach(function(r,ri){
-    if(r.t===0x85){var nm=shortStr(r.o+6,1);bofMap[dv.getUint32(r.o,true)]=sheets.length;sheets.push({name:nm,rows:[]});}
+    if(r.t===0x85){var nm=shortStr(r.o+6,1);bofMap[dv.getUint32(r.o,true)]=sheets.length;sheets.push({name:nm,rows:[],hidden:(dv.getUint8(r.o+4)&3)>0});}
     else if(r.t===0xFC){ // SST + CONTINUE
       var segs=[[r.o,r.o+r.l]];for(var k=ri+1;k<recs.length&&recs[k].t===0x3C;k++)segs.push([recs[k].o,recs[k].o+recs[k].l]);
       var si=0,pos=r.o+8,cnt=dv.getUint32(r.o+4,true);
@@ -1543,31 +1601,105 @@ function textRows(text){
   var delim=cnt['\t']?'\t':(cnt[';']>=cnt[',']&&cnt[';']?';':(cnt[',']?',':null));
   return delim?parseDelimited(text,delim):text.split(/\r?\n/).map(function(l){return [l.trim()];}).filter(function(r){return r[0];});
 }
-function mapHeader(row){
-  var map={};
-  row.forEach(function(h,i){var n=norm(h);if(!n)return;for(var k=0;k<HEAD.length;k++){if(HEAD[k][1].test(n)&&map[HEAD[k][0]]==null){map[HEAD[k][0]]=i;break;}}});
-  row.forEach(function(h,i){if(/massar|\bcode\b|الرمز|رمز/.test(norm(h))&&map.sid!==i&&!(map.sid!=null&&/massar/.test(norm(row[map.sid]))))map.sid=i;});
+function norm(s){s=String(s==null?'':s).toLowerCase();try{s=s.normalize('NFD').replace(/[\u0300-\u036f\u064b-\u065f\u0670\u0640]/g,'');}catch(e){}return s.replace(/[أإآ]/g,'ا').replace(/\s+/g,' ').trim();}
+/* header rules: [key, regex, weak] – order matters (specific first) */
+var HEAD=[
+ ['cls',/^(classe|class|groupe|division|section|القسم|الفوج)$/],
+ ['rank',/^(n°|n °|no|n|nr|num|#|id|ordre|rang|n° d'ordre|ر ?\. ?ت|ر ت|رت|ت|الرقم الترتيبي|الرتبة|ع\.?ر)$/],
+ ['sid',/massar|\bcode\b|\bcne\b|matricule|رمز|رقم التلميذ|رقم مسار|الرقم الوطني|student ?id|\bid (eleve|student)/],
+ ['name',/nom (et |& |\/ ?|- ?)?prenoms?|nom complet|full ?name|prenoms? (et |& )?nom|nom de l'eleve|nom eleve|^(names?|eleves?|students?|pupils?)$/],
+ ['nameAr',/^(الاسم|اسم) ?(الكامل|و ?النسب|التلميذ|الكامل للتلميذ|التلميذة?)|^(النسب|الاسم العائلي) ?و ?الاسم|^اسم و ?نسب|^الاسم الكامل/],
+ ['lastAr',/^(النسب|الاسم العائلي|النسب العائلي|اللقب)$/],
+ ['firstAr',/^(الاسم|اسم|الاسم الشخصي)$/],
+ ['first',/\bprenoms?\b|first ?name|given ?name/],
+ ['last',/^noms?$|last ?name|surname|family ?name|nom de famille/],
+ ['dob',/naissance|birth|\bdob\b|ازدياد|الميلاد/],
+ ['phone',/\b(tel|telephone|phone|mobile|gsm|portable)\b|هاتف/],
+ ['parent',/\b(parent|guardian|tuteur|pere|mere|father|mother)\b|ولي/],
+ ['notes',/\b(notes?|remarques?|observations?|comments?)\b|ملاحظ/],
+ ['name',/\b(name|nom|eleve|student|pupil|apprenant)\b|التلميذ|اسم/,1],
+ ['sid',/\b(numero|number)\b|رقم/,1],
+ ['dob',/\bdate\b|تاريخ/,1]
+];
+var NAMEK=['name','last','first','nameAr','lastAr','firstAr'];
+var MAPK=['ign','name','last','first','nameAr','lastAr','firstAr','sid','dob','phone','parent','notes','cls','rank'];
+var CODE_RE=/^[A-Za-z]{1,2}\d{6,12}$/;
+function looksCode(v){return CODE_RE.test(String(v||'').replace(/\s+/g,''));}
+function mapHeader(row,hid){
+  var map={},strong=0;
+  row.forEach(function(h,i){if(hid&&hid[i])return;var n=norm(h).replace(/[\s*:.]+$/,'');if(!n||n.length>40||/[:：]\s*\S/.test(h))return;
+    for(var k=0;k<HEAD.length;k++){var K=HEAD[k][0];if(map[K]==null&&HEAD[k][1].test(n)){map[K]=i;if(!HEAD[k][2])strong++;break;}}});
+  Object.defineProperty(map,'_strong',{value:strong,enumerable:false});
   return map;
 }
-function hasNameCol(m){return m.name!=null||m.last!=null||m.first!=null;}
-function rowsToItems(rows,scan){
-  rows=rows.filter(function(r){return r.some(function(x){return String(x).trim();});}).map(function(r){return r.map(function(x){return String(x==null?'':x).trim();});});
-  if(!rows.length)return {items:[],header:false,cols:[],block:[],map:{}};
-  var hi=-1,map={},lim=scan?Math.min(rows.length,40):1;
-  for(var r=0;r<lim;r++){var m=mapHeader(rows[r]),filled=rows[r].filter(function(x){return x;}).length;if(hasNameCol(m)&&(r===0||filled>=2)){hi=r;map=m;break;}}
-  var header=hi>=0,block=header?rows.slice(0,hi):[],data=header?rows.slice(hi+1):rows;
-  if(!header){map={};var off=0;if(data[0].length>1&&data.every(function(r){return /^\d{1,3}$/.test(r[0]||'');}))off=1;map.name=off;map.sid=off+1;map.parent=off+2;map.phone=off+3;}
-  var items=data.map(function(r){
-    function g(k){return map[k]!=null?(r[map[k]]||'').trim():'';}
-    var name=g('name');
-    if(map.last!=null||map.first!=null){var ln=g('last'),fn=g('first');name=((map.name!=null&&!ln?name+' ':'')+ln+' '+fn).trim();}
-    name=name.replace(/\s+/g,' ').trim();
-    return {name:name,sid:g('sid'),parent:g('parent'),phone:g('phone'),dob:toISO(g('dob')),notes:g('notes'),cls:g('cls')};
-  }).filter(function(x){return x.name&&!(header&&hasNameCol(mapHeader([x.name])));});
-  var cols=Object.keys(map).filter(function(k){return map[k]!=null&&(header||data.some(function(r){return r[map[k]];}));});
-  return {items:items,header:header,cols:cols,block:block,map:map};
+function hasNameCol(m){return NAMEK.some(function(k){return m[k]!=null;});}
+function colStats(data,j){
+  var s={n:0,code:0,num:0,date:0,text:0,ph:0,one:0,seq:0};
+  for(var r=0;r<data.length&&r<300;r++){var v=String(data[r][j]||'').trim();if(!v)continue;s.n++;
+    var c=v.replace(/\s+/g,'');
+    if(CODE_RE.test(c))s.code++;
+    else if(/^(\+?212|0)[5-7]\d{8}$/.test(c.replace(/[-.]/g,'')))s.ph++;
+    else if(/^\d+([.,]\d+)?$/.test(c)){s.num++;if(/^\d{1,4}$/.test(c))s.seq++;}
+    else if(toISO(v))s.date++;
+    else if(/[A-Za-z\u00C0-\u024F\u0600-\u06FF]{2}/.test(v)&&!/\d{3}/.test(v)){s.text++;if(!/\s/.test(v))s.one++;}}
+  s.r=function(k){return s.n?s[k]/s.n:0;};return s;
 }
-function parseImport(text){return rowsToItems(textRows(text),false);}
+/* rows -> {items, header, map, cols(info), block, noname} ; ov = manual mapping {colIndex:key} */
+function rowsToItems(rows,scan,ov,hid){
+  hid=hid||{};
+  rows=rows.map(function(r){return (r||[]).map(function(x){return String(x==null?'':x).trim();});}).filter(function(r){return r.some(function(x){return x;});});
+  if(!rows.length)return {items:[],header:false,cols:[],block:[],map:{},info:[],noname:0};
+  var hi=-1,map={},best=0,lim=scan?Math.min(rows.length-1,40):1;if(lim<1)lim=1;
+  for(var r=0;r<lim;r++){var m=mapHeader(rows[r],hid),keys=Object.keys(m).length,filled=rows[r].filter(function(x){return x;}).length;
+    var ok=(hasNameCol(m)||m.sid!=null)&&(keys>=2&&m._strong>=1||(r===0&&filled===1&&m._strong===1&&hasNameCol(m)));
+    if(ok&&keys>best){best=keys;hi=r;map=m;}}
+  var header=hi>=0,block=header?rows.slice(0,hi):[],data=header?rows.slice(hi+1):rows;
+  var ncol=0;data.forEach(function(r){if(r.length>ncol)ncol=r.length;});if(header&&rows[hi].length>ncol)ncol=rows[hi].length;
+  var st=[];for(var j=0;j<ncol;j++)st[j]=colStats(data,j);
+  var vis=function(j){return !hid[j];};
+  if(!header){map={};}
+  // 1) Massar code column by content – never a name
+  var cc=-1,cr=0;for(j=0;j<ncol;j++)if(vis(j)&&st[j].r('code')>=0.6&&st[j].r('code')>cr){cr=st[j].r('code');cc=j;}
+  if(cc>=0){Object.keys(map).forEach(function(k){if(map[k]===cc)delete map[k];});map.sid=cc;}
+  // 2) a name key pointing at a non-text column is dropped
+  NAMEK.forEach(function(k){var j=map[k];if(j!=null&&st[j]&&st[j].n&&st[j].r('text')<0.5)delete map[k];});
+  if(map.sid!=null&&st[map.sid]&&st[map.sid].n&&st[map.sid].r('text')>0.6)delete map.sid;
+  function used(j){return Object.keys(map).some(function(k){return map[k]===j;});}
+  function nameHasData(){return NAMEK.some(function(k){return map[k]!=null&&st[map[k]]&&st[map[k]].n;});}
+  if(!header){
+    for(j=0;j<ncol;j++){if(used(j)||!vis(j))continue;var s=st[j];if(!s.n)continue;
+      if(map.rank==null&&j<=1&&s.r('seq')>=0.9&&!nameHasData())map.rank=j;
+      else if(map.phone==null&&s.r('ph')>=0.6)map.phone=j;
+      else if(map.dob==null&&s.r('date')>=0.6)map.dob=j;}
+    var texts=[];for(j=0;j<ncol;j++)if(!used(j)&&vis(j)&&st[j].n&&st[j].r('text')>=0.6)texts.push(j);
+    if(texts.length){map.name=texts[0];var t2=texts[1];
+      if(t2===texts[0]+1&&st[texts[0]].r('one')>=0.7&&st[t2].r('one')>=0.5){delete map.name;map.last=texts[0];map.first=t2;t2=texts[2];}
+      if(t2!=null)map.parent=t2;}
+    if(map.sid==null){var nj=map.name!=null?map.name:map.first;if(nj!=null&&st[nj+1]&&st[nj+1].n&&!used(nj+1)&&st[nj+1].r('text')<0.5&&st[nj+1].r('ph')<0.6)map.sid=nj+1;}
+    if(map.phone==null&&map.parent!=null&&st[map.parent+1]&&st[map.parent+1].n&&!used(map.parent+1))map.phone=map.parent+1;
+  }else if(!nameHasData()){
+    var bt=-1,bv=0;for(j=0;j<ncol;j++)if(!used(j)&&vis(j)&&st[j].r('text')>=0.6&&st[j].n>bv){bv=st[j].n;bt=j;}
+    if(bt>=0)map.name=bt;
+  }
+  var auto={};Object.keys(map).forEach(function(k){auto[k]=map[k];});
+  if(ov){map={};Object.keys(ov).forEach(function(j){if(ov[j]&&ov[j]!=='ign')map[ov[j]]=+j;});}
+  var noname=0;
+  var items=[];data.forEach(function(r){
+    function g(k){return map[k]!=null?(r[map[k]]||'').replace(/\s+/g,' ').trim():'';}
+    var fr=g('name')||(g('last')+' '+g('first')).trim(),ar=g('nameAr')||(g('lastAr')+' '+g('firstAr')).trim();
+    var name=(looksCode(fr)||/^\d+$/.test(fr)?'':fr)||(looksCode(ar)||/^\d+$/.test(ar)?'':ar);
+    var sid=g('sid');
+    if(!name){if(sid||looksCode(fr)||looksCode(ar))noname++;return;}
+    if(header){var hm=mapHeader([name]);if(hm._strong&&hasNameCol(hm))return;}
+    if(name.length<2)return;
+    items.push({name:name,sid:sid,parent:g('parent'),phone:g('phone'),dob:toISO(g('dob')),notes:g('notes')==='-'?'':g('notes'),cls:g('cls')});
+  });
+  var info=[];for(j=0;j<ncol;j++){var hv=header?String(rows[hi][j]||'').replace(/\s+/g,' ').trim():'',sv='';for(var q=0;q<data.length&&!sv;q++)sv=data[q][j]||'';
+    if(!hv&&!sv)continue;var key='ign';Object.keys(map).forEach(function(k){if(map[k]===j)key=k;});info.push({j:j,head:hv,sample:sv,key:key,hidden:!!hid[j]});}
+  var cols=Object.keys(map).filter(function(k){return map[k]!=null&&k!=='rank';});
+  return {items:items,header:header,cols:cols,block:block,map:map,auto:auto,info:info,noname:noname};
+}
+function parseImport(text){return rowsToItems(textRows(text),true);}
 var CLS_LBL=/^(classe|class|groupe|division|section|القسم|الفوج)\s*[:：]?$/;
 function cleanCls(v){return String(v).split(/\s{2,}|\s+[|–-]\s+|\s+(?=\S+\s*[:：])/)[0].trim();}
 function blockClass(block){
@@ -1592,17 +1724,23 @@ function fileClassName(f){
   if(/(^|[^a-z])(tc|[123]\s*bac|[1-3]\s*a?c)/i.test(cl))return {n:cl.toUpperCase().replace(/\s+/g,'')};
   return null;
 }
-var bulkFiles=[],bulkMode='class',bulkChoices={},bulkPlan=null;
-function bulkEngine(){return bulkFiles.length>0||bulkMode==='global';}
+var bulkFiles=[],bulkMode='class',bulkChoices={},bulkPlan=null,bulkMap={};
+function colName(j){var s='';j++;while(j>0){var m=(j-1)%26;s=String.fromCharCode(65+m)+s;j=Math.floor((j-1)/26);}return s;}
+function isBroken(s){var n=String(s.name||'').trim();return !n||looksCode(n)||/^\d+$/.test(n);}
+function bulkEngine(){return true;}
 function buildPlan(){
   var tables=[];
-  if(bulkFiles.length)bulkFiles.forEach(function(f){var ne=f.sheets.filter(function(s){return s.rows.some(function(r){return r.some(function(x){return String(x).trim();});});});ne.forEach(function(s){tables.push({file:f.name,sheet:s.name,multi:ne.length>1,rows:s.rows});});});
-  else if($('bulkText').value.trim())tables.push({file:'',sheet:'',multi:false,rows:textRows($('bulkText').value)});
+  if(bulkFiles.length)bulkFiles.forEach(function(f){var ne=f.sheets.filter(function(s){return s.rows.some(function(r){return r.some(function(x){return String(x).trim();});});});
+    var vis=ne.filter(function(s){return !s.hidden;});if(vis.length)ne=vis;
+    ne.forEach(function(s){tables.push({key:f.name+'|'+s.name,file:f.name,sheet:s.name,multi:ne.length>1,rows:s.rows,hid:s.hid});});});
+  else if($('bulkText').value.trim())tables.push({key:'|paste',file:'',sheet:'',multi:false,rows:textRows($('bulkText').value)});
+  var tinfo=[],noname=0;
   var groups={},order=[],cols={};
   function grp(key,label,how,src){if(!groups[key]){groups[key]={key:key,label:label,how:how,srcs:[],items:[]};order.push(key);}var g=groups[key];if(src&&g.srcs.indexOf(src)<0)g.srcs.push(src);return g;}
   function byName(v,contain,how,src){var c=findClass(v,contain);return c?grp('c:'+c.id,c.name,how,src):grp('n:'+ckey(v),cleanCls(v).replace(/\s+/g,''),how,src);}
   tables.forEach(function(t){
-    var res=rowsToItems(t.rows,true);res.cols.forEach(function(c){if(c!=='cls')cols[c]=1;});
+    var res=rowsToItems(t.rows,true,bulkMap[t.key],t.hid);res.cols.forEach(function(c){if(c!=='cls')cols[c]=1;});noname+=res.noname;
+    if(res.info.length)tinfo.push({key:t.key,label:t.file?(t.file+(t.multi?' › '+t.sheet:'')):'',info:res.info,header:res.header,n:res.items.length});
     var src=t.file?(t.file+(t.multi||(t.sheet&&!DEFSHEET.test(t.sheet))?' › '+t.sheet:'')):'';
     var bc=bulkMode==='global'?blockClass(res.block):'',fc=null;
     res.items.forEach(function(it){var g;
@@ -1615,46 +1753,56 @@ function buildPlan(){
       g.items.push(it);});
   });
   // targets + duplicates
-  var sidSeen={},nameSeen={};
-  DB.students.forEach(function(s){if(s.sid)sidSeen[ckey(s.sid)]=1;(nameSeen['c:'+s.classId]=nameSeen['c:'+s.classId]||{})[norm(s.name)]=1;});
+  var sidSeen={},nameSeen={},broken={},fixUsed={};
+  DB.students.forEach(function(s){if(isBroken(s)){if(s.sid)broken[ckey(s.sid)]=s;if(s.name)broken[ckey(s.name)]=s;return;}if(s.sid)sidSeen[ckey(s.sid)]=1;(nameSeen['c:'+s.classId]=nameSeen['c:'+s.classId]||{})[norm(s.name)]=1;});
   var list=order.map(function(k){var g=groups[k];
     var ch=bulkChoices[k]!=null?bulkChoices[k]:(k.indexOf('c:')===0?k.slice(2):(k.indexOf('n:')===0?'__new':'__skip'));
     if(ch!=='__new'&&ch!=='__skip'&&!cls(ch))ch=k.indexOf('n:')===0?'__new':'__skip';
-    g.choice=ch;g.add=[];g.dup=0;
+    g.choice=ch;g.add=[];g.dup=0;g.fix=[];
     var tk=ch==='__new'?'n:'+ckey(g.label):'c:'+ch,ns=nameSeen[tk]=nameSeen[tk]||{};
     g.items.forEach(function(it){if(ch==='__skip')return;var sk=it.sid?ckey(it.sid):'',nk=norm(it.name);
+      var bs=sk&&broken[sk];if(bs&&!fixUsed[bs.id]){fixUsed[bs.id]=1;sidSeen[sk]=1;g.fix.push({s:bs,it:it});return;}
       if((sk&&sidSeen[sk])||(!sk&&ns[nk])){g.dup++;return;}if(sk)sidSeen[sk]=1;ns[nk]=1;g.add.push(it);});
     return g;});
-  return {groups:list,cols:Object.keys(cols),tables:tables.length};
+  return {groups:list,cols:Object.keys(cols),tables:tables.length,tinfo:tinfo,noname:noname};
 }
 function renderPlan(){
   var P=bulkPlan=buildPlan(),labels={name:'Nom',first:'Prénom',last:'Nom de famille',sid:'Code élève',parent:'Parent',phone:'Téléphone',dob:'Date de naissance',notes:'Remarques'};
-  var n=0,d=0,created={};P.groups.forEach(function(g){n+=g.add.length;d+=g.dup;if(g.choice==='__new'&&g.add.length)created[ckey(g.label)]=1;});
-  $('bulkGo').disabled=!n;$('bulkGo').textContent=TX.impGo(n);
+  var n=0,d=0,fx=0,created={};P.groups.forEach(function(g){n+=g.add.length;d+=g.dup;fx+=g.fix.length;if(g.choice==='__new'&&g.add.length)created[ckey(g.label)]=1;});
+  $('bulkGo').disabled=!(n+fx);$('bulkGo').textContent=TX.impGo(n,fx);
   if(!P.tables){$('bulkPreview').textContent=bulkMode==='global'?TX.impHelpGlobal:'Rien à importer pour l’instant.';return;}
   var h='<div class="imp">'+(bulkFiles.length?'<div class="small muted">'+esc(TX.impFiles(bulkFiles.length,P.tables))+'</div>':'')+(P.cols.length?'<div class="small muted">'+esc(TX.impCols)+esc(P.cols.map(function(k){return labelsFr(k,labels);}).join(', '))+'</div>':'');
+  P.tinfo.forEach(function(t){
+    h+='<div class="impmap" data-t="'+esc(t.key)+'"><div class="small"><b>'+esc(TX.impMapTitle)+'</b>'+(t.label&&P.tinfo.length>1?' <span class="muted" dir="auto">'+esc(t.label)+'</span>':'')+'</div><div class="impmap-r">';
+    t.info.forEach(function(c){
+      h+='<label class="impcol'+(c.key==='ign'?' ign':'')+'"><span class="ih" dir="auto">'+esc(c.head||TX.impColN(colName(c.j)))+'</span><span class="is" dir="auto">'+esc(String(c.sample).slice(0,22))+'</span><select data-t="'+esc(t.key)+'" data-j="'+c.j+'">'+
+        MAPK.map(function(k){return '<option value="'+k+'"'+(k===c.key?' selected':'')+'>'+esc(TX.impKeys[k])+'</option>';}).join('')+'</select></label>';});
+    h+='</div>'+(bulkMap[t.key]?'<button type="button" class="btn ghost small" data-mapreset="'+esc(t.key)+'">'+esc(TX.impMapAuto)+'</button>':'')+'</div>';});
+  if(P.noname)h+='<p class="warnline">'+esc(TX.impNoName(P.noname))+'</p>';
   if(!P.groups.length)h+='<p class="warnline">'+esc(TX.impNothing)+'</p>';
   P.groups.forEach(function(g){
     var opts=(g.label&&g.key.indexOf('c:')!==0?'<option value="__new">'+esc(TX.impCreate(g.label))+'</option>':'')+DB.classes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(TX.impInto(c.name))+'</option>';}).join('')+'<option value="__skip">'+esc(TX.impSkip)+'</option>';
     h+='<div class="impg'+(g.choice==='__skip'?' skip':'')+'"><div class="impg-h"><b dir="auto">'+esc(g.label||TX.impUnknown)+'</b>'+(g.how?'<span class="small muted">'+esc(TX.impHow[g.how])+'</span>':'')+'</div>'+
       (g.srcs.length?'<div class="small muted src" dir="auto">'+esc(g.srcs.join(' · '))+'</div>':'')+
-      '<div class="impg-c"><span class="chip ok">'+esc(TX.impNew(g.add.length))+'</span>'+(g.dup?'<span class="chip warn">'+esc(TX.impDup(g.dup))+'</span>':'')+'</div>'+
+      '<div class="impg-c"><span class="chip ok">'+esc(TX.impNew(g.add.length))+'</span>'+(g.fix.length?'<span class="chip ok">'+esc(TX.impFix(g.fix.length))+'</span>':'')+(g.dup?'<span class="chip warn">'+esc(TX.impDup(g.dup))+'</span>':'')+'</div>'+
       '<select data-g="'+esc(g.key)+'" aria-label="'+esc(TX.impDetected)+'">'+opts+'</select>'+
-      (g.add.length?'<div class="small names" dir="auto">'+esc(g.add.slice(0,3).map(function(x){return x.name+(x.sid?' ('+x.sid+')':'');}).join(', '))+(g.add.length>3?', …':'')+'</div>':'')+'</div>';
+      (g.add.length||g.fix.length?'<div class="small names" dir="auto">'+g.add.concat(g.fix.map(function(f){return f.it;})).slice(0,3).map(function(x){return '<b>'+esc(x.name)+'</b>'+(x.sid?' <span class="muted">'+esc(x.sid)+'</span>':'');}).join(', ')+(g.add.length+g.fix.length>3?', …':'')+'</div>':'')+'</div>';
   });
-  h+='<p class="imp-tot"><b>'+esc(TX.impTotal(n,d,Object.keys(created).length))+'</b></p></div>';
+  h+='<p class="imp-tot"><b>'+esc(TX.impTotal(n,d,Object.keys(created).length))+(fx?' '+TX.impFix(fx)+'.':'')+'</b></p></div>';
   $('bulkPreview').innerHTML=h;
   P.groups.forEach(function(g){var s=$('bulkPreview').querySelector('select[data-g="'+g.key.replace(/"/g,'\\"')+'"]');if(s)s.value=g.choice;});
 }
 function labelsFr(k,labels){return (TX.impColNames&&TX.impColNames[k])||labels[k]||k;}
 function doImportPlan(){
   var P=bulkPlan=buildPlan(),now=Date.now(),made={},n=0,cset={},nc=0;
+  var fx=0;P.groups.forEach(function(g){g.fix.forEach(function(f){var s=f.s,it=f.it;s.name=it.name;s.sid=it.sid||(looksCode(s.sid)?s.sid:'');if(!s.dob&&it.dob)s.dob=it.dob;if(!s.phone&&it.phone)s.phone=it.phone;if(!s.parent&&it.parent)s.parent=it.parent;fx++;});});
   P.groups.forEach(function(g){if(!g.add.length||g.choice==='__skip')return;var cid=g.choice;
     if(cid==='__new'){var k=ckey(g.label),ex=findClass(g.label,false);if(ex)cid=ex.id;else if(made[k])cid=made[k];else{cid='c'+uid();DB.classes.push({id:cid,name:g.label});made[k]=cid;nc++;}}
     cset[cid]=1;g.add.forEach(function(x,i){DB.students.push({id:uid()+n+i,classId:cid,name:x.name,sid:x.sid,dob:x.dob,parent:x.parent,phone:x.phone,notes:x.notes,created:now});});n+=g.add.length;});
-  if(!n)return;
+  if(!n&&!fx)return;
+  if(!n){persistNow();closeModal('bulkModal');toast(TX.impFixed(fx));bulkFiles=[];stuBrokenOnly=false;render();return;}
   var one=Object.keys(cset);if(one.length===1)DB.ui.cls=one[0];
-  persistNow();calReset();closeModal('bulkModal');toast(TX.impDone(n,one.length,nc));bulkFiles=[];$('stuClassFilter').value='';render();if(one.length===1){$('stuClassFilter').value=one[0];render();}
+  persistNow();calReset();closeModal('bulkModal');toast(TX.impDone(n,one.length,nc)+(fx?' · '+TX.impFixed(fx):''));stuBrokenOnly=false;bulkFiles=[];$('stuClassFilter').value='';render();if(one.length===1){$('stuClassFilter').value=one[0];render();}
 }
 function bulkUi(){
   if(!$('bulkMode')){
@@ -1664,8 +1812,13 @@ function bulkUi(){
     $('bulkFile').setAttribute('accept','.xlsx,.xls,.csv,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/plain');
     $('bulkFile').multiple=true;
     $('bulkMode').addEventListener('click',function(e){var b=e.target.closest('[data-m]');if(!b)return;bulkMode=b.dataset.m;bulkChoices={};bulkSync();bulkPreview();});
-    $('bulkClearFiles').addEventListener('click',function(){bulkFiles=[];bulkChoices={};bulkSync();bulkPreview();});
-    $('bulkPreview').addEventListener('change',function(e){var s=e.target.closest('select[data-g]');if(!s)return;bulkChoices[s.dataset.g]=s.value;renderPlan();});
+    $('bulkClearFiles').addEventListener('click',function(){bulkFiles=[];bulkChoices={};bulkMap={};bulkSync();bulkPreview();});
+    $('bulkPreview').addEventListener('change',function(e){var s=e.target.closest('select[data-g]');if(s){bulkChoices[s.dataset.g]=s.value;renderPlan();return;}
+      var m=e.target.closest('select[data-j]');if(!m)return;var tk=m.dataset.t,ov={};
+      $('bulkPreview').querySelectorAll('select[data-j]').forEach(function(x){if(x.dataset.t===tk)ov[x.dataset.j]=x.value;});
+      var v=m.value;if(v!=='ign')Object.keys(ov).forEach(function(j){if(j!==m.dataset.j&&ov[j]===v)ov[j]='ign';});
+      bulkMap[tk]=ov;renderPlan();});
+    $('bulkPreview').addEventListener('click',function(e){var b=e.target.closest('[data-mapreset]');if(!b)return;delete bulkMap[b.dataset.mapreset];renderPlan();});
   }
   $('bulkFileBtn').textContent=TX.impFileBtn;
   var tip=$('bulkModal').querySelector('p.small.muted:not(#bulkModeHelp)');if(tip)tip.textContent=TX.impTip;
@@ -1680,12 +1833,12 @@ function bulkSync(){
   $('bulkFilesBox').classList.toggle('hidden',!hf);
   var tip=$('bulkModal').querySelector('p.small.muted:not(#bulkModeHelp)');if(tip)tip.classList.toggle('hidden',hf);
   $('bulkModeHelp').classList.toggle('hidden',hf);
-  $('bulkFileList').innerHTML=bulkFiles.map(function(f){return '<span class="chip" dir="auto">📄 '+esc(f.name)+(f.sheets.length>1?' ('+f.sheets.length+')':'')+'</span>';}).join(' ');
+  $('bulkFileList').innerHTML=bulkFiles.map(function(f){return '<span class="chip" dir="auto">📄 '+esc(f.name)+(f.sheets.filter(function(x){return !x.hidden;}).length>1?' ('+f.sheets.filter(function(x){return !x.hidden;}).length+')':'')+'</span>';}).join(' ');
 }
 function loadBulkFiles(files){
   $('bulkPreview').textContent=TX.impReading;
   Promise.all(files.map(function(f){return readSheetFile(f).then(function(sh){return {name:f.name,sheets:sh};},function(){toast(TX.impErr(f.name));return null;});})).then(function(list){
-    list.forEach(function(x){if(x)bulkFiles.push(x);});bulkChoices={};bulkSync();bulkPreview();
+    list.forEach(function(x){if(x)bulkFiles.push(x);});bulkChoices={};bulkMap={};bulkSync();bulkPreview();
   });
 }
 
