@@ -2199,7 +2199,7 @@ var APP=window.CJApp;if(!APP)return;
 var FB_VER='12.19.0',FB='https://www.gstatic.com/firebasejs/'+FB_VER+'/';
 var CFG={apiKey:"AIzaSyCM94TX_z-gj5kOcc2a2vQBBrPaDQtKwD0",authDomain:"cahier-journalier-2830a.firebaseapp.com",projectId:"cahier-journalier-2830a",storageBucket:"cahier-journalier-2830a.firebasestorage.app",messagingSenderId:"540109116482",appId:"1:540109116482:web:24d800296cd78764e589db"};
 var MOD_EMAIL='tammar.med@gmail.com';           /* modérateur (doit aussi avoir une adresse vérifiée, voir firestore.rules) */
-var APP_URL='https://tammarmed-ux.github.io/cahier-journalier/';
+var APP_URL='https://cahier-eps.web.app/';        /* adresse officielle (Firebase Hosting) */
 /* local tests only: http://localhost/…?emu=1 uses the Firebase emulators (never active on the real site) */
 var EMU=(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&/[?&]emu=1(&|$)/.test(location.search))?{auth:'http://127.0.0.1:9099',host:'127.0.0.1',port:8080}:null;
 var MKEY=APP.key+'.sync';           /* local sync metadata (separate key; data key unchanged) */
@@ -2888,6 +2888,75 @@ function maybeShow(){if(!isDone())afterSplash(function(){if(!isDone()&&window.CJ
 if(window.CJGateOpen)maybeShow();   /* otherwise shown by the login gate after an authorized sign-in */
 var again=document.getElementById('onbAgain');if(again)again.addEventListener('click',function(){afterSplash(show);});
 window.CJIntro={show:function(){afterSplash(show);},onSignIn:maybeShow,skipSplash:hideSplash,splashDone:function(){return done;}};
+})();
+</script>
+<!-- Move notice: the app moved to Firebase Hosting; shown only on the old GitHub Pages address -->
+<style>
+#mvBox{position:fixed;left:0;right:0;bottom:0;z-index:990;padding:0 12px max(12px,env(safe-area-inset-bottom));display:none}
+#mvBox.on{display:block}
+#mvBox .mv{max-width:520px;margin:0 auto;background:#fff;color:var(--ink);border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,30,.45);border-top:5px solid var(--pri)}
+#mvBox h3{margin:0 0 6px;font-size:17px;color:var(--pri)}
+#mvBox p{margin:0 0 8px;font-size:14px;line-height:1.4}
+#mvBox a.url{font-weight:700;color:var(--pri);word-break:break-all}
+#mvBox .st{font-size:13px;color:var(--muted);min-height:18px}
+#mvBox .st.ok{color:var(--ok);font-weight:600}#mvBox .st.warn{color:var(--bad);font-weight:600}
+#mvBox .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+#mvBox .btn{flex:1 1 auto}
+</style>
+<div id="mvBox" role="dialog" aria-live="polite" aria-labelledby="mvT"><div class="mv">
+  <h3 id="mvT">Nouvelle adresse</h3>
+  <p>L’application a déménagé : <a class="url" id="mvUrl" href="#"></a>. Réinstallez-la depuis Safari (Partager › Sur l’écran d’accueil).</p>
+  <div class="st" id="mvSt"></div>
+  <div class="row"><button type="button" class="btn primary" id="mvGo">Ouvrir la nouvelle adresse</button><button type="button" class="btn sec" id="mvLater">Plus tard</button></div>
+</div></div>
+<script>
+(function(){
+'use strict';
+var NEW_URL='https://cahier-eps.web.app/';
+var old=/\.github\.io$/i.test(location.hostname)||(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&/[?&]movetest=1(&|$)/.test(location.search));
+if(!old)return;
+var KEY='classRegister.v2',box=document.getElementById('mvBox'),st=document.getElementById('mvSt'),go=document.getElementById('mvGo');
+var target=NEW_URL+location.search.replace(/([?&])movetest=1(&|$)/,'$1').replace(/[?&]$/,'')+location.hash;
+document.getElementById('mvUrl').textContent=NEW_URL.replace(/^https:\/\//,'').replace(/\/$/,'');
+document.getElementById('mvUrl').href=target;
+var timer=null,count=0,safe=false,dismissed=false;
+function hasLocal(){try{var d=JSON.parse(localStorage.getItem(KEY)||'null');return !!(d&&((d.students&&d.students.length)||(d.sessions&&Object.keys(d.sessions).length)));}catch(e){return true;}}
+function setSt(t,c){st.textContent=t;st.className='st'+(c?' '+c:'');}
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+function redirect(){stopTimer();location.replace(target);}
+function countdown(n){if(timer||dismissed)return;count=n;setSt('Ouverture automatique dans '+count+' s…','ok');timer=setInterval(function(){count--;if(count<=0)redirect();else setSt('Ouverture automatique dans '+count+' s…','ok');},1000);}
+function meta(){try{return window.CJSync&&window.CJSync.meta();}catch(e){return null;}}
+function syncState(){var s=window.CJSync&&window.CJSync.state;return s||{};}
+function openNow(){
+  if(safe||!hasLocal())return redirect();
+  var m=meta(),s=syncState();
+  if(s.user&&window.CJGateOpen&&m&&m.dirty){
+    if(!confirm('Des modifications ne sont pas encore synchronisées. Elles resteront sur cet appareil à l’ancienne adresse. Ouvrir quand même la nouvelle adresse ?'))return;
+  }else if(!s.user&&!confirm('Vos données locales restent à l’ancienne adresse. Connectez-vous d’abord ici pour les synchroniser, puis ouvrez la nouvelle adresse. Continuer quand même ?'))return;
+  redirect();
+}
+go.addEventListener('click',openNow);
+document.getElementById('mvLater').addEventListener('click',function(){dismissed=true;stopTimer();box.classList.remove('on');try{sessionStorage.setItem('cahier.moveLater','1');}catch(e){}});
+function show(){if(dismissed)return;box.classList.add('on');}
+var started=Date.now(),syncAsked=false,t0=0;
+function tick(){
+  if(dismissed||safe)return;
+  var intro=window.CJIntro;if(intro&&!intro.splashDone())return;
+  if(window.CJApp&&window.CJApp.viewing()){show();setSt('');return;}   /* read-only link: manual only */
+  show();
+  if(!hasLocal()){safe=true;return countdown(5);}
+  var s=syncState(),m=meta();
+  if(s.user&&window.CJGateOpen){
+    if(!navigator.onLine){setSt('Hors ligne : connectez-vous à Internet pour synchroniser avant de changer d’adresse.','warn');return;}
+    if(!syncAsked&&s.ready){syncAsked=true;t0=Date.now();try{window.CJSync.syncNow();}catch(e){}setSt('Synchronisation de vos données…');return;}
+    if(!syncAsked){setSt('Préparation de la synchronisation…');return;}
+    if(m&&!m.dirty&&!s.uploading&&!s.busy&&m.lastSyncAt>=t0){safe=true;return countdown(5);}
+    if(Date.now()-t0>20000)setSt('Synchronisation pas encore terminée. Réessayez « Synchroniser maintenant » dans Paramètres avant de changer d’adresse.','warn');
+    else setSt('Synchronisation de vos données…');
+  }else setSt('Connectez-vous pour synchroniser vos données, puis ouvrez la nouvelle adresse.');
+}
+try{if(sessionStorage.getItem('cahier.moveLater')==='1')dismissed=true;}catch(e){}
+setInterval(tick,700);
 })();
 </script>
 <script>

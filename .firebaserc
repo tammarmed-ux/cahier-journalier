@@ -1,0 +1,4 @@
+{
+  "projects": { "default": "cahier-journalier-2830a" },
+  "targets": { "cahier-journalier-2830a": { "hosting": { "app": ["cahier-eps"] } } }
+}
