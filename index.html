@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="cj-locked">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -403,6 +403,30 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
 #onb .onb-dots i.on{width:22px;background:#fff}
 #onb .onb-next{background:#fff;color:var(--pri);border:0;border-radius:12px;font:inherit;font-size:16px;font-weight:700;padding:12px 22px;min-height:48px;min-width:132px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,30,.25)}
 body.cj-ro #onbCard{display:none!important}
+
+/* ===== Login gate (mandatory sign-in) ===== */
+html.cj-locked body{overflow:hidden}
+html.cj-locked header.top,html.cj-locked main,html.cj-locked nav.tabs,html.cj-locked .fab,html.cj-locked #roBar,html.cj-locked .modal,html.cj-locked #toast,html.cj-locked #onb{visibility:hidden!important}
+#gate{position:fixed;inset:0;z-index:950;display:none;overflow-y:auto;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;color:#fff;padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
+html.cj-locked #gate{display:block}
+#gate .g-wrap{max-width:420px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#gate .g-logo{width:84px;height:84px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,20,.35),0 0 0 1px rgba(255,255,255,.25)}
+#gate h1{margin:16px 0 2px;font-size:23px;font-weight:700;text-align:center}
+#gate .g-sub{font-size:13.5px;opacity:.85;margin-bottom:18px}
+#gate .g-card{background:#fff;color:var(--ink);border-radius:20px;width:100%;padding:20px 18px;box-shadow:0 14px 40px rgba(0,0,30,.35)}
+#gate .g-card h2{margin:0 0 4px;font-size:19px;color:var(--pri)}
+#gate label.f:first-of-type{margin-top:6px}
+#gate .btn{width:100%;margin-top:12px}
+#gate .gbtn{background:#fff;color:#1f2937;border-color:#d0d7e2}
+#gate .g-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:14px 0 0}
+#gate .g-or::before,#gate .g-or::after{content:'';flex:1;height:1px;background:var(--line)}
+#gate .lnk{background:none;border:0;color:var(--pri);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;padding:8px 0 0}
+#gate .g-err{color:var(--bad);font-weight:600;font-size:14px;margin:12px 0 0}
+#gate .g-info{color:var(--ok);font-weight:600;font-size:14px;margin:12px 0 0}
+#gate .g-note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
+#gate .g-load{display:flex;align-items:center;gap:12px;justify-content:center;padding:14px 0;color:#344054;font-weight:600}
+#gate .spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--pri-soft);border-top-color:var(--pri);animation:gspin .8s linear infinite}
+@keyframes gspin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -412,6 +436,15 @@ body.cj-ro #onbCard{display:none!important}
   <div class="sp-box"><img class="sp-logo" src="icons/icon-192.png" alt="" width="112" height="112">
   <div class="sp-title">Cahier Journalier digital</div><div class="sp-ver">v1.0</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
+</div>
+<!-- Login gate: the app stays hidden (html.cj-locked) until an authorized account is signed in -->
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gTitle">
+  <div class="g-wrap">
+    <img class="g-logo" src="icons/icon-192.png" alt="" width="84" height="84">
+    <h1 id="gTitle">Cahier Journalier digital</h1>
+    <div class="g-sub">Accès sur invitation</div>
+    <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
+  </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
@@ -550,7 +583,7 @@ body.cj-ro #onbCard{display:none!important}
     <p class="muted small" style="margin-top:0">Supprime tous les élèves, toutes les classes et toutes les absences de cet appareil. Téléchargez d’abord une sauvegarde.</p>
     <button class="btn danger" id="wipeAll">Supprimer toutes les données</button>
   </div>
-  <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation en ligne facultative (voir Synchronisation)</p>
+  <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation automatique avec votre compte</p>
 </section>
 </main>
 
@@ -2126,6 +2159,7 @@ window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();r
 window.CJApp={
   key:KEY,
   getJSON:function(){if(VIEW)return localStorage.getItem(KEY)||JSON.stringify(VIEW.own);if(saveT)persistNow();return localStorage.getItem(KEY)||JSON.stringify(DB);},
+  resetLocal:function(){if(VIEW)return false;DB=blank();SYNC_QUIET=true;var ok;try{ok=persistNow();}finally{SYNC_QUIET=false;}closeAllModals();render();return ok;},
   isEmpty:function(){var d=VIEW?VIEW.own:DB;return !d.students.length&&!Object.keys(d.sessions).length;},
   stats:function(json){try{var o=typeof json==='string'?JSON.parse(json):json;return {classCount:(o.classes||[]).length,studentCount:(o.students||[]).length,sessionCount:Object.keys(o.sessions||{}).length};}catch(e){return {classCount:0,studentCount:0,sessionCount:0};}},
   viewing:function(){return !!VIEW;},
@@ -2186,6 +2220,48 @@ var S={sdk:null,loading:null,loadErr:false,auth:null,db:null,user:undefined,busy
   role:null,member:null,memUnsub:null,pend:false,pwOpen:false,pwMsg:'',pwErr:'',profT:0,
   mod:{list:null,loading:false,err:'',msg:'',cred:null,exist:null,busy:false,sec:null}};
 function allowed(){return S.role==='mod'||S.role==='member';}
+/* ---- login gate ---- */
+var AKEY='cahier.authOk';          /* last authorized account on this device: {uid,email,t,ok} (offline entry only if Firebase restores that same session) */
+var G={open:false,msg:'',offT:null};
+function authOkGet(){try{return JSON.parse(localStorage.getItem(AKEY)||'null');}catch(e){return null;}}
+function authOkSet(u,ok){try{localStorage.setItem(AKEY,JSON.stringify({uid:u.uid,email:lc(u.email),t:Date.now(),ok:ok!==false}));}catch(e){}}
+function authOkFor(u){var a=authOkGet();return !!(a&&u&&a.ok!==false&&a.uid===u.uid&&a.email===lc(u.email));}
+function lockApp(){G.open=false;window.CJGateOpen=false;document.documentElement.classList.add('cj-locked');}
+function openApp(){if(G.open)return;G.open=true;window.CJGateOpen=true;document.documentElement.classList.remove('cj-locked');try{window.scrollTo(0,0);}catch(e){}
+  try{window.CJIntro&&window.CJIntro.onSignIn();}catch(e){}}
+/* another account on this device: keep the previous account's local data in a separate key, never show it */
+function switchLocal(u){
+  var a=authOkGet(),prev=M.syncedUid||(a&&a.uid)||'';
+  if(!prev||prev===u.uid)return true;
+  var BK=APP.key+'.backup.';
+  try{localStorage.setItem(BK+prev,JSON.stringify({uid:prev,savedAt:Date.now(),updatedAt:M.updatedAt||0,dirty:!!M.dirty,linked:M.syncedUid===prev,data:APP.getJSON()}));}
+  catch(e){return false;}                     /* could not keep a copy: do not replace anything */
+  var bk=null;try{bk=JSON.parse(localStorage.getItem(BK+u.uid)||'null');}catch(e){}
+  if(bk&&bk.data&&APP.isValid(safeParse(bk.data))){
+    APP.applyJSON(bk.data);M.updatedAt=bk.updatedAt||0;M.dirty=!!bk.dirty;M.syncedUid=bk.linked?u.uid:null;
+    try{localStorage.removeItem(BK+u.uid);}catch(e){}
+  }else{APP.resetLocal();M.updatedAt=0;M.dirty=false;M.syncedUid=null;}   /* first-connect logic then loads this account's online data */
+  M.lastSyncAt=0;saveM();log('local switch',prev,'->',u.uid);
+  return true;
+}
+function grant(u){
+  if(S.user!==u)return;
+  if(!switchLocal(u)){G.msg='Espace de stockage insuffisant sur cet appareil : impossible de préparer les données de ce compte. Téléchargez une sauvegarde puis libérez de l’espace.';lockApp();ui(true);return false;}
+  authOkSet(u,true);openApp();return true;
+}
+function deny(u,msg){
+  if(S.user!==u)return;
+  stopSync();lockApp();
+  G.msg=msg||'Accès non autorisé ou désactivé. Contactez l’administrateur.';
+  authOkSet(u,false);
+  if(S.sdk)S.sdk.U.signOut(S.auth).catch(function(){});
+  ui(true);
+}
+/* offline (or server unreachable): enter only if Firebase restored the session of the last authorized account */
+function tryOffline(u){
+  if(S.user!==u||G.open||allowed()||S.role==='denied'||S.role==='unverified')return;
+  if(authOkFor(u)){S.offline=true;log('offline entry');grant(u);ui(true);}
+}
 function isModEmail(u){return !!(u&&lc(u.email)===MOD_EMAIL);}
 /* ---- local saves ---- */
 window.addEventListener('cj:saved',function(){log('local save');M.updatedAt=Date.now();M.dirty=true;saveM();ui();schedule(2000);});
@@ -2201,6 +2277,7 @@ function loadSdk(){
     var auth;try{auth=U.initializeAuth(app,{persistence:[U.indexedDBLocalPersistence,U.browserLocalPersistence],popupRedirectResolver:U.browserPopupRedirectResolver});}catch(e){auth=U.getAuth(app);}
     try{auth.languageCode='fr';}catch(e){}
     var db=F.getFirestore(app);
+    try{if(F.setLogLevel)F.setLogLevel('silent');}catch(e){}   /* offline is a normal state here: errors are handled in the callbacks */
     if(EMU){try{U.connectAuthEmulator(auth,EMU.auth,{disableWarnings:true});F.connectFirestoreEmulator(db,EMU.host,EMU.port);}catch(e){console.warn('emu',e);}}
     S.sdk={A:A,U:U,F:F};S.auth=auth;S.db=db;
     U.onAuthStateChanged(auth,onUser);
@@ -2214,12 +2291,14 @@ function memberRef(email){return S.sdk.F.doc(S.db,'members',lc(email));}
 function profileRef(uid){return S.sdk.F.doc(S.db,'profiles',uid);}
 /* ---- auth ---- */
 function onUser(u){
-  S.user=u||null;S.err='';S.info='';S.pwOpen=false;S.pwMsg='';S.pwErr='';
+  S.user=u||null;S.err='';S.info='';S.pwOpen=false;S.pwMsg='';S.pwErr='';S.offline=false;
   if(APP.viewing())APP.exitView();
-  stopSync();
+  stopSync();lockApp();clearTimeout(G.offT);
   if(S.memUnsub){try{S.memUnsub();}catch(e){}S.memUnsub=null;}
   S.role=u?'checking':null;S.member=null;S.mod.list=null;S.mod.cred=null;S.mod.exist=null;S.mod.err='';S.mod.msg='';
-  if(u){S.emailOpen=false;checkAccess(u);}
+  if(u){S.emailOpen=false;checkAccess(u);
+    if(!navigator.onLine)tryOffline(u);
+    else G.offT=setTimeout(function(){if(S.role==='checking'||S.role==='error')tryOffline(u);},8000);}
   ui(true);
 }
 function stopSync(){
@@ -2231,11 +2310,12 @@ function checkAccess(u){
   if(S.user!==u)return;
   if(S.memUnsub){try{S.memUnsub();}catch(e){}S.memUnsub=null;}
   if(isModEmail(u)){
-    if(u.emailVerified){S.role='mod';ui(true);startSession(u);modLoad();try{window.CJIntro&&window.CJIntro.onSignIn();}catch(e){}}
-    else{S.role='unverified';ui(true);}
+    if(u.emailVerified){S.role='mod';G.msg='';if(!grant(u))return;ui(true);startSession(u);modLoad();}
+    else{S.role='unverified';lockApp();ui(true);}
     return;
   }
   S.role='checking';ui();
+  if(!navigator.onLine)return;           /* offline: membership is re-checked when back online (see kick) */
   var F=S.sdk.F;
   S.memUnsub=F.onSnapshot(memberRef(u.email),function(snap){
     if(S.user!==u)return;
@@ -2243,51 +2323,55 @@ function checkAccess(u){
     var m=snap.exists()?snap.data():null;
     var ok=!!(m&&m.active===true&&(!m.uid||m.uid===u.uid));
     S.member=m;
-    if(ok){if(S.role!=='member'){S.role='member';log('access ok');startSession(u);try{window.CJIntro&&window.CJIntro.onSignIn();}catch(e){}}}
-    else{if(S.role!=='denied')log('access denied');S.role='denied';stopSync();}
+    if(ok){if(S.role!=='member'){S.role='member';S.offline=false;G.msg='';log('access ok');if(!grant(u))return;startSession(u);}}
+    else{if(S.role!=='denied')log('access denied');S.role='denied';deny(u);return;}
     ui(true);
   },function(e){
     if(S.user!==u)return;
     log('access check err',e&&e.code);
-    S.role=(e&&e.code==='permission-denied')?'denied':'error';stopSync();S.memUnsub=null;ui(true);
+    S.memUnsub=null;
+    if(e&&e.code==='permission-denied'){S.role='denied';deny(u);return;}
+    S.role='error';if(!G.open)stopSync();tryOffline(u);ui(true);
   });
 }
 function gErr(e){
   var c=(e&&e.code)||'';
-  if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return 'Connexion Google annulée. Si la fenêtre ne s’ouvre pas ou se ferme toute seule (fréquent sur iPhone, application ajoutée à l’écran d’accueil), utilisez « Se connecter avec e-mail ».';
+  if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return 'Connexion Google annulée. Si la fenêtre ne s’ouvre pas ou se ferme toute seule (fréquent sur iPhone, application ajoutée à l’écran d’accueil), utilisez l’e-mail et le mot de passe.';
   if(c==='auth/network-request-failed')return 'Pas de connexion Internet. Réessayez quand vous êtes en ligne.';
-  return 'La connexion Google n’a pas fonctionné sur cet appareil'+(c?' ('+c.replace('auth/','')+')':'')+'. Sur iPhone (application ajoutée à l’écran d’accueil), c’est fréquent : utilisez plutôt « Se connecter avec e-mail », qui fonctionne partout.';
+  return 'La connexion Google n’a pas fonctionné sur cet appareil'+(c?' ('+c.replace('auth/','')+')':'')+'. Sur iPhone (application ajoutée à l’écran d’accueil), c’est fréquent : utilisez plutôt l’e-mail et le mot de passe, qui fonctionnent partout.';
 }
 function eErr(e){
   var c=(e&&e.code)||'';
-  var t={'auth/invalid-email':'Adresse e-mail invalide.','auth/missing-password':'Saisissez le mot de passe.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/wrong-password':'Mot de passe incorrect.','auth/user-not-found':'Aucun compte avec cet e-mail. Demandez un accès au modérateur.','auth/email-already-in-use':'Un compte existe déjà avec cet e-mail.','auth/weak-password':'Mot de passe trop faible (8 caractères minimum).','auth/too-many-requests':'Trop de tentatives. Patientez quelques minutes.','auth/network-request-failed':'Pas de connexion Internet. Réessayez quand vous êtes en ligne.','auth/operation-not-allowed':'La connexion par e-mail n’est pas activée pour ce projet.','auth/missing-email':'Saisissez votre adresse e-mail.','auth/requires-recent-login':'Par sécurité, déconnectez-vous puis reconnectez-vous avant de changer le mot de passe.','permission-denied':'Action refusée par le serveur (règles Firestore publiées ?).'};
+  var t={'auth/invalid-email':'Adresse e-mail invalide.','auth/missing-password':'Saisissez le mot de passe.','auth/invalid-credential':'E-mail ou mot de passe incorrect.','auth/wrong-password':'Mot de passe incorrect.','auth/user-not-found':'Aucun compte avec cet e-mail. Demandez un accès à l’administrateur.','auth/user-disabled':'Ce compte est désactivé. Contactez l’administrateur.','auth/email-already-in-use':'Un compte existe déjà avec cet e-mail.','auth/weak-password':'Mot de passe trop faible (8 caractères minimum).','auth/too-many-requests':'Trop de tentatives. Patientez quelques minutes.','auth/network-request-failed':'Pas de connexion Internet. Réessayez quand vous êtes en ligne.','auth/operation-not-allowed':'La connexion par e-mail n’est pas activée pour ce projet.','auth/missing-email':'Saisissez votre adresse e-mail.','auth/requires-recent-login':'Par sécurité, déconnectez-vous puis reconnectez-vous avant de changer le mot de passe.','permission-denied':'Action refusée par le serveur (règles Firestore publiées ?).'};
   return t[c]||('Erreur : '+(c?c.replace('auth/',''):(e&&e.message)||'inconnue'));
 }
 function signGoogle(){
-  S.err='';S.info='';
-  if(!S.sdk){S.err='Service de connexion indisponible (hors ligne ?).';ui();return;}
+  S.err='';S.info='';G.msg='';
+  if(!S.sdk){S.err=navigator.onLine?'Service de connexion indisponible pour le moment.':'Connexion Internet requise pour la première connexion.';ui(true);return;}
+  if(!navigator.onLine){S.err='Connexion Internet requise pour la première connexion.';ui(true);return;}
   var U=S.sdk.U,p=new U.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
   /* popup must open synchronously from the tap: SDK is already loaded here */
   U.signInWithPopup(S.auth,p).catch(function(e){console.info('Google sign-in:',e&&e.code);S.err=gErr(e);S.emailOpen=true;ui(true);});
 }
 function emailAction(kind){
-  var em=($('syEmail')||{}).value,pw=($('syPass')||{}).value;em=String(em||'').trim();
-  S.err='';S.info='';
-  if(!S.sdk){S.err='Service de connexion indisponible (hors ligne ?).';ui();return;}
+  var em=($('gEmail')||{}).value,pw=($('gPass')||{}).value;em=String(em||'').trim();
+  S.err='';S.info='';G.msg='';
+  if(!S.sdk||!navigator.onLine){S.err=navigator.onLine?'Service de connexion indisponible pour le moment. Réessayez.':'Connexion Internet requise pour la première connexion.';ui(true);return;}
   var U=S.sdk.U;
   if(kind==='reset'){
-    if(!em){S.err='Saisissez votre adresse e-mail puis touchez « Mot de passe oublié ? ».';ui();return;}
-    setBusy(true);U.sendPasswordResetEmail(S.auth,em).then(function(){S.info='Si un compte existe pour '+em+', un e-mail de réinitialisation vient d’être envoyé (vérifiez aussi les courriers indésirables).';}).catch(function(e){S.err=eErr(e);}).then(function(){setBusy(false);});
+    if(!em){S.err='Saisissez votre adresse e-mail puis touchez « Mot de passe oublié ? ».';ui(true);return;}
+    var okMsg='Si un compte existe pour '+em+', un e-mail de réinitialisation vient d’être envoyé (vérifiez aussi les courriers indésirables).';
+    setBusy(true);U.sendPasswordResetEmail(S.auth,em).then(function(){S.info=okMsg;}).catch(function(e){var c=e&&e.code;if(c==='auth/user-not-found'||c==='auth/invalid-credential')S.info=okMsg;else S.err=eErr(e);}).then(function(){setBusy(false);});
     return;
   }
-  if(!em||!pw){S.err='Saisissez l’e-mail et le mot de passe.';ui();return;}
+  if(!em||!pw){S.err='Saisissez l’e-mail et le mot de passe.';ui(true);return;}
   setBusy(true);
-  U.signInWithEmailAndPassword(S.auth,em,pw).catch(function(e){S.err=eErr(e);}).then(function(){setBusy(false);});
+  U.signInWithEmailAndPassword(S.auth,em,pw).catch(function(e){S.err=(e&&e.code==='auth/network-request-failed')?'Connexion Internet requise pour la première connexion.':eErr(e);}).then(function(){setBusy(false);});
 }
 function signOut(){
   if(!S.sdk)return;
   if(allowed()&&M.dirty&&navigator.onLine&&!confirm('Des modifications ne sont pas encore envoyées en ligne. Se déconnecter quand même ? (Elles restent sur cet appareil.)'))return;
-  S.sdk.U.signOut(S.auth).then(function(){APP.toast('Déconnecté · les données restent sur cet appareil');});
+  S.sdk.U.signOut(S.auth).then(function(){S.info='Vous êtes déconnecté. Vos données restent sur cet appareil.';ui(true);});
 }
 function setBusy(b){S.busy=b;ui(true);}
 /* moderator with an e-mail/password account: the address must be verified */
@@ -2459,8 +2543,8 @@ function genPw(){
 function shareMsg(c){
   return 'Bonjour'+(c.name?' '+c.name:'')+',\n\nVoici votre accès au « Cahier Journalier digital » :\n\n'+
     '🔗 Lien : '+APP_URL+'\n📧 E-mail : '+c.email+'\n🔑 Mot de passe provisoire : '+c.pw+'\n\n'+
-    'Ouvrez le lien (sur iPhone : Safari › Partager › « Sur l’écran d’accueil »), puis Paramètres › Synchronisation › « Se connecter avec e-mail ».\n'+
-    'Après la première connexion, changez votre mot de passe (Paramètres › Synchronisation › « Changer le mot de passe »).\n\nCordialement,';
+    'Ouvrez le lien (sur iPhone : Safari › Partager › « Sur l’écran d’accueil »), puis connectez-vous avec votre e-mail et ce mot de passe.\n'+
+    'Après la première connexion, changez votre mot de passe (Paramètres › Compte et synchronisation › « Changer le mot de passe »).\n\nCordialement,';
 }
 function secAuth(){
   /* secondary Firebase app: creating an account there never signs the moderator out */
@@ -2607,22 +2691,52 @@ function status(){
   if(M.dirty)return {c:'wait',t:'En attente',l:'Modifications en attente d’envoi…'};
   return {c:'ok',t:M.lastSyncAt?hhmm(M.lastSyncAt):'Synchro',l:M.lastSyncAt?'À jour · dernière synchro à '+whenStr(M.lastSyncAt):'À jour'};
 }
+var GOOGLE_SVG='<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+function gMsgs(){return (G.msg?'<p class="g-err" id="gDenied">'+esc(G.msg)+'</p>':'')+(S.err?'<p class="g-err">'+esc(S.err)+'</p>':'')+(S.info?'<p class="g-info">'+esc(S.info)+'</p>':'');}
+function drawGate(){
+  var b=$('gBody');if(!b||G.open)return;
+  var u=S.user,h,state;
+  if(u===undefined&&!S.loadErr)state='load';
+  else if(!u)state=S.sdk?'login':'nosdk';
+  else if(S.role==='unverified')state='verify';
+  else state='check';
+  if(b.dataset.state===state&&(state==='login'||state==='verify')&&$('gMsgs')){   /* same screen: update in place (never wipe what is being typed) */
+    $('gMsgs').innerHTML=gMsgs();['gGo','gVerify','gVerified'].forEach(function(id){var x=$(id);if(x)x.disabled=!!S.busy;});
+    var off=$('gOff');if(off)off.classList.toggle('hidden',navigator.onLine);return;}
+  if(state==='load')h='<div class="g-load"><span class="spin"></span>Vérification de la connexion…</div>';
+  else if(state==='check')h='<div class="g-load"><span class="spin"></span>Vérification de l’accès…</div><p class="g-note" style="text-align:center">'+esc(u.email||'')+'</p>'+gMsgs()+'<button type="button" class="lnk" id="gOut">Se déconnecter</button>';
+  else if(state==='verify')h='<h2>Vérifiez votre adresse</h2><p class="small" style="margin:6px 0 0">Compte administrateur <b>'+esc(u.email||'')+'</b> : l’adresse e-mail doit être vérifiée avant d’accéder à l’application (ou connectez-vous avec Google).</p><div id="gMsgs">'+gMsgs()+'</div>'+
+    '<button class="btn" id="gVerify"'+(S.busy?' disabled':'')+'>Envoyer l’e-mail de vérification</button><button class="btn sec" id="gVerified"'+(S.busy?' disabled':'')+'>J’ai vérifié mon adresse</button><button type="button" class="lnk" id="gOut">Se déconnecter</button>';
+  else if(state==='nosdk')h='<h2>Connexion</h2><p class="g-err">'+(navigator.onLine?'Service de connexion indisponible pour le moment.':'Connexion Internet requise pour la première connexion.')+'</p><button class="btn" id="gRetry">Réessayer</button>';
+  else h='<form id="gForm" autocomplete="on" onsubmit="return false"><h2>Connexion</h2>'+
+    '<p class="g-err'+(navigator.onLine?' hidden':'')+'" id="gOff">Connexion Internet requise pour la première connexion.</p>'+
+    '<label class="f" for="gEmail">E-mail</label><input type="email" id="gEmail" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false">'+
+    '<label class="f" for="gPass">Mot de passe</label><input type="password" id="gPass" autocomplete="current-password">'+
+    '<div id="gMsgs">'+gMsgs()+'</div>'+
+    '<button type="submit" class="btn" id="gGo"'+(S.busy?' disabled':'')+'>Se connecter</button>'+
+    '<div class="g-or">ou</div><button type="button" class="btn gbtn" id="gGoogle">'+GOOGLE_SVG+'Se connecter avec Google</button>'+
+    '<div style="text-align:center"><button type="button" class="lnk" id="gReset">Mot de passe oublié ?</button></div>'+
+    '<p class="g-note">Accès sur invitation : vos identifiants vous sont remis par l’administrateur. Sur iPhone (application sur l’écran d’accueil), si la connexion Google ne s’ouvre pas, utilisez l’e-mail et le mot de passe.</p></form>';
+  var keep={};['gEmail','gPass'].forEach(function(id){var e=$(id);if(e)keep[id]=e.value;});
+  b.innerHTML=h;b.dataset.state=state;
+  Object.keys(keep).forEach(function(id){var e=$(id);if(e)e.value=keep[id];});
+}
 var uiT=null;function ui(force){if(force)S.force=true;if(uiT)return;uiT=setTimeout(function(){uiT=null;draw();},30);}
 function draw(){
   var st=status(),p=$('syncPill');
   if(p){p.className='syncpill '+st.c;p.querySelector('.lbl').textContent=S.user?st.t:'Local';p.title='Synchronisation : '+st.l;}
-  drawMod();
+  drawMod();drawGate();
   var c=$('syncCard');if(!c){S.force=false;return;}
   if(!S.force&&c.contains(document.activeElement)&&document.activeElement.tagName==='INPUT')return;S.force=false; /* don't wipe what the user is typing */
-  var h='<h2>Synchronisation</h2>',u=S.user;
-  h+='<p class="small muted" style="margin-top:0">Retrouvez les mêmes données sur votre iPhone et votre ordinateur : connectez-vous avec le même compte sur chaque appareil. Tout est envoyé automatiquement ; l’application continue de fonctionner hors ligne.</p>';
+  var h='<h2>Compte et synchronisation</h2>',u=S.user;
+  h+='<p class="small muted" style="margin-top:0">Vos données sont envoyées automatiquement sur votre compte : connectez-vous avec le même compte sur votre iPhone et votre ordinateur. L’application continue de fonctionner hors ligne.</p>';
   h+='<div class="sstat '+st.c+'"><span class="dot"></span><div>'+(u?'<b>Connecté en tant que '+esc(u.email||u.displayName||'utilisateur')+'</b>'+(S.role==='mod'?' · modérateur':'')+'<br>':'')+'<span class="small">'+esc(st.l)+'</span></div></div>';
   if(u&&S.role==='denied')h+='<p class="small serr" id="syDenied">Accès non autorisé ou désactivé. Contactez le modérateur.</p><p class="small muted">Vos données restent utilisables sur cet appareil, mais elles ne sont pas synchronisées.</p>';
   if(S.err)h+='<p class="small serr">'+esc(S.err)+'</p>';
   if(S.info)h+='<p class="small" style="color:var(--ok);font-weight:600">'+esc(S.info)+'</p>';
   if(u){
     if(S.role==='unverified')h+='<p class="small">Pour activer l’espace modérateur avec un compte e-mail/mot de passe, l’adresse doit être vérifiée (ou connectez-vous avec Google).</p><div class="actions"><button class="btn" id="syVerify"'+(S.busy?' disabled':'')+'>Envoyer l’e-mail de vérification</button><button class="btn sec" id="syVerified"'+(S.busy?' disabled':'')+'>J’ai vérifié mon adresse</button></div>';
-    h+='<div class="actions">'+(allowed()?'<button class="btn" id="sySync">⟳ Synchroniser maintenant</button>':'')+'<button class="btn danger" id="syOut">Se déconnecter</button></div>';
+    h+='<div class="actions">'+(allowed()?'<button class="btn" id="sySync">⟳ Synchroniser maintenant</button>':'')+'<button class="btn danger" id="syOut">Déconnexion</button></div>';
     if(allowed()&&hasPassword(u)){
       if(!S.pwOpen)h+='<button type="button" class="lnk" id="pwOpen">Changer le mot de passe</button>';
       else h+='<form id="pwForm" autocomplete="on" onsubmit="return false"><b>Changer le mot de passe</b>'+
@@ -2634,22 +2748,8 @@ function draw(){
         '<div class="actions"><button type="submit" class="btn" id="pwGo"'+(S.busy?' disabled':'')+'>Enregistrer</button><button type="button" class="btn sec" id="pwCancel">Annuler</button></div></form>';
       if(S.pwMsg)h+='<p class="small" style="color:var(--ok);font-weight:600">'+esc(S.pwMsg)+'</p>';
     }
-  }else if(!S.sdk){
-    h+='<div class="actions"><button class="btn sec" id="syRetry">Réessayer</button></div>';
-  }else{
-    h+='<p class="small" style="margin:4px 0 0"><b>Accès sur invitation :</b> vos identifiants vous sont remis par le modérateur.</p>';
-    h+='<div class="actions"><button class="btn gbtn" id="syGoogle"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Se connecter avec Google</button></div>';
-    if(!S.emailOpen)h+='<button type="button" class="lnk" id="syEmailOpen">Se connecter avec e-mail</button>';
-    else{
-      h+='<form id="syForm" autocomplete="on" onsubmit="return false"><b>Se connecter avec e-mail</b>'+
-        '<label class="f" for="syEmail">E-mail</label><input type="email" id="syEmail" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false">'+
-        '<label class="f" for="syPass">Mot de passe</label><input type="password" id="syPass" autocomplete="current-password">'+
-        '<div class="actions"><button type="submit" class="btn" id="syEmailGo"'+(S.busy?' disabled':'')+'>Se connecter</button></div>'+
-        '<div class="row" style="justify-content:flex-end"><button type="button" class="lnk" id="syReset">Mot de passe oublié ?</button></div></form>';
-    }
-    h+='<p class="small muted">Sur iPhone (application sur l’écran d’accueil), si la connexion Google ne s’ouvre pas, utilisez la connexion par e-mail.</p>';
   }
-  var keep={};['syEmail','syPass','pwCur','pwNew','pwNew2'].forEach(function(id){var e=$(id);if(e)keep[id]=e.value;});
+  var keep={};['pwCur','pwNew','pwNew2'].forEach(function(id){var e=$(id);if(e)keep[id]=e.value;});
   c.innerHTML=h;
   Object.keys(keep).forEach(function(id){var e=$(id);if(e)e.value=keep[id];});
 }
@@ -2669,12 +2769,18 @@ document.addEventListener('click',function(e){
       if(t.dataset.mact==='view')modView(id);else if(t.dataset.mact==='toggle')modToggle(id);else if(t.dataset.mact==='reset')modReset(id);}
     return;
   }
+  if(t.closest('#gate')){
+    if(t.id==='gGo'){e.preventDefault();emailAction('in');}
+    else if(t.id==='gGoogle')signGoogle();
+    else if(t.id==='gReset')emailAction('reset');
+    else if(t.id==='gOut'){G.msg='';if(S.sdk)S.sdk.U.signOut(S.auth).catch(function(){});}
+    else if(t.id==='gVerify')sendVerify();
+    else if(t.id==='gVerified')recheckVerify();
+    else if(t.id==='gRetry'){S.err='';loadSdk().catch(function(){});ui(true);}
+    return;
+  }
   if(!t.closest('#syncCard'))return;
-  if(t.id==='syGoogle')signGoogle();
-  else if(t.id==='syEmailOpen'){S.emailOpen=true;S.err='';draw();var i=$('syEmail');if(i)i.focus();}
-  else if(t.id==='syReset')emailAction('reset');
-  else if(t.id==='syEmailGo'){e.preventDefault();emailAction('in');}
-  else if(t.id==='syOut')signOut();
+  if(t.id==='syOut')signOut();
   else if(t.id==='syRetry'){loadSdk().catch(function(){});ui();}
   else if(t.id==='sySync')syncNow();
   else if(t.id==='syVerify')sendVerify();
@@ -2698,7 +2804,7 @@ function syncNow(){
 }
 /* ---- retries: online / start / visibility ---- */
 function kick(){
-  ui();
+  ui(true);
   if(!S.sdk){loadSdk().catch(function(){});return;}
   if(!navigator.onLine||APP.viewing())return;
   var u=S.user;if(!u)return;
@@ -2707,7 +2813,7 @@ function kick(){
   else if(allowed()&&M.dirty)schedule(300);
 }
 window.addEventListener('online',kick);
-window.addEventListener('offline',ui);
+window.addEventListener('offline',function(){ui(true);});
 document.addEventListener('visibilitychange',function(){if(!document.hidden)kick();});
 window.addEventListener('pagehide',function(){if(M.dirty&&S.user&&S.ready&&allowed()&&!APP.viewing())pushNow();});
 ui();
@@ -2746,7 +2852,7 @@ var PAGES=[
  {ic:'👥',t:'Classes et élèves',p:['Créez vos classes dans Paramètres, puis ajoutez vos élèves avec + ou « Import en masse » (Excel, CSV, listes Massar).','Saisissez votre emploi du temps sur l’Accueil : les dates des séances sont calculées automatiquement.']},
  {ic:'✅',t:'Marquer les présences',p:['Onglet Absences, mode Rapide : touchez une case pour passer d’un code à l’autre.','Mode Détail (ou appui long) : choisissez le statut et ajoutez un motif.'],codes:true},
  {ic:'🩺',t:'Élèves dispensés',p:['Appui long sur une case, puis 🩺 Dispensé : choisissez 1er semestre ou Toute l’année.','Les cases de l’élève deviennent grises ; absences et retards restent possibles.']},
- {ic:'📊',t:'Rapports et synchronisation',p:['Rapports : bilans par cycle ou sur l’année, alertes. Paramètres : exports CSV pour Excel et sauvegardes.','Connectez-vous (Paramètres › Synchronisation) pour retrouver votre cahier sur PC et iPhone.']}
+ {ic:'📊',t:'Rapports et synchronisation',p:['Rapports : bilans par cycle ou sur l’année, alertes. Paramètres : exports CSV pour Excel et sauvegardes.','Votre cahier est synchronisé avec votre compte : connectez-vous avec le même compte sur PC et iPhone.']}
 ];
 var CODES=[['A','A','Absent'],['S','ST','Sans tenue'],['M','M','Maladie'],['L','R','Retard'],['K','MJ','Maladie just.'],['J','AJ','Abs. justifiée']];
 function esc(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -2774,8 +2880,8 @@ function show(){
   document.addEventListener('keydown',onKey);
   setCur(0);
 }
-function maybeShow(){if(!isDone())afterSplash(function(){if(!isDone())show();});}
-maybeShow();
+function maybeShow(){if(!isDone())afterSplash(function(){if(!isDone()&&window.CJGateOpen)show();});}
+if(window.CJGateOpen)maybeShow();   /* otherwise shown by the login gate after an authorized sign-in */
 var again=document.getElementById('onbAgain');if(again)again.addEventListener('click',function(){afterSplash(show);});
 window.CJIntro={show:function(){afterSplash(show);},onSignIn:maybeShow,skipSplash:hideSplash,splashDone:function(){return done;}};
 })();
