@@ -364,9 +364,55 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
 #modCard .cred code{font-size:17px;font-weight:700;letter-spacing:.5px;user-select:all}
 #modCard textarea{width:100%;min-height:150px;font:inherit;font-size:14px;margin-top:6px}
 #modCard .serr{color:var(--bad);font-weight:600}
+
+/* ===== Splash (every launch) ===== */
+#splash{position:fixed;inset:0;z-index:1000;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;cursor:pointer;transition:opacity .4s ease;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}
+#splash.out{opacity:0;pointer-events:none}
+#splash .sp-logo{width:112px;height:112px;border-radius:26px;box-shadow:0 10px 30px rgba(0,0,20,.35),0 0 0 1px rgba(255,255,255,.25);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}
+#splash .sp-title{margin:22px 0 0;font-size:24px;font-weight:700;letter-spacing:.3px;opacity:0;transform:translateY(18px);animation:spUp .6s ease-out .6s forwards}
+#splash .sp-ver{margin-top:6px;font-size:14px;font-weight:600;opacity:0;letter-spacing:1px;animation:spVer .5s ease-out 1s forwards}
+#splash .sp-skip{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom));left:0;right:0;font-size:12.5px;opacity:0;animation:spVer .4s ease-out 1.1s forwards}
+#splash video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0732f3;display:none}
+#splash.vid video{display:block}#splash.vid .sp-box{display:none}
+@keyframes spLogo{to{opacity:1;transform:scale(1)}}
+@keyframes spUp{to{opacity:1;transform:none}}
+@keyframes spVer{to{opacity:.8}}
+@media (prefers-reduced-motion:reduce){
+  #splash .sp-logo,#splash .sp-title,#splash .sp-ver,#splash .sp-skip{transform:none;animation:spFade .3s ease-out forwards}
+  #splash{transition:opacity .25s}
+}
+@keyframes spFade{to{opacity:1}}
+/* ===== Onboarding (first use) ===== */
+#onb{position:fixed;inset:0;z-index:900;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;display:flex;flex-direction:column;color:#fff;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:onbIn .35s ease-out}
+#onb.out{opacity:0;transition:opacity .3s}
+@keyframes onbIn{from{opacity:0}to{opacity:1}}
+#onb .onb-top{display:flex;justify-content:flex-end;padding:12px 14px 0}
+#onb .onb-skip{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;font:inherit;font-size:14px;font-weight:600;padding:8px 16px;min-height:38px;cursor:pointer}
+#onb .onb-pages{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#onb .onb-pages::-webkit-scrollbar{display:none}
+#onb .onb-page{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;padding:12px 22px}
+#onb .onb-card{background:#fff;color:var(--ink);border-radius:22px;max-width:440px;width:100%;padding:28px 22px 24px;text-align:center;box-shadow:0 14px 40px rgba(0,0,30,.35)}
+#onb .onb-ic{width:88px;height:88px;margin:0 auto 14px;border-radius:24px;background:var(--pri-soft);display:flex;align-items:center;justify-content:center;font-size:46px;line-height:1}
+#onb h2{margin:0 0 10px;font-size:22px;color:var(--pri)}
+#onb p{margin:0 0 8px;font-size:15.5px;line-height:1.45;color:#344054}
+#onb .onb-codes{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 10px;margin-top:12px;font-size:13px;color:#475467}
+#onb .onb-codes span{display:inline-flex;align-items:center}
+#onb .onb-bar{display:flex;align-items:center;gap:12px;padding:10px 22px 18px;max-width:484px;width:100%;margin:0 auto}
+#onb .onb-dots{flex:1;display:flex;gap:8px}
+#onb .onb-dots i{width:8px;height:8px;border-radius:99px;background:rgba(255,255,255,.4);transition:all .25s}
+#onb .onb-dots i.on{width:22px;background:#fff}
+#onb .onb-next{background:#fff;color:var(--pri);border:0;border-radius:12px;font:inherit;font-size:16px;font-weight:700;padding:12px 22px;min-height:48px;min-width:132px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,30,.25)}
+body.cj-ro #onbCard{display:none!important}
 </style>
 </head>
 <body>
+<!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
+<div id="splash" role="img" aria-label="Cahier Journalier digital v1.0">
+  <video id="splashVid" muted playsinline autoplay preload="auto"></video>
+  <div class="sp-box"><img class="sp-logo" src="icons/icon-192.png" alt="" width="112" height="112">
+  <div class="sp-title">Cahier Journalier digital</div><div class="sp-ver">v1.0</div></div>
+  <div class="sp-skip sp-box">Touchez pour passer</div>
+</div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
   <h1>Cahier Journalier digital v1.0</h1>
@@ -494,6 +540,11 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
     <input type="text" id="setTeacher" dir="auto" placeholder="ex. Mohamed – Lycée …">
   </div>
   <div class="card" id="holCard"></div>
+  <div class="card" id="onbCard">
+    <h2>Présentation</h2>
+    <p class="muted small" style="margin-top:0">Les principales fonctions de l’application en quelques pages.</p>
+    <button class="btn sec" id="onbAgain">Revoir la présentation</button>
+  </div>
   <div class="card">
     <h2 style="color:var(--bad)">Zone dangereuse</h2>
     <p class="muted small" style="margin-top:0">Supprime tous les élèves, toutes les classes et toutes les absences de cet appareil. Téléchargez d’abord une sauvegarde.</p>
@@ -2180,7 +2231,7 @@ function checkAccess(u){
   if(S.user!==u)return;
   if(S.memUnsub){try{S.memUnsub();}catch(e){}S.memUnsub=null;}
   if(isModEmail(u)){
-    if(u.emailVerified){S.role='mod';ui(true);startSession(u);modLoad();}
+    if(u.emailVerified){S.role='mod';ui(true);startSession(u);modLoad();try{window.CJIntro&&window.CJIntro.onSignIn();}catch(e){}}
     else{S.role='unverified';ui(true);}
     return;
   }
@@ -2192,7 +2243,7 @@ function checkAccess(u){
     var m=snap.exists()?snap.data():null;
     var ok=!!(m&&m.active===true&&(!m.uid||m.uid===u.uid));
     S.member=m;
-    if(ok){if(S.role!=='member'){S.role='member';log('access ok');startSession(u);}}
+    if(ok){if(S.role!=='member'){S.role='member';log('access ok');startSession(u);try{window.CJIntro&&window.CJIntro.onSignIn();}catch(e){}}}
     else{if(S.role!=='denied')log('access denied');S.role='denied';stopSync();}
     ui(true);
   },function(e){
@@ -2662,6 +2713,71 @@ window.addEventListener('pagehide',function(){if(M.dirty&&S.user&&S.ready&&allow
 ui();
 loadSdk().catch(function(){});
 window.CJSync={log:LOG,state:S,meta:function(){return M;},syncNow:syncNow};
+})();
+</script>
+<script>
+/* ===== Intro: splash on every launch + onboarding on first use (flag: cahier.onboardingDone) ===== */
+(function(){
+'use strict';
+/* To use a video splash: put the file next to index.html (e.g. splash.mp4), set its name here and add it to ASSETS in sw.js. */
+var SPLASH_VIDEO='';
+var OKEY='cahier.onboardingDone';
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var sp=document.getElementById('splash'),done=false,waiters=[],tHide=null;
+function afterSplash(fn){if(done)fn();else waiters.push(fn);}
+function hideSplash(){if(done)return;done=true;clearTimeout(tHide);if(sp){sp.classList.add('out');var v=document.getElementById('splashVid');try{v.pause();}catch(e){}setTimeout(function(){if(sp&&sp.parentNode)sp.parentNode.removeChild(sp);},450);}
+  var w=waiters;waiters=[];w.forEach(function(f){try{f();}catch(e){console.warn(e);}});}
+function cssTimer(){var total=reduce?900:2000,el=(window.performance&&performance.now)?performance.now():0;tHide=setTimeout(hideSplash,Math.max(reduce?500:1400,total-el));}
+if(sp){
+  sp.addEventListener('click',hideSplash);
+  var v=document.getElementById('splashVid');
+  if(SPLASH_VIDEO&&v&&!reduce){
+    var started=false,fb=setTimeout(function(){if(!started){sp.classList.remove('vid');cssTimer();}},1500);
+    v.addEventListener('playing',function(){if(done)return;started=true;clearTimeout(fb);sp.classList.add('vid');clearTimeout(tHide);tHide=setTimeout(hideSplash,((v.duration||6)+0.5)*1000);});
+    v.addEventListener('ended',hideSplash);
+    v.addEventListener('error',function(){if(!started){clearTimeout(fb);cssTimer();}});
+    v.src=SPLASH_VIDEO;var pr=v.play&&v.play();if(pr&&pr.catch)pr.catch(function(){});
+  }else{if(v)v.parentNode.removeChild(v);cssTimer();}
+}else done=true;
+
+/* ---- onboarding ---- */
+var PAGES=[
+ {ic:'📒',t:'Bienvenue',p:['Cahier Journalier digital : votre cahier d’EPS dans la poche.','Présences, absences, points retirés et bilans par cycle, même hors ligne.']},
+ {ic:'👥',t:'Classes et élèves',p:['Créez vos classes dans Paramètres, puis ajoutez vos élèves avec + ou « Import en masse » (Excel, CSV, listes Massar).','Saisissez votre emploi du temps sur l’Accueil : les dates des séances sont calculées automatiquement.']},
+ {ic:'✅',t:'Marquer les présences',p:['Onglet Absences, mode Rapide : touchez une case pour passer d’un code à l’autre.','Mode Détail (ou appui long) : choisissez le statut et ajoutez un motif.'],codes:true},
+ {ic:'🩺',t:'Élèves dispensés',p:['Appui long sur une case, puis 🩺 Dispensé : choisissez 1er semestre ou Toute l’année.','Les cases de l’élève deviennent grises ; absences et retards restent possibles.']},
+ {ic:'📊',t:'Rapports et synchronisation',p:['Rapports : bilans par cycle ou sur l’année, alertes. Paramètres : exports CSV pour Excel et sauvegardes.','Connectez-vous (Paramètres › Synchronisation) pour retrouver votre cahier sur PC et iPhone.']}
+];
+var CODES=[['A','A','Absent'],['S','ST','Sans tenue'],['M','M','Maladie'],['L','R','Retard'],['K','MJ','Maladie just.'],['J','AJ','Abs. justifiée']];
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var box=null,cur=0;
+function isDone(){try{return !!localStorage.getItem(OKEY);}catch(e){return true;}}
+function setDone(){try{localStorage.setItem(OKEY,String(Date.now()));}catch(e){}}
+function viewing(){try{return !!(window.CJApp&&window.CJApp.viewing());}catch(e){return false;}}
+function go(i){var pg=box.querySelector('.onb-pages');pg.scrollTo({left:i*pg.clientWidth,behavior:reduce?'auto':'smooth'});setCur(i);}
+function setCur(i){cur=Math.max(0,Math.min(PAGES.length-1,i));box.querySelectorAll('.onb-dots i').forEach(function(d,k){d.classList.toggle('on',k===cur);});
+  var last=cur===PAGES.length-1,n=box.querySelector('.onb-next');n.textContent=last?'Commencer':'Suivant';box.querySelector('.onb-skip').style.visibility=last?'hidden':'visible';}
+function close(){if(!box)return;setDone();var b=box;box=null;b.classList.add('out');document.body.style.overflow='';setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b);},320);document.removeEventListener('keydown',onKey);}
+function onKey(e){if(!box)return;if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);else if(e.key==='Escape')close();}
+function show(){
+  if(box||viewing())return;
+  var h='<div class="onb-top"><button type="button" class="onb-skip">Passer</button></div><div class="onb-pages">';
+  PAGES.forEach(function(p,i){h+='<section class="onb-page" aria-label="'+(i+1)+' / '+PAGES.length+'"><div class="onb-card"><div class="onb-ic" aria-hidden="true">'+p.ic+'</div><h2>'+esc(p.t)+'</h2>'+p.p.map(function(x){return '<p>'+esc(x)+'</p>';}).join('')+
+    (p.codes?'<div class="onb-codes">'+CODES.map(function(c){return '<span><span class="lg '+c[0]+'">'+c[1]+'</span>'+esc(c[2])+'</span>';}).join('')+'</div>':'')+'</div></section>';});
+  h+='</div><div class="onb-bar"><div class="onb-dots">'+PAGES.map(function(){return '<i></i>';}).join('')+'</div><button type="button" class="onb-next">Suivant</button></div>';
+  box=document.createElement('div');box.id='onb';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label','Présentation de l’application');box.innerHTML=h;
+  document.body.appendChild(box);document.body.style.overflow='hidden';
+  var pg=box.querySelector('.onb-pages'),st=null;
+  pg.addEventListener('scroll',function(){clearTimeout(st);st=setTimeout(function(){if(box)setCur(Math.round(pg.scrollLeft/Math.max(1,pg.clientWidth)));},60);},{passive:true});
+  box.querySelector('.onb-skip').addEventListener('click',close);
+  box.querySelector('.onb-next').addEventListener('click',function(){if(cur>=PAGES.length-1)close();else go(cur+1);});
+  document.addEventListener('keydown',onKey);
+  setCur(0);
+}
+function maybeShow(){if(!isDone())afterSplash(function(){if(!isDone())show();});}
+maybeShow();
+var again=document.getElementById('onbAgain');if(again)again.addEventListener('click',function(){afterSplash(show);});
+window.CJIntro={show:function(){afterSplash(show);},onSignIn:maybeShow,skipSplash:hideSplash,splashDone:function(){return done;}};
 })();
 </script>
 <script>
