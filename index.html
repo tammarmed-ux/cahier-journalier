@@ -2199,7 +2199,7 @@ var APP=window.CJApp;if(!APP)return;
 var FB_VER='12.19.0',FB='https://www.gstatic.com/firebasejs/'+FB_VER+'/';
 var CFG={apiKey:"AIzaSyCM94TX_z-gj5kOcc2a2vQBBrPaDQtKwD0",authDomain:"cahier-journalier-2830a.firebaseapp.com",projectId:"cahier-journalier-2830a",storageBucket:"cahier-journalier-2830a.firebasestorage.app",messagingSenderId:"540109116482",appId:"1:540109116482:web:24d800296cd78764e589db"};
 var MOD_EMAIL='tammar.med@gmail.com';           /* modérateur (doit aussi avoir une adresse vérifiée, voir firestore.rules) */
-var APP_URL='https://cahier-eps.web.app/';        /* adresse officielle (Firebase Hosting) */
+var APP_URL='https://cahier-eps-ma.web.app/';        /* adresse officielle (Firebase Hosting) */
 /* local tests only: http://localhost/…?emu=1 uses the Firebase emulators (never active on the real site) */
 var EMU=(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&/[?&]emu=1(&|$)/.test(location.search))?{auth:'http://127.0.0.1:9099',host:'127.0.0.1',port:8080}:null;
 var MKEY=APP.key+'.sync';           /* local sync metadata (separate key; data key unchanged) */
@@ -2912,7 +2912,7 @@ window.CJIntro={show:function(){afterSplash(show);},onSignIn:maybeShow,skipSplas
 <script>
 (function(){
 'use strict';
-var NEW_URL='https://cahier-eps.web.app/';
+var NEW_URL='https://cahier-eps-ma.web.app/';
 var old=/\.github\.io$/i.test(location.hostname)||(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&/[?&]movetest=1(&|$)/.test(location.search));
 if(!old)return;
 var KEY='classRegister.v2',box=document.getElementById('mvBox'),st=document.getElementById('mvSt'),go=document.getElementById('mvGo');
