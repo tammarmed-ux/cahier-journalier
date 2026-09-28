@@ -26,7 +26,11 @@
 html,body{margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Arabic",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 header.top{position:sticky;top:0;z-index:20;background-color:var(--pri);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:32px 32px;background-position:center top;color:#fff;padding:12px 16px calc(12px);padding-top:max(12px,env(safe-area-inset-top));box-shadow:0 2px 6px rgba(0,0,0,.12)}
-header.top h1{margin:0;font-size:18px;font-weight:650;letter-spacing:.2px}
+header.top h1{margin:0;font-size:18px;font-weight:650;letter-spacing:.2px;display:flex;align-items:center;gap:9px;min-width:0}
+header.top .h-logo{flex:0 0 auto;width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px rgba(255,255,255,.55),0 2px 6px rgba(0,0,20,.25)}
+header.top .h-txt{min-width:0;line-height:1.2}
+header.top .h-logo{display:none}
+@media (min-width:480px){header.top .h-logo{display:block}header.top .sub{padding-left:41px}}
 header.top .sub{font-size:12.5px;opacity:.85}
 main{max-width:860px;margin:0 auto;padding:14px 12px 96px}
 nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 10px rgba(0,0,0,.05)}
@@ -368,9 +372,9 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
 /* ===== Splash (every launch) ===== */
 #splash{position:fixed;inset:0;z-index:1000;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;cursor:pointer;transition:opacity .4s ease;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}
 #splash.out{opacity:0;pointer-events:none}
-#splash .sp-logo{width:112px;height:112px;border-radius:26px;box-shadow:0 10px 30px rgba(0,0,20,.35),0 0 0 1px rgba(255,255,255,.25);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}
-#splash .sp-title{margin:22px 0 0;font-size:24px;font-weight:700;letter-spacing:.3px;opacity:0;transform:translateY(18px);animation:spUp .6s ease-out .6s forwards}
-#splash .sp-ver{margin-top:6px;font-size:14px;font-weight:600;opacity:0;letter-spacing:1px;animation:spVer .5s ease-out 1s forwards}
+#splash .sp-logo{display:block;width:clamp(180px,54vw,220px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:22%;box-shadow:0 14px 40px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.3);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}
+.cj-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#splash .sp-ver{margin-top:18px;font-size:14px;font-weight:600;opacity:0;letter-spacing:1px;animation:spVer .5s ease-out 1s forwards}
 #splash .sp-skip{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom));left:0;right:0;font-size:12.5px;opacity:0;animation:spVer .4s ease-out 1.1s forwards}
 #splash video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0732f3;display:none}
 #splash.vid video{display:block}#splash.vid .sp-box{display:none}
@@ -378,7 +382,7 @@ body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #b
 @keyframes spUp{to{opacity:1;transform:none}}
 @keyframes spVer{to{opacity:.8}}
 @media (prefers-reduced-motion:reduce){
-  #splash .sp-logo,#splash .sp-title,#splash .sp-ver,#splash .sp-skip{transform:none;animation:spFade .3s ease-out forwards}
+  #splash .sp-logo,#splash .sp-ver,#splash .sp-skip{transform:none;animation:spFade .3s ease-out forwards}
   #splash{transition:opacity .25s}
 }
 @keyframes spFade{to{opacity:1}}
@@ -410,9 +414,9 @@ html.cj-locked header.top,html.cj-locked main,html.cj-locked nav.tabs,html.cj-lo
 #gate{position:fixed;inset:0;z-index:950;display:none;overflow-y:auto;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;color:#fff;padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
 html.cj-locked #gate{display:block}
 #gate .g-wrap{max-width:420px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#gate .g-logo{width:84px;height:84px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,20,.35),0 0 0 1px rgba(255,255,255,.25)}
-#gate h1{margin:16px 0 2px;font-size:23px;font-weight:700;text-align:center}
-#gate .g-sub{font-size:13.5px;opacity:.85;margin-bottom:18px}
+#gate .g-logo{display:block;width:clamp(170px,50vw,210px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:22%;box-shadow:0 12px 32px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.3)}
+@media (max-height:640px){#gate .g-logo{width:140px}}
+#gate .g-sub{font-size:13.5px;opacity:.85;margin:12px 0 18px}
 #gate .g-card{background:#fff;color:var(--ink);border-radius:20px;width:100%;padding:20px 18px;box-shadow:0 14px 40px rgba(0,0,30,.35)}
 #gate .g-card h2{margin:0 0 4px;font-size:19px;color:var(--pri)}
 #gate label.f:first-of-type{margin-top:6px}
@@ -433,22 +437,22 @@ html.cj-locked #gate{display:block}
 <!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
 <div id="splash" role="img" aria-label="Cahier Journalier digital v1.0">
   <video id="splashVid" muted playsinline autoplay preload="auto"></video>
-  <div class="sp-box"><img class="sp-logo" src="icons/icon-192.png" alt="" width="112" height="112">
-  <div class="sp-title">Cahier Journalier digital</div><div class="sp-ver">v1.0</div></div>
+  <div class="sp-box"><img class="sp-logo" src="logo.jpg" alt="Cahier Journalier · EPS ·" width="512" height="512" decoding="async" fetchpriority="high">
+  <div class="sp-ver">v1.0</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
 </div>
 <!-- Login gate: the app stays hidden (html.cj-locked) until an authorized account is signed in -->
 <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gTitle">
   <div class="g-wrap">
-    <img class="g-logo" src="icons/icon-192.png" alt="" width="84" height="84">
-    <h1 id="gTitle">Cahier Journalier digital</h1>
+    <img class="g-logo" src="logo.jpg" alt="" width="512" height="512" decoding="async">
+    <h1 id="gTitle" class="cj-sr">Cahier Journalier digital</h1>
     <div class="g-sub">Accès sur invitation</div>
     <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
   </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
-  <h1>Cahier Journalier digital v1.0</h1>
+  <h1><img class="h-logo" src="icons/icon-192.png" alt="" width="32" height="32"><span class="h-txt">Cahier Journalier digital v1.0</span></h1>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -544,13 +548,13 @@ html.cj-locked #gate{display:block}
   </div>
   <div class="card">
     <h2>Classes</h2>
-    <p class="muted small" style="margin-top:0">Renommez une classe en modifiant son nom (ex. « 1BACLSH1 »). Plafond = nombre maximum de points retirés par élève et par cycle (par défaut 4 pour les classes 1BAC…, 3 pour les 2BAC… et les autres ; videz la case pour revenir à la valeur par défaut).</p>
+    <p class="muted small" style="margin-top:0">Renommez une classe en modifiant son nom (ex. « 1BACLSH1 »). Note comportementale = nombre maximum de points retirés par élève et par cycle (par défaut 4 pour les classes 1BAC…, 3 pour les 2BAC… et les autres ; videz la case pour revenir à la valeur par défaut).</p>
     <div id="clsManage"></div>
     <div class="row" style="margin-top:10px"><input type="text" class="grow" id="newClassName" dir="auto" placeholder="Nom de la nouvelle classe" maxlength="40"><button class="btn sec" id="addClassBtn">+ Ajouter</button></div>
   </div>
   <div class="card">
     <h2>Points retirés (déduction)</h2>
-    <p class="muted small" style="margin-top:0">Points retirés pour chaque séance marquée. Le total par élève et par cycle ne dépasse jamais le plafond de la classe (voir Classes).</p>
+    <p class="muted small" style="margin-top:0">Points retirés pour chaque séance marquée. Le total par élève et par cycle ne dépasse jamais la note comportementale de la classe (voir Classes).</p>
     <div class="pgrid">
       <div><label class="f" for="ptA">Absence non justifiée (A)</label><input type="number" id="ptA" data-pt="A" min="0" max="20" step="0.05" inputmode="decimal"></div>
       <div><label class="f" for="ptS">Sans tenue (ST)</label><input type="number" id="ptS" data-pt="S" min="0" max="20" step="0.05" inputmode="decimal"></div>
@@ -718,9 +722,9 @@ var TX={
  cmpTitle:'Comparaison des classes',cmpHead:['Classe','Élèves','Séances','Abs.','Taux'],
  cmpNote:'Taux d’absence = (A + AJ + M + MJ) ÷ (élèves × séances effectuées), sur toute l’année.',
  watchTitle:'Élèves à surveiller',
- watchNote:function(th){return 'Plafond de points atteint dans un cycle, ou au moins '+th+' absences non justifiées sur l’année.';},
+ watchNote:function(th){return 'Note comportementale atteinte dans un cycle, ou au moins '+th+' absences non justifiées sur l’année.';},
  watchNone:'Aucun élève à signaler pour le moment.',
- capBadge:function(c){return 'plafond C'+c;},njBadge:function(n){return n+' non just.';},
+ capBadge:function(c){return 'note comp. C'+c;},njBadge:function(n){return n+' non just.';},
  asName:'ASS – Association sportive scolaire',asShort:'ASS',asNoSess:'pas de séance à noter',
  svcLabel:'Service hebdomadaire :',svcBreak:function(c,a){return 'Classes : '+c+' · ASS : '+a;},
  svcDiff:function(x,y){return 'Le total ('+x+') ne correspond pas au service obligatoire ('+y+').';},
@@ -758,9 +762,9 @@ var TX={
  fixReimp:'Réimporter la liste',fixShow:'Afficher ces élèves',fixAll:'Afficher tous les élèves',noName:'Nom manquant',
  impDone:function(n,k,c){return (n>1?n+' élèves importés':'1 élève importé')+' dans '+(k>1?k+' classes':'1 classe')+(c?' ('+(c>1?c+' créées':'1 créée')+')':'');},
  add:'Ajouter',addStu:'Ajouter un élève',addStuSub:function(c){return c?'Dans la classe '+c:'Vous choisirez la classe dans la fiche';},
- addCls:'Ajouter une classe',addClsSub:'Nom, plafond de points, séances par semaine',addImp:'Importer une liste',addImpSub:'Excel (.xlsx, .xls), CSV ou liste Massar',
- clsTitle:'Nouvelle classe',clsName:'Nom de la classe',clsNamePh:'ex. TCS3',clsCap:'Plafond de points par cycle',clsCapPh:'automatique',
- clsCapAuto:function(v){return 'Laissez le plafond vide pour la règle automatique : 4 points pour les classes 1BAC…, 3 pour les autres (ici : '+v+').';},
+ addCls:'Ajouter une classe',addClsSub:'Nom, note comportementale, séances par semaine',addImp:'Importer une liste',addImpSub:'Excel (.xlsx, .xls), CSV ou liste Massar',
+ clsTitle:'Nouvelle classe',clsName:'Nom de la classe',clsNamePh:'ex. TCS3',clsCap:'Note comportementale (points par cycle)',clsCapPh:'automatique',
+ clsCapAuto:function(v){return 'Laissez la note comportementale vide pour la règle automatique : 4 points pour les classes 1BAC…, 3 pour les autres (ici : '+v+').';},
  clsPw:'Séances par semaine',clsCreate:'Créer la classe',clsNeed:'Indiquez le nom de la classe.',clsExists:'Cette classe existe déjà.',
  clsAdded:function(n){return 'Classe '+n+' créée';},pwShort:'S/sem.',pwSet:function(c,n){return c+' : '+(n>1?n+' séances':'1 séance')+' par semaine';},
  bkRemind:function(d){return d==null?'💾 Aucune sauvegarde téléchargée pour l’instant.':'💾 Dernière sauvegarde il y a '+d+(d>1?' jours.':' jour.');},
@@ -1175,7 +1179,7 @@ function renderGrid(){
   S=cols.n;var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
   var h='<table class="grid"><thead><tr><th class="nm">Élève</th>';
   cols.forEach(function(c){if(c.hol){h+='<th class="holh" title="'+esc(c.hol.label)+'">'+esc(holShort(c.hol)===TX.vacShort?TX.vacHead:TX.holHead)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';});
-  h+='<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (plafonnés)">Pts</th><th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';
+  h+='<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th><th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';
   list.forEach(function(st,i){
     h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+'"><span class="n">'+(i+1)+'</span>'+(dspInCycle(st,p)?'<span class="dspb" title="Dispensé – '+esc(dspShort(dspOf(st)))+'">🩺</span>':'')+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>';
     cols.forEach(function(c){if(c.hol){if(!i)h+='<td class="holc" rowspan="'+list.length+'" aria-label="'+esc(c.hol.label+' – '+dmy(c.date))+'"><span class="holv">'+esc(holShort(c.hol))+'</span></td>';return;}var s=c.s,r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r,dspAt(st,cid,p,s))+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';});
@@ -1339,22 +1343,22 @@ function renderReports(){
   });
   function H(k,l,t){return '<th data-sort="'+k+'" style="cursor:pointer"'+(t?' title="'+esc(t)+'"':'')+'>'+l+(repSort.k===k?(repSort.dir===1?' ▾':' ▴'):'')+'</th>';}
   function C(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
-  var h='<thead><tr>'+H('name','Élève')+H('ded',year?'Points retirés (année)':'Points retirés','Plafonné par cycle');
+  var h='<thead><tr>'+H('name','Élève')+H('ded',year?'Points retirés (année)':'Points retirés','Limité par la note comportementale du cycle');
   if(year)DB.periods.forEach(function(n,i){h+=H('p'+i,TX.cyc+(i+1),cycleLabel(i)+' – points retirés');});
   h+=H('A','Abs.')+H('U','Non just.')+H('S',CODE_TXT.S,'Sans tenue')+H('M','M','Maladie non justifiée')+H('L','Retards')+H('K',CODE_TXT.K,'Maladie justifiée')+H('J','Just.')+'</tr></thead><tbody>';
   var flagged=0,capN=0;
   d.rows.forEach(function(r){var f=r.st.U>=th;if(f)flagged++;
     h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+((year?dspOf(r.s):dspInCycle(r.s,+d.scope))?' <span class="chip dchip" title="Dispensé – '+esc(dspShort(dspOf(r.s)))+'">🩺</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>';
     if(year){h+='<td class="ptsc'+(r.y.ded?'':' z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';r.y.per.forEach(function(st){h+='<td class="'+(st.ded?(st.capped?'capc':''):'z')+'">'+fmtPts(st.ded)+'</td>';});}
-    else{if(r.st.capped)capN++;h+='<td class="ptsc'+(r.st.capped?' capc':'')+(r.st.ded?'':' z')+'"><b>'+fmtPts(r.st.ded)+'</b> / '+fmtNum(r.st.cap)+(r.st.raw>r.st.cap?'<br><small>plafonné ('+fmtPts(r.st.raw)+')</small>':(r.st.capped?'<br><small>plafond atteint</small>':''))+'</td>';}
+    else{if(r.st.capped)capN++;h+='<td class="ptsc'+(r.st.capped?' capc':'')+(r.st.ded?'':' z')+'"><b>'+fmtPts(r.st.ded)+'</b> / '+fmtNum(r.st.cap)+(r.st.raw>r.st.cap?'<br><small>limité à la note comportementale ('+fmtPts(r.st.raw)+')</small>':(r.st.capped?'<br><small>note comportementale atteinte</small>':''))+'</td>';}
     h+=C(r.st.A)+C(r.st.U)+C(r.st.S)+C(r.st.M)+C(r.st.L)+C(r.st.K)+C(r.st.J)+'</tr>';});
   if(!d.rows.length)h+='<tr><td colspan="16" class="empty">Aucun élève dans cette classe.</td></tr>';
   $('repTable').innerHTML=h+'</tbody>';
   $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.';
-  if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' au plafond de points.</b>';
+  if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' à la note comportementale maximale.</b>';
   var dspN=d.rows.filter(function(r){return year?dspOf(r.s):dspInCycle(r.s,+d.scope);}).length;
   if(dspN)$('repLegend').innerHTML+='<br><span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';
-  $('repInfo').textContent+=' · plafond : '+fmtNum(capOf(d.cid))+' pts par cycle';
+  $('repInfo').textContent+=' · note comportementale : '+fmtNum(capOf(d.cid))+' pts par cycle';
   // alerts across all classes
   var al=[];DB.students.forEach(function(s){var y=yearStat(s.classId,s.id);if(y.U>=th)al.push({s:s,y:y});});
   al.sort(function(a,b){return b.y.U-a.y.U||cmp(a.s.name,b.s.name);});
@@ -1386,7 +1390,7 @@ function exportGrid(cid,p){
   if(!cls(cid)){toast('Choisissez une classe');return;}var list=studentsIn(cid);if(!list.length){toast('Aucun élève dans cette classe');return;}
   var head=['N°','Nom complet','Code élève'],dates=['','','Date'];
   var cols=colsOf(cid,p);cols.forEach(function(c){if(c.hol){head.push(holShort(c.hol)===TX.vacShort?TX.vacShort:TX.holHead);dates.push(dmy(c.date));return;}var s=c.s,r=rec(cid,p,s);head.push('S'+(s+1));var sd=sessDate(cid,p,s);dates.push(sd?dmy(sd):(r?'effectuée':''));});
-  head.push('Absences','Non justifiées','Sans tenue','Maladie non justifiée','Retards','Maladie justifiée','Justifiées','Points retirés','Plafond','Dispense');
+  head.push('Absences','Non justifiées','Sans tenue','Maladie non justifiée','Retards','Maladie justifiée','Justifiées','Points retirés','Note comportementale','Dispense');
   var rows=[['Classe',clsName(cid),'Cycle',cycleLabel(p),'Codes : P=présent A=absent ST=sans tenue M=maladie non justifiée R=retard MJ=maladie justifiée AJ=absence justifiée (vide = séance non effectuée) · Dispense = élève dispensé de sport'],[],head,dates];
   list.forEach(function(st,i){var row=[i+1,st.name,keepText(st.sid)];
     cols.forEach(function(c){if(c.hol){row.push(holMotif(c.hol));return;}var r=rec(cid,p,c.s);row.push(r?CODE_CSV[codeOf(r.marks[st.id])]:'');});
@@ -2085,7 +2089,7 @@ function backupReminderHtml(){
 function renderSettings(){
   classOptions($('expClass'),$('expClass').value||curCls(),'Toutes les classes');
   periodOptions($('expPeriod'),$('expPeriod').value||String(DB.ui.per),false);
-  $('clsManage').innerHTML=(DB.classes.length?'<div class="clsrow clshead"><span style="flex:1">Classe</span><span style="flex:0 0 72px">Plafond</span><span class="cnt"></span><span style="flex:0 0 44px"></span></div>':'')+DB.classes.map(function(c){var n=countIn(c.id);return '<div class="clsrow" data-cid="'+esc(c.id)+'"><input type="text" dir="auto" value="'+esc(c.name)+'" maxlength="40" aria-label="Nom de la classe"><input type="number" class="capin" min="0" max="60" step="0.25" inputmode="decimal" value="'+capOf(c.id)+'" title="Plafond de points par cycle" aria-label="Plafond de points par cycle"><span class="cnt">'+plural(n,'élève')+'</span><button class="btn danger" data-del="1" aria-label="Supprimer la classe">✕</button></div>';}).join('')||'<p class="muted">Aucune classe.</p>';
+  $('clsManage').innerHTML=(DB.classes.length?'<div class="clsrow clshead"><span style="flex:1">Classe</span><span style="flex:0 0 72px;font-size:11px;line-height:1.15">Note comportementale</span><span class="cnt"></span><span style="flex:0 0 44px"></span></div>':'')+DB.classes.map(function(c){var n=countIn(c.id);return '<div class="clsrow" data-cid="'+esc(c.id)+'"><input type="text" dir="auto" value="'+esc(c.name)+'" maxlength="40" aria-label="Nom de la classe"><input type="number" class="capin" min="0" max="60" step="0.25" inputmode="decimal" value="'+capOf(c.id)+'" title="Note comportementale (points par cycle)" aria-label="Note comportementale (points par cycle)"><span class="cnt">'+plural(n,'élève')+'</span><button class="btn danger" data-del="1" aria-label="Supprimer la classe">✕</button></div>';}).join('')||'<p class="muted">Aucune classe.</p>';
   renderCalSettings();
   document.querySelectorAll('#clsManage .clsrow').forEach(function(r){var cnt=r.querySelector('.cnt');if(!cnt)return;if(r.classList.contains('clshead')){cnt.insertAdjacentHTML('beforebegin','<span style="flex:0 0 52px">'+esc(TX.pwShort)+'</span>');return;}var c=cls(r.dataset.cid);cnt.insertAdjacentHTML('beforebegin','<input type="number" class="pwin" min="1" max="10" inputmode="numeric" value="'+clsPw(c)+'" title="'+esc(TX.clsPw)+'" aria-label="'+esc(TX.clsPw)+'">');});
   storeInfo();
@@ -2104,7 +2108,7 @@ $('clsManage').addEventListener('change',function(e){
   var row=e.target.closest('.clsrow');if(!row||e.target.tagName!=='INPUT')return;var c=cls(row.dataset.cid);
   if(e.target.classList.contains('capin')){var raw=e.target.value.trim();
     if(raw===''){delete c.cap;}else{var nv=parseFloat(raw.replace(',','.'));if(!(nv>=0&&nv<=60)){e.target.value=capOf(c.id);return;}if(nv===defaultCap(c.name))delete c.cap;else c.cap=nv;}
-    e.target.value=capOf(c.id);persistNow();toast('Plafond de '+c.name+' : '+fmtNum(capOf(c.id))+' pts');return;}
+    e.target.value=capOf(c.id);persistNow();toast('Note comportementale de '+c.name+' : '+fmtNum(capOf(c.id))+' pts');return;}
   var v=e.target.value.trim().replace(/\s+/g,' ');
   if(!v){e.target.value=c.name;return;}
   if(DB.classes.some(function(x){return x!==c&&x.name.toLowerCase()===v.toLowerCase();})){toast('Une classe porte déjà ce nom');e.target.value=c.name;return;}
