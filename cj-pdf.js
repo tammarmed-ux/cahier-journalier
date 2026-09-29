@@ -227,7 +227,7 @@ function cardsFor(t,cid,p,extra){var DB=A.db(),th=DB.settings.threshold,cap=cid?
   if(cap!=null){it.push({v:'-'+num(r1(avgDed)),l:'Points retirés (moy.)',s:p==='year'?'par élève sur l’année':'sur '+num(cap)+' pts par élève',c:[184,110,0]});
     it.push({v:p==='year'?num(r1(avgDed)):num(r1(cap-avgDed))+' / '+num(cap),l:p==='year'?'Total moyen retiré':'Note comportementale moy.',s:p==='year'?'somme des cycles':'note restante moyenne',c:PRI});}
   return it;}
-function topRows(list,cid,p,max){return list.map(function(s){var y=A.yearStat(cid,s.id),st=p==='year'?y:y.per[p];return {l:s.name,c:kcounts(st),t:st.U+st.J+st.M+st.K+st.L+st.S,dsp:p==='year'?!!A.dspOf(s):A.dspInCycle(s,p)};}).filter(function(r){return r.t>0;}).sort(function(a,b){return b.t-a.t||b.c.A-a.c.A||A.cmp(a.l,b.l);}).slice(0,max||12);}
+function topRows(list,cid,p,max){return list.map(function(s){var y=A.yearStat(cid,s.id),st=p==='year'?y:y.per[p];return {l:s.name,s:s,c:kcounts(st),t:st.U+st.J+st.M+st.K+st.L+st.S,dsp:p==='year'?!!A.dspOf(s):A.dspInCycle(s,p)};}).filter(function(r){return r.t>0;}).sort(function(a,b){return b.t-a.t||b.c.A-a.c.A||A.cmpStu(a.s,b.s);}).slice(0,max||12);}
 function grpCellOf(cid,s){var g=A.grpOf(cid),i=A.grpIdx(g,s.id);return i<0?(g?C('–'):null):C(String(i+1),{fillColor:GC[i],textColor:255,fontStyle:'bold'});}
 
 /* ---------- blocs communs ---------- */
@@ -281,7 +281,7 @@ function groupsBlock(d,y,cid,withTitle){
   var colW=(W-2*M-6)/2;
   for(var k=0;k<sets.length;k+=2){var need=0;[sets[k],sets[k+1]].forEach(function(s){if(s)need=Math.max(need,12+s.a.length*5.2);});y=ensure(d,y,Math.min(need,120));var y0=y,ymax=y;
     [sets[k],sets[k+1]].forEach(function(s,j){if(!s)return;var col=s.i>=0?GC[s.i]:[102,112,133],st=A.grpStats(s.a,mean);
-      var sorted=s.a.slice().sort(function(a,b){var la=A.lvlOf(a),lb=A.lvlOf(b);return (lb==null?mean:lb)-(la==null?mean:la)||A.cmp(a.name,b.name);});
+      var sorted=s.a.slice().sort(function(a,b){return A.cmpStu(a,b);});
       var body=sorted.map(function(x,n){var l=A.lvlOf(x),dp=A.dspActive(x);return [n+1,C(x.name,{halign:'left',fontStyle:'bold',textColor:dp?DSP_T:INK,fillColor:dp?DSP_F:undefined}),sexTxt(x),l==null?C('moy.',{textColor:MUTED}):num(Math.round(l)),dp?C('Dispensé',{textColor:DSP_T,fontSize:6}):''];});
       var title=(s.i>=0?A.grpName(g,s.i):'Sans groupe')+' – '+st.n+' él. · '+st.f+' F / '+st.m+' G · ind. phys. '+num(Math.round(st.avg));
       d.autoTable({startY:y0,head:[[{content:title,colSpan:5,styles:{halign:'left',fillColor:col,textColor:255,fontSize:7.6}}],['N°','Nom et prénom','Sexe','Ind. phys.','Obs.']],body:body,theme:'grid',
@@ -340,7 +340,7 @@ function repAll(){var DB=A.db(),th=DB.settings.threshold,cls=DB.classes.filter(f
   y=section(d,y,'Tableau récapitulatif par classe','',40);
   y=table(d,y,['Classe','Effectif','F / G','Séances','Présence','A','AJ','M','MJ','R','ST','Disp.','Alertes','Pts moy.'],rows.map(function(r){var t=r.t;return [C(r.c.name,{halign:'left',fontStyle:'bold'}),t.n,(t.f||t.g)?t.f+' / '+t.g:'—',t.held,C(pct(t.rate,1),{fontStyle:'bold',textColor:t.rate==null?MUTED:t.rate>=0.9?ST.P.ch:t.rate>=0.8?[184,110,0]:ST.A.c}),zero(t.U,ST.A.c),zero(t.J,ST.J.c),zero(t.M,ST.M.c),zero(t.K,ST.K.c),zero(t.L,ST.L.c),zero(t.S,ST.S.c),t.dsp||'',t.alert?C(String(t.alert),{textColor:ST.A.c,fontStyle:'bold'}):'',A.fmtPts(t.n?r1(t.ded/t.n):0)];}),{fs:7.2,foot:['Total',T0.n,(T0.f||T0.g)?T0.f+' / '+T0.g:'—',T0.held,pct(T0.rate,1),T0.U,T0.J,T0.M,T0.K,T0.L,T0.S,T0.dsp,T0.alert,A.fmtPts(T0.n?r1(T0.ded/T0.n):0)],cols:{0:{cellWidth:26}}});
   var al=[];DB.students.forEach(function(s){if(!A.cls(s.classId))return;var yy=A.yearStat(s.classId,s.id);if(yy.U>=th)al.push({s:s,y:yy});});
-  al.sort(function(a,b){return b.y.U-a.y.U||A.cmp(a.s.name,b.s.name);});
+  al.sort(function(a,b){return b.y.U-a.y.U||A.cmpStu(a.s,b.s);});
   y=section(d,y,'Élèves en alerte',al.length?pl(al.length,'élève')+' · '+th+' abs. non justifiées ou plus':'aucun élève',20);
   if(!al.length)y=note(d,y,'Aucun élève n’atteint '+th+' absences non justifiées. Bravo !',ST.P.ch);
   else y=table(d,y,['N°','Classe','Code Massar','Nom et prénom','A','AJ','M','MJ','R','ST','Pts retirés'],al.map(function(a,i){var q=a.y;return [i+1,C(A.clsName(a.s.classId),{fontStyle:'bold'}),a.s.sid||'',C(a.s.name,{halign:'left',fontStyle:'bold'}),C(String(q.U),{textColor:ST.A.c,fontStyle:'bold'}),zero(q.J,ST.J.c),zero(q.M,ST.M.c),zero(q.K,ST.K.c),zero(q.L,ST.L.c),zero(q.S,ST.S.c),A.fmtPts(q.ded)];}),{fs:7.1,cols:{0:{cellWidth:7},3:{cellWidth:52}}});
@@ -375,16 +375,16 @@ function repRecords(o){var DB=A.db(),cid=o.cid||'',rows=[],t={A:0,J:0,M:0,K:0,L:
   y=section(d,y,cid?'Répartition par cycle':'Répartition par classe','',60);
   var cats=cid?Object.keys(byCyc).map(function(p){return {l:'C'+(+p+1),sub:String(DB.periods[p]||'').slice(0,12),c:byCyc[p]};}):DB.classes.filter(function(c){return byCls[c.id];}).map(function(c){return {l:c.name,c:byCls[c.id]};});
   stackBars(d,M,y+1,W-2*M,58,cats,'Nombre d’incidents');y+=64;
-  rows.sort(function(a,b){return DB.classes.indexOf(a.c)-DB.classes.indexOf(b.c)||(a.sd||'9').localeCompare(b.sd||'9')||a.p-b.p||a.s-b.s||A.cmp(a.st.name,b.st.name);});
+  rows.sort(function(a,b){return DB.classes.indexOf(a.c)-DB.classes.indexOf(b.c)||(a.sd||'9').localeCompare(b.sd||'9')||a.p-b.p||a.s-b.s||A.cmpStu(a.st,b.st);});
   var per={};rows.forEach(function(r){var k=r.st.id;if(!per[k])per[k]={st:r.st,c:r.c,A:0,J:0,M:0,K:0,L:0,S:0,t:0};per[k][r.code]++;per[k].t++;});
-  var pr=Object.keys(per).map(function(k){return per[k];}).sort(function(a,b){return b.t-a.t||b.A-a.A||A.cmp(a.st.name,b.st.name);});
+  var pr=Object.keys(per).map(function(k){return per[k];}).sort(function(a,b){return b.t-a.t||b.A-a.A||A.cmpStu(a.st,b.st);});
   y=section(d,y,'Récapitulatif par élève',pl(pr.length,'élève')+' concerné'+(pr.length>1?'s':''),30);
   var hh=['N°'];if(!cid)hh.push('Classe');hh.push('Nom et prénom','Code Massar','A','AJ','M','MJ','R','ST','Total');
   y=table(d,y,hh,pr.map(function(x,i){var r=[i+1];if(!cid)r.push(C(x.c.name,{fontStyle:'bold'}));r.push(C(x.st.name,{halign:'left',fontStyle:'bold'}),x.st.sid||'',zero(x.A,ST.A.c),zero(x.J,ST.J.c),zero(x.M,ST.M.c),zero(x.K,ST.K.c),zero(x.L,ST.L.c),zero(x.S,ST.S.c),C(String(x.t),{fontStyle:'bold'}));return r;}),{fs:7,cols:{0:{cellWidth:7},[cid?1:2]:{cellWidth:50}}});
   var scope=DB.classes.filter(function(c){return (!cid||c.id===cid)&&A.countIn(c.id);}),ids=scope.map(function(c){return c.id;}),yr=periodRange('year'),lr=lastRecDate(ids),rg=yr?[yr[0],lr&&lr<yr[1]?lr:yr[1]]:null,hr=[];
   if(rg)scope.forEach(function(c){holList([c.id],allPs(),rg).forEach(function(e){if(e.cols.length)hr.push({hol:e.h,c:c,sd:e.cols[0].date,p:e.cols[0].p,cols:e.cols});});});
   var hn=0;hr.forEach(function(x){hn+=x.cols.length;});
-  if(hr.length){rows=rows.concat(hr);rows.sort(function(a,b){return DB.classes.indexOf(a.c)-DB.classes.indexOf(b.c)||(a.sd||'9').localeCompare(b.sd||'9')||(a.hol?-1:0)-(b.hol?-1:0)||a.p-b.p||(a.s||0)-(b.s||0)||(a.st&&b.st?A.cmp(a.st.name,b.st.name):0);});}
+  if(hr.length){rows=rows.concat(hr);rows.sort(function(a,b){return DB.classes.indexOf(a.c)-DB.classes.indexOf(b.c)||(a.sd||'9').localeCompare(b.sd||'9')||(a.hol?-1:0)-(b.hol?-1:0)||a.p-b.p||(a.s||0)-(b.s||0)||(a.st&&b.st?A.cmpStu(a.st,b.st):0);});}
   y=section(d,y,'Liste détaillée',pl(tot,'ligne')+(hr.length?' + '+pl(hr.length,'jour férié / vacances','jours fériés / vacances'):''),30);
   var head=['Date','Cycle','Séance'];if(!cid)head.push('Classe');head.push('Nom et prénom','Code Massar','Statut','Motif');
   var dsp={},hrow={};y=table(d,y,head,rows.map(function(r,i){if(r.hol){hrow[i]=1;var hx=[C(A.dmy(r.sd),{fontStyle:'bold',textColor:HOL_T}),C('C'+(r.p+1),{textColor:HOL_T}),C('—',{textColor:HOL_T})];if(!cid)hx.push(C(r.c.name,{fontStyle:'bold',textColor:HOL_T}));

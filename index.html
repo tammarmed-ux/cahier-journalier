@@ -513,7 +513,7 @@ table.gbal tfoot td{font-weight:700}
       <span id="stuCount"></span>
       <label style="display:inline-flex;align-items:center;gap:6px">Trier
         <select id="stuSort" style="min-height:36px;padding:5px 8px;font-size:14px;width:auto">
-          <option value="name">Nom A–Z</option><option value="name-desc">Nom Z–A</option><option value="class">Classe, puis nom</option>
+          <option value="sid">Code Massar A→Z</option><option value="sid-desc">Code Massar Z→A</option><option value="name">Nom A–Z</option><option value="name-desc">Nom Z–A</option><option value="class">Classe, puis code Massar</option>
         </select></label>
     </div>
     <div class="actions" style="margin-top:10px">
@@ -1004,7 +1004,10 @@ if(!localStorage.getItem(KEY))persistNow();
 function cls(id){for(var i=0;i<DB.classes.length;i++)if(DB.classes[i].id===id)return DB.classes[i];return null;}
 function clsName(id){var c=cls(id);return c?c.name:'?';}
 function byId(id){for(var i=0;i<DB.students.length;i++)if(DB.students[i].id===id)return DB.students[i];return null;}
-function studentsIn(cid){return DB.students.filter(function(s){return !cid||s.classId===cid;}).sort(function(a,b){return cmp(a.name,b.name);});}
+/* ordre des élèves : code Massar (chaîne, sans casse ni espaces), sans code → à la fin, par nom ; dir=-1 : Z→A (sans code toujours à la fin) */
+function sidKey(s){return String(s&&s.sid||'').replace(/\s+/g,'').toUpperCase();}
+function cmpStu(a,b,dir){var x=sidKey(a),y=sidKey(b);if(x&&!y)return -1;if(!x&&y)return 1;if(x!==y)return (x<y?-1:1)*(dir||1);return cmp(a.name,b.name)||(a.id<b.id?-1:a.id>b.id?1:0);}
+function studentsIn(cid){return DB.students.filter(function(s){return !cid||s.classId===cid;}).sort(cmpStu);}
 function countIn(cid){var n=0;DB.students.forEach(function(s){if(s.classId===cid)n++;});return n;}
 function skey(cid,p,s){return cid+'|'+p+'|'+s;}
 function rec(cid,p,s){return DB.sessions[skey(cid,p,s)]||null;}
@@ -1109,7 +1112,7 @@ function renderStudents(){
     if(f&&s.classId!==f)return false;if(!q)return true;
     return (s.name+' '+s.sid+' '+s.parent+' '+s.phone+' '+clsName(s.classId)).toLowerCase().indexOf(q)>=0;
   });
-  list.sort(function(a,b){if(sort==='name-desc')return cmp(b.name,a.name);if(sort==='class')return (cn[a.classId]-cn[b.classId])||cmp(a.name,b.name);return cmp(a.name,b.name);});
+  list.sort(function(a,b){if(sort==='name-desc')return cmp(b.name,a.name);if(sort==='name')return cmp(a.name,b.name)||cmpStu(a,b);if(sort==='class')return (cn[a.classId]-cn[b.classId])||cmpStu(a,b);if(sort==='sid-desc')return cmpStu(a,b,-1);return cmpStu(a,b);});
   $('stuCount').textContent=list.length+' sur '+plural(DB.students.length,'élève');
   if(!DB.students.length){$('stuList').innerHTML='<li class="empty"><b>Aucun élève pour le moment</b>Touchez <b style="display:inline">+</b> pour en ajouter un, ou utilisez <b style="display:inline">Import en masse</b> pour importer vos listes (Excel, CSV, Massar).</li>';return;}
   if(!list.length){$('stuList').innerHTML='<li class="empty">Aucun élève ne correspond.</li>';return;}
@@ -1543,7 +1546,7 @@ function renderGroups(){
     if(m.none.length){var sn=grpStats(m.none,mean);h+='<tr><td><span class="gchip" style="--gc:#667085;--gs:#f2f4f7"><i>?</i>Sans groupe</span></td><td><b>'+sn.n+'</b></td><td>'+sn.f+'</td><td>'+sn.m+'</td>'+(all.u?'<td>'+sn.u+'</td>':'')+'<td>'+fmtNum(Math.round(sn.avg*10)/10)+'</td><td>'+(sn.d||'')+'</td></tr>';}
     h+='</tbody><tfoot><tr><td>Classe</td><td>'+all.n+'</td><td>'+all.f+'</td><td>'+all.m+'</td>'+(all.u?'<td>'+all.u+'</td>':'')+'<td>'+fmtNum(Math.round(all.avg*10)/10)+'</td><td>'+(all.d||'')+'</td></tr></tfoot></table>';
     function card(a,i){var col=i>=0?GRP_COL[i]:'#667085',soft=i>=0?GRP_SOFT[i]:'#f2f4f7',st=grpStats(a,mean);
-      var sorted=a.slice().sort(function(x,y){var lx=lvlOf(x),ly=lvlOf(y);return (ly==null?mean:ly)-(lx==null?mean:lx)||cmp(x.name,y.name);});
+      var sorted=a.slice().sort(function(x,y){return cmpStu(x,y);});
       var r='<div class="gcard" style="--gc:'+col+';--gs:'+soft+'"><div class="gh"><span class="gnum">'+(i>=0?i+1:'?')+'</span>'+(i>=0?'<input type="text" dir="auto" maxlength="30" data-gname="'+i+'" value="'+esc(grpName(g,i))+'" aria-label="Nom du groupe">':'<b style="flex:1">Sans groupe (nouveaux élèves)</b>')+'</div>';
       r+='<div class="gst">'+plural(st.n,'élève')+' · '+st.f+' fille'+(st.f>1?'s':'')+' / '+st.m+' garçon'+(st.m>1?'s':'')+(st.u?' / '+st.u+' ?':'')+' · niveau physique moyen '+fmtNum(Math.round(st.avg*10)/10)+(st.d?' · '+st.d+' dispensé'+(st.d>1?'s':''):'')+'</div><ul>';
       sorted.forEach(function(s){var x=sexOf(s),l=lvlOf(s),mv='<select data-mv="'+esc(s.id)+'" aria-label="Déplacer vers"'+(lock?' disabled':'')+'>';g.names.forEach(function(nm,j){mv+='<option value="'+j+'"'+(j===i?' selected':'')+'>→ '+esc(nm)+'</option>';});if(i<0)mv+='<option value="-1" selected>—</option>';mv+='</select>';
@@ -1614,9 +1617,9 @@ function renderReports(){
   $('repInfo').textContent=plural(held,'séance')+' effectuée'+(held>1?'s':'')+' · '+plural(d.rows.length,'élève')+' · alerte à partir de '+th+' absences non justifiées';
   var key=repSort.k;
   d.rows.sort(function(a,b){
-    if(key==='name')return cmp(a.s.name,b.s.name)*repSort.dir;
+    if(key==='name')return cmpStu(a.s,b.s,repSort.dir);
     var va=/^p\d/.test(key)?a.y.per[+key.slice(1)].ded:a.st[key],vb=/^p\d/.test(key)?b.y.per[+key.slice(1)].ded:b.st[key];
-    return (vb-va)*repSort.dir||cmp(a.s.name,b.s.name);
+    return (vb-va)*repSort.dir||cmpStu(a.s,b.s);
   });
   function H(k,l,t){return '<th data-sort="'+k+'" style="cursor:pointer"'+(t?' title="'+esc(t)+'"':'')+'>'+l+(repSort.k===k?(repSort.dir===1?' ▾':' ▴'):'')+'</th>';}
   function C(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
@@ -1638,7 +1641,7 @@ function renderReports(){
   $('repInfo').textContent+=' · note comportementale : '+fmtNum(capOf(d.cid))+' pts par cycle';
   // alerts across all classes
   var al=[];DB.students.forEach(function(s){var y=yearStat(s.classId,s.id);if(y.U>=th)al.push({s:s,y:y});});
-  al.sort(function(a,b){return b.y.U-a.y.U||cmp(a.s.name,b.s.name);});
+  al.sort(function(a,b){return b.y.U-a.y.U||cmpStu(a.s,b.s);});
   $('alertList').innerHTML=al.length?al.map(function(a){return '<li data-id="'+esc(a.s.id)+'"><span class="nm2" dir="auto">'+esc(a.s.name)+'</span><span class="chip">'+esc(clsName(a.s.classId))+'</span><span class="chip bad">'+a.y.U+' non just.</span></li>';}).join(''):'<li class="empty" style="cursor:default">Aucun élève n’atteint '+th+' absences non justifiées. 👍</li>';
 }
 $('repClass').addEventListener('change',renderReports);
@@ -1687,7 +1690,7 @@ function exportStudents(cid){
   var list=studentsIn(cid);if(!list.length){toast('Aucun élève à exporter');return;}
   var ci={};DB.classes.forEach(function(c,i){ci[c.id]=i;});
   var rows=[['Nom complet','Classe','Code élève','Date de naissance','Parent / tuteur','Téléphone du parent','Remarques','Absences (année)','Non justifiées','Sans tenue','Maladie non justifiée','Retards','Maladie justifiée','Justifiées','Dispense']];
-  list.sort(function(a,b){return (ci[a.classId]-ci[b.classId])||cmp(a.name,b.name);}).forEach(function(s){var y=yearStat(s.classId,s.id);rows.push([s.name,clsName(s.classId),keepText(s.sid),dmy(s.dob),s.parent,keepText(s.phone),s.notes,y.A,y.U,y.S,y.M,y.L,y.K,y.J,dspShort(dspOf(s))]);});
+  list.sort(function(a,b){return (ci[a.classId]-ci[b.classId])||cmpStu(a,b);}).forEach(function(s){var y=yearStat(s.classId,s.id);rows.push([s.name,clsName(s.classId),keepText(s.sid),dmy(s.dob),s.parent,keepText(s.phone),s.notes,y.A,y.U,y.S,y.M,y.L,y.K,y.J,dspShort(dspOf(s))]);});
   download('eleves_'+slug(cid?clsName(cid):'toutes-classes')+'_'+todayStr()+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Liste des élèves téléchargée (CSV)');
 }
 function exportRecords(cid){
@@ -1812,7 +1815,7 @@ function homeStats(){
     K.forEach(function(k){tot[k]+=cst[k];});
     var ab=cst.A+cst.M+cst.K,den=list.length*ch;per.push({c:c,n:list.length,held:ch,abs:ab,rate:den?ab/den:null});
   });
-  watch.sort(function(a,b){return b.capped.length-a.capped.length||b.y.U-a.y.U||cmp(a.s.name,b.s.name);});
+  watch.sort(function(a,b){return b.capped.length-a.capped.length||b.y.U-a.y.U||cmpStu(a.s,b.s);});
   return {tot:tot,held:held,per:per,watch:watch,students:DB.students.filter(function(s){return cls(s.classId);}).length,classes:DB.classes.length};
 }
 function pct(x){return x==null?'—':fmtNum(Math.round(x*1000)/10)+'\u00a0%';}
@@ -2451,7 +2454,7 @@ window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();r
 
 /* ================= API for cloud sync (see sync script below) ================= */
 window.CJR={db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
-  dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
+  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJApp={
