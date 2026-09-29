@@ -467,6 +467,7 @@ table.gbal th,table.gbal td{padding:6px 4px;border-bottom:1px solid var(--line);
 table.gbal th{font-size:12px;color:var(--muted)}
 table.gbal th:first-child,table.gbal td:first-child{text-align:start}
 table.gbal tfoot td{font-weight:700}
+.tibox{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-top:8px;background:#f8f9fd}.ticols{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px}.ticols .pt{display:flex;flex-direction:column;gap:2px;font-size:12px}.ticols select{min-height:34px;font-size:13px;padding:3px 6px;width:100%}
 .gedit{margin-top:8px}
 .gedit li{display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px solid var(--line)}
 .gedit .nm2{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
@@ -979,6 +980,8 @@ function normalize(d){
     var o={id:String(s.id),classId:String(s.classId),name:String(s.name),dob:String(s.dob||''),sid:String(s.sid||''),parent:String(s.parent||''),phone:String(s.phone||''),notes:String(s.notes||''),created:s.created||Date.now()};
     var dp=s.dispense;if(dp&&typeof dp==='object'&&(dp.type==='S1'||dp.type==='annee'))o.dispense={type:dp.type,since:/^\d{4}-\d{2}-\d{2}$/.test(dp.since||'')?dp.since:''};
     var sx=String(s.sex||'').toUpperCase();if(sx==='F'||sx==='G')o.sex=sx;var ph=normPhys(s.phys);if(ph)o.phys=ph;
+    /* champs inconnus (ex. données d’une autre version) : conservés tels quels, jamais supprimés silencieusement */
+    Object.keys(s).forEach(function(k){if(!(k in o)&&k!=='sex'&&k!=='phys'&&k!=='dispense'&&s[k]!=null&&typeof s[k]!=='function'){try{o[k]=JSON.parse(JSON.stringify(s[k]));}catch(e){}}});
     return o;
   });
   Object.keys(d.sessions).forEach(function(k){
@@ -996,7 +999,7 @@ function normalize(d){
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_VER='cahier-v19';                       /* = nom du cache de sw.js : change à chaque mise à jour de l’application */
+var APP_VER='cahier-v20';                       /* = nom du cache de sw.js : change à chaque mise à jour de l’application */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1541,9 +1544,62 @@ function renderTests(){
   h+='<div class="row"><select id="tCls" class="grow" aria-label="Classe"></select><select id="tKey" class="grow" aria-label="Test">'+TESTS.map(function(x){return '<option value="'+x.k+'"'+(x.k===testK?' selected':'')+'>'+esc(x.l)+' ('+esc(x.u)+')</option>';}).join('')+'</select></div>';
   h+='<p class="small" id="tStats" style="margin:8px 0 2px">'+testStatsTxt(list,testK)+'</p><p class="small muted" style="margin:0">'+(t.d===-1?'Plus la valeur est basse, meilleur est le résultat.':t.d===1?'Plus la valeur est haute, meilleur est le résultat.':'Sert au calcul de l’IMC (taille et poids).')+' Valeurs acceptées : '+fmtNum(t.min)+' à '+fmtNum(t.max)+' '+esc(t.u)+'.</p>';
   h+='<ul class="list gedit">'+(list.length?list.map(function(s,i){var v=phys(s,testK);return '<li data-sid="'+esc(s.id)+'"><span class="sx">'+(sexOf(s)||'?')+'</span><span class="nm2" dir="auto">'+(i+1)+'. '+esc(s.name)+'</span><input type="number" data-tv="1" step="'+t.st+'" min="'+t.min+'" max="'+t.max+'" inputmode="decimal" enterkeyhint="next" value="'+(v==null?'':v)+'" placeholder="'+esc(t.u)+'" aria-label="'+esc(t.l+' – '+s.name)+'"></li>';}).join(''):'<li class="empty">Aucun élève dans cette classe.</li>')+'</ul>';
+  h+='<div class="tiwrap"><h3 style="margin:14px 0 4px">Importer des tests (CSV / Excel)</h3><p class="small muted" style="margin:0 0 6px">Fichier avec une colonne <b>Code Massar</b> (ou <b>Nom</b>) et une colonne par test (Taille, Poids, Navette, VMA, Vitesse 30 m, …). Les élèves sont reconnus dans la classe choisie ci-dessus ; rien n’est modifié avant votre confirmation.</p>'+
+    '<div class="row"><button type="button" class="btn sec grow" id="tiFileBtn">📄 Choisir un fichier…</button><button type="button" class="btn sec grow" id="tiNotes">🔎 Chercher dans les Remarques</button></div><input type="file" id="tiFile" accept=".xlsx,.xls,.csv,.txt" class="hidden"><div id="tiBox"></div></div>';
   h+='<div class="actions"><button type="button" class="btn sec" id="tPdf">📄 PDF des tests (classe)</button><button type="button" class="btn" data-close>Terminé</button></div>';
-  $('testBody').innerHTML=h;classOptions($('tCls'),testCid);
+  $('testBody').innerHTML=h;classOptions($('tCls'),testCid);tiRender();
 }
+/* ----- import de tests (CSV / Excel) et récupération depuis les Remarques ----- */
+var TI={src:'',rows:null,hi:-1,map:{},keep:true,plan:null,file:''};
+var TI_RX=[['sid',/massar|\bcode\b|\bcne\b|matricule|\bid\b/],['nav',/navette|palier|leger|\bluc\b/],['vma',/\bvma\b|vitesse maximale|aerobie/],['v30',/30 ?m|vitesse/],['dv',/vertical|\bdv\b|sargent/],['dh',/horizontal|\bdh\b|longueur/],['fc',/\bfc\b|frequence|cardiaque|repos|pouls/],['soup',/souplesse|\bsit\b|reach|flex/],['mb',/medecine|medicine|ball|lancer/],['eq',/equilibre|balance|flamant/],['h',/taille|height|hauteur/],['w',/poids|weight|masse/],['last',/^(nom|nom de famille|last ?name)$/],['first',/^(prenom|first ?name)$/],['name',/nom|eleve|student|name/]];
+function tiKind(h){var n=norm(h);if(!n)return 'ign';for(var i=0;i<TI_RX.length;i++)if(TI_RX[i][1].test(n))return TI_RX[i][0];return 'ign';}
+function tiNum(v){var x=String(v==null?'':v).trim().replace(/\s/g,'').replace(',','.');if(x===''||x==='-')return null;var f=parseFloat(x);return isFinite(f)?f:null;}
+function tiFindHeader(rows){for(var i=0;i<Math.min(rows.length,25);i++){var r=rows[i]||[],ks=r.map(tiKind),hasId=ks.some(function(k){return k==='sid'||k==='name'||k==='last';}),nt=ks.filter(function(k){return TESTK[k];}).length;if(hasId&&nt)return i;}return -1;}
+function tiNameKey(x){return norm(x).split(' ').filter(Boolean).sort().join(' ');}
+function tiBuild(){var pl={items:[],un:0,bad:0,same:0,n:0,cols:{}},list=studentsIn(testCid),bySid={},byName={};
+  list.forEach(function(st){if(st.sid)bySid[ckey(st.sid)]=st;var k=tiNameKey(st.name);if(k&&!byName[k])byName[k]=st;});
+  if(TI.src==='notes'){list.forEach(function(st){var t=String(st.notes||''),v={},m;
+      m=/(?:test\s+)?(?:navette|palier|luc[\s-]*l[ée]ger|l[ée]ger)[^0-9\n]{0,25}?(\d{1,2}(?:[.,]\d{1,2})?)/i.exec(t);if(m)v.nav=tiNum(m[1]);
+      m=/\bvma\b[^0-9\n]{0,15}?(\d{1,2}(?:[.,]\d{1,2})?)/i.exec(t);if(m)v.vma=tiNum(m[1]);
+      if(Object.keys(v).length)pl.items.push({s:st,v:v,src:t.slice(0,80)});});
+  }else if(TI.rows&&TI.hi>=0){var hd=TI.rows[TI.hi],ci={};hd.forEach(function(h,j){var k=TI.map[j];if(k&&k!=='ign')(ci[k]=ci[k]||[]).push(j);});
+    for(var i=TI.hi+1;i<TI.rows.length;i++){var r=TI.rows[i]||[];if(!r.some(function(x){return String(x||'').trim();}))continue;
+      var st=null,sid=ci.sid?String(r[ci.sid[0]]||''):'';if(sid&&bySid[ckey(sid)])st=bySid[ckey(sid)];
+      if(!st){var nm=ci.name?String(r[ci.name[0]]||''):((ci.last?String(r[ci.last[0]]||''):'')+' '+(ci.first?String(r[ci.first[0]]||''):''));nm=nm.trim();if(nm&&byName[tiNameKey(nm)])st=byName[tiNameKey(nm)];}
+      if(!st){pl.un++;continue;}
+      var v={},any=false;TESTS.forEach(function(t){if(!ci[t.k])return;var x=tiNum(r[ci[t.k][0]]);if(x==null)return;any=true;if(x<t.min||x>t.max){pl.bad++;return;}v[t.k]=x;});
+      if(any)pl.items.push({s:st,v:v});}}
+  var seen={};pl.items=pl.items.filter(function(it){if(seen[it.s.id]){seen[it.s.id].v=Object.assign(seen[it.s.id].v,it.v);return false;}seen[it.s.id]=it;return true;});
+  pl.items.forEach(function(it){Object.keys(it.v).forEach(function(k){var cur=phys(it.s,k);if(cur==null||!TI.keep){if(cur!==it.v[k]){pl.n++;pl.cols[k]=(pl.cols[k]||0)+1;}}else pl.same++;});});
+  return pl;}
+function tiRender(){var b=$('tiBox');if(!b)return;if(!TI.src){b.innerHTML='';return;}
+  TI.plan=tiBuild();var pl=TI.plan,h='<div class="tibox">';
+  if(TI.src==='file'){h+='<p class="small" style="margin:6px 0"><b>'+esc(TI.file)+'</b> · '+plural(Math.max(0,TI.rows.length-TI.hi-1),'ligne')+'</p><div class="ticols">';
+    (TI.rows[TI.hi]||[]).forEach(function(c,j){if(!String(c||'').trim())return;h+='<label class="pt"><span>'+esc(String(c).slice(0,28))+'</span><select data-ticol="'+j+'"><option value="ign">— ignorer —</option><option value="sid"'+(TI.map[j]==='sid'?' selected':'')+'>Code Massar</option><option value="name"'+(TI.map[j]==='name'?' selected':'')+'>Nom complet</option><option value="last"'+(TI.map[j]==='last'?' selected':'')+'>Nom</option><option value="first"'+(TI.map[j]==='first'?' selected':'')+'>Prénom</option>'+TESTS.map(function(t){return '<option value="'+t.k+'"'+(TI.map[j]===t.k?' selected':'')+'>'+esc(t.l)+'</option>';}).join('')+'</select></label>';});h+='</div>';}
+  else h+='<p class="small" style="margin:6px 0">Valeurs trouvées dans les <b>Remarques</b> des élèves de la classe (« navette », « palier », « VMA »). Les remarques ne sont pas modifiées.</p>';
+  h+='<label class="small" style="display:flex;gap:6px;align-items:center;margin:6px 0"><input type="checkbox" id="tiKeep"'+(TI.keep?' checked':'')+'> Ne pas remplacer les valeurs déjà saisies</label>';
+  h+='<p class="small" id="tiSum"><b>'+plural(pl.items.length,'élève')+'</b> reconnu'+(pl.items.length>1?'s':'')+' · <b>'+pl.n+'</b> valeur'+(pl.n>1?'s':'')+' à enregistrer'+(pl.same?' · '+pl.same+' déjà saisie'+(pl.same>1?'s':''):'')+(pl.un?' · <span style="color:var(--warn)">'+pl.un+' ligne'+(pl.un>1?'s':'')+' non reconnue'+(pl.un>1?'s':'')+' (autre classe ?)</span>':'')+(pl.bad?' · <span style="color:var(--bad)">'+pl.bad+' valeur'+(pl.bad>1?'s':'')+' hors limites ignorée'+(pl.bad>1?'s':'')+'</span>':'')+'</p>';
+  if(pl.items.length)h+='<ul class="small muted" style="margin:0 0 6px;padding-left:18px">'+pl.items.slice(0,4).map(function(it){return '<li>'+esc(it.s.name)+' : '+Object.keys(it.v).map(function(k){return esc(TESTK[k].l)+' '+fmtNum(it.v[k]);}).join(', ')+'</li>';}).join('')+(pl.items.length>4?'<li>…</li>':'')+'</ul>';
+  h+='<div class="row"><button type="button" class="btn grow" id="tiApply"'+(pl.n?'':' disabled')+'>Enregistrer '+pl.n+' valeur'+(pl.n>1?'s':'')+'</button><button type="button" class="btn sec" id="tiCancel">Annuler</button></div></div>';
+  b.innerHTML=h;}
+function tiLoadFile(f){readSheetFile(f).then(function(sheets){var best=null;
+    sheets.forEach(function(sh){var hi=tiFindHeader(sh.rows||[]);if(hi>=0&&(!best||sh.rows.length>best.rows.length))best={rows:sh.rows,hi:hi};});
+    if(!best){toast('Aucune colonne de test reconnue (il faut Code Massar ou Nom + au moins un test)');return;}
+    TI={src:'file',rows:best.rows,hi:best.hi,map:{},keep:TI.keep!==false,plan:null,file:f.name};best.rows[best.hi].forEach(function(h,j){TI.map[j]=tiKind(h);});
+    var used={};Object.keys(TI.map).forEach(function(j){var k=TI.map[j];if(TESTK[k]||k==='sid'||k==='name'){if(used[k])TI.map[j]='ign';used[k]=1;}});
+    tiRender();}).catch(function(){toast('Impossible de lire ce fichier (enregistrez-le en .xlsx ou CSV)');});}
+$('testBody').addEventListener('click',function(e){
+  if(e.target.closest('#tiFileBtn')){$('tiFile').value='';$('tiFile').click();return;}
+  if(e.target.closest('#tiNotes')){TI={src:'notes',rows:null,hi:-1,map:{},keep:TI.keep!==false,plan:null,file:''};tiRender();if(!TI.plan.items.length){$('tiBox').insertAdjacentHTML('afterbegin','<p class="small muted" style="margin:6px 0">Aucune valeur de navette ou de VMA trouvée dans les Remarques de cette classe.</p>');}return;}
+  if(e.target.closest('#tiCancel')){TI.src='';tiRender();return;}
+  if(e.target.closest('#tiApply')){var pl=tiBuild(),n=0;pl.items.forEach(function(it){Object.keys(it.v).forEach(function(k){var cur=phys(it.s,k);if(cur==null||!TI.keep){if(cur!==it.v[k]){setPhys(it.s,k,it.v[k]);n++;}}});});
+    if(n){persistNow();}TI.src='';renderTests();toast(n+' valeur'+(n>1?'s':'')+' enregistrée'+(n>1?'s':''));if($('grpModal').classList.contains('open'))renderGroups();}
+});
+$('testBody').addEventListener('change',function(e){var t=e.target;
+  if(t.id==='tiFile'){var f=t.files&&t.files[0];if(f)tiLoadFile(f);return;}
+  if(t.id==='tiKeep'){TI.keep=t.checked;tiRender();return;}
+  if(t.dataset&&t.dataset.ticol!=null){TI.map[t.dataset.ticol]=t.value;tiRender();}
+});
 $('testBody').addEventListener('change',function(e){var t=e.target;
   if(t.id==='tCls'){testCid=t.value;renderTests();return;}
   if(t.id==='tKey'){testK=t.value;renderTests();return;}
