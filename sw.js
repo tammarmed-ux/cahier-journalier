@@ -1,5 +1,5 @@
 /* Cahier journalier digital – service worker (cache-first, hors ligne) */
-const CACHE = 'cahier-v15';
+const CACHE = 'cahier-v16';
 const ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,13 @@ const ASSETS = [
   './icons/maskable-192.png',
   './icons/maskable-512.png',
   './icons/apple-touch-icon.png',
-  './icons/favicon-32.png'
+  './icons/favicon-32.png',
+  /* exports PDF : bibliothèques et polices locales (aucun CDN) */
+  './cj-pdf.js',
+  './vendor/jspdf.umd.min.js',
+  './vendor/jspdf.plugin.autotable.min.js',
+  './vendor/NotoSansArabic-Regular.ttf',
+  './vendor/NotoSansArabic-Bold.ttf'
 ];
 /* Firebase JS SDK (versioned, immutable files): cached on first successful fetch */
 const SDK_PREFIX = 'https://www.gstatic.com/firebasejs/';

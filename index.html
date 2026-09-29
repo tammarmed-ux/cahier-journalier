@@ -431,6 +431,50 @@ html.cj-locked #gate{display:block}
 #gate .g-load{display:flex;align-items:center;gap:12px;justify-content:center;padding:14px 0;color:#344054;font-weight:600}
 #gate .spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--pri-soft);border-top-color:var(--pri);animation:gspin .8s linear infinite}
 @keyframes gspin{to{transform:rotate(360deg)}}
+/* ---- v16: exports PDF + groupes de travail ---- */
+.gbadge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:5px;color:#fff;font-size:10.5px;font-weight:800;margin-inline-end:4px;vertical-align:1px;padding:0 3px;line-height:1}
+table.grid tr.ghead th.nm{background:var(--gs);color:var(--gc);font-weight:800;font-size:12.5px;box-shadow:inset 5px 0 0 var(--gc);cursor:default;white-space:normal;line-height:1.15;padding:5px 6px 5px 10px;border-top:2px solid var(--gc)}
+table.grid tr.ghead th.nm small{display:block;font-weight:650;font-size:10.5px;color:var(--ink);opacity:.75}
+table.grid tr.ghead td{background:var(--gs);border-top:2px solid var(--gc);height:36px;cursor:default}
+.grpbox{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fbfcff}
+.grpbox .gtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.grpbox .gtop b{font-size:14px}
+.gchips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.gchip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px 3px 3px;font-size:12.5px;font-weight:700;background:var(--gs);color:var(--gc);border:1px solid var(--gc)}
+.gchip .gn{max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gchip small{font-size:11px;font-weight:650;color:var(--ink);opacity:.7}
+.gchip i{font-style:normal;background:var(--gc);color:#fff;border-radius:999px;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
+.switch{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:650;color:var(--ink);cursor:pointer}
+.switch input{width:20px;height:20px;accent-color:var(--pri);margin:0}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:13.5px}
+.gcard{border:1px solid var(--gc);border-radius:14px;margin-top:12px;overflow:hidden;background:#fff}
+.gcard .gh{background:var(--gc);color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gcard .gh input{flex:1 1 120px;min-height:36px;padding:6px 10px;font-weight:700;border:0;border-radius:8px;font-size:15px;width:auto}
+.gcard .gh .gnum{background:#fff;color:var(--gc);border-radius:8px;min-width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:800}
+.gcard .gst{font-size:12.5px;font-weight:650;background:var(--gs);color:var(--ink);padding:6px 10px}
+.gcard ul{list-style:none;margin:0;padding:0}
+.gcard li{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid var(--line);font-size:14px}
+.gcard li .nm2{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.gcard li select{width:auto;min-height:34px;padding:4px 6px;font-size:13px;border-radius:8px}
+.gcard li.dsp .nm2{color:var(--dsp-d)}
+.sx{display:inline-block;min-width:22px;text-align:center;font-size:11px;font-weight:800;border-radius:6px;padding:2px 4px;background:#eef1f5;color:#475467}
+.lv{font-size:12px;color:var(--muted);min-width:38px;text-align:end}
+table.gbal{width:100%;table-layout:auto;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+table.gbal th,table.gbal td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:center}
+table.gbal th{font-size:12px;color:var(--muted)}
+table.gbal th:first-child,table.gbal td:first-child{text-align:start}
+table.gbal tfoot td{font-weight:700}
+.gedit{margin-top:8px}
+.gedit li{display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px solid var(--line)}
+.gedit .nm2{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.gedit .seg button{padding:5px 11px;min-height:34px}
+.gedit input[type=number]{width:78px;min-height:36px;padding:5px 8px;font-size:15px}
+.ptests{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+.pt{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted);font-weight:600;margin:0}
+.pt.imc b{font-size:14.5px;color:var(--ink);padding:9px 0}
+.pin{display:flex;align-items:center;gap:5px}
+.pin input[type=number]{min-height:40px;padding:7px 9px;font-size:16px}
+.pin em{font-style:normal;font-size:12px;color:var(--muted);min-width:38px}
+.csvline{margin-top:14px;padding-top:10px;border-top:1px dashed var(--line)}
 </style>
 </head>
 <body>
@@ -474,6 +518,7 @@ html.cj-locked #gate{display:block}
     </div>
     <div class="actions" style="margin-top:10px">
       <button class="btn sec" id="bulkBtn">⇪ Import en masse (Excel / CSV)</button>
+      <button class="btn sec" id="testsBtn">📏 Tests physiques (saisie rapide)</button>
     </div>
   </div>
   <div class="card fixbox hidden" id="stuFix"></div>
@@ -491,6 +536,7 @@ html.cj-locked #gate{display:block}
     <div class="pchips" id="attPeriods" role="tablist" aria-label="Cycle"></div>
     <div class="cyctitle" id="attCycle"></div>
     <div class="legend2"><span><span class="lg P">P</span>Présent</span><span><span class="lg A">A</span>Absent</span><span><span class="lg S">ST</span>Sans tenue</span><span><span class="lg M">M</span>Maladie non just.</span><span><span class="lg L">R</span>Retard</span><span><span class="lg K">MJ</span>Maladie just.</span><span><span class="lg J">AJ</span>Abs. justifiée</span><span><span class="lg D">🩺</span>Dispensé</span><span id="attInfo"></span></div>
+    <div class="grpbox hidden" id="attGrp"></div>
   </div>
   <div class="card gridcard" id="attCard"><div class="gridwrap" id="gridWrap"></div></div>
   <p class="small muted" style="margin:0 4px">Touchez une case pour alterner Présent → Absent → Sans tenue → Maladie → Retard → Maladie justifiée → Absence justifiée. Appui long (ou mode « Détail ») pour ajouter un motif. Touchez l’en-tête d’une séance (S1…) pour saisir sa date. Touchez un nom pour voir le bilan annuel de l’élève. Élève dispensé de sport : appui long sur une de ses cases (ou mode « Détail ») puis 🩺 Dispensé ; ses cases deviennent violettes et barrées, les autres marques restent possibles. Enregistrement automatique.</p>
@@ -509,11 +555,12 @@ html.cj-locked #gate{display:block}
   <div class="card" style="padding:8px">
     <div class="tablewrap"><table id="repTable"></table></div>
     <div class="legend" id="repLegend" style="padding:0 6px 4px"></div>
-    <div class="actions" style="margin:10px 4px 4px"><button class="btn sec" id="repExportCsv">⬇ Exporter ce tableau (CSV)</button></div>
+    <div class="actions" style="margin:10px 4px 4px"><button class="btn" id="repExportPdf">📄 Exporter le bilan (PDF)</button><button class="btn sec" id="repExportCsv">⬇ Tableau Excel (CSV)</button></div>
   </div>
   <div class="card">
     <h2>Alertes – toutes les classes, année entière</h2>
     <ul class="list alert-list" id="alertList"></ul>
+    <div class="actions"><button class="btn sec" id="repAllPdf">📄 Synthèse de toutes les classes (PDF)</button></div>
   </div>
 </section>
 
@@ -522,19 +569,31 @@ html.cj-locked #gate{display:block}
   <div class="card" id="syncCard"><h2>Synchronisation</h2><p class="small muted" style="margin-top:0">Chargement…</p></div>
   <div class="card hidden" id="modCard"></div>
   <div class="card">
-    <h2>Exporter vers Excel (CSV)</h2>
-    <p class="muted small" style="margin-top:0">Fichiers CSV UTF-8 qui s’ouvrent correctement dans Excel, y compris les noms accentués et arabes.</p>
+    <h2>Exporter les documents (PDF)</h2>
+    <p class="muted small" style="margin-top:0">Documents PDF A4 prêts à imprimer ou à envoyer : statistiques, graphiques et tableaux détaillés (fonctionne aussi hors ligne). Sur iPhone : « Partager » puis « Enregistrer dans Fichiers ».</p>
     <div class="row">
       <div class="grow"><label class="f" for="expClass">Classe</label><select id="expClass"></select></div>
       <div class="grow"><label class="f" for="expPeriod">Cycle</label><select id="expPeriod"></select></div>
     </div>
     <div class="actions">
-      <button class="btn sec" id="expGrid">⬇ Registre (classe + cycle)</button>
-      <button class="btn sec" id="expYear">⬇ Bilan annuel (classe)</button>
-      <button class="btn sec" id="expStudents">⬇ Liste des élèves</button>
-      <button class="btn sec" id="expRecords">⬇ Détail de toutes les absences</button>
+      <button class="btn" id="pdfCycle">📄 Bilan du cycle</button>
+      <button class="btn" id="pdfYear">📄 Bilan annuel</button>
+      <button class="btn sec" id="pdfStudents">📄 Liste des élèves</button>
+      <button class="btn sec" id="pdfRecords">📄 Détail des absences</button>
+      <button class="btn sec" id="pdfGroups">📄 Groupes de travail</button>
+      <button class="btn sec" id="pdfTests">📄 Tests physiques</button>
     </div>
-    <p class="small muted">Le registre et le bilan annuel portent sur une seule classe. La liste des élèves et le détail utilisent la classe choisie, ou toutes les classes.</p>
+    <p class="small muted">Le bilan du cycle porte sur une classe. Avec « Toutes les classes », le bilan annuel devient une synthèse de toutes les classes ; la liste, le détail et les groupes couvrent toutes les classes.</p>
+    <div class="csvline">
+      <b class="small">Tableaux Excel (CSV)</b>
+      <p class="muted small" style="margin:2px 0 0">Données brutes pour Excel (UTF-8, noms accentués et arabes corrects).</p>
+      <div class="actions" style="margin-top:8px">
+        <button class="btn sec" id="expGrid">⬇ Registre (CSV)</button>
+        <button class="btn sec" id="expYear">⬇ Bilan annuel (CSV)</button>
+        <button class="btn sec" id="expStudents">⬇ Liste des élèves (CSV)</button>
+        <button class="btn sec" id="expRecords">⬇ Détail des absences (CSV)</button>
+      </div>
+    </div>
   </div>
   <div class="card">
     <h2>Sauvegarde et restauration</h2>
@@ -611,6 +670,7 @@ html.cj-locked #gate{display:block}
       <div><label class="f" for="fDob">Date de naissance</label><input type="date" id="fDob"></div>
       <div><label class="f" for="fParent">Nom du parent / tuteur</label><input type="text" id="fParent" dir="auto" maxlength="120"></div>
       <div><label class="f" for="fPhone">Téléphone du parent</label><input type="tel" id="fPhone" dir="ltr" maxlength="30" placeholder="06 12 34 56 78" inputmode="tel"></div>
+      <div><label class="f" for="fSex">Sexe</label><select id="fSex"><option value="">— non renseigné —</option><option value="F">Fille</option><option value="G">Garçon</option></select></div>
     </div>
     <label class="f" for="fNotes">Remarques</label>
     <textarea id="fNotes" dir="auto" maxlength="2000"></textarea>
@@ -690,6 +750,9 @@ html.cj-locked #gate{display:block}
   </div>
 </div>
 
+<div class="modal" id="grpModal" role="dialog" aria-modal="true" aria-label="Groupes de travail"><div class="sheet" id="grpBody"></div></div>
+<div class="modal" id="testModal" role="dialog" aria-modal="true" aria-label="Tests physiques"><div class="sheet" id="testBody"></div></div>
+<div class="modal" id="pdfModal" role="dialog" aria-modal="true" aria-label="PDF prêt"><div class="sheet" id="pdfBody"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -742,7 +805,7 @@ var TX={
  impErr:function(f){return 'Impossible de lire « '+f+' ». Enregistrez-le au format .xlsx ou CSV UTF-8, puis réessayez.';},
  impFiles:function(n,t){return (n>1?n+' fichiers':'1 fichier')+' · '+(t>1?t+' tableaux lus':t+' tableau lu');},
  impCols:'Colonnes reconnues : ',impClear:'Retirer les fichiers',
- impColNames:{name:'Nom complet',first:'Prénom',last:'Nom',nameAr:'Nom complet (arabe)',firstAr:'Prénom (arabe)',lastAr:'Nom (arabe)',sid:'Code élève (Massar)',parent:'Parent',phone:'Téléphone',dob:'Date de naissance',notes:'Remarques'},
+ impColNames:{name:'Nom complet',first:'Prénom',last:'Nom',nameAr:'Nom complet (arabe)',firstAr:'Prénom (arabe)',lastAr:'Nom (arabe)',sid:'Code élève (Massar)',parent:'Parent',phone:'Téléphone',dob:'Date de naissance',sex:'Sexe',notes:'Remarques'},
  impNothing:'Aucun élève trouvé. Vérifiez que le tableau contient une colonne Nom (ou Nom et Prénom).',
  impDetected:'Classe de destination',impUnknown:'Classe non détectée',
  impNew:function(n){return n>1?n+' nouveaux':n+' nouveau';},
@@ -753,7 +816,7 @@ var TX={
  impTotal:function(n,d,c){return 'Total : '+(n>1?n+' élèves à importer':n+' élève à importer')+(d?', '+(d>1?d+' doublons ignorés':'1 doublon ignoré'):'')+(c?', '+(c>1?c+' classes à créer':'1 classe à créer'):'')+'.';},
  impGo:function(n,f){return n?(n>1?'Importer '+n+' élèves':'Importer 1 élève'):(f?'Corriger '+f+(f>1?' noms':' nom'):'Importer');},
  impMapTitle:'Colonnes (touchez pour corriger)',impMapAuto:'Détection automatique',impColN:function(l){return 'Colonne '+l;},
- impKeys:{ign:'— Ignorer —',name:'Nom complet',last:'Nom',first:'Prénom',nameAr:'Nom complet (arabe)',lastAr:'النسب (nom arabe)',firstAr:'الاسم (prénom arabe)',sid:'Code Massar',dob:'Date de naissance',phone:'Téléphone',parent:'Parent',notes:'Remarques',cls:'Classe',rank:'N° d’ordre'},
+ impKeys:{ign:'— Ignorer —',name:'Nom complet',last:'Nom',first:'Prénom',nameAr:'Nom complet (arabe)',lastAr:'النسب (nom arabe)',firstAr:'الاسم (prénom arabe)',sid:'Code Massar',dob:'Date de naissance',sex:'Sexe',phone:'Téléphone',parent:'Parent',notes:'Remarques',cls:'Classe',rank:'N° d’ordre'},
  impNoName:function(n){return n+(n>1?' lignes ont':' ligne a')+' un code mais pas de nom : '+(n>1?'elles sont ignorées':'elle est ignorée')+'. Vérifiez la colonne « Nom ».';},
  impFix:function(n){return n+(n>1?' noms corrigés':' nom corrigé');},
  impFixed:function(n){return n+(n>1?' noms d’élèves corrigés (absences conservées)':' nom d’élève corrigé (absences conservées)');},
@@ -845,6 +908,20 @@ var CODE_CSV={P:'P',A:'A',J:'AJ',L:'R',M:'M',K:'MJ',S:'ST'};
 var CODE_LABEL={P:'Présent',A:'Absence non justifiée',J:'Absence justifiée',L:'Retard',M:'Maladie non justifiée',K:'Maladie justifiée',S:'Sans tenue'};
 var CODE_S={A:'A',J:'A',L:'L',M:'M',K:'M',S:'ST'}; // grid code -> stored status
 var CSV_SEP=';',DEC=',';
+/* tests anthropométriques et physiques (définis tôt : utilisés par normalize) */
+var TESTS=[
+ {k:'h',l:'Taille',u:'cm',min:80,max:230,st:0.5},
+ {k:'w',l:'Poids',u:'kg',min:15,max:200,st:0.1},
+ {k:'dv',l:'Détente verticale',u:'cm',min:0,max:120,st:0.5,d:1},
+ {k:'dh',l:'Détente horizontale',u:'cm',min:0,max:400,st:1,d:1},
+ {k:'fc',l:'FC de repos',u:'bpm',min:30,max:150,st:1,d:-1},
+ {k:'nav',l:'Test navette (palier)',u:'palier',min:0,max:25,st:0.5,d:1},
+ {k:'vma',l:'VMA (navette)',u:'km/h',min:5,max:25,st:0.1,d:1},
+ {k:'v30',l:'Vitesse 30 m',u:'s',min:3,max:15,st:0.01,d:-1},
+ {k:'soup',l:'Souplesse (sit and reach)',u:'cm',min:-40,max:50,st:0.5,d:1},
+ {k:'mb',l:'Lancer médecine-ball',u:'m',min:0,max:25,st:0.1,d:1},
+ {k:'eq',l:'Équilibre',u:'s',min:0,max:300,st:0.1,d:1}];
+var TESTK={};TESTS.forEach(function(t){TESTK[t.k]=t;});
 
 /* ================= helpers ================= */
 function $(id){return document.getElementById(id);}
@@ -865,17 +942,19 @@ var toastT;function toast(msg){var t=$('toast');t.textContent=msg;t.classList.ad
 /* ================= storage ================= */
 var DEFCYC=[['2026-09-14','2026-10-17'],['2026-10-26','2026-11-29'],['2026-11-30','2027-01-09'],['2027-02-01','2027-02-28'],['2027-03-01','2027-04-11'],['2027-04-12','2027-05-22']];
 function blank(){
-  var d={app:'class-register',version:3,classes:[],periods:[],spp:10,students:[],sessions:{},settings:{threshold:3,teacher:'',autoDate:true,points:{A:0.5,L:0.25,M:0.25,K:0,S:0.5,J:0}},ui:{cls:'',per:0,mode:'cycle'},lastBackup:null};
+  var d={app:'class-register',version:3,classes:[],periods:[],spp:10,students:[],sessions:{},settings:{threshold:3,teacher:'',autoDate:true,points:{A:0.5,L:0.25,M:0.25,K:0,S:0.5,J:0}},ui:{cls:'',per:0,mode:'cycle',grp:false},lastBackup:null};
   ['1BACLSH1','1BACLSH2','1BACLSH3','1BACLSH4','2BACSP4','2BACSP5','2BACSP6','2BACSSVT1','2BACSSVT2'].forEach(function(n,i){d.classes.push({id:'c'+(i+1)+uid(),name:n});});
   d.periods=[TX.act1,'','','','',''];
   d.cal={start:DEFCYC[0][0],weeks:5,cycles:defCycles(),oblig:21,perWeek:2,dayMin:2,dayMax:6,friMax:4,asInit:true,holidays:defHolidays(),tt:[defAS()]};
   return d;
 }
+function normGrp(g){if(!g||typeof g!=='object'||!Array.isArray(g.names)||!g.names.length)return null;var names=g.names.slice(0,5).map(function(x,i){return String(x==null?'':x).trim().slice(0,30)||('Groupe '+(i+1));}),of={};
+  if(g.of&&typeof g.of==='object')Object.keys(g.of).forEach(function(k){var v=parseInt(g.of[k],10);if(v>=0&&v<names.length)of[k]=v;});return {names:names,of:of,lock:!!g.lock,at:+g.at||0};}
 function isBackup(d){return d&&typeof d==='object'&&Array.isArray(d.classes)&&Array.isArray(d.students)&&d.sessions&&typeof d.sessions==='object';}
 function normalize(d){
   var b=blank();if(!isBackup(d))return b;
   var ids={};
-  b.classes=d.classes.filter(function(c){return c&&c.id&&!ids[c.id]&&(ids[c.id]=1);}).map(function(c){var o={id:String(c.id),name:String(c.name||'Classe')},cp=parseFloat(c.cap);if(c.cap!=null&&c.cap!==''&&cp>=0)o.cap=cp;var pw=parseInt(c.pw,10);if(pw>=1&&pw<=10)o.pw=pw;return o;});
+  b.classes=d.classes.filter(function(c){return c&&c.id&&!ids[c.id]&&(ids[c.id]=1);}).map(function(c){var o={id:String(c.id),name:String(c.name||'Classe')},cp=parseFloat(c.cap);if(c.cap!=null&&c.cap!==''&&cp>=0)o.cap=cp;var pw=parseInt(c.pw,10);if(pw>=1&&pw<=10)o.pw=pw;var gq=normGrp(c.grp);if(gq)o.grp=gq;return o;});
   var ver=parseInt(d.version,10)||2;
   if(Array.isArray(d.periods)&&d.periods.length){b.periods=d.periods.slice(0,12).map(function(p){p=String(p==null?'':p).trim();if(ver<3&&/^(p[ée]riode|[p]eriod|cycle)\s*\d+$/i.test(p))p='';return p;});if(ver<3&&!b.periods[0])b.periods[0]=TX.act1;}
   if(d.cal&&typeof d.cal==='object'){var dc=d.cal;var wk=parseInt(dc.weeks,10);if(wk>=1&&wk<=20)b.cal.weeks=wk;
@@ -889,6 +968,7 @@ function normalize(d){
   b.students=d.students.filter(function(s){return s&&s.id&&typeof s.name==='string'&&ids[s.classId];}).map(function(s){
     var o={id:String(s.id),classId:String(s.classId),name:String(s.name),dob:String(s.dob||''),sid:String(s.sid||''),parent:String(s.parent||''),phone:String(s.phone||''),notes:String(s.notes||''),created:s.created||Date.now()};
     var dp=s.dispense;if(dp&&typeof dp==='object'&&(dp.type==='S1'||dp.type==='annee'))o.dispense={type:dp.type,since:/^\d{4}-\d{2}-\d{2}$/.test(dp.since||'')?dp.since:''};
+    var sx=String(s.sex||'').toUpperCase();if(sx==='F'||sx==='G')o.sex=sx;var ph=normPhys(s.phys);if(ph)o.phys=ph;
     return o;
   });
   Object.keys(d.sessions).forEach(function(k){
@@ -899,7 +979,7 @@ function normalize(d){
   });
   if(d.settings){var t=parseInt(d.settings.threshold,10);if(t>0)b.settings.threshold=t;b.settings.teacher=String(d.settings.teacher||'');b.settings.autoDate=d.settings.autoDate!==false;
     if(d.settings.points)['A','L','M','K','S','J'].forEach(function(k){var v=parseFloat(d.settings.points[k]);if(v>=0&&v<100)b.settings.points[k]=v;});}
-  if(d.ui){b.ui.cls=String(d.ui.cls||'');b.ui.per=Math.max(0,Math.min(b.periods.length-1,parseInt(d.ui.per,10)||0));b.ui.mode=d.ui.mode==='edit'?'edit':'cycle';}
+  if(d.ui){b.ui.cls=String(d.ui.cls||'');b.ui.per=Math.max(0,Math.min(b.periods.length-1,parseInt(d.ui.per,10)||0));b.ui.mode=d.ui.mode==='edit'?'edit':'cycle';b.ui.grp=!!d.ui.grp;}
   b.lastBackup=d.lastBackup||null;
   return b;
 }
@@ -914,8 +994,8 @@ function roGuard(){clearTimeout(saveT);saveT=null;if(CAL)CAL.mx=null,CAL.cols=nu
   clearTimeout(roT);roT=setTimeout(function(){if(!VIEW)return;var ui=DB.ui;DB=normalize(JSON.parse(VIEW.json));DB.ui=ui;fixUi();render();toast('Lecture seule : modification annulée (rien n’est enregistré)');},0);
   return true;}
 function fixUi(){if(DB.ui.cls&&!DB.classes.some(function(c){return c.id===DB.ui.cls;}))DB.ui.cls='';if(DB.ui.per>=DB.periods.length)DB.ui.per=0;}
-function persistNow(){if(VIEW)return roGuard();clearTimeout(saveT);saveT=null;if(CAL)CAL.mx=null,CAL.cols=null,CAL.auto={};try{localStorage.setItem(KEY,JSON.stringify(DB));if(!SYNC_QUIET){try{window.dispatchEvent(new Event('cj:saved'));}catch(e){}}return true;}catch(e){toast('⚠ Enregistrement impossible – stockage plein ou bloqué. Téléchargez une sauvegarde !');return false;}}
-function persist(){if(VIEW)return roGuard();clearTimeout(saveT);saveT=setTimeout(persistNow,250);}
+function persistNow(){physReset();if(VIEW)return roGuard();clearTimeout(saveT);saveT=null;if(CAL)CAL.mx=null,CAL.cols=null,CAL.auto={};try{localStorage.setItem(KEY,JSON.stringify(DB));if(!SYNC_QUIET){try{window.dispatchEvent(new Event('cj:saved'));}catch(e){}}return true;}catch(e){toast('⚠ Enregistrement impossible – stockage plein ou bloqué. Téléchargez une sauvegarde !');return false;}}
+function persist(){physReset();if(VIEW)return roGuard();clearTimeout(saveT);saveT=setTimeout(persistNow,250);}
 window.addEventListener('pagehide',function(){if(saveT)persistNow();});
 document.addEventListener('visibilitychange',function(){if(document.hidden&&saveT)persistNow();});
 if(!localStorage.getItem(KEY))persistNow();
@@ -1044,6 +1124,7 @@ $('stuFix').addEventListener('click',function(e){
   if(e.target.closest('#fixShow')){stuBrokenOnly=!stuBrokenOnly;renderStudents();return;}
   if(e.target.closest('#fixReimp')){var b=DB.students.filter(isBroken)[0];if(b)$('stuClassFilter').value=b.classId;bulkMode='class';$('bulkBtn').click();}
 });
+$('testsBtn').addEventListener('click',function(){openTests($('stuClassFilter').value||DB.ui.cls);});
 $('stuSearch').addEventListener('input',renderStudents);
 $('stuClassFilter').addEventListener('change',renderStudents);
 $('stuSort').addEventListener('change',renderStudents);
@@ -1056,7 +1137,7 @@ function openForm(id){
   editingId=id;var s=id?byId(id):null;
   $('stuModalTitle').textContent=s?'Modifier l’élève':'Ajouter un élève';
   classOptions($('fClass'),s?s.classId:($('stuClassFilter').value||DB.ui.cls));
-  $('fName').value=s?s.name:'';$('fSid').value=s?s.sid:'';$('fDob').value=s?s.dob:'';$('fParent').value=s?s.parent:'';$('fPhone').value=s?s.phone:'';$('fNotes').value=s?s.notes:'';
+  $('fSex').value=s&&s.sex?s.sex:'';$('fName').value=s?s.name:'';$('fSid').value=s?s.sid:'';$('fDob').value=s?s.dob:'';$('fParent').value=s?s.parent:'';$('fPhone').value=s?s.phone:'';$('fNotes').value=s?s.notes:'';
   $('stuDelete').classList.toggle('hidden',!s);
   openModal('stuModal');$('fName').focus();
 }
@@ -1065,7 +1146,8 @@ $('stuForm').addEventListener('submit',function(e){
   var name=$('fName').value.trim().replace(/\s+/g,' '),cid=$('fClass').value;
   if(!name){$('fName').focus();return;}if(!cls(cid))return;
   var data={name:name,classId:cid,sid:$('fSid').value.trim(),dob:$('fDob').value,parent:$('fParent').value.trim(),phone:$('fPhone').value.trim(),notes:$('fNotes').value.trim()};
-  if(editingId){var s=byId(editingId),old=s.classId;Object.assign(s,data);toast(old!==cid?'Élève déplacé vers '+clsName(cid)+' (les absences passées restent dans '+clsName(old)+')':'Élève modifié');}
+  var sx=$('fSex').value;if(sx==='F'||sx==='G')data.sex=sx;
+  if(editingId){var s=byId(editingId),old=s.classId;Object.assign(s,data);if(!data.sex)delete s.sex;toast(old!==cid?'Élève déplacé vers '+clsName(cid)+' (les absences passées restent dans '+clsName(old)+')':'Élève modifié');}
   else{
     if(DB.students.some(function(x){return x.classId===cid&&x.name.toLowerCase()===name.toLowerCase();})&&!confirm('« '+name+' » existe déjà dans '+clsName(cid)+'. Ajouter quand même ?'))return;
     data.id=uid();data.created=Date.now();DB.students.push(data);toast('Élève ajouté');
@@ -1084,14 +1166,16 @@ function openDetail(id){
   var s=byId(id);if(!s)return;var y=yearStat(s.classId,id),th=DB.settings.threshold;
   var tel=s.phone.replace(/[^\d+]/g,'');
   var h='<div class="sheet-head"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><h2 dir="auto">'+esc(s.name)+'</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>';
-  h+='<dl class="kv"><dt>Classe</dt><dd><span class="chip">'+esc(clsName(s.classId))+'</span></dd>';
+  h+='<h3 style="margin-top:4px">Informations personnelles</h3><dl class="kv"><dt>Classe</dt><dd><span class="chip">'+esc(clsName(s.classId))+'</span></dd>';
   if(s.sid)h+='<dt>Code élève</dt><dd dir="auto">'+esc(s.sid)+'</dd>';
+  if(s.sex)h+='<dt>Sexe</dt><dd>'+(s.sex==='F'?'Fille':'Garçon')+'</dd>';
+  var dg=grpOf(s.classId),dgi=grpIdx(dg,s.id);if(dgi>=0)h+='<dt>Groupe</dt><dd>'+grpChip(dg,dgi)+'</dd>';
   if(s.dob)h+='<dt>Date de naissance</dt><dd>'+esc(fmtDate(s.dob))+'</dd>';
   if(s.parent)h+='<dt>Parent / tuteur</dt><dd dir="auto">'+esc(s.parent)+'</dd>';
   var dp=dspOf(s);if(dp)h+='<dt>Dispense de sport</dt><dd><span class="chip dchip">🩺 '+esc(dspLabel(dp))+'</span>'+(dp.since?' <span class="small muted">depuis le '+esc(dmy(dp.since))+'</span>':'')+(dspActive(s)?'':' <span class="small muted">(terminée)</span>')+'</dd>';
   if(s.phone)h+='<dt>Téléphone</dt><dd><a class="tel" dir="ltr" href="tel:'+esc(tel)+'">'+esc(s.phone)+'</a></dd>';
   if(s.notes)h+='<dt>Remarques</dt><dd dir="auto" style="white-space:pre-wrap">'+esc(s.notes)+'</dd>';
-  h+='</dl><h3>Année entière</h3><div class="stats">'+
+  h+='</dl>'+physFormHtml(s)+'<h3>Année entière</h3><div class="stats">'+
     '<div class="stat bad"><b>'+y.A+'</b><span>Absences</span></div>'+
     '<div class="stat '+(y.U>=th?'bad':'')+'"><b>'+y.U+'</b><span>Non justifiées</span></div>'+
     '<div class="stat"><b style="color:#0f766e">'+y.S+'</b><span>Sans tenue</span></div>'+
@@ -1112,10 +1196,12 @@ function openDetail(id){
     var chip=x.code==='M'?'<span class="chip mchip">Maladie non justifiée</span>':x.code==='K'?'<span class="chip kchip">Maladie justifiée</span>':x.code==='S'?'<span class="chip schip">Sans tenue</span>':x.code==='L'?'<span class="chip warn">Retard</span>':(x.code==='J'?'<span class="chip ok">Justifiée</span>':'<span class="chip bad">Absent</span>');
     return '<li><span class="d">'+esc(cycleName(x.p))+' · S'+(x.s+1)+'<br><span class="small muted" style="font-weight:500">'+(x.date?esc(fmtDate(x.date)):'sans date')+'</span></span>'+chip+'<span class="r" dir="auto">'+esc(x.r)+(x.cid!==s.classId?' ('+esc(clsName(x.cid))+')':'')+'</span></li>';
   }).join('')+'</ul>';
-  h+='<div class="actions"><button class="btn sec" data-close>Fermer</button><button class="btn sec" id="detDsp">🩺 Dispensé</button><button class="btn" id="detEdit">Modifier</button></div>';
+  h+='<div class="actions"><button class="btn sec" data-close>Fermer</button><button class="btn sec" id="detDsp">🩺 Dispensé</button><button class="btn sec" id="detPdf">📄 Fiche PDF</button><button class="btn" id="detEdit">Modifier</button></div>';
   $('detBody').innerHTML=h;
   $('detEdit').onclick=function(){closeModal('detModal');openForm(id);};
   $('detDsp').onclick=function(){openDispense(id,'',function(){render();openDetail(id);});};
+  $('detPdf').onclick=function(){runPdf('student',{sid:id});};
+  wirePhysForm(s);
   openModal('detModal');
 }
 
@@ -1168,6 +1254,7 @@ function renderAttendance(){
   document.querySelectorAll('#view-attendance .seg button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===DB.ui.mode);});
   $('attPeriods').innerHTML=DB.periods.map(function(n,i){return '<button class="pchip'+(i===p?' on':'')+'" data-p="'+i+'" role="tab" aria-selected="'+(i===p)+'">'+esc(cycleName(i))+'</button>';}).join('');
   $('attCycle').innerHTML=cycleInfoHtml(cid,p);
+  renderGrpBox();
   var on=$('attPeriods').querySelector('.on');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
   renderGrid();
 }
@@ -1180,10 +1267,19 @@ function renderGrid(){
   var h='<table class="grid"><thead><tr><th class="nm">Élève</th>';
   cols.forEach(function(c){if(c.hol){h+='<th class="holh" title="'+esc(c.hol.label)+'">'+esc(holShort(c.hol)===TX.vacShort?TX.vacHead:TX.holHead)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';});
   h+='<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th><th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';
-  list.forEach(function(st,i){
-    h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+'"><span class="n">'+(i+1)+'</span>'+(dspInCycle(st,p)?'<span class="dspb" title="Dispensé – '+esc(dspShort(dspOf(st)))+'">🩺</span>':'')+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>';
-    cols.forEach(function(c){if(c.hol){if(!i)h+='<td class="holc" rowspan="'+list.length+'" aria-label="'+esc(c.hol.label+' – '+dmy(c.date))+'"><span class="holv">'+esc(holShort(c.hol))+'</span></td>';return;}var s=c.s,r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r,dspAt(st,cid,p,s))+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';});
-    h+=totalsHtml(cid,st.id,p)+'</tr>';
+  var gq=grpOf(cid),byG=!!(gq&&DB.ui.grp),secs;
+  if(byG){var gm=grpMembers(cid);secs=gm.groups.map(function(a,i){return {i:i,list:a};}).filter(function(x){return x.list.length;});if(gm.none.length)secs.push({i:-1,list:gm.none});}
+  else secs=[{i:null,list:list}];
+  var span=list.length+(byG?secs.length-1:0),firstRow=true;
+  secs.forEach(function(sec,si){
+   if(byG){var gc=sec.i>=0?GRP_COL[sec.i]:'#667085',gs=sec.i>=0?GRP_SOFT[sec.i]:'#f2f4f7',gst=grpStats(sec.list,10);
+    h+='<tr class="ghead" style="--gc:'+gc+';--gs:'+gs+'"><th class="nm">'+(sec.i>=0?'<span class="gbadge" style="background:'+gc+'">'+(sec.i+1)+'</span>'+esc(grpName(gq,sec.i)):'Sans groupe')+'<small>'+plural(gst.n,'élève')+(gst.f||gst.m?' · '+gst.f+' F / '+gst.m+' G':'')+'</small></th>';
+    cols.forEach(function(c){if(c.hol&&si)return;h+='<td></td>';});h+='<td></td><td></td><td></td><td></td><td class="yr"></td></tr>';}
+   sec.list.forEach(function(st,i){var gi=grpIdx(gq,st.id);
+    h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+(gi>=0?' – '+esc(grpName(gq,gi)):'')+'"><span class="n">'+(i+1)+'</span>'+(gi>=0?'<span class="gbadge" style="background:'+GRP_COL[gi]+'" aria-label="'+esc(grpName(gq,gi))+'">'+(gi+1)+'</span>':'')+(dspInCycle(st,p)?'<span class="dspb" title="Dispensé – '+esc(dspShort(dspOf(st)))+'">🩺</span>':'')+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>';
+    cols.forEach(function(c){if(c.hol){if(firstRow)h+='<td class="holc" rowspan="'+span+'" aria-label="'+esc(c.hol.label+' – '+dmy(c.date))+'"><span class="holv">'+esc(holShort(c.hol))+'</span></td>';return;}var s=c.s,r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r,dspAt(st,cid,p,s))+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';});
+    h+=totalsHtml(cid,st.id,p)+'</tr>';firstRow=false;
+   });
   });
   h+='</tbody><tfoot><tr><th class="nm">Absents</th>';
   cols.forEach(function(c){h+=c.hol?'<td class="holf"></td>':'<td data-f="'+c.s+'">'+footVal(recs[c.s])+'</td>';});
@@ -1200,7 +1296,7 @@ function totalsHtml(cid,sid,p){
 }
 function flagRows(){
   var th=DB.settings.threshold,cid=DB.ui.cls;
-  $('gridWrap').querySelectorAll('tbody tr').forEach(function(tr){tr.classList.toggle('flag',yearStat(cid,tr.dataset.sid).U>=th);});
+  $('gridWrap').querySelectorAll('tbody tr[data-sid]').forEach(function(tr){tr.classList.toggle('flag',yearStat(cid,tr.dataset.sid).U>=th);});
 }
 function updateInfo(){
   var cid=DB.ui.cls,n=heldCount(cid,DB.ui.per);
@@ -1251,7 +1347,7 @@ grid.addEventListener('touchstart',function(e){
 },{passive:true});
 grid.addEventListener('touchmove',function(e){if(!lpStart)return;var t=e.touches[0];if(Math.abs(t.clientX-lpStart[0])>8||Math.abs(t.clientY-lpStart[1])>8)clearTimeout(lpTimer);},{passive:true});
 grid.addEventListener('touchend',function(){clearTimeout(lpTimer);lpStart=null;},{passive:true});
-$('attClass').addEventListener('change',function(){DB.ui.cls=this.value;persist();renderGrid();$('gridWrap').scrollTop=0;});
+$('attClass').addEventListener('change',function(){DB.ui.cls=this.value;persist();renderGrpBox();renderGrid();$('gridWrap').scrollTop=0;});
 $('attPeriods').addEventListener('click',function(e){var b=e.target.closest('[data-p]');if(!b)return;DB.ui.per=+b.dataset.p;persist();renderAttendance();});
 document.querySelectorAll('#view-attendance .seg button').forEach(function(b){b.addEventListener('click',function(){DB.ui.mode=b.dataset.mode;persist();renderAttendance();toast(DB.ui.mode==='edit'?'Touchez une case pour choisir le statut (A, ST, M, R, MJ, AJ), le motif ou 🩺 Dispensé':'Touchez une case pour alterner P → A → ST → M → R → MJ → AJ');});});
 
@@ -1322,6 +1418,187 @@ $('sessHeld').addEventListener('click',function(){var r=ensureRec(DB.ui.cls,DB.u
 $('sessReset').addEventListener('click',function(){if(!confirm('Marquer tout le monde présent pour la séance '+(sessS+1)+' ?'))return;var r=rec(DB.ui.cls,DB.ui.per,sessS);if(r)r.marks={};persist();closeModal('sessModal');renderGrid();});
 $('sessClear').addEventListener('click',function(){if(!confirm('Effacer la séance '+(sessS+1)+' ? Toutes ses marques et sa date seront supprimées et elle ne comptera plus comme effectuée.'))return;delete DB.sessions[skey(DB.ui.cls,DB.ui.per,sessS)];persist();closeModal('sessModal');renderGrid();});
 
+/* ===== Tests anthropométriques et physiques =====
+   student.phys = {h,w,dv,dh,fc,nav,vma,v30,soup,mb,eq} (valeurs facultatives, synchronisées avec le reste des données).
+   Indice physique (0–100, 50 = moyenne de la classe) : moyenne des z-scores de la classe pour chaque test disponible
+   (signe inversé quand « moins = mieux » : vitesse 30 m, FC de repos ; IMC noté par l’écart à la zone normale 18,5–25). */
+function normPhys(p){if(!p||typeof p!=='object')return null;var o={},n=0;TESTS.forEach(function(t){var v=parseFloat(p[t.k]);if(p[t.k]!=null&&p[t.k]!==''&&isFinite(v)&&v>=t.min&&v<=t.max){o[t.k]=v;n++;}});return n?o:null;}
+function phys(s,k){return s&&s.phys&&typeof s.phys[k]==='number'?s.phys[k]:null;}
+function hasPhys(s){return !!(s.phys&&TESTS.some(function(t){return typeof s.phys[t.k]==='number';}));}
+function imcOf(s){var h=phys(s,'h'),w=phys(s,'w');return h&&w?Math.round(w/Math.pow(h/100,2)*10)/10:null;}
+function imcCat(b){return b==null?'':b<18.5?'Maigreur':b<25?'Normal':b<30?'Surpoids':'Obésité';}
+function setPhys(s,k,v){if(v==null){if(s.phys){delete s.phys[k];if(!hasPhys(s))delete s.phys;}return;}s.phys=s.phys||{};s.phys[k]=v;}
+var FACT=[{k:'imc',f:function(s){var b=imcOf(s);return b==null?null:-(b<18.5?18.5-b:b>25?b-25:0);}},{k:'dv',d:1},{k:'dh',d:1},{k:'fc',d:-1},{k:'end'},{k:'v30',d:-1},{k:'soup',d:1},{k:'mb',d:1},{k:'eq',d:1}];
+var PHYS_C={db:null,m:{}};
+function physScores(cid){if(PHYS_C.db!==DB)PHYS_C={db:DB,m:{}};if(PHYS_C.m[cid])return PHYS_C.m[cid];
+  var list=DB.students.filter(function(s){return s.classId===cid;}),acc={};list.forEach(function(s){acc[s.id]=[];});
+  function zs(get,dir){var v=[];list.forEach(function(s){var x=get(s);if(x!=null)v.push([s.id,x]);});if(v.length<2)return null;var m=0;v.forEach(function(a){m+=a[1];});m/=v.length;var sd=0;v.forEach(function(a){sd+=(a[1]-m)*(a[1]-m);});sd=Math.sqrt(sd/v.length);if(!sd)return null;var o={};v.forEach(function(a){o[a[0]]=(a[1]-m)/sd*dir;});return o;}
+  FACT.forEach(function(f){
+    if(f.k==='end'){var a=zs(function(s){return phys(s,'vma');},1),b=zs(function(s){return phys(s,'nav');},1);if(!a&&!b)return;
+      list.forEach(function(s){var z=[];if(a&&a[s.id]!=null)z.push(a[s.id]);if(b&&b[s.id]!=null)z.push(b[s.id]);if(z.length)acc[s.id].push(z.length>1?(z[0]+z[1])/2:z[0]);});return;}
+    var z=zs(f.f||function(s){return phys(s,f.k);},f.d||1);if(!z)return;Object.keys(z).forEach(function(id){acc[id].push(z[id]);});});
+  var res={};list.forEach(function(s){var a=acc[s.id];if(a.length){var t=0;a.forEach(function(x){t+=x;});res[s.id]=Math.max(0,Math.min(100,Math.round((50+15*t/a.length)*10)/10));}});
+  return (PHYS_C.m[cid]=res);}
+function physReset(){if(PHYS_C)PHYS_C.m={};}
+/* saisie rapide : un test pour toute la classe */
+var testCid='',testK='dv';
+function openTests(cid,k){testCid=cls(cid)?cid:curCls();if(k&&TESTK[k])testK=k;if(!cls(testCid)){toast('Créez d’abord une classe (Paramètres)');return;}renderTests();openModal('testModal');}
+function testStatsTxt(list,k){var v=list.map(function(s){return phys(s,k);}).filter(function(x){return x!=null;});if(!v.length)return '<b>0/'+list.length+'</b> saisi';var t=0;v.forEach(function(x){t+=x;});return '<b>'+v.length+'/'+list.length+'</b> saisis · moyenne <b>'+fmtNum(Math.round(t/v.length*100)/100)+'</b> · min '+fmtNum(Math.min.apply(null,v))+' · max '+fmtNum(Math.max.apply(null,v))+' '+esc(TESTK[k].u);}
+function renderTests(){
+  var list=studentsIn(testCid),t=TESTK[testK];
+  var h='<div class="sheet-head"><h2>📏 Tests physiques</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>';
+  h+='<p class="small muted" style="margin-top:0">Saisie rapide d’un test pour toute la classe (touche Entrée = élève suivant). Enregistrement automatique. Les résultats apparaissent aussi dans la fiche de chaque élève.</p>';
+  h+='<div class="row"><select id="tCls" class="grow" aria-label="Classe"></select><select id="tKey" class="grow" aria-label="Test">'+TESTS.map(function(x){return '<option value="'+x.k+'"'+(x.k===testK?' selected':'')+'>'+esc(x.l)+' ('+esc(x.u)+')</option>';}).join('')+'</select></div>';
+  h+='<p class="small" id="tStats" style="margin:8px 0 2px">'+testStatsTxt(list,testK)+'</p><p class="small muted" style="margin:0">'+(t.d===-1?'Plus la valeur est basse, meilleur est le résultat.':t.d===1?'Plus la valeur est haute, meilleur est le résultat.':'Sert au calcul de l’IMC (taille et poids).')+' Valeurs acceptées : '+fmtNum(t.min)+' à '+fmtNum(t.max)+' '+esc(t.u)+'.</p>';
+  h+='<ul class="list gedit">'+(list.length?list.map(function(s,i){var v=phys(s,testK);return '<li data-sid="'+esc(s.id)+'"><span class="sx">'+(sexOf(s)||'?')+'</span><span class="nm2" dir="auto">'+(i+1)+'. '+esc(s.name)+'</span><input type="number" data-tv="1" step="'+t.st+'" min="'+t.min+'" max="'+t.max+'" inputmode="decimal" enterkeyhint="next" value="'+(v==null?'':v)+'" placeholder="'+esc(t.u)+'" aria-label="'+esc(t.l+' – '+s.name)+'"></li>';}).join(''):'<li class="empty">Aucun élève dans cette classe.</li>')+'</ul>';
+  h+='<div class="actions"><button type="button" class="btn sec" id="tPdf">📄 PDF des tests (classe)</button><button type="button" class="btn" data-close>Terminé</button></div>';
+  $('testBody').innerHTML=h;classOptions($('tCls'),testCid);
+}
+$('testBody').addEventListener('change',function(e){var t=e.target;
+  if(t.id==='tCls'){testCid=t.value;renderTests();return;}
+  if(t.id==='tKey'){testK=t.value;renderTests();return;}
+  if(t.dataset.tv){var s=byId(t.closest('li').dataset.sid),x=TESTK[testK],raw=String(t.value).trim().replace(',','.'),v=parseFloat(raw);if(!s)return;
+    if(raw===''){setPhys(s,testK,null);}else if(isFinite(v)&&v>=x.min&&v<=x.max){setPhys(s,testK,v);}else{toast('Valeur hors limites ('+fmtNum(x.min)+' à '+fmtNum(x.max)+' '+x.u+')');t.value=phys(s,testK)==null?'':phys(s,testK);return;}
+    persist();$('tStats').innerHTML=testStatsTxt(studentsIn(testCid),testK);if($('grpModal').classList.contains('open'))renderGroups();}
+});
+$('testBody').addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.tv){e.preventDefault();var li=e.target.closest('li').nextElementSibling,n=li&&li.querySelector('input');e.target.blur();if(n){n.focus();n.select&&n.select();}}});
+$('testBody').addEventListener('click',function(e){if(e.target.closest('#tPdf'))runPdf('tests',{cid:testCid});});
+/* fiche élève : tests modifiables */
+function physFormHtml(s){var idx=physScores(s.classId)[s.id],b=imcOf(s);
+  var h='<h3>Tests anthropométriques et physiques</h3><div class="ptests">';
+  TESTS.forEach(function(t){var v=phys(s,t.k);h+='<label class="pt"><span>'+esc(t.l)+'</span><span class="pin"><input type="number" data-pk="'+t.k+'" step="'+t.st+'" min="'+t.min+'" max="'+t.max+'" inputmode="decimal" value="'+(v==null?'':v)+'"><em>'+esc(t.u)+'</em></span></label>';
+    if(t.k==='w')h+='<div class="pt imc"><span>IMC (calculé)</span><b id="detImc">'+(b==null?'—':fmtNum(b)+' · '+imcCat(b))+'</b></div>';});
+  h+='</div><p class="small muted" id="detIdx">Indice physique : <b>'+(idx==null?'—':fmtNum(idx))+'</b> / 100 (50 = moyenne de la classe ; sert à équilibrer les groupes). IMC indicatif (seuils adultes 18,5 / 25 / 30).</p>';return h;}
+function wirePhysForm(s){$('detBody').querySelectorAll('[data-pk]').forEach(function(inp){inp.addEventListener('change',function(){var t=TESTK[inp.dataset.pk],raw=String(inp.value).trim().replace(',','.'),v=parseFloat(raw);
+  if(raw==='')setPhys(s,t.k,null);else if(isFinite(v)&&v>=t.min&&v<=t.max)setPhys(s,t.k,v);else{toast('Valeur hors limites ('+fmtNum(t.min)+' à '+fmtNum(t.max)+' '+t.u+')');inp.value=phys(s,t.k)==null?'':phys(s,t.k);return;}
+  persist();var b=imcOf(s),idx=physScores(s.classId)[s.id];$('detImc').textContent=b==null?'—':fmtNum(b)+' · '+imcCat(b);$('detIdx').querySelector('b').textContent=idx==null?'—':fmtNum(idx);});});}
+
+/* ================= Groupes de travail : hétérogènes à l’intérieur, homogènes entre eux, mixtes =================
+   class.grp = {names:[…≤5], of:{studentId:index}, lock:bool, at:timestamp}; student.sex = 'F'|'G' ; niveau = indice physique composite (tests anthropométriques et physiques, voir TESTS).
+   Champs facultatifs, synchronisés avec le reste des données (clé classRegister.v2 inchangée). */
+var GRP_MAX=5,GRP_COL=['#d6336c','#1c7ed6','#5c940d','#f76707','#6741d9'],GRP_SOFT=['#fdeef3','#e8f2fd','#eff6e4','#fff1e6','#f0ecfd'];
+function grpOf(c){if(typeof c==='string')c=cls(c);return c&&c.grp&&c.grp.names&&c.grp.names.length?c.grp:null;}
+function grpName(g,i){return (g&&g.names[i])||('Groupe '+(i+1));}
+function grpIdx(g,sid){if(!g)return -1;var v=g.of[sid];return v>=0&&v<g.names.length?v:-1;}
+function grpChip(g,i){return '<span class="gchip" style="--gc:'+GRP_COL[i]+';--gs:'+GRP_SOFT[i]+'"><i>'+(i+1)+'</i>'+esc(grpName(g,i))+'</span>';}
+function grpDefN(n){return Math.max(1,Math.min(GRP_MAX,Math.ceil(n/8)));}
+function lvlOf(s){var r=physScores(s.classId)[s.id];return r==null?null:r;}
+function sexOf(s){return s.sex==='F'||s.sex==='G'?s.sex:'';}
+function classMean(list){var t=0,n=0;list.forEach(function(x){var l=lvlOf(x);if(l!=null){t+=l;n++;}});return n?t/n:50;}
+function grpMembers(cid){var g=grpOf(cid);if(!g)return null;var out=[],none=[];for(var i=0;i<g.names.length;i++)out.push([]);studentsIn(cid).forEach(function(s){var k=grpIdx(g,s.id);(k<0?none:out[k]).push(s);});return {g:g,groups:out,none:none};}
+function grpStats(arr,mean){var r={n:arr.length,f:0,m:0,u:0,d:0,nl:0,avg:0},t=0;arr.forEach(function(s){var x=sexOf(s);if(x==='F')r.f++;else if(x==='G')r.m++;else r.u++;if(dspActive(s))r.d++;var l=lvlOf(s);if(l!=null){t+=l;r.nl++;}});r.avg=r.n?(t+(r.n-r.nl)*mean)/r.n:0;return r;}
+function shuffled(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+/* répartition : tirage en serpentin par niveau, séparément pour les filles, les garçons puis les non-renseignés
+   (les restes vont aux groupes les moins nombreux → effectifs à 1 près), puis échanges fille↔fille / garçon↔garçon
+   pour rapprocher les niveaux moyens, garder des niveaux mélangés dans chaque groupe et répartir les dispensés. */
+function grpBuild(list,k){
+  var mean=classMean(list);function L(s){var l=lvlOf(s);return l==null?mean:l;}
+  var G=[],i,round=0;for(i=0;i<k;i++)G.push([]);
+  function avg(g){if(!g.length)return mean;var t=0;g.forEach(function(s){t+=L(s);});return t/g.length;}
+  ['F','G',''].forEach(function(sx){
+    var b=shuffled(list.filter(function(s){return sexOf(s)===sx;})).sort(function(a,c){return L(c)-L(a);});
+    while(b.length){var chunk=b.splice(0,k),ord=[];for(var q=0;q<k;q++)ord.push(q);
+      if(chunk.length===k){if(round%2)ord.reverse();}
+      else{ord=shuffled(ord).sort(function(x,y){return G[x].length-G[y].length;}).slice(0,chunk.length).sort(function(x,y){return avg(G[x])-avg(G[y]);});}
+      chunk.forEach(function(s,j){G[ord[j]].push(s);});round++;}
+  });
+  if(k<2)return G;
+  var all=[].concat.apply([],G),mu=avg(all),sdAll=sd(all),dAll=all.filter(function(s){return dspActive(s);}).length/k;
+  function sd(g){if(!g.length)return 0;var a=avg(g),v=0;g.forEach(function(s){v+=(L(s)-a)*(L(s)-a);});return Math.sqrt(v/g.length);}
+  function cost(){var c=0;G.forEach(function(g){if(!g.length)return;var a=avg(g);c+=(a-mu)*(a-mu)*4+Math.pow(sd(g)-sdAll,2)+Math.pow(g.filter(function(s){return dspActive(s);}).length-dAll,2)*0.6;});return c;}
+  var best=cost();
+  for(var it=0;it<3000;it++){var a=Math.floor(Math.random()*k),b2=Math.floor(Math.random()*k);if(a===b2||!G[a].length||!G[b2].length)continue;
+    var x=Math.floor(Math.random()*G[a].length),y=Math.floor(Math.random()*G[b2].length);if(sexOf(G[a][x])!==sexOf(G[b2][y]))continue;
+    var t=G[a][x];G[a][x]=G[b2][y];G[b2][y]=t;var c=cost();if(c<best-1e-9)best=c;else{G[b2][y]=G[a][x];G[a][x]=t;}}
+  return G;
+}
+function grpGenerate(cid,k){var c=cls(cid),list=studentsIn(cid);if(!c||!list.length)return;k=Math.max(1,Math.min(GRP_MAX,parseInt(k,10)||grpDefN(list.length)));
+  var G=grpBuild(list,k),old=grpOf(c),names=[],of={};for(var i=0;i<k;i++)names.push(old&&old.names[i]?old.names[i]:'Groupe '+(i+1));
+  G.forEach(function(g,i){g.forEach(function(s){of[s.id]=i;});});c.grp={names:names,of:of,lock:false,at:Date.now()};persistNow();}
+function grpPlace(cid){var m=grpMembers(cid);if(!m||!m.none.length)return 0;var mean=classMean(studentsIn(cid)),n=m.none.length;
+  m.none.forEach(function(s){var best=-1,bk=null,x=sexOf(s);m.groups.forEach(function(g,i){var st=grpStats(g,mean),k=[g.length,x==='F'?st.f:x==='G'?st.m:st.u,st.avg*(lvlOf(s)!=null&&lvlOf(s)>mean?1:-1)];
+    if(!bk||k[0]<bk[0]||(k[0]===bk[0]&&(k[1]<bk[1]||(k[1]===bk[1]&&k[2]<bk[2])))){bk=k;best=i;}});m.g.of[s.id]=best;m.groups[best].push(s);});
+  m.g.at=Date.now();persistNow();return n;}
+function sizesTxt(n,k){var q=Math.floor(n/k),r=n%k;return r?q+'–'+(q+1)+' élèves':q+' élèves';}
+var grpCid='',grpEdit=false;
+function openGroups(cid){grpCid=cid||curCls();if(!cls(grpCid)){toast('Choisissez une classe');return;}grpEdit=false;renderGroups();openModal('grpModal');}
+function renderGroups(){
+  var c=cls(grpCid);if(!c){closeModal('grpModal');return;}
+  var list=studentsIn(grpCid),g=grpOf(c),n=list.length,mean=classMean(list),lock=!!(g&&g.lock);
+  var nSex=list.filter(sexOf).length,nLvl=list.filter(hasPhys).length;
+  var h='<div class="sheet-head"><h2>👥 Groupes – '+esc(c.name)+'</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>';
+  h+='<p class="small muted" style="margin-top:0">Groupes <b>hétérogènes</b> à l’intérieur (niveaux physiques mélangés), <b>homogènes</b> entre eux (effectifs à 1 près, niveau physique moyen proche) et <b>mixtes</b> (filles et garçons répartis équitablement). Niveau = <b>indice physique</b> calculé à partir des tests anthropométriques et physiques (50 = moyenne de la classe). À faire après le cycle 1 (possible à tout moment). 5 groupes au maximum, environ 8 élèves par groupe (9 au-delà de 40 élèves).</p>';
+  if(VIEW)h+='<p class="small" style="color:var(--warn);font-weight:650">Lecture seule : aucune modification n’est enregistrée.</p>';
+  h+='<div class="grpbox"><div class="gtop"><span class="small" style="flex:1 1 200px"><b>'+nSex+'/'+n+'</b> sexe renseigné · <b>'+nLvl+'/'+n+'</b> avec tests physiques'+(nLvl<n?' <span class="muted">(sans test = moyenne de la classe)</span>':'')+'</span><button type="button" class="btn sec sm" id="grpTests">📏 Tests physiques</button><button type="button" class="btn sec sm" id="grpEditBtn">'+(grpEdit?'✓ Terminer':'✎ Sexe F/G')+'</button></div>';
+  if(grpEdit)h+='<ul class="list gedit">'+list.map(function(s){var x=sexOf(s),l=lvlOf(s);return '<li data-sid="'+esc(s.id)+'"><span class="nm2" dir="auto">'+esc(s.name)+'</span><span class="lv" title="Indice physique">'+(l==null?'—':fmtNum(l))+'</span><span class="seg" role="group" aria-label="Sexe"><button type="button" data-sx="F" class="'+(x==='F'?'on':'')+'">F</button><button type="button" data-sx="G" class="'+(x==='G'?'on':'')+'">G</button></span></li>';}).join('')+'</ul><p class="small muted">F = fille, G = garçon · enregistrement automatique. Le sexe peut aussi être importé (colonne « Sexe » / « النوع » d’une liste Massar).</p>';
+  h+='</div>';
+  var kDef=g?g.names.length:grpDefN(n),opts='';for(var i=1;i<=GRP_MAX;i++)opts+='<option value="'+i+'"'+(i===kDef?' selected':'')+'>'+i+' groupe'+(i>1?'s':'')+(n?' ('+sizesTxt(n,i)+')':'')+'</option>';
+  h+='<div class="row" style="margin-top:10px"><select id="grpK" class="grow" aria-label="Nombre de groupes"'+(lock?' disabled':'')+'>'+opts+'</select><button type="button" class="btn" id="grpGen"'+(lock||!n?' disabled':'')+'>'+(g?'↻ Régénérer':'⚙ Générer les groupes')+'</button></div>';
+  if(g){var m=grpMembers(grpCid);
+    h+='<div class="row" style="margin-top:10px"><label class="switch"><input type="checkbox" id="grpLock"'+(lock?' checked':'')+'> 🔒 Verrouiller les groupes</label><span style="flex:1"></span>'+(m.none.length&&!lock?'<button type="button" class="btn sec sm" id="grpPlace">Placer les '+m.none.length+' nouveau'+(m.none.length>1?'x':'')+'</button>':'')+'<button type="button" class="btn sec sm" id="grpPdf">📄 PDF</button><button type="button" class="btn danger sm" id="grpDel"'+(lock?' disabled':'')+'>Supprimer</button></div>';
+    if(lock)h+='<p class="small muted" style="margin:6px 0 0">Groupes verrouillés : régénération et déplacements désactivés (renommage possible).</p>';
+    var all=grpStats(list,mean);
+    h+='<table class="gbal"><thead><tr><th>Groupe</th><th title="Effectif">Eff.</th><th title="Filles">F</th><th title="Garçons">G</th>'+(all.u?'<th title="Sexe non renseigné">?</th>':'')+'<th title="Indice physique moyen (50 = moyenne de la classe)">Niv. phys.</th><th title="Dispensés">🩺</th></tr></thead><tbody>';
+    m.groups.forEach(function(a,i){var st=grpStats(a,mean);h+='<tr><td>'+grpChip(g,i)+'</td><td><b>'+st.n+'</b></td><td>'+st.f+'</td><td>'+st.m+'</td>'+(all.u?'<td>'+st.u+'</td>':'')+'<td>'+fmtNum(Math.round(st.avg*10)/10)+'</td><td>'+(st.d||'')+'</td></tr>';});
+    if(m.none.length){var sn=grpStats(m.none,mean);h+='<tr><td><span class="gchip" style="--gc:#667085;--gs:#f2f4f7"><i>?</i>Sans groupe</span></td><td><b>'+sn.n+'</b></td><td>'+sn.f+'</td><td>'+sn.m+'</td>'+(all.u?'<td>'+sn.u+'</td>':'')+'<td>'+fmtNum(Math.round(sn.avg*10)/10)+'</td><td>'+(sn.d||'')+'</td></tr>';}
+    h+='</tbody><tfoot><tr><td>Classe</td><td>'+all.n+'</td><td>'+all.f+'</td><td>'+all.m+'</td>'+(all.u?'<td>'+all.u+'</td>':'')+'<td>'+fmtNum(Math.round(all.avg*10)/10)+'</td><td>'+(all.d||'')+'</td></tr></tfoot></table>';
+    function card(a,i){var col=i>=0?GRP_COL[i]:'#667085',soft=i>=0?GRP_SOFT[i]:'#f2f4f7',st=grpStats(a,mean);
+      var sorted=a.slice().sort(function(x,y){var lx=lvlOf(x),ly=lvlOf(y);return (ly==null?mean:ly)-(lx==null?mean:lx)||cmp(x.name,y.name);});
+      var r='<div class="gcard" style="--gc:'+col+';--gs:'+soft+'"><div class="gh"><span class="gnum">'+(i>=0?i+1:'?')+'</span>'+(i>=0?'<input type="text" dir="auto" maxlength="30" data-gname="'+i+'" value="'+esc(grpName(g,i))+'" aria-label="Nom du groupe">':'<b style="flex:1">Sans groupe (nouveaux élèves)</b>')+'</div>';
+      r+='<div class="gst">'+plural(st.n,'élève')+' · '+st.f+' fille'+(st.f>1?'s':'')+' / '+st.m+' garçon'+(st.m>1?'s':'')+(st.u?' / '+st.u+' ?':'')+' · niveau physique moyen '+fmtNum(Math.round(st.avg*10)/10)+(st.d?' · '+st.d+' dispensé'+(st.d>1?'s':''):'')+'</div><ul>';
+      sorted.forEach(function(s){var x=sexOf(s),l=lvlOf(s),mv='<select data-mv="'+esc(s.id)+'" aria-label="Déplacer vers"'+(lock?' disabled':'')+'>';g.names.forEach(function(nm,j){mv+='<option value="'+j+'"'+(j===i?' selected':'')+'>→ '+esc(nm)+'</option>';});if(i<0)mv+='<option value="-1" selected>—</option>';mv+='</select>';
+        r+='<li class="'+(dspActive(s)?'dsp':'')+'"><span class="sx">'+(x||'?')+'</span><span class="nm2" dir="auto">'+esc(s.name)+(dspActive(s)?' 🩺':'')+'</span><span class="lv" title="Indice physique">'+(l==null?'moy.':fmtNum(l))+'</span>'+mv+'</li>';});
+      return r+'</ul></div>';}
+    m.groups.forEach(function(a,i){h+=card(a,i);});if(m.none.length)h+=card(m.none,-1);
+  }else if(n)h+='<p class="small muted" style="margin-top:10px">Choisissez le nombre de groupes puis touchez « Générer ». Pensez à renseigner le sexe et, si possible, les tests physiques de chaque élève (📏).</p>';
+  else h+='<p class="empty">Aucun élève dans cette classe.</p>';
+  h+='<div class="actions"><button type="button" class="btn sec" data-close>Fermer</button></div>';
+  var sc=$('grpBody').scrollTop;$('grpBody').innerHTML=h;$('grpBody').scrollTop=sc;
+}
+function grpChanged(){renderGroups();if(current==='attendance'){renderGrpBox();renderGrid();}}
+$('grpBody').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var c=cls(grpCid);if(!c)return;
+  if(b.id==='grpEditBtn'){grpEdit=!grpEdit;renderGroups();return;}
+  if(b.id==='grpTests'){openTests(grpCid);return;}
+  if(b.dataset.sx){var s=byId(b.closest('li').dataset.sid);if(!s)return;if(s.sex===b.dataset.sx)delete s.sex;else s.sex=b.dataset.sx;persist();b.parentNode.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x.dataset.sx===s.sex);});return;}
+  if(b.id==='grpGen'){if(grpOf(c)&&!confirm('Régénérer les groupes de '+c.name+' ? La répartition actuelle (et les déplacements manuels) sera remplacée.'))return;grpGenerate(grpCid,$('grpK').value);grpChanged();toast('Groupes générés : '+c.name);return;}
+  if(b.id==='grpPlace'){var n=grpPlace(grpCid);grpChanged();toast(plural(n,'élève')+' placé'+(n>1?'s':''));return;}
+  if(b.id==='grpDel'){if(!confirm('Supprimer les groupes de '+c.name+' ?'))return;delete c.grp;DB.ui.grp=false;persistNow();grpChanged();toast('Groupes supprimés');return;}
+  if(b.id==='grpPdf'){runPdf('groups',{cid:grpCid});return;}
+});
+$('grpBody').addEventListener('change',function(e){var t=e.target,c=cls(grpCid),g=grpOf(c);
+  if(!g)return;
+  if(t.id==='grpLock'){g.lock=t.checked;persistNow();grpChanged();return;}
+  if(t.dataset.gname!=null){var v2=t.value.trim().replace(/\s+/g,' ').slice(0,30);g.names[+t.dataset.gname]=v2||('Groupe '+(+t.dataset.gname+1));persistNow();grpChanged();return;}
+  if(t.dataset.mv){var k=parseInt(t.value,10);if(g.lock)return;if(k>=0)g.of[t.dataset.mv]=k;else delete g.of[t.dataset.mv];g.at=Date.now();persistNow();grpChanged();}
+});
+function renderGrpBox(){var box=$('attGrp'),cid=DB.ui.cls,c=cls(cid);if(!box)return;if(!c||!countIn(cid)){box.classList.add('hidden');return;}box.classList.remove('hidden');var g=grpOf(c);
+  if(!g){box.innerHTML='<div class="gtop"><b>👥 Groupes</b><span class="small muted" style="flex:1 1 160px">Aucun groupe pour cette classe (conseillé après le cycle 1).</span><button type="button" class="btn sec sm" data-grp="open">Créer les groupes</button></div>';return;}
+  var m=grpMembers(cid);
+  box.innerHTML='<div class="gtop"><b>👥 Groupes'+(g.lock?' 🔒':'')+'</b><label class="switch"><input type="checkbox" id="attGrpOn"'+(DB.ui.grp?' checked':'')+'> Par groupe</label><span style="flex:1"></span><button type="button" class="btn sec sm" data-grp="open">Gérer</button></div><div class="gchips">'+m.groups.map(function(a,i){var st=grpStats(a,10);return '<span class="gchip" style="--gc:'+GRP_COL[i]+';--gs:'+GRP_SOFT[i]+'"><i>'+(i+1)+'</i><span class="gn">'+esc(grpName(g,i))+'</span><small>'+st.n+(st.f||st.m?' · '+st.f+'F/'+st.m+'G':'')+'</small></span>';}).join('')+(m.none.length?'<span class="gchip" style="--gc:#667085;--gs:#f2f4f7"><i>?</i>Sans groupe · '+m.none.length+'</span>':'')+'</div>';}
+$('attGrp').addEventListener('click',function(e){if(e.target.closest('[data-grp="open"]'))openGroups(DB.ui.cls);});
+$('attGrp').addEventListener('change',function(e){if(e.target.id==='attGrpOn'){DB.ui.grp=e.target.checked;persist();renderGrid();}});
+
+/* ================= PDF : bibliothèques locales (vendor/) chargées à la demande, en cache hors ligne ================= */
+var PDF_LIBS=['vendor/jspdf.umd.min.js','vendor/jspdf.plugin.autotable.min.js','cj-pdf.js'],pdfP=null,pdfBusy=false;
+function loadScript(src){return new Promise(function(res,rej){var el=document.createElement('script');el.src=src;el.onload=res;el.onerror=function(){el.remove();rej(new Error('Chargement impossible : '+src));};document.head.appendChild(el);});}
+function pdfLib(){if(window.CJPDF)return Promise.resolve();if(!pdfP)pdfP=PDF_LIBS.reduce(function(pr,src){return pr.then(function(){return loadScript(src);});},Promise.resolve()).then(function(){if(!window.CJPDF)throw new Error('module PDF absent');}).catch(function(e){pdfP=null;throw e;});return pdfP;}
+function runPdf(kind,o){
+  if(pdfBusy){toast('PDF en cours de préparation…');return;}pdfBusy=true;toast('Préparation du PDF…');
+  pdfLib().then(function(){return window.CJPDF.make(kind,o||{});}).then(function(r){pdfBusy=false;deliverPdf(r.blob,r.name);})
+  .catch(function(e){pdfBusy=false;try{console.warn('PDF',e);}catch(x){}toast(e&&e.userMsg?e.userMsg:'⚠ Impossible de créer le PDF'+(navigator.onLine===false?' hors ligne : ouvrez l’application une fois en ligne pour l’installer.':'. Réessayez.'));});
+}
+function isIOS(){return /iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+var pdfUrl=null;
+function deliverPdf(blob,name){
+  window.__lastPdf={name:name,size:blob.size,blob:blob};
+  if(!isIOS()){download(name,blob,'application/pdf');toast('PDF téléchargé : '+name);return;}
+  if(pdfUrl)URL.revokeObjectURL(pdfUrl);pdfUrl=URL.createObjectURL(blob);var file=null;try{file=new File([blob],name,{type:'application/pdf'});}catch(e){}
+  var share=!!(file&&navigator.canShare&&navigator.share&&navigator.canShare({files:[file]}));
+  $('pdfBody').innerHTML='<div class="sheet-head"><h2>📄 PDF prêt</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div><p class="small" style="word-break:break-all;margin-top:0"><b>'+esc(name)+'</b><br><span class="muted">'+Math.max(1,Math.round(blob.size/1024))+' Ko · A4</span></p><div class="actions">'+(share?'<button type="button" class="btn" id="pdfShare">Partager / Enregistrer</button>':'')+'<a class="btn'+(share?' sec':'')+'" id="pdfOpen" href="'+pdfUrl+'" download="'+esc(name)+'" target="_blank" rel="noopener">Ouvrir le PDF</a><button type="button" class="btn sec" data-close>Fermer</button></div><p class="small muted">« Partager » → « Enregistrer dans Fichiers », WhatsApp, Mail…</p>';
+  if(share)$('pdfShare').onclick=function(){navigator.share({files:[file],title:name}).catch(function(){});};
+  openModal('pdfModal');
+}
+
 /* ================= Reports ================= */
 var repSort={k:'name',dir:1};
 function reportData(){
@@ -1372,6 +1649,8 @@ $('repTable').addEventListener('click',function(e){
   var tr=e.target.closest('tr[data-id]');if(tr)openDetail(tr.dataset.id);
 });
 $('alertList').addEventListener('click',function(e){var li=e.target.closest('li[data-id]');if(li)openDetail(li.dataset.id);});
+$('repExportPdf').addEventListener('click',function(){var s=$('repScope').value,c=$('repClass').value;if(!cls(c)){toast('Choisissez une classe');return;}if(s==='year')runPdf('year',{cid:c});else runPdf('cycle',{cid:c,p:+s});});
+$('repAllPdf').addEventListener('click',function(){runPdf('all');});
 $('repExportCsv').addEventListener('click',function(){var s=$('repScope').value;if(s==='year')exportYear($('repClass').value);else exportGrid($('repClass').value,+s);});
 
 /* ================= CSV ================= */
@@ -1809,6 +2088,7 @@ function norm(s){s=String(s==null?'':s).toLowerCase();try{s=s.normalize('NFD').r
 /* header rules: [key, regex, weak] – order matters (specific first) */
 var HEAD=[
  ['cls',/^(classe|class|groupe|division|section|القسم|الفوج)$/],
+ ['sex',/^(sexe|genre|sex|gender|النوع|الجنس|f ?\/ ?g|g ?\/ ?f|fille ?\/ ?garcon)$/],
  ['rank',/^(n°|n °|no|n|nr|num|#|id|ordre|rang|n° d'ordre|ر ?\. ?ت|ر ت|رت|ت|الرقم الترتيبي|الرتبة|ع\.?ر)$/],
  ['sid',/massar|\bcode\b|\bcne\b|matricule|رمز|رقم التلميذ|رقم مسار|الرقم الوطني|student ?id|\bid (eleve|student)/],
  ['name',/nom (et |& |\/ ?|- ?)?prenoms?|nom complet|full ?name|prenoms? (et |& )?nom|nom de l'eleve|nom eleve|^(names?|eleves?|students?|pupils?)$/],
@@ -1826,7 +2106,8 @@ var HEAD=[
  ['dob',/\bdate\b|تاريخ/,1]
 ];
 var NAMEK=['name','last','first','nameAr','lastAr','firstAr'];
-var MAPK=['ign','name','last','first','nameAr','lastAr','firstAr','sid','dob','phone','parent','notes','cls','rank'];
+var MAPK=['ign','name','last','first','nameAr','lastAr','firstAr','sid','dob','sex','phone','parent','notes','cls','rank'];
+function parseSex(v){v=norm(v).replace(/[.\s]/g,'');if(/^(f|fille|feminin|femme|female|girl|انثى|أنثى|ا|ث)$/.test(v))return 'F';if(/^(g|m|h|garcon|masculin|homme|male|boy|ذكر|ذ)$/.test(v))return 'G';return '';}
 var CODE_RE=/^[A-Za-z]{1,2}\d{6,12}$/;
 function looksCode(v){return CODE_RE.test(String(v||'').replace(/\s+/g,''));}
 function mapHeader(row,hid){
@@ -1896,7 +2177,7 @@ function rowsToItems(rows,scan,ov,hid){
     if(!name){if(sid||looksCode(fr)||looksCode(ar))noname++;return;}
     if(header){var hm=mapHeader([name]);if(hm._strong&&hasNameCol(hm))return;}
     if(name.length<2)return;
-    items.push({name:name,sid:sid,parent:g('parent'),phone:g('phone'),dob:toISO(g('dob')),notes:g('notes')==='-'?'':g('notes'),cls:g('cls')});
+    items.push({name:name,sid:sid,parent:g('parent'),phone:g('phone'),dob:toISO(g('dob')),sex:parseSex(g('sex')),notes:g('notes')==='-'?'':g('notes'),cls:g('cls')});
   });
   var info=[];for(j=0;j<ncol;j++){var hv=header?String(rows[hi][j]||'').replace(/\s+/g,' ').trim():'',sv='';for(var q=0;q<data.length&&!sv;q++)sv=data[q][j]||'';
     if(!hv&&!sv)continue;var key='ign';Object.keys(map).forEach(function(k){if(map[k]===j)key=k;});info.push({j:j,head:hv,sample:sv,key:key,hidden:!!hid[j]});}
@@ -1962,11 +2243,11 @@ function buildPlan(){
   var list=order.map(function(k){var g=groups[k];
     var ch=bulkChoices[k]!=null?bulkChoices[k]:(k.indexOf('c:')===0?k.slice(2):(k.indexOf('n:')===0?'__new':'__skip'));
     if(ch!=='__new'&&ch!=='__skip'&&!cls(ch))ch=k.indexOf('n:')===0?'__new':'__skip';
-    g.choice=ch;g.add=[];g.dup=0;g.fix=[];
+    g.choice=ch;g.add=[];g.dup=0;g.fix=[];g.sexd=[];
     var tk=ch==='__new'?'n:'+ckey(g.label):'c:'+ch,ns=nameSeen[tk]=nameSeen[tk]||{};
     g.items.forEach(function(it){if(ch==='__skip')return;var sk=it.sid?ckey(it.sid):'',nk=norm(it.name);
       var bs=sk&&broken[sk];if(bs&&!fixUsed[bs.id]){fixUsed[bs.id]=1;sidSeen[sk]=1;g.fix.push({s:bs,it:it});return;}
-      if((sk&&sidSeen[sk])||(!sk&&ns[nk])){g.dup++;return;}if(sk)sidSeen[sk]=1;ns[nk]=1;g.add.push(it);});
+      if((sk&&sidSeen[sk])||(!sk&&ns[nk])){g.dup++;if(it.sex)(g.sexd=g.sexd||[]).push(it);return;}if(sk)sidSeen[sk]=1;ns[nk]=1;g.add.push(it);});
     return g;});
   return {groups:list,cols:Object.keys(cols),tables:tables.length,tinfo:tinfo,noname:noname};
 }
@@ -1999,10 +2280,13 @@ function renderPlan(){
 function labelsFr(k,labels){return (TX.impColNames&&TX.impColNames[k])||labels[k]||k;}
 function doImportPlan(){
   var P=bulkPlan=buildPlan(),now=Date.now(),made={},n=0,cset={},nc=0;
-  var fx=0;P.groups.forEach(function(g){g.fix.forEach(function(f){var s=f.s,it=f.it;s.name=it.name;s.sid=it.sid||(looksCode(s.sid)?s.sid:'');if(!s.dob&&it.dob)s.dob=it.dob;if(!s.phone&&it.phone)s.phone=it.phone;if(!s.parent&&it.parent)s.parent=it.parent;fx++;});});
+  /* sexe : complète les élèves déjà présents (doublons) si l’information manquait */
+  var sxf=0;P.groups.forEach(function(g){if(g.choice==='__skip'||g.choice==='__new')return;(g.sexd||[]).forEach(function(it){var sk=it.sid?ckey(it.sid):'',nk=norm(it.name);var s=DB.students.filter(function(x){return sk?ckey(x.sid)===sk:(x.classId===g.choice&&norm(x.name)===nk);})[0];if(s&&!s.sex){s.sex=it.sex;sxf++;}});});
+  var fx=0;P.groups.forEach(function(g){g.fix.forEach(function(f){var s=f.s,it=f.it;if(!s.sex&&it.sex)s.sex=it.sex;s.name=it.name;s.sid=it.sid||(looksCode(s.sid)?s.sid:'');if(!s.dob&&it.dob)s.dob=it.dob;if(!s.phone&&it.phone)s.phone=it.phone;if(!s.parent&&it.parent)s.parent=it.parent;fx++;});});
   P.groups.forEach(function(g){if(!g.add.length||g.choice==='__skip')return;var cid=g.choice;
     if(cid==='__new'){var k=ckey(g.label),ex=findClass(g.label,false);if(ex)cid=ex.id;else if(made[k])cid=made[k];else{cid='c'+uid();DB.classes.push({id:cid,name:g.label});made[k]=cid;nc++;}}
-    cset[cid]=1;g.add.forEach(function(x,i){DB.students.push({id:uid()+n+i,classId:cid,name:x.name,sid:x.sid,dob:x.dob,parent:x.parent,phone:x.phone,notes:x.notes,created:now});});n+=g.add.length;});
+    cset[cid]=1;g.add.forEach(function(x,i){var o={id:uid()+n+i,classId:cid,name:x.name,sid:x.sid,dob:x.dob,parent:x.parent,phone:x.phone,notes:x.notes,created:now};if(x.sex)o.sex=x.sex;DB.students.push(o);});n+=g.add.length;});
+  if(!n&&!fx&&sxf){persistNow();closeModal('bulkModal');toast(sxf+' élève'+(sxf>1?'s':'')+' : sexe complété');bulkFiles=[];render();return;}
   if(!n&&!fx)return;
   if(!n){persistNow();closeModal('bulkModal');toast(TX.impFixed(fx));bulkFiles=[];stuBrokenOnly=false;render();return;}
   var one=Object.keys(cset);if(one.length===1)DB.ui.cls=one[0];
@@ -2099,6 +2383,12 @@ function renderSettings(){
   var n=Object.keys(DB.sessions).length;
   $('bkInfo').textContent=plural(DB.students.length,'élève')+', '+plural(DB.classes.length,'classe')+', '+plural(n,'séance')+' enregistrée'+(n>1?'s':'')+'. '+(DB.lastBackup?'Dernière sauvegarde : '+fmtDT(DB.lastBackup):'Aucune sauvegarde téléchargée pour l’instant.');
 }
+$('pdfCycle').addEventListener('click',function(){var c=$('expClass').value;if(!cls(c)){toast('Choisissez une classe pour le bilan du cycle');return;}runPdf('cycle',{cid:c,p:+$('expPeriod').value});});
+$('pdfYear').addEventListener('click',function(){var c=$('expClass').value;if(c)runPdf('year',{cid:c});else runPdf('all');});
+$('pdfStudents').addEventListener('click',function(){runPdf('students',{cid:$('expClass').value});});
+$('pdfRecords').addEventListener('click',function(){runPdf('records',{cid:$('expClass').value});});
+$('pdfTests').addEventListener('click',function(){runPdf('tests',{cid:$('expClass').value});});
+$('pdfGroups').addEventListener('click',function(){runPdf('groups',{cid:$('expClass').value});});
 $('expGrid').addEventListener('click',function(){exportGrid($('expClass').value,+$('expPeriod').value);});
 $('expYear').addEventListener('click',function(){exportYear($('expClass').value);});
 $('expStudents').addEventListener('click',function(){exportStudents($('expClass').value);});
@@ -2160,6 +2450,10 @@ $('wipeAll').addEventListener('click',function(){
 window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();render();}});
 
 /* ================= API for cloud sync (see sync script below) ================= */
+window.CJR={db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
+  dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
+  grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
+  user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJApp={
   key:KEY,
   getJSON:function(){if(VIEW)return localStorage.getItem(KEY)||JSON.stringify(VIEW.own);if(saveT)persistNow();return localStorage.getItem(KEY)||JSON.stringify(DB);},
