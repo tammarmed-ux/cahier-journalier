@@ -9,7 +9,7 @@ Format de version : **1.<version>.<correctif>** (actuelle : 1.22.0 · suivante :
 2. `manifest.webmanifest` : `name` contient `v1.22.0`.
 3. `sw.js` : `CACHE = 'cahier-v22'` ; toute nouvelle ressource (polices, scripts) ajoutée à `ASSETS` ou `FONT_ASSETS`.
 4. La clé de stockage `classRegister.v2` ne change JAMAIS.
-5. Tests (dossier `cj-emu`, émulateurs Firebase actifs) : `test_gate` 61+, `test_move`, `test_pdf`, `test_order`, `test_snap`, `test_import`, `test_v22` (version, polices arabes, bidi, semestres, vert/rouge).
+5. Tests (dossier `cj-emu`, émulateurs Firebase actifs) : `test_gate` 61+, `test_move`, `test_pdf`, `test_order`, `test_snap`, `test_import`, `test_v22` (copie dans `tests/`, non servie ; version, polices arabes, bidi, semestres, vert/rouge).
 6. Aperçus PDF à regarder (PNG) : nom centré (latin + arabe), vert/rouge présence, polices arabes, semestres.
 
 ## Publier

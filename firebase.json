@@ -15,7 +15,9 @@
       "*.md",
       "**/*.md",
       "RELEASE*",
-      "**/RELEASE*"
+      "**/RELEASE*",
+      "tests",
+      "tests/**"
     ],
     "cleanUrls": false,
     "headers": [
