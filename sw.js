@@ -16,8 +16,11 @@ const ASSETS = [
   './vendor/jspdf.umd.min.js',
   './vendor/jspdf.plugin.autotable.min.js',
   './vendor/NotoSansArabic-Regular.ttf',
-  './vendor/NotoSansArabic-Bold.ttf'
+  './vendor/NotoSansArabic-Bold.ttf',
+  './vendor/bidi-js.min.js'
 ];
+/* autres polices arabes au choix (Paramètres) : mises en cache après l’installation, sans jamais la bloquer (aussi à la demande au premier usage) */
+const FONT_ASSETS = ['Amiri', 'NotoNaskhArabic', 'Cairo', 'Tajawal'].reduce((a, f) => a.concat(['./vendor/' + f + '-Regular.ttf', './vendor/' + f + '-Bold.ttf']), []);
 /* Firebase JS SDK (versioned, immutable files): cached on first successful fetch */
 const SDK_PREFIX = 'https://www.gstatic.com/firebasejs/';
 const SDK_FILES = ['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js'].map(f => SDK_PREFIX + '12.19.0/' + f);
@@ -25,7 +28,7 @@ const SDK_FILES = ['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).then(() =>
     /* best effort: pre-cache the sync SDK; never blocks installation */
-    Promise.all(SDK_FILES.map(u => fetch(u, { mode: 'cors' }).then(r => r.ok ? c.put(u, r) : null).catch(() => null)))
+    Promise.all(FONT_ASSETS.map(u => fetch(u).then(r => r.ok ? c.put(u, r) : null).catch(() => null)).concat(SDK_FILES.map(u => fetch(u, { mode: 'cors' }).then(r => r.ok ? c.put(u, r) : null).catch(() => null))))
   )).then(() => self.skipWaiting()));
 });
 

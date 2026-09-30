@@ -12,7 +12,10 @@
       "**/.*",
       "**/.*/**",
       "**/node_modules/**",
-      "*.md"
+      "*.md",
+      "**/*.md",
+      "RELEASE*",
+      "**/RELEASE*"
     ],
     "cleanUrls": false,
     "headers": [

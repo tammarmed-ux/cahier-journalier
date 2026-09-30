@@ -23,8 +23,20 @@
   --radius:14px;--shadow:0 1px 2px rgba(16,24,40,.06),0 2px 8px rgba(16,24,40,.05);
 }
 *{box-sizing:border-box}
+/* ===== Police arabe (choix dans Paramètres) : uniquement les caractères arabes (unicode-range), chargée à la demande ===== */
+@font-face{font-family:"CJ-noto";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/NotoSansArabic-Regular.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-noto";font-weight:700;font-style:normal;font-display:swap;src:url(vendor/NotoSansArabic-Bold.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-amiri";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/Amiri-Regular.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-amiri";font-weight:700;font-style:normal;font-display:swap;src:url(vendor/Amiri-Bold.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-naskh";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/NotoNaskhArabic-Regular.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-naskh";font-weight:700;font-style:normal;font-display:swap;src:url(vendor/NotoNaskhArabic-Bold.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-cairo";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/Cairo-Regular.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-cairo";font-weight:700;font-style:normal;font-display:swap;src:url(vendor/Cairo-Bold.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-tajawal";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/Tajawal-Regular.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:"CJ-tajawal";font-weight:700;font-style:normal;font-display:swap;src:url(vendor/Tajawal-Bold.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
+:root{--arfont:"CJ-noto"}
 html,body{margin:0;padding:0}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Arabic",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+body{font-family:var(--arfont),system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Arabic",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
 header.top{position:sticky;top:0;z-index:20;background-color:var(--pri);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:32px 32px;background-position:center top;color:#fff;padding:12px 16px calc(12px);padding-top:max(12px,env(safe-area-inset-top));box-shadow:0 2px 6px rgba(0,0,0,.12)}
 header.top h1{margin:0;font-size:18px;font-weight:650;letter-spacing:.2px;display:flex;align-items:center;gap:9px;min-width:0}
 header.top .h-logo{flex:0 0 auto;width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px rgba(255,255,255,.55),0 2px 6px rgba(0,0,20,.25)}
@@ -420,6 +432,9 @@ html.cj-locked #gate{display:block}
 #gate .g-wrap{max-width:420px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #gate .g-logo{display:block;width:clamp(170px,50vw,210px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:22%;box-shadow:0 12px 32px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.3)}
 @media (max-height:640px){#gate .g-logo{width:140px}}
+#gate .g-ver{font-size:12px;opacity:.7;margin:-8px 0 14px;letter-spacing:.3px}
+.arprev{font-size:20px;margin:8px 0 0;padding:8px 12px;background:var(--pri-soft);border-radius:10px;text-align:center}
+.verline{text-align:center;font-size:12.5px;color:var(--muted);margin:6px 0 0}
 #gate .g-sub{font-size:13.5px;opacity:.85;margin:12px 0 18px}
 #gate .g-card{background:#fff;color:var(--ink);border-radius:20px;width:100%;padding:20px 18px;box-shadow:0 14px 40px rgba(0,0,30,.35)}
 #gate .g-card h2{margin:0 0 4px;font-size:19px;color:var(--pri)}
@@ -646,6 +661,9 @@ table.gbal tfoot td{font-weight:700}
     <label class="chk" style="margin-top:12px"><input type="checkbox" id="setAutoDate"> Inscrire la date du jour quand je commence une séance</label>
     <label class="f" for="setTeacher">Enseignant / établissement (affiché en haut, facultatif)</label>
     <input type="text" id="setTeacher" dir="auto" placeholder="ex. Mohamed Tammar – Lycée qualifiant Baja">
+    <label class="f" for="setArFont">Police arabe (noms arabes dans l’application et les PDF)</label>
+    <select id="setArFont"><option value="noto">Noto Sans Arabic (par défaut)</option><option value="amiri">Amiri</option><option value="naskh">Noto Naskh Arabic</option><option value="cairo">Cairo</option><option value="tajawal">Tajawal</option></select>
+    <p class="arprev" id="arPrev" dir="rtl" lang="ar">محمد الإدريسي – لا إله إلا الله – أحمد (أ) ٢٠٢٦</p>
   </div>
   <div class="card" id="holCard"></div>
   <div class="card" id="onbCard">
@@ -659,6 +677,7 @@ table.gbal tfoot td{font-weight:700}
     <button class="btn danger" id="wipeAll">Supprimer toutes les données</button>
   </div>
   <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation automatique avec votre compte</p>
+  <p class="verline" id="verLine">Version 1.22.0</p>
 </section>
 </main>
 
@@ -953,8 +972,13 @@ var toastT;function toast(msg){var t=$('toast');t.textContent=msg;t.classList.ad
 
 /* ================= storage ================= */
 var DEFCYC=[['2026-09-14','2026-10-17'],['2026-10-26','2026-11-29'],['2026-11-30','2027-01-09'],['2027-02-01','2027-02-28'],['2027-03-01','2027-04-11'],['2027-04-12','2027-05-22']];
+/* ===== Police arabe (PDF + application) ===== */
+var AR_FONTS={noto:{n:'Noto Sans Arabic',f:'NotoSansArabic'},amiri:{n:'Amiri',f:'Amiri'},naskh:{n:'Noto Naskh Arabic',f:'NotoNaskhArabic'},cairo:{n:'Cairo',f:'Cairo'},tajawal:{n:'Tajawal',f:'Tajawal'}};
+function arFontKey(k){return AR_FONTS.hasOwnProperty(k)?k:'noto';}
+function arFontFiles(k){var f=AR_FONTS[arFontKey(k)].f;return ['vendor/'+f+'-Regular.ttf','vendor/'+f+'-Bold.ttf'];}
+function applyArFont(){try{document.documentElement.style.setProperty('--arfont','"CJ-'+arFontKey(DB&&DB.settings&&DB.settings.arFont)+'"');}catch(e){}}
 function blank(){
-  var d={app:'class-register',version:3,classes:[],periods:[],spp:10,students:[],sessions:{},settings:{threshold:3,teacher:'',autoDate:true,points:{A:0.5,L:0.25,M:0.25,K:0,S:0.5,J:0}},ui:{cls:'',per:0,mode:'cycle',grp:false},lastBackup:null};
+  var d={app:'class-register',version:3,classes:[],periods:[],spp:10,students:[],sessions:{},settings:{threshold:3,teacher:'',autoDate:true,arFont:'noto',points:{A:0.5,L:0.25,M:0.25,K:0,S:0.5,J:0}},ui:{cls:'',per:0,mode:'cycle',grp:false},lastBackup:null};
   ['1BACLSH1','1BACLSH2','1BACLSH3','1BACLSH4','2BACSP4','2BACSP5','2BACSP6','2BACSSVT1','2BACSSVT2'].forEach(function(n,i){d.classes.push({id:'c'+(i+1)+uid(),name:n});});
   d.periods=[TX.act1,'','','','',''];
   d.cal={start:DEFCYC[0][0],weeks:5,cycles:defCycles(),oblig:21,perWeek:2,dayMin:2,dayMax:6,friMax:4,asInit:true,holidays:defHolidays(),tt:[defAS()]};
@@ -991,7 +1015,7 @@ function normalize(d){
     if(r.marks&&typeof r.marks==='object')Object.keys(r.marks).forEach(function(id){var m=r.marks[id]||{};if(m.s==='A'||m.s==='L'||m.s==='M'||m.s==='ST')marks[id]={s:m.s,j:(m.s==='A'||m.s==='M')&&!!m.j,r:String(m.r||'')};});
     b.sessions[k]={date:/^\d{4}-\d{2}-\d{2}$/.test(r.date||'')?r.date:'',marks:marks};
   });
-  if(d.settings){var t=parseInt(d.settings.threshold,10);if(t>0)b.settings.threshold=t;b.settings.teacher=String(d.settings.teacher||'');b.settings.autoDate=d.settings.autoDate!==false;
+  if(d.settings){var t=parseInt(d.settings.threshold,10);if(t>0)b.settings.threshold=t;b.settings.teacher=String(d.settings.teacher||'');b.settings.autoDate=d.settings.autoDate!==false;b.settings.arFont=arFontKey(d.settings.arFont);
     if(d.settings.points)['A','L','M','K','S','J'].forEach(function(k){var v=parseFloat(d.settings.points[k]);if(v>=0&&v<100)b.settings.points[k]=v;});}
   if(d.ui){b.ui.cls=String(d.ui.cls||'');b.ui.per=Math.max(0,Math.min(b.periods.length-1,parseInt(d.ui.per,10)||0));b.ui.mode=d.ui.mode==='edit'?'edit':'cycle';b.ui.grp=!!d.ui.grp;}
   b.lastBackup=d.lastBackup||null;
@@ -1187,6 +1211,7 @@ function showTab(tab){
 }
 $('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b)showTab(b.dataset.tab);});
 function render(){
+  applyArFont();
   updateHeader();
   calReset();
   if(current==='home')renderHome();
@@ -1739,7 +1764,7 @@ $('attGrp').addEventListener('click',function(e){if(e.target.closest('[data-grp=
 $('attGrp').addEventListener('change',function(e){if(e.target.id==='attGrpOn'){DB.ui.grp=e.target.checked;persist();renderGrid();}});
 
 /* ================= PDF : bibliothèques locales (vendor/) chargées à la demande, en cache hors ligne ================= */
-var PDF_LIBS=['vendor/jspdf.umd.min.js','vendor/jspdf.plugin.autotable.min.js','cj-pdf.js'],pdfP=null,pdfBusy=false;
+var PDF_LIBS=['vendor/jspdf.umd.min.js','vendor/jspdf.plugin.autotable.min.js','vendor/bidi-js.min.js','cj-pdf.js'],pdfP=null,pdfBusy=false;
 function loadScript(src){return new Promise(function(res,rej){var el=document.createElement('script');el.src=src;el.onload=res;el.onerror=function(){el.remove();rej(new Error('Chargement impossible : '+src));};document.head.appendChild(el);});}
 function pdfLib(){if(window.CJPDF)return Promise.resolve();if(!pdfP)pdfP=PDF_LIBS.reduce(function(pr,src){return pr.then(function(){return loadScript(src);});},Promise.resolve()).then(function(){if(!window.CJPDF)throw new Error('module PDF absent');}).catch(function(e){pdfP=null;throw e;});return pdfP;}
 function runPdf(kind,o){
@@ -2540,7 +2565,7 @@ function renderSettings(){
   storeInfo();renderSnaps();
   $('periodNames').innerHTML=DB.periods.map(function(n,i){return '<label class="cyrow"><span>'+esc(cycleName(i))+'</span><input type="text" dir="auto" data-pi="'+i+'" value="'+esc(n)+'" maxlength="40" placeholder="'+esc(TX.actPh)+'" aria-label="Activité du cycle '+(i+1)+'"></label>';}).join('');
   document.querySelectorAll('[data-pt]').forEach(function(i){i.value=DB.settings.points[i.dataset.pt];});
-  $('setSpp').value=DB.spp;$('setThreshold').value=DB.settings.threshold;$('setTeacher').value=DB.settings.teacher;$('setAutoDate').checked=DB.settings.autoDate;
+  $('setSpp').value=DB.spp;$('setThreshold').value=DB.settings.threshold;$('setTeacher').value=DB.settings.teacher;$('setArFont').value=arFontKey(DB.settings.arFont);$('verLine').textContent='Version '+APP_SEMVER;$('setAutoDate').checked=DB.settings.autoDate;
   var n=Object.keys(DB.sessions).length;
   $('bkInfo').textContent=plural(DB.students.length,'élève')+', '+plural(DB.classes.length,'classe')+', '+plural(n,'séance')+' enregistrée'+(n>1?'s':'')+'. '+(DB.lastBackup?'Dernière sauvegarde : '+fmtDT(DB.lastBackup):'Aucune sauvegarde téléchargée pour l’instant.');
 }
@@ -2608,6 +2633,7 @@ $('periodNames').addEventListener('change',function(e){var i=+e.target.dataset.p
 $('setSpp').addEventListener('change',function(){var v=parseInt(this.value,10);if(v>0&&v<=30){if(v<DB.spp&&!confirm('Afficher seulement '+v+' séances par cycle ? Les marques des séances au-delà de '+v+' sont conservées mais masquées et non comptées.')){this.value=DB.spp;return;}DB.spp=v;persistNow();toast(v+' séances par cycle');}else this.value=DB.spp;});
 $('setThreshold').addEventListener('change',function(){var v=parseInt(this.value,10);if(v>0&&v<100){DB.settings.threshold=v;persistNow();toast('Seuil d’alerte : '+v);}else this.value=DB.settings.threshold;});
 document.querySelectorAll('[data-pt]').forEach(function(inp){inp.addEventListener('change',function(){var k=inp.dataset.pt,v=parseFloat(String(inp.value).replace(',','.'));if(v>=0&&v<100){DB.settings.points[k]=v;persistNow();toast(CODE_LABEL[k]+' : -'+fmtNum(v)+' pt');}else inp.value=DB.settings.points[k];});});
+$('setArFont').addEventListener('change',function(){if(VIEW){this.value=arFontKey(DB.settings.arFont);toast('Lecture seule : modification impossible');return;}DB.settings.arFont=arFontKey(this.value);persistNow();applyArFont();toast('Police arabe : '+AR_FONTS[DB.settings.arFont].n);});
 $('setAutoDate').addEventListener('change',function(){DB.settings.autoDate=this.checked;persistNow();});
 $('setTeacher').addEventListener('change',function(){DB.settings.teacher=this.value.trim();persistNow();updateHeader();});
 $('bkExport').addEventListener('click',function(){
@@ -2637,7 +2663,7 @@ $('wipeAll').addEventListener('click',function(){
 window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();render();}});
 
 /* ================= API for cloud sync (see sync script below) ================= */
-window.CJR={db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
+window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
   cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
