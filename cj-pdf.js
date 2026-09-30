@@ -243,7 +243,7 @@ function studentTable(d,y,list,cid,p){
   var body=list.map(function(s,i){var y=A.yearStat(cid,s.id),st=year?y:y.per[p],dsp=year?!!A.dspOf(s):A.dspInCycle(s,p),al=st.U>=th,r=stRate(st);
     ['U','J','M','K','L','S'].forEach(function(k){tot[k]+=st[k];});tot.ded+=st.ded;tot.held+=st.held;tot.abs+=st.A+st.M+st.K;if(dsp)dspRows[i]=1;
     var obs=[];if(dsp)obs.push('Dispensé(e) – '+A.dspShort(A.dspOf(s)));if(al)obs.push('Alerte : '+st.U+' abs. non just.');if(!year&&st.capped)obs.push('Note comp. épuisée');
-    var row=[i+1,s.sid||'',C(s.name,{halign:'left',fontStyle:'bold'})];if(g)row.push(grpCellOf(cid,s));
+    var row=[i+1,s.sid||'',C(s.name,{halign:'center',fontStyle:'bold'})];if(g)row.push(grpCellOf(cid,s));
     row.push(sexTxt(s),C(pct(r,0),{textColor:r==null?MUTED:r>=0.9?ST.P.ch:r>=0.8?[184,110,0]:ST.A.c,fontStyle:'bold'}),zero(st.U,ST.A.c),zero(st.J,ST.J.c),zero(st.M,ST.M.c),zero(st.K,ST.K.c),zero(st.L,ST.L.c),zero(st.S,ST.S.c),C(A.fmtPts(st.ded),{textColor:st.ded?[184,110,0]:[190,196,206],fontStyle:'bold'}));
     if(!year)row.push(C(num(r2(st.cap-st.ded))+' / '+num(st.cap),{fontStyle:'bold',textColor:st.capped?ST.A.c:INK}));
     row.push(C(obs.join(' · '),{halign:'left',fontSize:6.3,textColor:al?ST.A.c:dsp?DSP_T:MUTED}));return row;});
@@ -256,11 +256,11 @@ function registerTable(d,y,list,cid,p){
   var cols=A.colsOf(cid,p),head=['N°','Nom et prénom'],nC=cols.length;
   var holIdx={};cols.forEach(function(c,i){if(c.hol){holIdx[2+i]=c.hol;head.push((isVac(c.hol)?'Vac.':'Férié')+'\n'+c.date.slice(8,10)+'/'+c.date.slice(5,7));return;}var sd=A.sessDate(cid,p,c.s);head.push('S'+(c.s+1)+(sd?'\n'+sd.slice(8,10)+'/'+sd.slice(5,7):''));});
   head.push('A','R','Pts');
-  var dsp={};var body=list.map(function(s,i){if(A.dspInCycle(s,p))dsp[i]=1;var row=[i+1,C(s.name,{halign:'left',fontStyle:'bold'})];
+  var dsp={};var body=list.map(function(s,i){if(A.dspInCycle(s,p))dsp[i]=1;var row=[i+1,C(s.name,{halign:'center',fontStyle:'bold'})];
     cols.forEach(function(c){if(c.hol){row.push(C('',{fillColor:HOL_F}));return;}var r=A.rec(cid,p,c.s);if(!r){row.push(C('',{fillColor:[252,252,253]}));return;}var code=A.codeOf(r.marks[s.id]),cell=stCell(code);if(A.dspAt(s,cid,p,c.s)&&code==='P')cell.styles.fillColor=DSP_F;row.push(cell);});
     var st=A.perStat(cid,s.id,p);row.push(zero(st.A,ST.A.c),zero(st.L,ST.L.c),C(A.fmtPts(st.ded),{fontStyle:'bold'}));return row;});
   var nameW=nC>18?30:nC>12?36:44,rest=W-2*M-7-nameW-3*8,cw=nC?Math.min(10,rest/nC):8,fs=nC>20?5.6:nC>14?6.2:6.8;
-  var cs={0:{cellWidth:6},1:{cellWidth:nameW,halign:'left'}};for(var i=0;i<nC;i++)cs[2+i]={cellWidth:cw};cs[2+nC]={cellWidth:7};cs[3+nC]={cellWidth:7};cs[4+nC]={cellWidth:9};
+  var cs={0:{cellWidth:6},1:{cellWidth:nameW,halign:'center'}};for(var i=0;i<nC;i++)cs[2+i]={cellWidth:cw};cs[2+nC]={cellWidth:7};cs[3+nC]={cellWidth:7};cs[4+nC]={cellWidth:9};
   var spans={};
   function flush(){Object.keys(spans).forEach(function(k){var sp=spans[k];d.setFillColor.apply(d,HOL_F);var tw2=sp.w-0.8,msg=A.holShort(sp.h);vtext(d,msg,sp.x+sp.w/2,(sp.y0+sp.y1)/2,sp.y1-sp.y0-3,sp.w>=6?7:5.8);});spans={};}
   var tw=6+nameW+nC*cw+23;return table(d,y,head,body,{fs:fs,cols:cs,width:tw,left:Math.max(M,(W-tw)/2),right:Math.max(M,(W-tw)/2),
@@ -282,12 +282,12 @@ function groupsBlock(d,y,cid,withTitle){
   for(var k=0;k<sets.length;k+=2){var need=0;[sets[k],sets[k+1]].forEach(function(s){if(s)need=Math.max(need,12+s.a.length*5.2);});y=ensure(d,y,Math.min(need,120));var y0=y,ymax=y;
     [sets[k],sets[k+1]].forEach(function(s,j){if(!s)return;var col=s.i>=0?GC[s.i]:[102,112,133],st=A.grpStats(s.a,mean);
       var sorted=s.a.slice().sort(function(a,b){return A.cmpStu(a,b);});
-      var body=sorted.map(function(x,n){var l=A.lvlOf(x),dp=A.dspActive(x);return [n+1,C(x.name,{halign:'left',fontStyle:'bold',textColor:dp?DSP_T:INK,fillColor:dp?DSP_F:undefined}),sexTxt(x),l==null?C('moy.',{textColor:MUTED}):num(Math.round(l)),dp?C('Dispensé',{textColor:DSP_T,fontSize:6}):''];});
+      var body=sorted.map(function(x,n){var l=A.lvlOf(x),dp=A.dspActive(x);return [n+1,C(x.name,{halign:'center',fontStyle:'bold',textColor:dp?DSP_T:INK,fillColor:dp?DSP_F:undefined}),sexTxt(x),l==null?C('moy.',{textColor:MUTED}):num(Math.round(l)),dp?C('Dispensé',{textColor:DSP_T,fontSize:6}):''];});
       var title=(s.i>=0?A.grpName(g,s.i):'Sans groupe')+' – '+st.n+' él. · '+st.f+' F / '+st.m+' G · ind. phys. '+num(Math.round(st.avg));
       d.autoTable({startY:y0,head:[[{content:title,colSpan:5,styles:{halign:'left',fillColor:col,textColor:255,fontSize:7.6}}],['N°','Nom et prénom','Sexe','Ind. phys.','Obs.']],body:body,theme:'grid',
         margin:{top:TOP,left:M+j*(colW+6),right:W-M-(M+j*(colW+6))-colW,bottom:BOT},tableWidth:colW,
         styles:{font:'helvetica',fontSize:7,cellPadding:1.1,lineColor:LINE,lineWidth:0.2,textColor:INK,halign:'center',valign:'middle'},
-        headStyles:{fillColor:s.i>=0?GS[s.i]:[242,244,247],textColor:col,fontStyle:'bold',fontSize:6.6},columnStyles:{0:{cellWidth:6},1:{halign:'left'},2:{cellWidth:9},3:{cellWidth:11},4:{cellWidth:13}},
+        headStyles:{fillColor:s.i>=0?GS[s.i]:[242,244,247],textColor:col,fontStyle:'bold',fontSize:6.6},columnStyles:{0:{cellWidth:6},1:{halign:'center'},2:{cellWidth:9},3:{cellWidth:11},4:{cellWidth:13}},
         didParseCell:function(h){var t=h.cell.text.join(' ');if(isAr(t))h.cell.styles.font='NSA';else h.cell.text=h.cell.text.map(function(x){return clean(x).replace(WA,'');});}});
       ymax=Math.max(ymax,d.lastAutoTable.finalY);if(d.getCurrentPageInfo().pageNumber!==undefined){} });
     y=ymax+6;}
@@ -321,7 +321,7 @@ function repYear(o){var cid=o.cid,c=A.cls(cid);if(!c)throw U('Choisissez une cla
   y=section(d,y,'Détail par élève – année entière',c.name,40);y=studentTable(d,y,list,cid,'year');
   y=section(d,y,'Points retirés par cycle',"limités par la note comportementale ("+num(A.capOf(cid))+' pts par cycle)',30);
   var head=['N°','Nom et prénom'];for(i=0;i<P;i++)head.push('C'+(i+1));head.push('Total');
-  var dsp={};y=table(d,y,head,list.map(function(s,n){var yy=A.yearStat(cid,s.id);if(A.dspOf(s))dsp[n]=1;var row=[n+1,C(s.name,{halign:'left',fontStyle:'bold'})];yy.per.forEach(function(st){row.push(C(A.fmtPts(st.ded),{textColor:st.capped?ST.A.c:st.ded?INK:[190,196,206],fontStyle:st.ded?'bold':'normal'}));});row.push(C(A.fmtPts(yy.ded),{fontStyle:'bold'}));return row;}),{fs:7,cols:{0:{cellWidth:7},1:{cellWidth:60}},cell:function(h){if(h.section==='body'&&dsp[h.row.index]){h.cell.styles.fillColor=DSP_F;}}});
+  var dsp={};y=table(d,y,head,list.map(function(s,n){var yy=A.yearStat(cid,s.id);if(A.dspOf(s))dsp[n]=1;var row=[n+1,C(s.name,{halign:'center',fontStyle:'bold'})];yy.per.forEach(function(st){row.push(C(A.fmtPts(st.ded),{textColor:st.capped?ST.A.c:st.ded?INK:[190,196,206],fontStyle:st.ded?'bold':'normal'}));});row.push(C(A.fmtPts(yy.ded),{fontStyle:'bold'}));return row;}),{fs:7,cols:{0:{cellWidth:7},1:{cellWidth:60}},cell:function(h){if(h.section==='body'&&dsp[h.row.index]){h.cell.styles.fillColor=DSP_F;}}});
   y=codesNote(d,y);
   y=holTable(d,y+2,[cid],allPs(),periodRange('year'),'année scolaire'+(periodRange('year')?' · du '+A.dmy(periodRange('year')[0])+' au '+A.dmy(periodRange('year')[1]):''));
   groupsBlock(d,y,cid);
@@ -343,7 +343,7 @@ function repAll(){var DB=A.db(),th=DB.settings.threshold,cls=DB.classes.filter(f
   al.sort(function(a,b){return b.y.U-a.y.U||A.cmpStu(a.s,b.s);});
   y=section(d,y,'Élèves en alerte',al.length?pl(al.length,'élève')+' · '+th+' abs. non justifiées ou plus':'aucun élève',20);
   if(!al.length)y=note(d,y,'Aucun élève n’atteint '+th+' absences non justifiées. Bravo !',ST.P.ch);
-  else y=table(d,y,['N°','Classe','Code Massar','Nom et prénom','A','AJ','M','MJ','R','ST','Pts retirés'],al.map(function(a,i){var q=a.y;return [i+1,C(A.clsName(a.s.classId),{fontStyle:'bold'}),a.s.sid||'',C(a.s.name,{halign:'left',fontStyle:'bold'}),C(String(q.U),{textColor:ST.A.c,fontStyle:'bold'}),zero(q.J,ST.J.c),zero(q.M,ST.M.c),zero(q.K,ST.K.c),zero(q.L,ST.L.c),zero(q.S,ST.S.c),A.fmtPts(q.ded)];}),{fs:7.1,cols:{0:{cellWidth:7},3:{cellWidth:52}}});
+  else y=table(d,y,['N°','Classe','Code Massar','Nom et prénom','A','AJ','M','MJ','R','ST','Pts retirés'],al.map(function(a,i){var q=a.y;return [i+1,C(A.clsName(a.s.classId),{fontStyle:'bold'}),a.s.sid||'',C(a.s.name,{halign:'center',fontStyle:'bold'}),C(String(q.U),{textColor:ST.A.c,fontStyle:'bold'}),zero(q.J,ST.J.c),zero(q.M,ST.M.c),zero(q.K,ST.K.c),zero(q.L,ST.L.c),zero(q.S,ST.S.c),A.fmtPts(q.ded)];}),{fs:7.1,cols:{0:{cellWidth:7},3:{cellWidth:52}}});
   var ids=cls.map(function(c){return c.id;}),yr=periodRange('year'),lr=lastRecDate(ids);
   y=holTable(d,y,ids,allPs(),yr&&lr?[yr[0],lr<yr[1]?lr:yr[1]]:yr,yr?'du '+A.dmy(yr[0])+' au '+A.dmy(lr&&lr<yr[1]?lr:yr[1])+' · toutes classes':'');
   return {doc:d,meta:m,name:'Synthese_toutes-classes_'+A.todayStr()+'.pdf'};}
@@ -360,7 +360,7 @@ function repStudents(o){var DB=A.db(),cid=o.cid||'',list=A.studentsIn(cid);if(!l
   cl.forEach(function(c,ci){var a=A.studentsIn(c.id),gp=A.grpOf(c.id);if(ci||cl.length>1){d.addPage();y=TOP;}
     y=section(d,y,'Classe '+c.name,pl(a.length,'élève'),20);
     var head=['N°','Code Massar','Nom et prénom','Sexe','Naissance'];if(gp)head.push('Grp');head.push('Parent / tuteur','Téléphone','Abs.','Dispense');
-    var dsp={};y=table(d,y,head,a.map(function(s,i){var yy=A.yearStat(c.id,s.id);if(A.dspOf(s))dsp[i]=1;var row=[i+1,s.sid||'',C(s.name,{halign:'left',fontStyle:'bold'}),sexTxt(s),A.dmy(s.dob)];if(gp)row.push(grpCellOf(c.id,s));row.push(C(s.parent||'',{halign:'left'}),s.phone||'',zero(yy.A,yy.U>=DB.settings.threshold?ST.A.c:INK),C(A.dspOf(s)?A.dspShort(A.dspOf(s)):'',{fontSize:6.3,textColor:DSP_T}));return row;}),{fs:7,cols:{0:{cellWidth:7},1:{cellWidth:21,fontSize:6.5},2:{cellWidth:44}},cell:function(h){if(h.section==='body'&&dsp[h.row.index])h.cell.styles.fillColor=DSP_F;}});});
+    var dsp={};y=table(d,y,head,a.map(function(s,i){var yy=A.yearStat(c.id,s.id);if(A.dspOf(s))dsp[i]=1;var row=[i+1,s.sid||'',C(s.name,{halign:'center',fontStyle:'bold'}),sexTxt(s),A.dmy(s.dob)];if(gp)row.push(grpCellOf(c.id,s));row.push(C(s.parent||'',{halign:'left'}),s.phone||'',zero(yy.A,yy.U>=DB.settings.threshold?ST.A.c:INK),C(A.dspOf(s)?A.dspShort(A.dspOf(s)):'',{fontSize:6.3,textColor:DSP_T}));return row;}),{fs:7,cols:{0:{cellWidth:7},1:{cellWidth:21,fontSize:6.5},2:{cellWidth:44}},cell:function(h){if(h.section==='body'&&dsp[h.row.index])h.cell.styles.fillColor=DSP_F;}});});
   return {doc:d,meta:m,name:'Eleves_'+A.slug(cid?A.clsName(cid):'toutes-classes')+'_'+A.todayStr()+'.pdf'};}
 function repRecords(o){var DB=A.db(),cid=o.cid||'',rows=[],t={A:0,J:0,M:0,K:0,L:0,S:0},byCls={},byCyc={};
   DB.classes.forEach(function(c){if(cid&&c.id!==cid)return;var list=A.studentsIn(c.id);
@@ -380,7 +380,7 @@ function repRecords(o){var DB=A.db(),cid=o.cid||'',rows=[],t={A:0,J:0,M:0,K:0,L:
   var pr=Object.keys(per).map(function(k){return per[k];}).sort(function(a,b){return b.t-a.t||b.A-a.A||A.cmpStu(a.st,b.st);});
   y=section(d,y,'Récapitulatif par élève',pl(pr.length,'élève')+' concerné'+(pr.length>1?'s':''),30);
   var hh=['N°'];if(!cid)hh.push('Classe');hh.push('Nom et prénom','Code Massar','A','AJ','M','MJ','R','ST','Total');
-  y=table(d,y,hh,pr.map(function(x,i){var r=[i+1];if(!cid)r.push(C(x.c.name,{fontStyle:'bold'}));r.push(C(x.st.name,{halign:'left',fontStyle:'bold'}),x.st.sid||'',zero(x.A,ST.A.c),zero(x.J,ST.J.c),zero(x.M,ST.M.c),zero(x.K,ST.K.c),zero(x.L,ST.L.c),zero(x.S,ST.S.c),C(String(x.t),{fontStyle:'bold'}));return r;}),{fs:7,cols:{0:{cellWidth:7},[cid?1:2]:{cellWidth:50}}});
+  y=table(d,y,hh,pr.map(function(x,i){var r=[i+1];if(!cid)r.push(C(x.c.name,{fontStyle:'bold'}));r.push(C(x.st.name,{halign:'center',fontStyle:'bold'}),x.st.sid||'',zero(x.A,ST.A.c),zero(x.J,ST.J.c),zero(x.M,ST.M.c),zero(x.K,ST.K.c),zero(x.L,ST.L.c),zero(x.S,ST.S.c),C(String(x.t),{fontStyle:'bold'}));return r;}),{fs:7,cols:{0:{cellWidth:7},[cid?1:2]:{cellWidth:50}}});
   var scope=DB.classes.filter(function(c){return (!cid||c.id===cid)&&A.countIn(c.id);}),ids=scope.map(function(c){return c.id;}),yr=periodRange('year'),lr=lastRecDate(ids),rg=yr?[yr[0],lr&&lr<yr[1]?lr:yr[1]]:null,hr=[];
   if(rg)scope.forEach(function(c){holList([c.id],allPs(),rg).forEach(function(e){if(e.cols.length)hr.push({hol:e.h,c:c,sd:e.cols[0].date,p:e.cols[0].p,cols:e.cols});});});
   var hn=0;hr.forEach(function(x){hn+=x.cols.length;});
@@ -389,7 +389,7 @@ function repRecords(o){var DB=A.db(),cid=o.cid||'',rows=[],t={A:0,J:0,M:0,K:0,L:
   var head=['Date','Cycle','Séance'];if(!cid)head.push('Classe');head.push('Nom et prénom','Code Massar','Statut','Motif');
   var dsp={},hrow={};y=table(d,y,head,rows.map(function(r,i){if(r.hol){hrow[i]=1;var hx=[C(A.dmy(r.sd),{fontStyle:'bold',textColor:HOL_T}),C('C'+(r.p+1),{textColor:HOL_T}),C('—',{textColor:HOL_T})];if(!cid)hx.push(C(r.c.name,{fontStyle:'bold',textColor:HOL_T}));
       hx.push({content:holType(r.hol)+' : '+holFull(r.hol)+' – '+pl(r.cols.length,'séance')+' non comptée'+(r.cols.length>1?'s':'')+' ('+r.cols.map(function(c){return wdd(c.date);}).join(', ')+')',colSpan:4,styles:{halign:'left',fontStyle:'bolditalic',textColor:HOL_T}});return hx;}
-    if(r.dsp)dsp[i]=1;var row=[r.sd?A.dmy(r.sd):'—','C'+(r.p+1),'S'+(r.s+1)];if(!cid)row.push(C(r.c.name,{fontStyle:'bold'}));row.push(C(r.st.name,{halign:'left',fontStyle:'bold'}),r.st.sid||'',{content:ST[r.code].t+' – '+ST[r.code].l,styles:{fillColor:ST[r.code].f,textColor:ST[r.code].c,fontStyle:'bold',halign:'left'}},C(r.r,{halign:'left'}));return row;}),{fs:6.9,cols:{0:{cellWidth:17},1:{cellWidth:10},2:{cellWidth:11}},cell:function(h){if(h.section==='body'&&hrow[h.row.index])h.cell.styles.fillColor=HOL_F;},
+    if(r.dsp)dsp[i]=1;var row=[r.sd?A.dmy(r.sd):'—','C'+(r.p+1),'S'+(r.s+1)];if(!cid)row.push(C(r.c.name,{fontStyle:'bold'}));row.push(C(r.st.name,{halign:'center',fontStyle:'bold'}),r.st.sid||'',{content:ST[r.code].t+' – '+ST[r.code].l,styles:{fillColor:ST[r.code].f,textColor:ST[r.code].c,fontStyle:'bold',halign:'left'}},C(r.r,{halign:'left'}));return row;}),{fs:6.9,cols:{0:{cellWidth:17},1:{cellWidth:10},2:{cellWidth:11}},cell:function(h){if(h.section==='body'&&hrow[h.row.index])h.cell.styles.fillColor=HOL_F;},
     draw:function(h){if(h.section==='body'&&hrow[h.row.index]&&h.column.index===0){var c=h.cell;hatch(d,c.x+0.4,c.y+0.6,1.6,c.height-1.2,1.1);}}});
   y=note(d,y,'Seuls les incidents sont listés (les présences ne figurent pas). Lignes sable = jours fériés et vacances : séances non comptées dans les absences ni dans les taux de présence. Pour les données brutes complètes, utilisez l’export CSV (Excel).');
   y=holTable(d,y+2,ids,allPs(),rg,rg?'du '+A.dmy(rg[0])+' au '+A.dmy(rg[1])+(ids.length>1?' · '+pl(ids.length,'classe'):''):'');
@@ -462,7 +462,7 @@ function repTests(o){var DB=A.db(),cid=o.cid||'',cl=DB.classes.filter(function(c
     d.addPage();y=section(d,TOP,'Résultats individuels – '+c.name,'valeurs brutes · indice sur 100',20);
     var head=['N°','Nom et prénom','Sexe','Taille','Poids','IMC','Dét. V','Dét. H','FC rep.','Palier','VMA','30 m','Soupl.','Méd.-b.','Équil.','Indice'];
     var units=['','','','cm','kg','','cm','cm','bpm','','km/h','s','cm','m','s','/100'];
-    var dsp={};y=table(d,y,head.map(function(h,i){return units[i]?h+'\n('+units[i]+')':h;}),list.map(function(s,i){if(A.dspActive(s))dsp[i]=1;var b=A.imcOf(s),row=[i+1,C(s.name,{halign:'left',fontStyle:'bold'}),sexTxt(s),f2(A.phys(s,'h')),f2(A.phys(s,'w')),b==null?'—':C(num(b),{textColor:IMC_COL[A.imcCat(b)],fontStyle:'bold'})];
+    var dsp={};y=table(d,y,head.map(function(h,i){return units[i]?h+'\n('+units[i]+')':h;}),list.map(function(s,i){if(A.dspActive(s))dsp[i]=1;var b=A.imcOf(s),row=[i+1,C(s.name,{halign:'center',fontStyle:'bold'}),sexTxt(s),f2(A.phys(s,'h')),f2(A.phys(s,'w')),b==null?'—':C(num(b),{textColor:IMC_COL[A.imcCat(b)],fontStyle:'bold'})];
       ['dv','dh','fc','nav','vma','v30','soup','mb','eq'].forEach(function(k){var v=A.phys(s,k);row.push(v==null?C('—',{textColor:[190,196,206]}):f2(v));});var ix=sc[s.id];row.push(ix==null?C('—',{textColor:MUTED}):C(num(Math.round(ix)),{fontStyle:'bold',textColor:ix>=55?ST.P.ch:ix<45?ST.A.c:INK}));return row;}),
       {fs:6.6,cols:{0:{cellWidth:6},1:{cellWidth:38}},cell:function(h){if(h.section==='head'){h.cell.styles.fontSize=5.8;h.cell.styles.cellPadding=0.8;}if(h.section==='body'&&dsp[h.row.index])h.cell.styles.fillColor=DSP_F;}});
     y=note(d,y,'Indice physique : moyenne des scores standardisés (z) de la classe pour chaque test disponible (IMC noté par l’écart à la zone 18,5–25 ; vitesse 30 m et FC de repos : plus bas = mieux ; navette et VMA comptent comme un seul test d’endurance), ramenée sur 100 (50 = moyenne de la classe). Ligne grise = élève dispensé(e).');});
