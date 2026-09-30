@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0732f3">
-<title>Cahier Journalier digital v1.1</title>
+<title>Cahier Journalier digital v1.22.0</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
@@ -484,10 +484,10 @@ table.gbal tfoot td{font-weight:700}
 </head>
 <body>
 <!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
-<div id="splash" role="img" aria-label="Cahier Journalier digital v1.1">
+<div id="splash" role="img" aria-label="Cahier Journalier digital v1.22.0">
   <video id="splashVid" muted playsinline autoplay preload="auto"></video>
   <div class="sp-box"><img class="sp-logo" src="logo.jpg" alt="Cahier Journalier · EPS ·" width="512" height="512" decoding="async" fetchpriority="high">
-  <div class="sp-ver">v1.1</div></div>
+  <div class="sp-ver">v1.22.0</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
 </div>
 <!-- Login gate: the app stays hidden (html.cj-locked) until an authorized account is signed in -->
@@ -496,12 +496,13 @@ table.gbal tfoot td{font-weight:700}
     <img class="g-logo" src="logo.jpg" alt="" width="512" height="512" decoding="async">
     <h1 id="gTitle" class="cj-sr">Cahier Journalier digital</h1>
     <div class="g-sub">Accès sur invitation</div>
+    <div class="g-ver" id="gVer">Version 1.22.0</div>
     <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
   </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
-  <h1><img class="h-logo" src="icons/icon-192.png" alt="" width="32" height="32"><span class="h-txt">Cahier Journalier digital v1.1</span></h1>
+  <h1><img class="h-logo" src="icons/icon-192.png" alt="" width="32" height="32"><span class="h-txt">Cahier Journalier digital v1.22.0</span></h1>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -644,7 +645,7 @@ table.gbal tfoot td{font-weight:700}
     <input type="number" id="setThreshold" min="1" max="99" inputmode="numeric">
     <label class="chk" style="margin-top:12px"><input type="checkbox" id="setAutoDate"> Inscrire la date du jour quand je commence une séance</label>
     <label class="f" for="setTeacher">Enseignant / établissement (affiché en haut, facultatif)</label>
-    <input type="text" id="setTeacher" dir="auto" placeholder="ex. Mohamed – Lycée …">
+    <input type="text" id="setTeacher" dir="auto" placeholder="ex. Mohamed Tammar – Lycée qualifiant Baja">
   </div>
   <div class="card" id="holCard"></div>
   <div class="card" id="onbCard">
@@ -999,7 +1000,8 @@ function normalize(d){
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_VER='cahier-v21';                       /* = nom du cache de sw.js : change à chaque mise à jour de l’application */
+var APP_SEMVER='1.22.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.23.0 */
+var APP_VER='cahier-v22';                       /* = nom du cache de sw.js : change à chaque mise à jour de l’application */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1119,6 +1121,17 @@ function fmtPts(x){x=r2(x);return x?'-'+fmtNum(x):'0';}
 /* stats of one student in one class for one period */
 function perStat(cid,sid,p){var st=emptyStat(),S=sessCount(cid,p);for(var s=0;s<S;s++){var r=DB.sessions[skey(cid,p,s)];if(r){st.held++;addMark(st,r.marks[sid]);}}return addPts(st,cid);}
 function yearStat(cid,sid){var y=emptyStat(),per=[];for(var p=0;p<DB.periods.length;p++){var st=perStat(cid,sid,p);per.push(st);y.A+=st.A;y.J+=st.J;y.U+=st.U;y.L+=st.L;y.M+=st.M;y.K+=st.K;y.S+=st.S;y.held+=st.held;y.ded=r2(y.ded+st.ded);y.raw=r2(y.raw+st.raw);}y.per=per;return y;}
+/* ===== Semestres : 1er = cycles 1..s1Cycles(), 2ème = les suivants (même découpage que la dispense « 1er semestre ») ===== */
+function isSem(sc){return sc==='s1'||sc==='s2';}
+function isMulti(sc){return sc==='year'||isSem(sc);}
+function scopeCycles(sc){var P=DB.periods.length,n=s1Cycles(),o=[],i;if(sc==='s1'){for(i=0;i<Math.min(n,P);i++)o.push(i);}else if(sc==='s2'){for(i=n;i<P;i++)o.push(i);}else if(sc==='year'){for(i=0;i<P;i++)o.push(i);}else{var k=+sc;if(k>=0&&k<P)o.push(k);}return o;}
+function semName(sc){return sc==='s1'?'Semestre 1':sc==='s2'?'Semestre 2':sc==='year'?'Année entière':'';}
+function semLabel(sc){var c=scopeCycles(sc);if(!isSem(sc)||!c.length)return semName(sc);return (sc==='s1'?'1er semestre':'2ème semestre')+' (Cycles '+(c[0]+1)+' à '+(c[c.length-1]+1)+')';}
+function semEnd(sc){var cs=cal().cycles,c=scopeCycles(sc),e='';c.forEach(function(p){if(cs[p]&&!cs[p].bad&&cs[p].end>e)e=cs[p].end;});return e;}
+/* statistiques d'un élève sur un ensemble de cycles (chaque cycle garde son plafond de points) */
+function groupStat(cid,sid,ps){var y=yearStat(cid,sid),g=emptyStat(),per=[];ps.forEach(function(p){var st=y.per[p];if(!st)return;per.push(st);g.A+=st.A;g.J+=st.J;g.U+=st.U;g.L+=st.L;g.M+=st.M;g.K+=st.K;g.S+=st.S;g.held+=st.held;g.ded=r2(g.ded+st.ded);g.raw=r2(g.raw+st.raw);if(st.capped)g.capped=true;});g.per=per;g.ps=ps;return g;}
+function scopeStat(cid,sid,sc){if(sc==='year')return yearStat(cid,sid);if(isSem(sc))return groupStat(cid,sid,scopeCycles(sc));var y=yearStat(cid,sid);return y.per[+sc];}
+function dspInScope(st,sc){if(sc==='year')return !!dspOf(st);return scopeCycles(sc).some(function(p){return dspInCycle(st,p);});}
 function heldCount(cid,p){var n=0,S=sessCount(cid,p);for(var s=0;s<S;s++)if(DB.sessions[skey(cid,p,s)])n++;return n;}
 function inRange(k){var a=k.split('|');return +a[1]<DB.periods.length&&+a[2]<sessCount(a[0],+a[1]);}
 /* all non-present marks of a student across every class (for history) */
@@ -1157,6 +1170,7 @@ function classOptions(sel,value,allLabel){
 }
 function periodOptions(sel,value,withYear){
   var h=DB.periods.map(function(p,i){return '<option value="'+i+'">'+esc(cycleLabel(i))+'</option>';}).join('');
+  if(DB.periods.length>=2)h+='<option value="s1">'+esc(semLabel('s1'))+'</option><option value="s2">'+esc(semLabel('s2'))+'</option>';
   if(withYear)h+='<option value="year">Année entière</option>';
   sel.innerHTML=h;if(value!=null&&value!==''&&sel.querySelector('option[value="'+value+'"]'))sel.value=value;
 }
@@ -1749,14 +1763,14 @@ function deliverPdf(blob,name){
 var repSort={k:'name',dir:1};
 function reportData(){
   var cid=$('repClass').value,scope=$('repScope').value,th=DB.settings.threshold;
-  var rows=studentsIn(cid).map(function(s,i){var y=yearStat(cid,s.id);return {i:i+1,s:s,y:y,st:scope==='year'?y:y.per[+scope]};});
+  var rows=studentsIn(cid).map(function(s,i){var y=yearStat(cid,s.id);return {i:i+1,s:s,y:y,st:isMulti(scope)?(scope==='year'?y:groupStat(cid,s.id,scopeCycles(scope))):y.per[+scope]};});
   return {cid:cid,scope:scope,rows:rows,th:th};
 }
 function renderReports(){
   classOptions($('repClass'),$('repClass').value||curCls());
   periodOptions($('repScope'),$('repScope').value||String(DB.ui.per),true);
-  var d=reportData(),th=d.th,year=d.scope==='year';
-  var held=0;if(year){for(var p=0;p<DB.periods.length;p++)held+=heldCount(d.cid,p);}else held=heldCount(d.cid,+d.scope);
+  var d=reportData(),th=d.th,year=isMulti(d.scope),sem=isSem(d.scope),scy=scopeCycles(d.scope);
+  var held=0;if(year){scy.forEach(function(p){held+=heldCount(d.cid,p);});}else held=heldCount(d.cid,+d.scope);
   $('repInfo').textContent=plural(held,'séance')+' effectuée'+(held>1?'s':'')+' · '+plural(d.rows.length,'élève')+' · alerte à partir de '+th+' absences non justifiées';
   var key=repSort.k;
   d.rows.sort(function(a,b){
@@ -1766,20 +1780,20 @@ function renderReports(){
   });
   function H(k,l,t){return '<th data-sort="'+k+'" style="cursor:pointer"'+(t?' title="'+esc(t)+'"':'')+'>'+l+(repSort.k===k?(repSort.dir===1?' ▾':' ▴'):'')+'</th>';}
   function C(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
-  var h='<thead><tr>'+H('name','Élève')+H('ded',year?'Points retirés (année)':'Points retirés','Limité par la note comportementale du cycle');
-  if(year)DB.periods.forEach(function(n,i){h+=H('p'+i,TX.cyc+(i+1),cycleLabel(i)+' – points retirés');});
+  var h='<thead><tr>'+H('name','Élève')+H('ded',year?(sem?'Points retirés (semestre)':'Points retirés (année)'):'Points retirés','Limité par la note comportementale du cycle');
+  if(year)scy.forEach(function(i){h+=H('p'+i,TX.cyc+(i+1),cycleLabel(i)+' – points retirés');});
   h+=H('A','Abs.')+H('U','Non just.')+H('S',CODE_TXT.S,'Sans tenue')+H('M','M','Maladie non justifiée')+H('L','Retards')+H('K',CODE_TXT.K,'Maladie justifiée')+H('J','Just.')+'</tr></thead><tbody>';
   var flagged=0,capN=0;
   d.rows.forEach(function(r){var f=r.st.U>=th;if(f)flagged++;
-    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+((year?dspOf(r.s):dspInCycle(r.s,+d.scope))?' <span class="chip dchip" title="Dispensé – '+esc(dspShort(dspOf(r.s)))+'">🩺</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>';
-    if(year){h+='<td class="ptsc'+(r.y.ded?'':' z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';r.y.per.forEach(function(st){h+='<td class="'+(st.ded?(st.capped?'capc':''):'z')+'">'+fmtPts(st.ded)+'</td>';});}
+    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+((year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope))?' <span class="chip dchip" title="Dispensé – '+esc(dspShort(dspOf(r.s)))+'">🩺</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>';
+    if(year){h+='<td class="ptsc'+(r.y.ded?'':' z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';(sem?r.st.per:r.y.per).forEach(function(st){h+='<td class="'+(st.ded?(st.capped?'capc':''):'z')+'">'+fmtPts(st.ded)+'</td>';});}
     else{if(r.st.capped)capN++;h+='<td class="ptsc'+(r.st.capped?' capc':'')+(r.st.ded?'':' z')+'"><b>'+fmtPts(r.st.ded)+'</b> / '+fmtNum(r.st.cap)+(r.st.raw>r.st.cap?'<br><small>limité à la note comportementale ('+fmtPts(r.st.raw)+')</small>':(r.st.capped?'<br><small>note comportementale atteinte</small>':''))+'</td>';}
     h+=C(r.st.A)+C(r.st.U)+C(r.st.S)+C(r.st.M)+C(r.st.L)+C(r.st.K)+C(r.st.J)+'</tr>';});
   if(!d.rows.length)h+='<tr><td colspan="16" class="empty">Aucun élève dans cette classe.</td></tr>';
   $('repTable').innerHTML=h+'</tbody>';
   $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.';
   if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' à la note comportementale maximale.</b>';
-  var dspN=d.rows.filter(function(r){return year?dspOf(r.s):dspInCycle(r.s,+d.scope);}).length;
+  var dspN=d.rows.filter(function(r){return year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope);}).length;
   if(dspN)$('repLegend').innerHTML+='<br><span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';
   $('repInfo').textContent+=' · note comportementale : '+fmtNum(capOf(d.cid))+' pts par cycle';
   // alerts across all classes
@@ -1795,9 +1809,9 @@ $('repTable').addEventListener('click',function(e){
   var tr=e.target.closest('tr[data-id]');if(tr)openDetail(tr.dataset.id);
 });
 $('alertList').addEventListener('click',function(e){var li=e.target.closest('li[data-id]');if(li)openDetail(li.dataset.id);});
-$('repExportPdf').addEventListener('click',function(){var s=$('repScope').value,c=$('repClass').value;if(!cls(c)){toast('Choisissez une classe');return;}if(s==='year')runPdf('year',{cid:c});else runPdf('cycle',{cid:c,p:+s});});
+$('repExportPdf').addEventListener('click',function(){var s=$('repScope').value,c=$('repClass').value;if(!cls(c)){toast('Choisissez une classe');return;}if(s==='year')runPdf('year',{cid:c});else if(isSem(s))runPdf('year',{cid:c,scope:s});else runPdf('cycle',{cid:c,p:+s});});
 $('repAllPdf').addEventListener('click',function(){runPdf('all');});
-$('repExportCsv').addEventListener('click',function(){var s=$('repScope').value;if(s==='year')exportYear($('repClass').value);else exportGrid($('repClass').value,+s);});
+$('repExportCsv').addEventListener('click',function(){var s=$('repScope').value;if(s==='year')exportYear($('repClass').value);else if(isSem(s))exportYear($('repClass').value,s);else exportGrid($('repClass').value,+s);});
 
 /* ================= CSV ================= */
 function keepText(v){v=String(v||'');return /^0[\d\s]+$/.test(v)?{raw:'="'+v+'"'}:v;} // keep leading zeros in Excel
@@ -1822,12 +1836,12 @@ function exportGrid(cid,p){
     var t=perStat(cid,st.id,p);row.push(t.A,t.U,t.S,t.M,t.L,t.K,t.J,fmtPts(t.ded),fmtNum(t.cap),dspInCycle(st,p)?dspShort(dspOf(st)):'');rows.push(row);});
   download('registre_'+slug(clsName(cid))+'_'+slug(cycleName(p))+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Registre CSV téléchargé');
 }
-function exportYear(cid){
+function exportYear(cid,sc){sc=sc||'year';var ps=scopeCycles(sc),sem=isSem(sc),lab=sem?(sc==='s1'?'semestre':'semestre'):'année',sl=sem?' ('+semName(sc)+')':' (année)';
   if(!cls(cid)){toast('Choisissez une classe');return;}var list=studentsIn(cid);if(!list.length){toast('Aucun élève dans cette classe');return;}
-  var head=['N°','Nom complet','Code élève'];DB.periods.forEach(function(n0,i){var n=cycleName(i);head.push(n+' – absences',n+' – non justifiées',n+' – '+CODE_TXT.S,n+' – M',n+' – retards',n+' – '+CODE_TXT.K,n+' – '+CODE_TXT.J,n+' – points retirés');});head.push('Absences (année)','Non justifiées (année)','Sans tenue (année)','Maladie non justifiée (année)','Retards (année)','Maladie justifiée (année)','Justifiées (année)','Points retirés (année)','Dispense');
-  var rows=[['Classe',clsName(cid),'Année entière'],[],head];
-  list.forEach(function(st,i){var y=yearStat(cid,st.id),row=[i+1,st.name,keepText(st.sid)];y.per.forEach(function(t){row.push(t.A,t.U,t.S,t.M,t.L,t.K,t.J,fmtPts(t.ded));});row.push(y.A,y.U,y.S,y.M,y.L,y.K,y.J,fmtPts(y.ded),dspShort(dspOf(st)));rows.push(row);});
-  download('bilan-annuel_'+slug(clsName(cid))+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Bilan annuel CSV téléchargé');
+  var head=['N°','Nom complet','Code élève'];ps.forEach(function(i){var n=cycleName(i);head.push(n+' – absences',n+' – non justifiées',n+' – '+CODE_TXT.S,n+' – M',n+' – retards',n+' – '+CODE_TXT.K,n+' – '+CODE_TXT.J,n+' – points retirés');});head.push('Absences'+sl,'Non justifiées'+sl,'Sans tenue'+sl,'Maladie non justifiée'+sl,'Retards'+sl,'Maladie justifiée'+sl,'Justifiées'+sl,'Points retirés'+sl,'Dispense');
+  var rows=[['Classe',clsName(cid),sem?semLabel(sc):'Année entière'],[],head];
+  list.forEach(function(st,i){var y=sem?groupStat(cid,st.id,ps):yearStat(cid,st.id),row=[i+1,st.name,keepText(st.sid)];y.per.forEach(function(t){row.push(t.A,t.U,t.S,t.M,t.L,t.K,t.J,fmtPts(t.ded));});row.push(y.A,y.U,y.S,y.M,y.L,y.K,y.J,fmtPts(y.ded),(sem?dspInScope(st,sc):!!dspOf(st))?dspShort(dspOf(st)):'');rows.push(row);});
+  download((sem?'bilan-semestre-'+sc.slice(1)+'_':'bilan-annuel_')+slug(clsName(cid))+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast(sem?'Bilan '+semName(sc).toLowerCase()+' CSV téléchargé':'Bilan annuel CSV téléchargé');
 }
 function exportStudents(cid){
   var list=studentsIn(cid);if(!list.length){toast('Aucun élève à exporter');return;}
@@ -2556,13 +2570,13 @@ $('snapList').addEventListener('click',function(e){var b=e.target.closest('[data
 $('snapNow').addEventListener('click',function(){if(VIEW)return;if(saveT)persistNow();var r=snapCreate('Sauvegarde manuelle',{force:true});
   if(r.skip){toast('Rien à sauvegarder pour l’instant');return;}
   snapDone(r).then(function(ok){toast(ok?'Sauvegarde de sécurité créée':'Stockage plein : sauvegarde impossible');renderSnaps();});});
-$('pdfCycle').addEventListener('click',function(){var c=$('expClass').value;if(!cls(c)){toast('Choisissez une classe pour le bilan du cycle');return;}runPdf('cycle',{cid:c,p:+$('expPeriod').value});});
+$('pdfCycle').addEventListener('click',function(){var c=$('expClass').value;if(!cls(c)){toast('Choisissez une classe pour le bilan du cycle');return;}var pv=$('expPeriod').value;if(isSem(pv))runPdf('year',{cid:c,scope:pv});else runPdf('cycle',{cid:c,p:+pv});});
 $('pdfYear').addEventListener('click',function(){var c=$('expClass').value;if(c)runPdf('year',{cid:c});else runPdf('all');});
-$('pdfStudents').addEventListener('click',function(){runPdf('students',{cid:$('expClass').value});});
-$('pdfRecords').addEventListener('click',function(){runPdf('records',{cid:$('expClass').value});});
+$('pdfStudents').addEventListener('click',function(){var pv=$('expPeriod').value;runPdf('students',isSem(pv)?{cid:$('expClass').value,scope:pv}:{cid:$('expClass').value});});
+$('pdfRecords').addEventListener('click',function(){var pv=$('expPeriod').value;runPdf('records',isSem(pv)?{cid:$('expClass').value,scope:pv}:{cid:$('expClass').value});});
 $('pdfTests').addEventListener('click',function(){runPdf('tests',{cid:$('expClass').value});});
 $('pdfGroups').addEventListener('click',function(){runPdf('groups',{cid:$('expClass').value});});
-$('expGrid').addEventListener('click',function(){exportGrid($('expClass').value,+$('expPeriod').value);});
+$('expGrid').addEventListener('click',function(){var pv=$('expPeriod').value;if(isSem(pv))exportYear($('expClass').value,pv);else exportGrid($('expClass').value,+pv);});
 $('expYear').addEventListener('click',function(){exportYear($('expClass').value);});
 $('expStudents').addEventListener('click',function(){exportStudents($('expClass').value);});
 $('expRecords').addEventListener('click',function(){exportRecords($('expClass').value);});
@@ -2623,7 +2637,7 @@ $('wipeAll').addEventListener('click',function(){
 window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();render();}});
 
 /* ================= API for cloud sync (see sync script below) ================= */
-window.CJR={db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
+window.CJR={db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
   cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
