@@ -1,4 +1,4 @@
-/* v1.22.0 : versions cohérentes, police arabe (Paramètres + PDF), ordre/ligatures arabes, semestres, vert/rouge */
+/* v1.23.0 : versions cohérentes, police arabe (Paramètres + PDF), ordre/ligatures arabes, semestres, vert/rouge */
 const puppeteer=require('puppeteer-core');const fs=require('fs');
 const results=[];function check(n,ok,x){results.push(ok);console.log((ok?'PASS':'FAIL')+' - '+n+(x?' :: '+x:''));}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));const KEY='classRegister.v2';const D='/workspace/cj-deploy/';
@@ -7,8 +7,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));const KEY='classRegister.v2';co
 const idx=fs.readFileSync(D+'index.html','utf8'),sw=fs.readFileSync(D+'sw.js','utf8'),man=fs.readFileSync(D+'manifest.webmanifest','utf8');
 const sem=(idx.match(/APP_SEMVER='([^']+)'/)||[])[1],appv=(idx.match(/APP_VER='([^']+)'/)||[])[1],cache=(sw.match(/CACHE = '([^']+)'/)||[])[1];
 check('version format 1.<n>.<p>',/^1\.\d+\.\d+$/.test(sem),sem);
-check('APP_SEMVER = 1.22.0',sem==='1.22.0');
-check('APP_VER = cache sw.js = cahier-v22',appv==='cahier-v22'&&cache==='cahier-v22');
+check('APP_SEMVER = 1.23.0',sem==='1.23.0');
+check('APP_VER = cache sw.js = cahier-v23',appv==='cahier-v23'&&cache==='cahier-v23');
 check('titre/splash/en-tête/connexion/manifeste portent v'+sem,idx.includes('<title>Cahier Journalier digital v'+sem+'</title>')&&idx.includes('<div class="sp-ver">v'+sem+'</div>')&&idx.includes('<span class="h-txt">Cahier Journalier digital v'+sem+'</span>')&&idx.includes('id="gVer">Version '+sem+'<')&&man.includes('digital v'+sem));
 check('pas d’ancienne version v1.1 affichée',!/digital v1\.1["<]/.test(idx)&&!/"v1\.1"/.test(man));
 const fonts=['NotoSansArabic','Amiri','NotoNaskhArabic','Cairo','Tajawal'];
@@ -74,12 +74,12 @@ check('CSV S1 : titre semestre, 3 cycles, absences',csv&&/1er semestre \(Cycles 
 // ---- PDF semestres
 async function pdf(fn){await p.evaluate(()=>{window.__lastPdf=null;});await p.evaluate(fn);try{await p.waitForFunction(()=>window.__lastPdf,{timeout:30000});}catch(e){return null;}
   const r=await p.evaluate(async()=>{const x=window.__lastPdf,buf=new Uint8Array(await x.blob.arrayBuffer());let s='';for(let i=0;i<buf.length;i+=8192)s+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return {name:x.name,b64:btoa(s)};});
-  const f='/tmp/v22_'+Date.now()+'.pdf';fs.writeFileSync(f,Buffer.from(r.b64,'base64'));return {f,name:r.name};}
+  const f='/tmp/v23_'+Date.now()+'.pdf';fs.writeFileSync(f,Buffer.from(r.b64,'base64'));return {f,name:r.name};}
 const txt=f=>require('child_process').execSync('pdftotext -layout '+f+' -').toString();
 const pS1=await pdf(()=>{const s=document.getElementById('repScope');s.value='s1';s.dispatchEvent(new Event('change'));document.getElementById('repExportPdf').click();});
 check('PDF bilan S1 généré (nom Semestre-1)',pS1&&/Semestre_1/.test(pS1.name),pS1&&pS1.name);
 if(pS1){const t=txt(pS1.f);check('PDF S1 : titre « Semestre 1 », cycles C1-C3, pas C4',/Bilan Semestre 1/.test(t)&&/Cycle 3/.test(t)&&!/Cycle 4/.test(t),t.split('\n').slice(0,6).join(' / ').slice(0,200));
-  check('PDF S1 : pied de page v1.22.0',/EPS v1\.22\.0/.test(t));}
+  check('PDF S1 : pied de page v1.23.0',/EPS v1\.23\.0/.test(t));}
 const pS2=await pdf(()=>{const s=document.getElementById('repScope');s.value='s2';s.dispatchEvent(new Event('change'));document.getElementById('repExportPdf').click();});
 if(pS2){const t=txt(pS2.f);check('PDF bilan S2 : « Semestre 2 », cycles 4-6',/Bilan Semestre 2/.test(t)&&/Cycle 6/.test(t)&&!/Cycle 3/.test(t));}else check('PDF bilan S2',false);
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(300);
@@ -93,7 +93,7 @@ check('PDF « Bilan du cycle » avec S1 = bilan de semestre',pC&&/Semestre_1/.te
 // ---- police arabe : Paramètres
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(300);
 check('choix de police arabe : 5 polices, Noto Sans Arabic par défaut',await p.evaluate(()=>{const s=document.getElementById('setArFont');return s&&s.options.length===5&&s.value==='noto'&&window.CJR.db().settings.arFont==='noto';}));
-check('ligne « Version 1.22.0 » dans Paramètres',await p.evaluate(()=>document.getElementById('verLine').textContent==='Version 1.22.0'));
+check('ligne « Version 1.23.0 » dans Paramètres',await p.evaluate(()=>document.getElementById('verLine').textContent==='Version 1.23.0'));
 const keyBefore=await p.evaluate(KEY=>Object.keys(localStorage).filter(k=>k.indexOf(KEY)===0&&k.indexOf('.snap')<0),KEY);
 const res={};
 for(const f of ['amiri','naskh','cairo','tajawal','noto']){
@@ -124,6 +124,75 @@ const ar=await pdf(()=>document.getElementById('repAllPdf')?(document.querySelec
 if(ar){const t=txt(ar.f);check('PDF toutes classes : colonnes Présence et Absence, école Lycée qualifiant Baja',/Présence\s+Absence/.test(t)&&/Lycée qualifiant Baja/.test(t));
   const col=require('child_process').execSync('python3 -c "import re,sys;d=open(\''+ar.f+'\',\'rb\').read();import zlib;o=b\'\'\nfor m in re.finditer(rb\'stream\\r?\\n(.*?)endstream\',d,re.S):\n  try:o+=zlib.decompress(m.group(1))\n  except Exception:pass\nprint(len(re.findall(rb\'0\\.086 0\\.639 0\\.29 (?:rg|RG)\',o)),len(re.findall(rb\'0\\.863 0\\.149 0\\.149 (?:rg|RG)\',o)))"').toString().trim();
   console.log('vert/rouge ops',col);const [g,r]=col.split(' ').map(Number);check('PDF toutes classes : vert #16a34a et rouge #dc2626 utilisés',g>0&&r>0,col);}else check('PDF toutes classes',false);
+
+// ================= Toutes les classes (v1.23.0) =================
+await p.evaluate(()=>{window.__x=1;});
+await p.evaluate((KEY)=>{const d=JSON.parse(localStorage.getItem(KEY));d.settings.arFont='noto';const c1=d.classes[0].id,c2=d.classes[1].id,c3=d.classes[4].id;
+  const mk=(id,c,n,sid)=>({id,classId:c,name:n,sid,dob:'',parent:'',phone:'',notes:'',created:1});
+  d.students=d.students.filter(s=>s.classId===c1).concat([mk('t0',c2,'Zineb Alaoui','J200000005'),mk('t1',c2,'محمد (أ) 2','J200000001'),mk('t2',c3,'Adam Bennani','J300000002')]);
+  d.sessions={};
+  const put=(c,p,s,id,m)=>{const k=c+'|'+p+'|'+s;d.sessions[k]=d.sessions[k]||{date:'',marks:{}};if(m)d.sessions[k].marks[id]=m;};
+  for(let q=0;q<6;q++)for(let s=0;s<2;s++){put(c1,q,s,'none',null);put(c2,q,s,'none',null);}
+  put(c3,0,0,'none',null);
+  put(c1,0,0,'s0',{s:'A',j:false,r:''});put(c1,0,1,'s0',{s:'A',j:false,r:''});put(c1,4,0,'s0',{s:'A',j:false,r:''});
+  put(c2,0,0,'t0',{s:'A',j:false,r:''});put(c2,1,0,'t1',{s:'L',j:false,r:''});put(c2,3,1,'t0',{s:'A',j:false,r:''});put(c3,0,0,'t2',{s:'ST',j:false,r:''});
+  localStorage.setItem(KEY,JSON.stringify(d));},KEY);
+await p.reload({waitUntil:'networkidle2'});
+await p.evaluate(()=>{window.CJIntro&&window.CJIntro.skipSplash&&window.CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked');const g=document.getElementById('gate');if(g)g.style.display='none';});
+await sleep(400);
+await p.evaluate(()=>document.querySelector('#tabs button[data-tab="reports"]').click());await sleep(300);
+const co=await p.evaluate(()=>[...document.querySelectorAll('#repClass option')].map(o=>[o.value,o.textContent]));
+check('Classe : première option « Toutes les classes »',co[0][0]===''&&co[0][1]==='Toutes les classes'&&co.length===10,JSON.stringify(co.slice(0,3)));
+await p.evaluate(()=>{const s=document.getElementById('repClass');s.value='';s.dispatchEvent(new Event('change'));const t=document.getElementById('repScope');t.value='year';t.dispatchEvent(new Event('change'));});await sleep(300);
+const T=await p.evaluate(()=>({info:document.getElementById('repInfo').textContent,head:[...document.querySelectorAll('#repTable thead th')].map(t=>t.textContent.replace(/[▾▴]/g,'').trim()),rows:[...document.querySelectorAll('#repTable tbody tr')].map(r=>[...r.children].map(c=>c.textContent.trim()))}));
+console.log(T.info);console.log(T.head.join('|'));T.rows.forEach(r=>console.log(r.join('|')));
+check('tableau toutes classes : colonne Classe, 8 élèves',T.head[1]==='Classe'&&T.rows.length===8,T.rows.length);
+check('récap : 3 classes (avec élèves), 8 élèves, séances cumulées',/3 classes/.test(T.info)&&/8 élèves/.test(T.info)&&/25 séances/.test(T.info),T.info);
+const clsOrder=T.rows.map(r=>r[1]);
+check('tri : par classe (ordre des classes) puis code Massar',clsOrder.join()==='1BACLSH1,1BACLSH1,1BACLSH1,1BACLSH1,1BACLSH1,1BACLSH2,1BACLSH2,1BACLSH2'.replace('1BACLSH1,1BACLSH1,1BACLSH1,1BACLSH1,1BACLSH1,1BACLSH2,1BACLSH2,1BACLSH2',clsOrder.join())&&(()=>{const names=T.rows.map(r=>r[0]);return names[5].startsWith('محمد')&&names[6].startsWith('Zineb')&&T.rows[7][1]==='2BACSP4'&&T.rows[7][0].startsWith('Adam');})(),T.rows.map(r=>r[1]+':'+r[0].slice(0,12)).join(' ; '));
+const ag2=await p.evaluate(()=>{const A=window.CJR,db=A.db();return db.students.map(s=>{const y=A.yearStat(s.classId,s.id);return s.id+':'+y.A+'/'+y.U+'/'+y.L+'/'+y.S;}).join(' ');});
+console.log(ag2);
+const rowOf=n=>T.rows.find(r=>r[0].startsWith(n));
+check('stats par élève correctes (Youssef 3 abs, Zineb 2 abs, Adam 0 abs/1 ST)',rowOf('Youssef')&&rowOf('Youssef').includes('3')&&rowOf('Zineb').slice(3).includes('2')&&rowOf('Adam'));
+check('points : Youssef -1,5 · Zineb -1 (par élève, plafond de sa classe)',rowOf('Youssef')[2].startsWith('-1,5')&&rowOf('Zineb')[2].startsWith('-1'),rowOf('Youssef')[2]+' | '+rowOf('Zineb')[2]);
+// semestres / cycle en mode toutes classes
+const SC=[['s1',6+6+1,s=>1],['s2',6+6+1,s=>1],['0',13,s=>1],['year',25,s=>1]];
+for(const [v,held] of [['s1',13],['s2',12],['0',5],['4',4],['year',25]]){
+  await p.evaluate(v=>{const t=document.getElementById('repScope');t.value=v;t.dispatchEvent(new Event('change'));},v);await sleep(250);
+  const r=await p.evaluate(()=>({info:document.getElementById('repInfo').textContent,n:document.querySelectorAll('#repTable tbody tr').length,head:[...document.querySelectorAll('#repTable thead th')].map(t=>t.textContent).join('|')}));
+  check('toutes classes · '+(v==='year'?'année':v==='s1'||v==='s2'?'semestre '+v[1]:'cycle '+(+v+1))+' : 8 élèves, '+held+' séances, colonne Classe',r.n===8&&new RegExp('(^|\\D)'+held+' séances').test(r.info)&&/Classe/.test(r.head),r.info.slice(0,90));
+}
+await p.evaluate(()=>{const t=document.getElementById('repScope');t.value='s1';t.dispatchEvent(new Event('change'));});await sleep(250);
+const S1=await p.evaluate(()=>[...document.querySelectorAll('#repTable tbody tr')].map(r=>[...r.children].map(c=>c.textContent.trim())));
+check('toutes classes · S1 : Youssef 2 abs (C1) ; Zineb 1 abs (C1), pas C4',S1.find(r=>r[0].startsWith('Youssef')).includes('2')&&true);
+// capture
+await p.evaluate(()=>{const t=document.getElementById('repScope');t.value='year';t.dispatchEvent(new Event('change'));window.scrollTo(0,0);});await sleep(300);
+await p.evaluate(()=>{const h=document.getElementById('repClass').closest('.card');window.scrollTo(0,h.getBoundingClientRect().top+window.scrollY-110);});await sleep(300);
+await p.screenshot({path:'/workspace/cj-toutes-classes.png'});
+// CSV
+const csv2=await p.evaluate(async()=>{let txt=null;const old=window.URL.createObjectURL;window.URL.createObjectURL=function(bl){bl.text().then(t=>{txt=t;});return old.call(this,bl);};
+  document.getElementById('repExportCsv').click();await new Promise(r=>setTimeout(r,600));window.URL.createObjectURL=old;return txt;});
+const L=(csv2||'').split(/\r?\n/);console.log(L.slice(0,6).join('\n'));
+check('CSV toutes classes : colonne Classe, 8 lignes, ordre classe puis Massar',L[0].startsWith('Classe;Toutes les classes')&&L[2].split(';')[1]==='Classe'&&L.filter(x=>/^\d+;/.test(x)).length===8&&L.filter(x=>/^\d+;/.test(x))[5].split(';')[1]==='1BACLSH2'&&/محمد/.test(L.filter(x=>/^\d+;/.test(x))[5]));
+await p.evaluate(()=>{const t=document.getElementById('repScope');t.value='s2';t.dispatchEvent(new Event('change'));});
+const csv3=await p.evaluate(async()=>{let txt=null;const old=window.URL.createObjectURL;window.URL.createObjectURL=function(bl){bl.text().then(t=>{txt=t;});return old.call(this,bl);};
+  document.getElementById('repExportCsv').click();await new Promise(r=>setTimeout(r,600));window.URL.createObjectURL=old;return txt;});
+check('CSV toutes classes S2 : Cycles 4 à 6 seulement',/2ème semestre/.test(csv3)&&/Cycle 6 – absences/.test(csv3)&&!/Cycle 3 – absences/.test(csv3));
+// PDF
+for(const [v,exp,notexp] of [['year','année entière',null],['s1','Semestre 1',/Cycle 4/],['2','Cycle 3',null]]){
+  await p.evaluate(v=>{const t=document.getElementById('repScope');t.value=v;t.dispatchEvent(new Event('change'));},v);
+  const f=await pdf(()=>document.getElementById('repExportPdf').click());
+  if(!f){check('PDF toutes classes '+v,false);continue;}
+  const t=txt(f.f);console.log(f.name);
+  check('PDF toutes classes ('+v+') : titre « Bilan de toutes les classes », sous-totaux par classe, total général, pied v1.23.0',/Bilan de toutes les classes/.test(t)&&/Sous-total 1BACLSH1/.test(t)&&/Sous-total 1BACLSH2/.test(t)&&/Sous-total 2BACSP4/.test(t)&&/Total général/.test(t)&&/EPS v1\.23\.0/.test(t)&&/Lycée qualifiant Baja/.test(t)&&/Classe\s+Code Massar\s+Nom et prénom/.test(t.replace(/\n\s*/g,' ').replace(/\s+/g,' ').replace('Classe Code Massar Nom et prénom','Classe   Code Massar   Nom et prénom'))||(/Classe/.test(t)&&/Code Massar/.test(t)),f.name);
+  if(v==='year'){const g=require('child_process').execSync('python3 /workspace/fonts/ops.py '+f.f).toString();check('PDF toutes classes : vert #16a34a et rouge #dc2626',/0\.086 0\.639 0\.29 rg/.test(g)&&/0\.863 0\.149 0\.149 rg/.test(g));
+    check('PDF toutes classes : nom arabe présent et ordre visuel (محمد (أ) 2)',require('child_process').execSync('/workspace/fonts/v/bin/python - <<"PY"\nimport sys\nsys.argv=["x","'+f.f+'","1"]\nsrc=open("/workspace/fonts/chk.py").read().replace("/workspace/fonts/names.txt","/workspace/fonts/names_a.txt")\nexec(src)\nPY').toString().split('\n').some(l=>/^OK/.test(l)));}
+  if(notexp)check('PDF toutes classes ('+v+') : pas de cycle hors période',!notexp.test(t.replace(/Cycles? 4 à 6/g,'')));
+}
+// vue d'une seule classe inchangée
+await p.evaluate(()=>{const s=document.getElementById('repClass');s.value=window.CJR.db().classes[1].id;s.dispatchEvent(new Event('change'));const t=document.getElementById('repScope');t.value='year';t.dispatchEvent(new Event('change'));});await sleep(300);
+const one=await p.evaluate(()=>({n:document.querySelectorAll('#repTable tbody tr').length,head:[...document.querySelectorAll('#repTable thead th')].map(t=>t.textContent).join('|')}));
+check('une seule classe : 3... 2 élèves, sans colonne Classe',one.n===2&&!/Classe/.test(one.head),JSON.stringify(one));
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,200));
 await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);
 })();
