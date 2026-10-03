@@ -357,27 +357,39 @@ function repYear(o){var sc=o.scope==='s1'||o.scope==='s2'?o.scope:'year',sem=sc!
   y=holTable(d,y+2,[cid],PS,periodRange(sc),(sem?SL:'année scolaire')+(periodRange(sc)?' · du '+A.dmy(periodRange(sc)[0])+' au '+A.dmy(periodRange(sc)[1]):''));
   groupsBlock(d,y,cid);
   return {doc:d,meta:m,name:(sem?'Bilan-'+A.slug(A.semName(sc))+'_':'Bilan-annuel_')+A.slug(c.name)+'_'+A.todayStr()+'.pdf'};}
-function repAll(){var DB=A.db(),th=DB.settings.threshold,cls=DB.classes.filter(function(c){return A.countIn(c.id);});if(!cls.length)throw U('Aucun élève enregistré.');
+function repAll(o){o=o||{};var sc=o.scope==null||o.scope==='year'?'year':(o.scope==='s1'||o.scope==='s2')?o.scope:+o.scope;if(sc!=='year'&&sc!=='s1'&&sc!=='s2'&&!(sc>=0))sc='year';
+  var sem=sc==='s1'||sc==='s2',PS=A.scopeCycles(sc),detail=!!o.detail,SL=sc==='year'?'année entière':sem?A.semName(sc):A.cycleLabel(sc),gen=detail||sc!=='year';
+  var DB=A.db(),th=DB.settings.threshold,cls=DB.classes.filter(function(c){return A.countIn(c.id);});if(!cls.length)throw U('Aucun élève enregistré.');
   var T0={n:0,U:0,J:0,M:0,K:0,L:0,S:0,A:0,slots:0,dsp:0,alert:0,ded:0,f:0,g:0,held:0,abs:0},rows=[];
-  cls.forEach(function(c){var list=A.studentsIn(c.id),t=agg(list,c.id,'year');rows.push({c:c,t:t});['n','U','J','M','K','L','S','slots','dsp','alert','ded','f','g','held','abs'].forEach(function(k){T0[k]+=t[k];});});
+  cls.forEach(function(c){var list=A.studentsIn(c.id),t=agg(list,c.id,sc);rows.push({c:c,t:t});['n','U','J','M','K','L','S','slots','dsp','alert','ded','f','g','held','abs'].forEach(function(k){T0[k]+=t[k];});});
   T0.rate=T0.slots?(T0.slots-T0.abs)/T0.slots:null;
-  var m=meta('Synthèse de toutes les classes',pl(cls.length,'classe')+' · '+pl(T0.n,'élève')+' · année entière · seuil d’alerte : '+th+' absences non justifiées','Synthèse annuelle · toutes les classes');
+  var m=meta(gen?'Bilan de toutes les classes · '+SL:'Synthèse de toutes les classes',pl(cls.length,'classe')+' · '+pl(T0.n,'élève')+' · '+SL+(sem?' (cycles '+(PS[0]+1)+' à '+(PS[PS.length-1]+1)+')':'')+' · '+pl(T0.held,'séance')+' effectuée'+(T0.held>1?'s':'')+' (cumul) · seuil d’alerte : '+th+' absences non justifiées',gen?'Bilan · toutes les classes · '+SL:'Synthèse annuelle · toutes les classes');
   var d=newDoc(m),y=titleBlock(d,m);
-  var it=cardsFor(T0,null,'year',{heldSub:'toutes classes'});it[0].s=pl(cls.length,'classe')+((T0.f||T0.g)?' · '+T0.f+' F / '+T0.g+' G':'');y=cards(d,y,it);
+  var it=cardsFor(T0,null,sc,{heldSub:'toutes classes'});it[0].s=pl(cls.length,'classe')+((T0.f||T0.g)?' · '+T0.f+' F / '+T0.g+' G':'');y=cards(d,y,it);
   y=section(d,y,'Comparaison des classes','',60);
   var segs=statusSegs(T0);donut(d,M+17,y+20,16,segs,pct(T0.rate,0),'présence',PG);donutLegend(d,M+37,y+6,segs,43);
   var yb=pctBars(d,M+84,y+1,W-M-(M+84),rows.map(function(r){return {l:r.c.name,v:r.t.rate};}),'Taux de présence par classe');y=Math.max(y+46,yb)+4;
-  y=section(d,y,'Absences et incidents par classe','',60);stackBars(d,M,y+1,W-2*M,60,rows.map(function(r){return {l:r.c.name,c:{A:r.t.U,J:r.t.J,M:r.t.M,K:r.t.K,L:r.t.L,S:r.t.S}};}),'Nombre de séances concernées (année)');y+=66;
+  y=section(d,y,'Absences et incidents par classe','',60);stackBars(d,M,y+1,W-2*M,60,rows.map(function(r){return {l:r.c.name,c:{A:r.t.U,J:r.t.J,M:r.t.M,K:r.t.K,L:r.t.L,S:r.t.S}};}),'Nombre de séances concernées ('+(sc==='year'?'année':SL)+')');y+=66;
   y=section(d,y,'Tableau récapitulatif par classe','',40);
   y=table(d,y,['Classe','Effectif','F / G','Séances','Présence','Absence','A','AJ','M','MJ','R','ST','Disp.','Alertes','Pts moy.'],rows.map(function(r){var t=r.t;return [C(r.c.name,{halign:'left',fontStyle:'bold'}),t.n,(t.f||t.g)?t.f+' / '+t.g:'—',t.held,C(pct(t.rate,1),{fontStyle:'bold',textColor:t.rate==null?MUTED:PG}),C(restPct(t.rate),{fontStyle:'bold',textColor:t.rate==null?MUTED:PR}),zero(t.U,ST.A.c),zero(t.J,ST.J.c),zero(t.M,ST.M.c),zero(t.K,ST.K.c),zero(t.L,ST.L.c),zero(t.S,ST.S.c),t.dsp||'',t.alert?C(String(t.alert),{textColor:ST.A.c,fontStyle:'bold'}):'',A.fmtPts(t.n?r1(t.ded/t.n):0)];}),{fs:7.2,foot:['Total',T0.n,(T0.f||T0.g)?T0.f+' / '+T0.g:'—',T0.held,C(pct(T0.rate,1),{fontStyle:'bold',textColor:T0.rate==null?MUTED:PG}),C(restPct(T0.rate),{fontStyle:'bold',textColor:T0.rate==null?MUTED:PR}),T0.U,T0.J,T0.M,T0.K,T0.L,T0.S,T0.dsp,T0.alert,A.fmtPts(T0.n?r1(T0.ded/T0.n):0)],cols:{0:{cellWidth:26}}});
-  var al=[];DB.students.forEach(function(s){if(!A.cls(s.classId))return;var yy=A.yearStat(s.classId,s.id);if(yy.U>=th)al.push({s:s,y:yy});});
+  var al=[];DB.students.forEach(function(s){if(!A.cls(s.classId))return;var yy=multi(sc)?A.scopeStat(s.classId,s.id,sc):A.yearStat(s.classId,s.id).per[sc];if(yy.U>=th)al.push({s:s,y:yy});});
   al.sort(function(a,b){return b.y.U-a.y.U||A.cmpStu(a.s,b.s);});
   y=section(d,y,'Élèves en alerte',al.length?pl(al.length,'élève')+' · '+th+' abs. non justifiées ou plus':'aucun élève',20);
   if(!al.length)y=note(d,y,'Aucun élève n’atteint '+th+' absences non justifiées. Bravo !',ST.P.ch);
   else y=table(d,y,['N°','Classe','Code Massar','Nom et prénom','A','AJ','M','MJ','R','ST','Pts retirés'],al.map(function(a,i){var q=a.y;return [i+1,C(A.clsName(a.s.classId),{fontStyle:'bold'}),a.s.sid||'',C(a.s.name,{halign:'center',fontStyle:'bold'}),C(String(q.U),{textColor:ST.A.c,fontStyle:'bold'}),zero(q.J,ST.J.c),zero(q.M,ST.M.c),zero(q.K,ST.K.c),zero(q.L,ST.L.c),zero(q.S,ST.S.c),A.fmtPts(q.ded)];}),{fs:7.1,cols:{0:{cellWidth:7},3:{cellWidth:52}}});
-  var ids=cls.map(function(c){return c.id;}),yr=periodRange('year'),lr=lastRecDate(ids);
-  y=holTable(d,y,ids,allPs(),yr&&lr?[yr[0],lr<yr[1]?lr:yr[1]]:yr,yr?'du '+A.dmy(yr[0])+' au '+A.dmy(lr&&lr<yr[1]?lr:yr[1])+' · toutes classes':'');
-  return {doc:d,meta:m,name:'Synthese_toutes-classes_'+A.todayStr()+'.pdf'};}
+  if(detail){
+    y=section(d,y,'Détail par élève – '+SL,pl(T0.n,'élève')+' · '+pl(cls.length,'classe')+' · sous-total par classe',40);
+    var body=[],sub={},n=0;
+    cls.forEach(function(c,ci){var q=rows[ci].t;
+      A.studentsIn(c.id).forEach(function(s){n++;var st=multi(sc)?A.scopeStat(c.id,s.id,sc):A.yearStat(c.id,s.id).per[sc],rt=stRate(st);
+        body.push([n,C(c.name,{fontStyle:'bold'}),s.sid||'',C(s.name,{halign:'center',fontStyle:'bold'}),sexTxt(s),C(pct(rt,0),{textColor:rt==null?MUTED:PG,fontStyle:'bold'}),zero(st.U,ST.A.c),zero(st.J,ST.J.c),zero(st.M,ST.M.c),zero(st.K,ST.K.c),zero(st.L,ST.L.c),zero(st.S,ST.S.c),C(A.fmtPts(st.ded),{textColor:st.ded?[184,110,0]:[190,196,206],fontStyle:'bold'})]);});
+      sub[body.length]=1;body.push([{content:'Sous-total '+c.name+' · '+pl(q.n,'élève'),colSpan:5,styles:{halign:'left',fontStyle:'bold'}},C(pct(q.rate,0),{fontStyle:'bold',textColor:q.rate==null?MUTED:PG}),q.U,q.J,q.M,q.K,q.L,q.S,A.fmtPts(r2(q.ded))]);});
+    y=table(d,y,['N°','Classe','Code Massar','Nom et prénom','Sexe','Présence','A','AJ','M','MJ','R','ST','Pts retirés'],body,{fs:7,foot:[{content:'Total général · '+pl(T0.n,'élève'),colSpan:5,styles:{halign:'left'}},C(pct(T0.rate,0),{fontStyle:'bold',textColor:T0.rate==null?MUTED:PG}),T0.U,T0.J,T0.M,T0.K,T0.L,T0.S,A.fmtPts(r2(T0.ded))],cols:{0:{cellWidth:7},1:{cellWidth:19},2:{cellWidth:21},3:{cellWidth:44}},
+      cell:function(h){if(h.section==='body'&&sub[h.row.index]){h.cell.styles.fillColor=[221,228,252];h.cell.styles.fontStyle='bold';}}});
+    y=codesNote(d,y);}
+  var ids=cls.map(function(c){return c.id;}),yr=periodRange(sc),lr=lastRecDate(ids);
+  y=holTable(d,y,ids,PS,yr&&lr?[yr[0],lr<yr[1]?lr:yr[1]]:yr,yr?'du '+A.dmy(yr[0])+' au '+A.dmy(lr&&lr<yr[1]?lr:yr[1])+' · toutes classes':'');
+  return {doc:d,meta:m,name:(gen?'Bilan_toutes-classes_'+A.slug(sc==='year'?'annee':sem?A.semName(sc):A.cycleName(sc))+'_':'Synthese_toutes-classes_')+A.todayStr()+'.pdf'};}
 function repStudents(o){var DB=A.db(),sc=o.scope==='s1'||o.scope==='s2'?o.scope:'year',sem=sc!=='year',cid=o.cid||'',list=A.studentsIn(cid);if(!list.length)throw U('Aucun élève à exporter.');
   var cl=DB.classes.filter(function(c){return (!cid||c.id===cid)&&A.countIn(c.id);});
   var f=0,g=0,dp=0;list.forEach(function(s){var x=A.sexOf(s);if(x==='F')f++;else if(x==='G')g++;if(A.dspActive(s))dp++;});
