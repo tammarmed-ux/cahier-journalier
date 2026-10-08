@@ -2,7 +2,7 @@
    SHOT=before|after : capture seule (BEFORE : version 3ea3a69 servie depuis /tmp/cj-before). */
 const puppeteer=require('puppeteer-core');const fs=require('fs');const http=require('http');const path=require('path');
 const results=[];function check(n,ok,x){results.push(!!ok);console.log((ok?'PASS':'FAIL')+' - '+n+(x?' :: '+x:''));}
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));const KEY='classRegister.v2';const SHOT=process.env.SHOT||'';const D=SHOT==='before'?'/tmp/cj-before':'/workspace/cj-deploy';const PORT=SHOT==='before'?8022:8021;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));const KEY='classRegister.v2';const SHOT=process.env.SHOT||'';const D=SHOT==='before'?'/tmp/cj-before':SHOT==='aj-before'?'/tmp/cj-before3':'/workspace/cj-deploy';const PORT=SHOT==='before'?8022:SHOT==='aj-before'?8028:8021;
 const MT={'.html':'text/html; charset=utf-8','.js':'text/javascript','.webmanifest':'application/manifest+json','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.ico':'image/x-icon','.jpg':'image/jpeg','.ttf':'font/ttf'};
 const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]);if(u.endsWith('/'))u+='index.html';const f=path.join(D,u);
   if(!f.startsWith(D)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end('404');}
@@ -29,6 +29,10 @@ await p.evaluate(KEY=>{const A=window.CJR,d=A.db(),t=new Date(),T=t.getFullYear(
   const raw=JSON.parse(localStorage.getItem(KEY));raw.sessions=S;localStorage.setItem(KEY,JSON.stringify(raw));},KEY);
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(500);
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="home"]').click());await sleep(500);
+if(/^aj-/.test(SHOT)){await p.addStyleTag({content:'header.top,#tabs,.fab,#toast{display:none!important}'});const c=await p.$('#homeToday');await c.evaluate(e=>e.scrollIntoView({block:'start'}));await sleep(1200);await c.screenshot({path:'/tmp/v28i-'+SHOT+'.png'});
+  if(SHOT==='aj-after'){await p.evaluate(KEY=>{const d=JSON.parse(localStorage.getItem(KEY));const wd=new Date().getDay();d.cal.tt=d.cal.tt.filter(t=>t.day!==wd);localStorage.setItem(KEY,JSON.stringify(d));},KEY);await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(400);
+    await p.evaluate(()=>document.querySelector('#tabs button[data-tab="home"]').click());await p.addStyleTag({content:'header.top,#tabs,.fab,#toast{display:none!important}'});await sleep(800);await p.evaluate(()=>window.scrollTo(0,0));await sleep(600);await (await p.$('#homeHero')).screenshot({path:'/tmp/v28i-aj-hero.png'});const c2=await p.$('#homeToday');await c2.evaluate(e=>e.scrollIntoView({block:'start'}));await sleep(800);await c2.screenshot({path:'/tmp/v28i-aj-none.png'});}
+  console.log('shot',SHOT,errs.length?'errors '+errs.join('|'):'ok');srv.close();await b.close();process.exit(0);}
 if(SHOT){await p.evaluate(()=>window.scrollTo(0,0));await sleep(2500);await p.screenshot({path:'/tmp/v28h-'+SHOT+'.png'});await p.evaluate(()=>window.scrollTo(0,document.getElementById(document.getElementById('homeQuick')?'homeQuick':'homeStats').getBoundingClientRect().top+window.scrollY-120));await sleep(400);await p.screenshot({path:'/tmp/v28h-'+SHOT+'2.png'});
   console.log('shot',SHOT,errs.length?'errors '+errs.join('|'):'ok');srv.close();await b.close();process.exit(0);}
 const H=await p.evaluate(()=>{const g=id=>document.getElementById(id);const hero=g('homeHero');return {hello:hero&&hero.querySelector('.hh-hello').textContent,date:hero&&hero.querySelector('.hh-date').textContent,clock:g('homeClock')&&g('homeClock').textContent,
@@ -69,6 +73,13 @@ check('Sauvegarde → export existant (#bkExport) : date de dernière sauvegarde
 await home();await p.evaluate(()=>window.scrollTo(0,0));await p.evaluate(()=>document.querySelector('.hh-tile[data-qa="watch"]').click());await sleep(900);
 const sc=await p.evaluate(()=>Math.round(document.getElementById('homeWatch').getBoundingClientRect().top));
 check('tuile « alertes » → fait défiler jusqu’à « À surveiller »',sc<200&&sc>-5,String(sc));
+// 1.28.0 (-i) : carte « Aujourd’hui » = séances du jour uniquement
+await home();let AJ=await p.evaluate(()=>{const c=document.getElementById('homeToday');return {h3:[...c.querySelectorAll('h3')].map(x=>x.textContent),li:c.querySelectorAll('.occ li').length,txt:c.textContent};});
+const nToday=await p.evaluate(()=>{const wd=new Date().getDay();return window.CJR.db().cal.tt.filter(t=>t.day===wd&&t.type==='class').length;});
+check('carte « Aujourd’hui » : seulement « Séances du jour » (plus de « Prochaines séances »)',AJ.h3.join('|')==='Séances du jour'&&!/Prochaines séances/i.test(AJ.txt)&&(nToday?AJ.li>=1:true),JSON.stringify([AJ.h3,AJ.li,nToday]));
+await p.evaluate(KEY=>{const d=JSON.parse(localStorage.getItem(KEY));const wd=new Date().getDay();d.cal.tt=d.cal.tt.filter(t=>t.day!==wd);localStorage.setItem(KEY,JSON.stringify(d));},KEY);await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(400);await home();
+AJ=await p.evaluate(()=>{const c=document.getElementById('homeToday'),n=document.getElementById('homeNext');return {h3:[...c.querySelectorAll('h3')].map(x=>x.textContent),li:c.querySelectorAll('.occ li').length,msg:(c.querySelector('p.muted')||{}).textContent,next:n&&n.textContent};});
+check('aucune séance aujourd’hui : message court, aucune séance suivante listée ; encadré « Prochaine séance » de l’en-tête conservé',AJ.h3.join('|')==='Séances du jour'&&AJ.li===0&&/^(Aucune séance aujourd’hui\.|Pas de cours aujourd’hui)/.test(AJ.msg)&&/Aucune séance aujourd’hui|Prochaine/.test(AJ.next||''),JSON.stringify(AJ));
 // mouvement réduit
 await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);await home();
 const tr=await p.evaluate(()=>getComputedStyle(document.querySelector('#homeQuick .qa')).transitionDuration);
