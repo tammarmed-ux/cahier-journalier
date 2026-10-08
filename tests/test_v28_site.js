@@ -53,7 +53,7 @@ const REM_OK=["var sx=String(s.sex||'').toUpperCase();","Object.keys(s).forEach(
 const okRem=rem.every(l=>REM_OK.some(x=>l.startsWith(x)));
 /* chaque ligne retirée a sa remplaçante (mêmes compteurs Abs./R/AJ/Pts dans l’affichage Absences, normalisation élève + ev) */
 const okAdd=add.some(l=>l.startsWith("return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class=\"t pts'"))&&add.some(l=>l.includes("&&k!=='ev'&&"))&&add.some(l=>/var ev=normEv\(s\.ev\);if\(ev\)o\.ev=ev;/.test(l));
-const noWrite=add.every(l=>!/setItem|removeItem|indexedDB|\.clear\(|F\.doc|setDoc|writeBatch|applyJSON|resetLocal|DB\.(?!evals\b|ui\.)[\w.]+\s*=[^=]|DB\.(?!evals\b)\w+\.(push|splice)|sessions\[[^\]]*\]\s*=|\.marks\[[^\]]*\]\s*=|\.marks\.\w+\s*=[^=]|delete\s+(?!e\[k\]|s\.ev|DB\.evals\.evt\[)/.test(l));
+const noWrite=add.every(l=>!/setItem|removeItem|indexedDB|\.clear\(|F\.doc|setDoc|writeBatch|applyJSON|resetLocal|DB\.(?!evals\b|ui\.)[\w.]+\s*=[^=]|DB\.(?!evals\b)\w+\.(push|splice)|sessions\[[^\]]*\]\s*=|\.marks\[[^\]]*\]\s*=|\.marks\.\w+\s*=[^=]|delete\s+(?!e\[[kf]\]|e\.(pr|perfRaw|perfAuto|prodAuto|perfEvent)\b|s\.ev|DB\.evals\.(evt|ntr)\[)/.test(l));
 check('logique JS : lignes retirées limitées à la version, aux colonnes de synthèse (déplacées dans sumHead/sumFoot/totalsHtml) et à la normalisation élève (+ ev) ('+rem.length+' retirées, '+add.length+' ajoutées)',okRem&&okAdd,JSON.stringify(rem.filter(l=>!REM_OK.some(x=>l.startsWith(x)))).slice(0,300));
 check('aucune écriture ajoutée sur les séances, marques, classes ou réglages : seules s.ev (notes de l’élève) et DB.evals (APS) sont écrites',noWrite,JSON.stringify(add.filter(l=>/DB\.(?!evals\b|ui\.)[\w.]+\s*=[^=]|delete\s/.test(l))).slice(0,300));
 /* v1.28.0 : cj-pdf.js — ajout du relevé de notes */

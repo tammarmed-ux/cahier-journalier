@@ -76,6 +76,15 @@
         ]
       },
       {
+        "source": "/op2007-athle.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
         "source": "/sitemap.xml",
         "headers": [
           {

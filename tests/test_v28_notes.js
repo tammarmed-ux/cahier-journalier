@@ -35,7 +35,7 @@ const base=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);const CI
 const sc=await p.evaluate(()=>{const A=window.CJR,DB=A.db(),o={},nm={TC:'TCS1','1BAC':'1BACLSH9','2BAC':'2BACSP9'};
   ['TC','1BAC','2BAC'].forEach(l=>{const id='x'+l;DB.classes.push({id,name:nm[l]});['coll','athle','gym'].forEach((a,i)=>{DB.evals=DB.evals||{aps:{}};DB.evals.aps=DB.evals.aps||{};DB.evals.aps[id+'|'+i]=a;const s=A.gradeSpec(id,i);o[l+'-'+a]=s.cols.map(c=>c.max).join('+')+'+'+s.comp+'='+s.total;});DB.classes.pop();});delete DB.evals;return o;});
 const expS={'TC-coll':'6+6+3+5=20','TC-athle':'6+6+3+5=20','TC-gym':'12+3+5=20','1BAC-coll':'6+7+3+4=20','1BAC-athle':'7+6+3+4=20','1BAC-gym':'13+3+4=20','2BAC-coll':'7+7+3+3=20','2BAC-athle':'7+7+3+3=20','2BAC-gym':'14+3+3=20'};
-check('barèmes OP 2007 : athlétisme 6/7/7 + 6/6/7, sports collectifs 6/6/7 + 6/7/7, gymnastique 12/13/14, conceptuel 3, comportemental 5/4/3 = 20',Object.keys(expS).every(k=>sc[k]===expS[k]),JSON.stringify(sc));
+check('barèmes OP 2007 : athlétisme Produit 6/7/7 + Performance 6/6/7, sports collectifs 6/6/7 + 6/7/7, gymnastique 12/13/14, conceptuel 3, comportemental 5/4/3 = 20',Object.keys(expS).every(k=>sc[k]===expS[k]),JSON.stringify(sc));
 const ag=await p.evaluate(()=>{const A=window.CJR;return [A.apsOf,0];});
 // ---- écran Absences : colonnes notes par défaut
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="attendance"]').click());await sleep(500);

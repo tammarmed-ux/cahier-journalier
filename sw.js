@@ -1,5 +1,5 @@
 /* Cahier journalier digital – service worker (cache-first, hors ligne) */
-const CACHE = 'cahier-v28-b';
+const CACHE = 'cahier-v28-c';
 const ASSETS = [
   './',
   './index.html',
@@ -20,6 +20,7 @@ const ASSETS = [
   './og-image-b.png',
   /* exports PDF : bibliothèques et polices locales (aucun CDN) */
   './cj-pdf.js',
+  './op2007-athle.js',   /* barèmes d’athlétisme OP 2007 */
   './vendor/jspdf.umd.min.js',
   './vendor/jspdf.plugin.autotable.min.js',
   './vendor/NotoSansArabic-Regular.ttf',
