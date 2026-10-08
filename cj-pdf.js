@@ -446,7 +446,9 @@ function repStudent(o){var s=A.byId(o.sid);if(!s)throw U('Élève introuvable.')
   var d=newDoc(m),y=titleBlock(d,m);
   var dp=A.dspOf(s),info=[['Classe',A.clsName(cid)],['Code Massar',s.sid||'—'],['Sexe',A.sexOf(s)==='F'?'Fille':A.sexOf(s)==='G'?'Garçon':'—'],['Date de naissance',s.dob?A.dmy(s.dob):'—'],['Groupe',gi>=0?A.grpName(g,gi):'—'],['Indice physique',A.lvlOf(s)!=null?num(A.lvlOf(s))+' / 100 (50 = moyenne classe)':'—'],['Parent / tuteur',s.parent||'—'],['Téléphone',s.phone||'—'],['Dispense de sport',dp?A.dspLabel(dp)+(dp.since?' depuis le '+A.dmy(dp.since):''):'Non']];
   var body=[];for(var i=0;i<info.length;i+=2){var r=[C(info[i][0],{fontStyle:'bold',textColor:MUTED,halign:'left'}),C(info[i][1],{halign:'left'})];if(info[i+1])r.push(C(info[i+1][0],{fontStyle:'bold',textColor:MUTED,halign:'left'}),C(info[i+1][1],{halign:'left'}));else r.push('','');body.push(r);}
-  y=table(d,y,null,body,{fs:7.8,cols:{0:{cellWidth:30},2:{cellWidth:30}}});
+  var ph=A.photoData&&A.photoData(s.id),y0p=y;   /* 1.28.0 : photo de l’élève (si elle est chargée dans la fiche) en face des informations */
+  y=table(d,y,null,body,{fs:7.8,cols:{0:{cellWidth:30},2:{cellWidth:30}},right:ph?M+31:M});
+  if(ph){try{d.setDrawColor.apply(d,LINE);d.setLineWidth(0.3);d.addImage(ph,'JPEG',W-M-28,y0p,28,28);d.roundedRect(W-M-28,y0p,28,28,1.5,1.5,'S');y=Math.max(y,y0p+30);}catch(e){}}
   if(s.notes)y=note(d,y,'Remarques : '+s.notes,INK);
   var t={n:1,U:y0.U,J:y0.J,M:y0.M,K:y0.K,L:y0.L,S:y0.S,slots:y0.held,abs:y0.A+y0.M+y0.K};t.rate=t.slots?(t.slots-t.abs)/t.slots:null;
   y=cards(d,y,[{v:y0.held,l:'Séances effectuées'},{v:pct(t.rate),l:'Taux de présence',c:PG,rate:t.rate},{v:y0.U,l:'Absences non justifiées',c:y0.U>=th?ST.A.c:ST.A.c,s:y0.U>=th?'seuil d’alerte atteint':''},{v:y0.J,l:'Absences justifiées',c:ST.J.c},{v:y0.M+' / '+y0.K,l:'Maladie M / MJ',c:ST.M.c},{v:y0.L,l:'Retards',c:ST.L.c},{v:y0.S,l:'Sans tenue',c:ST.S.c},{v:A.fmtPts(y0.ded),l:'Points retirés (année)',c:[184,110,0]}]);

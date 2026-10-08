@@ -350,6 +350,23 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 #homeStats .s4 .stat{padding:8px 4px}
 #homeStats .stat b{font-size:22px}
 #homeStats .stat span{font-size:12px}
+/* ===== 1.28.0 : photo de l’élève (fiche : en face de Classe / Code / Sexe / Naissance ; liste : avatar rond) ===== */
+.idcard{display:flex;align-items:flex-start;gap:12px}
+.idcard .kv{flex:1;min-width:0}
+.kv.kv2:empty{display:none}
+.phbox{flex:0 0 100px;width:100px;height:100px;margin-top:6px;border-radius:16px;border:1.5px dashed var(--pri-line);background:linear-gradient(180deg,#F7F9FC,#EEF2F8);color:var(--pri);padding:0;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:inherit;font-size:11.5px;font-weight:700;line-height:1.15;text-align:center;box-shadow:0 1px 2px rgba(16,24,40,.05);transition:transform .14s ease}
+.phbox svg{width:40px;height:40px;opacity:.55}
+.phbox.has{border:0;background:#E8EFF8;box-shadow:0 4px 12px -6px rgba(11,58,110,.45)}
+.phbox img{width:100%;height:100%;object-fit:cover;display:block}
+.phbox:active{transform:scale(.97)}.phbox:focus-visible{outline:none;box-shadow:var(--focus)}
+.avatar.ph{padding:0;overflow:hidden;background:#E8EFF8}.avatar.ph img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+@media(max-width:360px){.phbox{flex-basis:88px;width:88px;height:88px}}
+.phm{display:flex;flex-direction:column;gap:10px;margin-top:12px}.phm .btn{min-height:48px;justify-content:flex-start;font-size:16px}
+.phc-wrap{position:relative;width:min(280px,100%);aspect-ratio:1/1;margin:8px auto 10px;border-radius:18px;overflow:hidden;background:#0f172a;touch-action:none;cursor:grab}
+.phc-wrap canvas{width:100%;height:100%;display:block}
+.phc-wrap:after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.65);pointer-events:none}
+#phZoom{width:100%;accent-color:var(--pri);min-height:44px}
+@media (prefers-reduced-motion:reduce){.phbox{transition:none}.phbox:active{transform:none}}
 /* ===== 1.28.0 : Accueil modernisé (purement visuel : mêmes données, mêmes écrans) ===== */
 #homeBody .card{border-radius:18px}
 .hhero{position:relative;overflow:hidden;color:#fff;background:radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad);border-radius:22px;padding:18px 16px 16px;margin:0 0 12px;box-shadow:0 10px 26px -12px rgba(11,58,110,.55),0 2px 6px rgba(11,58,110,.18)}
@@ -906,6 +923,7 @@ table.gbal tfoot td{font-weight:700}
       <button class="btn" id="bkExport">⬇ Télécharger une sauvegarde (JSON)</button>
       <button class="btn sec" id="bkImportBtn">⬆ Restaurer une sauvegarde</button>
       <input type="file" id="bkFile" accept=".json,application/json" class="hidden">
+      <button class="btn sec" id="phExport">📷 Exporter les photos (fichier à part)</button><button class="btn sec" id="phImportBtn">📷 Importer des photos</button><input type="file" id="phFile" accept=".json,application/json" class="hidden">
     </div>
     <p class="small muted" id="bkInfo"></p>
   </div>
@@ -1054,6 +1072,26 @@ table.gbal tfoot td{font-weight:700}
 <!-- Student detail modal -->
 <div class="modal" id="detModal" role="dialog" aria-modal="true">
   <div class="sheet" id="detBody"></div>
+</div>
+
+<!-- 1.28.0 : photo de l’élève (menu + recadrage) -->
+<div class="modal" id="phMenu" role="dialog" aria-modal="true" aria-labelledby="phMenuT">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="phMenuT">Photo de l’élève</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>
+    <div class="small muted" id="phMenuSub" dir="auto"></div>
+    <div class="phm"><button type="button" class="btn" id="phTake">📷 Prendre une photo</button><button type="button" class="btn sec" id="phPick">🖼 Choisir dans la galerie</button><button type="button" class="btn danger" id="phDel">🗑 Supprimer la photo</button><button type="button" class="btn sec" data-close>Annuler</button></div>
+    <p class="small muted">Photo recadrée et compressée sur l’appareil (≈ 20 Ko). Elle est enregistrée à part (jamais dans les données du cahier) et synchronisée avec votre compte.</p>
+    <input type="file" id="phCam" accept="image/*" capture="environment" class="hidden"><input type="file" id="phGal" accept="image/*" class="hidden">
+  </div>
+</div>
+<div class="modal" id="phCrop" role="dialog" aria-modal="true" aria-labelledby="phCropT">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="phCropT">Recadrer la photo</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>
+    <div class="phc-wrap" id="phWrap"><canvas id="phCanvas" width="560" height="560" aria-label="Aperçu du recadrage"></canvas></div>
+    <label class="f" for="phZoom">Zoom</label><input type="range" id="phZoom" min="1" max="4" step="0.01" value="1">
+    <p class="small muted" style="margin:4px 0 0">Faites glisser la photo pour la centrer dans le carré.</p>
+    <div class="actions"><button type="button" class="btn sec" data-close>Annuler</button><button type="button" class="btn" id="phSave">Enregistrer</button></div>
+  </div>
 </div>
 
 <!-- Dispense modal (élève dispensé de sport) -->
@@ -1327,7 +1365,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28-f';                       /* aperçu test-128 : « -f » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-g';                       /* aperçu test-128 : « -g » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1725,11 +1763,12 @@ function openDetail(id){
   var s=byId(id);if(!s)return;var y=yearStat(s.classId,id),th=DB.settings.threshold;
   var tel=s.phone.replace(/[^\d+]/g,'');
   var h='<div class="sheet-head"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><h2 dir="auto">'+esc(s.name)+'</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>';
-  h+='<h3 style="margin-top:4px">Informations personnelles</h3><dl class="kv"><dt>Classe</dt><dd><span class="chip">'+esc(clsName(s.classId))+'</span></dd>';
+  h+='<h3 style="margin-top:4px">Informations personnelles</h3><div class="idcard"><dl class="kv"><dt>Classe</dt><dd><span class="chip">'+esc(clsName(s.classId))+'</span></dd>';
   if(s.sid)h+='<dt>Code élève</dt><dd dir="auto">'+esc(s.sid)+'</dd>';
   if(s.sex)h+='<dt>Sexe</dt><dd>'+(s.sex==='F'?'Fille':'Garçon')+'</dd>';
   var dg=grpOf(s.classId),dgi=grpIdx(dg,s.id);if(dgi>=0)h+='<dt>Groupe</dt><dd>'+grpChip(dg,dgi)+'</dd>';
   if(s.dob)h+='<dt>Date de naissance</dt><dd>'+esc(fmtDate(s.dob))+'</dd>';
+  h+='</dl>'+(VIEW?'':'<button type="button" class="phbox" id="detPhoto" aria-label="Photo de l’élève"></button>')+'</div><dl class="kv kv2">';   /* 1.28.0 : photo en face de Classe / Code / Sexe / Naissance (comme une carte d’identité) */
   if(s.parent)h+='<dt>Parent / tuteur</dt><dd dir="auto">'+esc(s.parent)+'</dd>';
   var dp=dspOf(s);if(dp)h+='<dt>Dispense de sport</dt><dd><span class="chip dchip">🩺 '+esc(dspLabel(dp))+'</span>'+(dp.since?' <span class="small muted">depuis le '+esc(dmy(dp.since))+'</span>':'')+(dspActive(s)?'':' <span class="small muted">(terminée)</span>')+'</dd>';
   if(s.phone)h+='<dt>Téléphone</dt><dd><a class="tel" dir="ltr" href="tel:'+esc(tel)+'">'+esc(s.phone)+'</a></dd>';
@@ -1762,6 +1801,7 @@ function openDetail(id){
   $('detDsp').onclick=function(){openDispense(id,'',function(){render();openDetail(id);});};
   $('detPdf').onclick=function(){runPdf('student',{sid:id});};
   wirePhysForm(s);
+  phFiche(id);   /* 1.28.0 : photo (stockage séparé) */
   openModal('detModal');
 }
 
@@ -3299,10 +3339,106 @@ $('wipeAll').addEventListener('click',function(){
 window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();render();}});
 
 /* ================= API for cloud sync (see sync script below) ================= */
+/*PHOTO-BEGIN*/
+/* ===== 1.28.0 : photo personnelle de l’élève =====
+   Stockage SÉPARÉ, jamais dans classRegister.v2 ni dans les morceaux users/{uid}/cahier/* :
+   - appareil : IndexedDB « cahier-photos » (magasins p = {id, d (JPEG data-URL ≤ 25 Ko), t}, q = envois en attente {id, t}, m = repères {k, v}) ;
+   - en ligne : 1 document par photo users/{uid}/photos/{idÉlève} = {d, t, dev, st} (suppression : {del:true, t, dev, st}),
+     déjà couvert par la règle existante users/{uid}/{document=**} (propriétaire autorisé ; le modérateur lit seulement).
+   Lecture incrémentale (st > dernier repère) : un nouvel appareil lit N photos une fois, ensuite seulement les changements. */
+var PH={db:null,known:{},url:{},cur:null,unsub:null,uidOn:null,pushing:false,again:false,blocked:false,pushT:null,img:null,z:1,ox:0,oy:0,sid:null},PH_MAX=25*1024,PH_SIZE=256,PH_V=560;
+function phIdb(){if(PH.db)return PH.db;PH.db=new Promise(function(res,rej){try{var r=indexedDB.open('cahier-photos',1);r.onupgradeneeded=function(){var d=r.result;['p','q'].forEach(function(n){if(!d.objectStoreNames.contains(n))d.createObjectStore(n,{keyPath:'id'});});if(!d.objectStoreNames.contains('m'))d.createObjectStore('m',{keyPath:'k'});};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};}catch(e){rej(e);}});PH.db.catch(function(){PH.db=null;});return PH.db;}
+function phTx(st,mode,fn){return phIdb().then(function(d){return new Promise(function(res,rej){var t=d.transaction(st,mode),o=t.objectStore(st),out,r=fn(o);if(r)r.onsuccess=function(){out=r.result;};t.oncomplete=function(){res(out);};t.onerror=t.onabort=function(){rej(t.error);};});});}
+function phGet(st,id){return phTx(st,'readonly',function(o){return o.get(id);});}
+function phPut(st,v){return phTx(st,'readwrite',function(o){return o.put(v);});}
+function phDel(st,id){return phTx(st,'readwrite',function(o){return o.delete(id);});}
+function phAll(st){return phTx(st,'readonly',function(o){return o.getAll();});}
+function phKeys(){return phTx('p','readonly',function(o){return o.getAllKeys();});}
+function phBytes(d){var i=String(d).indexOf(',');return i<0?0:Math.floor((d.length-i-1)*3/4);}
+function phOk(d){return typeof d==='string'&&/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+\/=]+$/.test(d)&&d.length<200000;}
+function phBlobUrl(d){var i=d.indexOf(','),b=atob(d.slice(i+1)),a=new Uint8Array(b.length);for(var k=0;k<b.length;k++)a[k]=b.charCodeAt(k);return URL.createObjectURL(new Blob([a],{type:d.slice(5,d.indexOf(';'))}));}
+function phForget(id){if(PH.url[id]){try{URL.revokeObjectURL(PH.url[id]);}catch(e){}delete PH.url[id];}if(PH.cur&&PH.cur.id===id)PH.cur=null;}
+function phUrl(id){if(PH.url[id])return Promise.resolve(PH.url[id]);return phGet('p',id).then(function(r){if(!r||!phOk(r.d))return null;if(!PH.url[id])PH.url[id]=phBlobUrl(r.d);return PH.url[id];});}
+var PH_SIL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>';
+/* fiche : photo en face des informations, mini-photo à la place des initiales */
+function phFiche(id){var box=$('detPhoto'),av=document.querySelector('#detBody .sheet-head .avatar');if(!box){return;}
+  box.dataset.phsid=id;box.classList.remove('has');box.innerHTML=PH_SIL+'<span>Ajouter une photo</span>';box.setAttribute('aria-label','Ajouter une photo');
+  if(!PH.known[id])return;
+  phGet('p',id).then(function(r){if(!r||!phOk(r.d)||box.dataset.phsid!==id||!document.body.contains(box))return;PH.cur={id:id,d:r.d};phUrl(id).then(function(u){if(!u||box.dataset.phsid!==id)return;
+    box.classList.add('has');box.innerHTML='<img alt="Photo de l’élève" src="'+u+'">';box.setAttribute('aria-label','Photo de l’élève : modifier ou supprimer');
+    if(av){av.classList.add('ph');av.innerHTML='<img alt="" src="'+u+'">';}});}).catch(function(){});}
+/* liste des élèves : avatar rond (chargé quand il devient visible) */
+var phIO=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;phIO.unobserve(e.target);phFill(e.target);});},{rootMargin:'200px'}):null;
+function phFill(av){var li=av.closest('[data-id]'),id=li&&li.dataset.id;if(!id||!PH.known[id])return;phUrl(id).then(function(u){if(u&&document.body.contains(av)){av.classList.add('ph');av.innerHTML='<img alt="" src="'+u+'">';}}).catch(function(){});}
+function phDecorate(){document.querySelectorAll('#stuList li.stu[data-id] .avatar').forEach(function(av){var id=av.parentNode.dataset.id;if(!PH.known[id]||av.classList.contains('ph'))return;if(phIO)phIO.observe(av);else phFill(av);});}
+if(window.MutationObserver)new MutationObserver(phDecorate).observe($('stuList'),{childList:true});
+function phRefresh(id){if(id&&PH.url[id])phForget(id);if(current==='students')renderStudents();var b=$('detPhoto');if(b&&$('detModal').classList.contains('open')&&(!id||b.dataset.phsid===id)){var av=document.querySelector('#detBody .sheet-head .avatar'),s=byId(b.dataset.phsid);if(av&&s&&!PH.known[s.id]){av.classList.remove('ph');av.textContent=initials(s.name);}phFiche(b.dataset.phsid);}}
+/* enregistrement local + file d’envoi */
+function phSet(id,d){var t=Date.now();return phPut('p',{id:id,d:d,t:t}).then(function(){return phPut('q',{id:id,t:t});}).then(function(){PH.known[id]=1;phForget(id);phRefresh(id);phSchedule(400);});}
+function phRemove(id){var t=Date.now();return phDel('p',id).then(function(){return phPut('q',{id:id,t:t});}).then(function(){delete PH.known[id];phForget(id);phRefresh(id);phSchedule(400);});}
+/* menu */
+$('detBody').addEventListener('click',function(e){var b=e.target.closest('#detPhoto');if(!b||VIEW)return;var s=byId(b.dataset.phsid);if(!s)return;PH.sid=s.id;
+  $('phMenuSub').textContent=s.name+' · '+clsName(s.classId);$('phDel').classList.toggle('hidden',!PH.known[s.id]);openModal('phMenu');});
+$('phTake').addEventListener('click',function(){$('phCam').value='';$('phCam').click();});
+$('phPick').addEventListener('click',function(){$('phGal').value='';$('phGal').click();});
+$('phDel').addEventListener('click',function(){var id=PH.sid;if(!id||!confirm('Supprimer la photo de cet élève ?'))return;closeModal('phMenu');phRemove(id).then(function(){toast('Photo supprimée');}).catch(function(){toast('Suppression impossible sur cet appareil');});});
+['phCam','phGal'].forEach(function(k){$(k).addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(f)phOpen(f);});});
+/* recadrage carré : glisser + zoom */
+function phOpen(file){if(!/^image\//.test(file.type||'image/')){toast('Choisissez une image');return;}var u=URL.createObjectURL(file),im=new Image();
+  im.onload=function(){URL.revokeObjectURL(u);var k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*k));c.height=Math.max(1,Math.round(im.naturalHeight*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    PH.img=c;PH.z=1;$('phZoom').value='1';var sc=phScale();PH.ox=(PH_V-c.width*sc)/2;PH.oy=(PH_V-c.height*sc)/2;phDraw();closeModal('phMenu');openModal('phCrop');};
+  im.onerror=function(){URL.revokeObjectURL(u);toast('Format d’image non pris en charge');};im.src=u;}
+function phScale(){var c=PH.img;return Math.max(PH_V/c.width,PH_V/c.height)*PH.z;}
+function phClamp(){var sc=phScale(),w=PH.img.width*sc,h=PH.img.height*sc;PH.ox=Math.min(0,Math.max(PH_V-w,PH.ox));PH.oy=Math.min(0,Math.max(PH_V-h,PH.oy));}
+function phDraw(){if(!PH.img)return;phClamp();var x=$('phCanvas').getContext('2d'),sc=phScale();x.fillStyle='#fff';x.fillRect(0,0,PH_V,PH_V);x.imageSmoothingQuality='high';x.drawImage(PH.img,PH.ox,PH.oy,PH.img.width*sc,PH.img.height*sc);}
+$('phZoom').addEventListener('input',function(e){if(!PH.img)return;var s0=phScale(),cx=(PH_V/2-PH.ox)/s0,cy=(PH_V/2-PH.oy)/s0;PH.z=Math.min(4,Math.max(1,+e.target.value||1));var s1=phScale();PH.ox=PH_V/2-cx*s1;PH.oy=PH_V/2-cy*s1;phDraw();});
+(function(){var w=$('phWrap'),drag=null;w.addEventListener('pointerdown',function(e){if(!PH.img)return;drag={x:e.clientX,y:e.clientY,ox:PH.ox,oy:PH.oy,k:PH_V/w.getBoundingClientRect().width};try{w.setPointerCapture(e.pointerId);}catch(x){}e.preventDefault();});
+  w.addEventListener('pointermove',function(e){if(!drag)return;PH.ox=drag.ox+(e.clientX-drag.x)*drag.k;PH.oy=drag.oy+(e.clientY-drag.y)*drag.k;phDraw();});
+  ['pointerup','pointercancel'].forEach(function(n){w.addEventListener(n,function(){drag=null;});});})();
+function phEncode(){var sizes=[PH_SIZE,224,192,160],q=[0.86,0.8,0.74,0.68,0.6,0.52,0.45];for(var i=0;i<sizes.length;i++){var n=sizes[i],c=document.createElement('canvas');c.width=c.height=n;var x=c.getContext('2d'),k=n/PH_V,sc=phScale();x.fillStyle='#fff';x.fillRect(0,0,n,n);x.imageSmoothingQuality='high';x.drawImage(PH.img,PH.ox*k,PH.oy*k,PH.img.width*sc*k,PH.img.height*sc*k);
+  for(var j=0;j<q.length;j++){var d=c.toDataURL('image/jpeg',q[j]);if(phBytes(d)<=PH_MAX)return d;}}return null;}
+$('phSave').addEventListener('click',function(){var id=PH.sid;if(!id||!PH.img)return;var d=phEncode();if(!d){toast('Image trop lourde, essayez une autre photo');return;}
+  phSet(id,d).then(function(){PH.img=null;closeModal('phCrop');toast('Photo enregistrée ('+Math.round(phBytes(d)/1024)+' Ko)');}).catch(function(){toast('Enregistrement impossible sur cet appareil (stockage plein ou navigation privée)');});});
+/* fichier de photos À PART (la sauvegarde JSON du cahier ne change pas) */
+$('phExport').addEventListener('click',function(){phAll('p').then(function(a){a=a.filter(function(r){return byId(r.id)&&phOk(r.d);});if(!a.length){toast('Aucune photo à exporter');return;}
+  download('cahier-journalier_photos_'+todayStr()+'.json',JSON.stringify({app:'cahier-photos',version:1,exportedAt:new Date().toISOString(),photos:a.map(function(r){var s=byId(r.id);return {id:r.id,sid:s.sid||'',name:s.name,t:r.t,d:r.d};})}),'application/json');toast(a.length+' photo(s) exportée(s)');}).catch(function(){toast('Photos indisponibles sur cet appareil');});});
+$('phImportBtn').addEventListener('click',function(){$('phFile').value='';$('phFile').click();});
+$('phFile').addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var o;try{o=JSON.parse(r.result);}catch(x){o=null;}
+  if(!o||o.app!=='cahier-photos'||!Array.isArray(o.photos)){toast('Ce fichier n’est pas un fichier de photos du cahier');return;}
+  var ok=o.photos.filter(function(p){return p&&byId(p.id)&&phOk(p.d)&&phBytes(p.d)<=2*PH_MAX;});if(!confirm(ok.length+' photo(s) correspondant à vos élèves sur '+o.photos.length+'. Les importer (les photos actuelles de ces élèves seront remplacées) ?'))return;
+  ok.reduce(function(pr,p){return pr.then(function(){return phSet(p.id,p.d);});},Promise.resolve()).then(function(){toast(ok.length+' photo(s) importée(s)');});};r.readAsText(f);});
+/* synchronisation (collection additive users/{uid}/photos) : jamais bloquante, silencieuse si refusée */
+function phSync(){var S=window.CJSync&&window.CJSync.state;return S&&S.ready&&S.user&&S.sdk&&S.db&&!VIEW?S:null;}
+function phInfo(m,e){try{console.info('Photos : '+m,e&&(e.code||e.message)||'');}catch(x){}}
+function phSchedule(ms){clearTimeout(PH.pushT);PH.pushT=setTimeout(phPush,ms==null?1500:ms);}
+function phPush(){var S=phSync();if(!S||PH.blocked)return;if(PH.pushing){PH.again=true;return;}PH.pushing=true;var F=S.sdk.F,uid=S.user.uid,dev=(window.CJSync.meta()||{}).deviceId||'';
+  phAll('q').then(function(list){return list.reduce(function(pr,qi){return pr.then(function(){if(PH.blocked||!phSync()||phSync().user.uid!==uid)return;return phGet('p',qi.id).then(function(r){
+    if(r&&!byId(qi.id))return;   /* photo d’un élève absent de ce cahier (autre compte) : jamais envoyée */
+    var ref=F.doc(S.db,'users',uid,'photos',qi.id),data=r?{d:r.d,t:r.t,dev:dev,st:F.serverTimestamp()}:{del:true,t:qi.t,dev:dev,st:F.serverTimestamp()};
+    return F.setDoc(ref,data).then(function(){return phGet('q',qi.id).then(function(c){if(c&&c.t===qi.t)return phDel('q',qi.id);});});});});},Promise.resolve());})
+  .catch(function(e){if(e&&e.code==='permission-denied'){PH.blocked=true;phInfo('envoi refusé par les règles du serveur, photos gardées sur l’appareil',e);}else phInfo('envoi différé',e);})
+  .then(function(){PH.pushing=false;if(PH.again){PH.again=false;phSchedule(500);}});}
+function phApply(id,x){return phGet('q',id).then(function(q){if(q&&q.t>=(x.t||0))return;return phGet('p',id).then(function(r){if(r&&r.t>=(x.t||0))return;
+  if(x.del){if(!r)return;return phDel('p',id).then(function(){delete PH.known[id];phForget(id);return id;});}
+  if(!phOk(x.d))return;return phPut('p',{id:id,d:x.d,t:x.t||Date.now()}).then(function(){PH.known[id]=1;phForget(id);return id;});});});}
+function phListen(){var S=phSync();if(!S||PH.blocked)return;var uid=S.user.uid;if(PH.unsub&&PH.uidOn===uid)return;phStop();PH.uidOn=uid;
+  phTx('m','readonly',function(o){return o.get('pull:'+uid);}).then(function(m){if(PH.uidOn!==uid||!phSync())return;var since=m?m.v:0,F=S.sdk.F,col=F.collection(S.db,'users',uid,'photos');
+    PH.unsub=F.onSnapshot(since?F.query(col,F.where('st','>',F.Timestamp.fromMillis(since))):col,function(snap){if(PH.uidOn!==uid)return;var mx=since,jobs=[];
+      snap.docChanges().forEach(function(ch){if(ch.type==='removed'||ch.doc.metadata.hasPendingWrites)return;var x=ch.doc.data();if(!x||!x.st||!x.st.toMillis)return;mx=Math.max(mx,x.st.toMillis());jobs.push(phApply(ch.doc.id,x));});
+      Promise.all(jobs).then(function(ch){if(ch.some(Boolean))phRefresh();if(mx>since){since=mx;return phPut('m',{k:'pull:'+uid,v:mx});}}).catch(function(e){phInfo('mise à jour locale impossible',e);});
+    },function(e){phInfo('lecture en ligne indisponible',e);if(e&&e.code==='permission-denied')PH.blocked=true;PH.unsub=null;PH.uidOn=null;});
+    phSchedule(800);}).catch(function(e){phInfo('stockage local indisponible',e);});}
+function phStop(){if(PH.unsub){try{PH.unsub();}catch(e){}}PH.unsub=null;PH.uidOn=null;}
+window.addEventListener('cj:syncready',function(){PH.blocked=false;phListen();});
+window.addEventListener('cj:syncstop',phStop);
+window.addEventListener('online',function(){if(phSync())phSchedule(1000);});
+phKeys().then(function(k){(k||[]).forEach(function(id){PH.known[id]=1;});if(k&&k.length){phDecorate();phRefresh();}if(phSync())phListen();}).catch(function(e){phInfo('stockage local indisponible',e);});
+/*PHOTO-END*/
 window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
   cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,colNos:colNos,isVacH:isVacH,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
+window.CJR.photoData=function(id){return PH.cur&&PH.cur.id===id?PH.cur.d:null;};window.CJR.photo={known:function(){return Object.keys(PH.known);},bytes:phBytes,state:function(){return {blocked:PH.blocked,listening:!!PH.unsub,pushing:PH.pushing};},push:function(){phPush();}};   /* 1.28.0 : photo (fiche PDF, tests) */
 window.CJApp={
   key:KEY,
   getJSON:function(){if(VIEW)return localStorage.getItem(KEY)||JSON.stringify(VIEW.own);if(saveT)persistNow();return localStorage.getItem(KEY)||JSON.stringify(DB);},
@@ -3457,6 +3593,7 @@ function onUser(u){
   ui(true);
 }
 function stopSync(){
+  try{window.dispatchEvent(new Event('cj:syncstop'));}catch(e){}   /* 1.28.0 : photos */
   if(S.unsub){try{S.unsub();}catch(e){}S.unsub=null;}
   clearTimeout(S.upT);S.remote=null;S.ready=false;
 }
@@ -3652,6 +3789,7 @@ function safeParse(s){try{return JSON.parse(s);}catch(e){return null;}}
 function afterFirst(u,push){
   if(S.user!==u||!allowed())return;
   S.ready=true;ui();
+  try{window.dispatchEvent(new Event('cj:syncready'));}catch(e){}   /* 1.28.0 : photos (collection additive users/{uid}/photos) */
   var F=S.sdk.F;
   if(S.unsub)S.unsub();
   S.unsub=F.onSnapshot(metaRef(u.uid),function(snap){
