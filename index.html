@@ -1284,7 +1284,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28-d';                       /* aperçu test-128 : « -d » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-e';                       /* aperçu test-128 : « -e » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1782,7 +1782,7 @@ function renderGrid(){
   if(!list.length){$('gridWrap').innerHTML='<div class="empty"><b>Aucun élève dans '+esc(clsName(cid))+'</b>Ajoutez-les dans l’onglet Élèves (l’import en masse est le plus rapide).</div>';$('attInfo').textContent='';return;}
   S=cols.n;var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
   var h='<table class="grid'+(ATT_VIEW==='notes'?' gv':'')+'"><thead><tr><th class="nm">Élève</th>';
-  cols.forEach(function(c,ci){if(c.hol){h+='<th class="holh" title="'+esc('Séance '+(ci+1)+' – '+(holShort(c.hol)===TX.vacShort?TX.vacShort:TX.holHead)+' : '+c.hol.label+' (non comptée)')+'">S'+(ci+1)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(ci+1)+hd.title+'">'+hd.html+'</th>';});
+  var NO=colNos(cid,p);cols.forEach(function(c,ci){if(c.hol){var vac=isVacH(c.hol);h+='<th class="holh'+(vac?' vach':'')+'" title="'+esc((vac?TX.vacShort:'Séance '+NO[ci]+' – '+TX.holHead)+' : '+c.hol.label+' · '+shortDate(c.date)+' (non comptée)')+'">'+(vac?'&nbsp;':'S'+NO[ci])+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+NO[ci]+hd.title+'">'+hd.html+'</th>';});
   h+=sumHead(cid,p)+'<th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';var nb=sumCount(cid,p);
   var gq=grpOf(cid),byG=!!(gq&&DB.ui.grp),secs;
   if(byG){var gm=grpMembers(cid);secs=gm.groups.map(function(a,i){return {i:i,list:a};}).filter(function(x){return x.list.length;});if(gm.none.length)secs.push({i:-1,list:gm.none});}
@@ -2455,7 +2455,9 @@ function colsOf(cid,p){
 function sessCount(cid,p){return colsOf(cid,p).n;}
 /* numéro AFFICHÉ d’une séance (1.28) : rang de la colonne dans le cycle, jours fériés / vacances compris (S1, S2… en continu).
    Affichage seulement : les séances restent enregistrées sous leur index s (fériés exclus) — rien n’est renuméroté dans les données. */
-function sessNo(cid,p,s){var cols=colsOf(cid,p);for(var i=0;i<cols.length;i++)if(cols[i].s===s)return i+1;return s+1;}
+function isVacH(h){return !!h&&holShort(h)===TX.vacShort;}   /* vacances (période de plusieurs jours « vacances / intermédiaire / mi-année ») ≠ jour férié : même classement que « Vac. » / « Férié » depuis la 1.2x */
+function colNos(cid,p){var n=0;return colsOf(cid,p).map(function(c){return c.hol&&isVacH(c.hol)?0:++n;});}   /* numéro AFFICHÉ de chaque colonne : séances et jours fériés numérotés en continu, vacances sans numéro (0) ; stockage inchangé */
+function sessNo(cid,p,s){var cols=colsOf(cid,p),nn=colNos(cid,p);for(var i=0;i<cols.length;i++)if(cols[i].s===s)return nn[i];return s+1;}
 function holShort(h){var l=String(h.label||'');if(h.to&&h.to>h.from&&/vacances|intermédiaire|break|mi-année|mid-year/i.test(l))return TX.vacShort;return l.replace(/\s*\([^)]*\)\s*/g,' ').replace(/^Anniversaire de (la |l’|l')?/i,'').trim()||TX.holShortDef;}
 function holMotif(h){var sh=holShort(h);return sh===TX.vacShort?sh:TX.holMotif(sh);}
 function autoDates(cid,p){
@@ -3209,7 +3211,7 @@ window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();r
 
 /* ================= API for cloud sync (see sync script below) ================= */
 window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
-  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
+  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,colNos:colNos,isVacH:isVacH,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJApp={

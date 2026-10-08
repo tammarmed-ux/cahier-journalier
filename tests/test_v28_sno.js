@@ -28,7 +28,7 @@ const goTab=async t=>{await p.evaluate(t=>document.querySelector('#tabs button[d
 await goTab('attendance');await p.evaluate(()=>document.querySelector('#attView button[data-v="abs"]').click());await sleep(300);
 const H=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap thead th')].slice(1,9).map(t=>({t:t.childNodes[0].textContent,d:(t.querySelector('small')||{}).textContent,c:t.className,s:t.dataset.sess,ti:t.title})));
 check('en-têtes : 14/09 = S1, 17/09 = S2, 21/09 = S3, 24/09 = S4 (fériés, plus « Férié »), 28/09 = S5, 01/10 = S6…',H.map(h=>h.t+' '+h.d).join(',')==='S1 14/09,S2 17/09,S3 21/09,S4 24/09,S5 28/09,S6 01/10,S7 05/10,S8 08/10'&&!H.some(h=>/Férié/.test(h.t)),JSON.stringify(H.map(h=>h.t+' '+h.d)));
-check('colonnes fériées toujours grisées / hachurées (holh), motif dans l’info-bulle « Séance 1 – Férié : … (non comptée) »',H.slice(0,4).every(h=>/holh/.test(h.c)&&h.s===undefined)&&/Séance 1 – Férié : Jour férié de test \(non comptée\)/.test(H[0].ti)&&!!(await p.evaluate(()=>document.querySelector('#gridWrap td.holc'))),H[0].ti);
+check('colonnes fériées toujours grisées / hachurées (holh), motif dans l’info-bulle « Séance 1 – Férié : … (non comptée) »',H.slice(0,4).every(h=>/holh/.test(h.c)&&h.s===undefined)&&/Séance 1 – Férié : Jour férié de test( · 14\/09)? \(non comptée\)/.test(H[0].ti)&&!!(await p.evaluate(()=>document.querySelector('#gridWrap td.holc'))),H[0].ti);
 check('S5 = 1re vraie séance : enregistrée sous l’index 0 (data-sess 0), info-bulle « Séance 5 »',H[4].s==='0'&&/^Séance 5/.test(H[4].ti)&&H[5].s==='1',JSON.stringify(H[4]));
 // marquer A en S5 (index 0) puis S6 (index 1)
 await p.evaluate(()=>{const td=document.querySelector('#gridWrap tr[data-sid="s0"] td.c[data-s="0"]');td.click();});await sleep(150);
