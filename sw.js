@@ -1,5 +1,5 @@
 /* Cahier journalier digital – service worker (cache-first, hors ligne) */
-const CACHE = 'cahier-v25-1';
+const CACHE = 'cahier-v26';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
   './logo.jpg',
   /* logo B « Cahier d’EPS » : noms de fichiers versionnés (-b) pour contourner les caches HTTP/iOS des anciennes icônes */
   './icons/logo-b.svg',
+  './icons/logo-b-pdf.png',
   './icons/favicon-b.svg',
   './icons/favicon-b-32.png',
   './icons/favicon-b.ico',

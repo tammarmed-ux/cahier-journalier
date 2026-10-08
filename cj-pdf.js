@@ -1,4 +1,4 @@
-/* Cahier Journalier · EPS – exports PDF (jsPDF + AutoTable, bibliothèques locales, fonctionne hors ligne) */
+/* Cahier d’EPS – exports PDF (jsPDF + AutoTable, bibliothèques locales, fonctionne hors ligne) */
 (function(){
 'use strict';
 var A=window.CJR;if(!A||!window.jspdf)return;
@@ -35,7 +35,8 @@ var FCACHE={};
 /* police arabe choisie dans Paramètres (Noto Sans Arabic par défaut) ; repli sur Noto si le fichier est indisponible */
 function loadFonts(key){key=A.arFontKey(key);if(FCACHE[key]){FONTS=FCACHE[key];FONTKEY=key;return Promise.resolve(FONTS);}
   return Promise.all(A.arFontFiles(key).map(function(u){return getBuf(u).then(b64);})).then(function(a){FONTS=FCACHE[key]=a;FONTKEY=key;return a;},function(e){if(key!=='noto')return loadFonts('noto');throw e;});}
-function loadLogo(){if(LOGO)return Promise.resolve(LOGO);return getBuf('logo.jpg').then(function(b){return (LOGO='data:image/jpeg;base64,'+b64(b));}).catch(function(){return null;});}
+/* logo B (coureur orange, carré bleu à liseré clair, coins transparents) : icons/logo-b-pdf.png, 360 px */
+function loadLogo(){if(LOGO)return Promise.resolve(LOGO);return getBuf('icons/logo-b-pdf.png').then(function(b){return (LOGO='data:image/png;base64,'+b64(b));}).catch(function(){return null;});}
 
 /* ---------- texte ---------- */
 function clean(s){return String(s==null?'':s).replace(/[\u202F\u2009\u2007]/g,' ').replace(/[\u200B-\u200F\u2066-\u2069\uFE0F]/g,'');}
@@ -81,24 +82,24 @@ function newDoc(m){
   if(HAS_AR&&FONTS){d.addFileToVFS('NSA-R.ttf',FONTS[0]);d.addFont('NSA-R.ttf','NSA','normal');d.addFileToVFS('NSA-B.ttf',FONTS[1]);d.addFont('NSA-B.ttf','NSA','bold');}
   /* texte déjà lié + réordonné par vis() : retirer la mise en forme arabe et le moteur bidi intégrés de jsPDF (double traitement) */
   try{var ev=d.internal.events,tp=ev.getTopics();Object.keys(tp.preProcessText||{}).forEach(function(id){ev.unsubscribe(id);});Object.keys(tp.postProcessText||{}).forEach(function(id){if(/isInputVisual/.test(String(tp.postProcessText[id][0])))ev.unsubscribe(id);});}catch(e){}
-  d.setProperties({title:prep(m.title),subject:prep(m.sub||''),author:prep(m.teacher||'Cahier Journalier · EPS'),creator:'Cahier Journalier · EPS',keywords:'EPS, absences, bilan'});
+  d.setProperties({title:prep(m.title),subject:prep(m.sub||''),author:prep(m.teacher||'Cahier d’EPS'),creator:'Cahier d’EPS',keywords:'EPS, absences, bilan'});
   try{d.setLanguage('fr-FR');}catch(e){}
   d.setLineHeightFactor(1.2);
   return d;
 }
 function header(d,m){
   d.setFillColor.apply(d,PRI);d.rect(0,0,W,21,'F');
-  d.setFillColor(233,30,140);d.rect(0,21,W,0.9,'F');
+  d.setFillColor(232,93,4);d.rect(0,21,W,0.9,'F');
   var x=M;
-  if(LOGO){d.setFillColor(255,255,255);d.roundedRect(M-0.6,2.4,16.2,16.2,2,2,'F');d.addImage(LOGO,'JPEG',M,3,15,15,'cjlogo','FAST');x=M+19;}
-  T(d,'Cahier Journalier · EPS',x,10,{bold:1,size:13.5,color:WHITE});
+  if(LOGO){d.addImage(LOGO,'PNG',M,3,15,15,'cjlogoB','FAST');x=M+19;}
+  T(d,'Cahier d’EPS',x,10,{bold:1,size:13.5,color:WHITE});
   T(d,m.head2,x,16,{size:8.3,color:[214,222,255],maxW:W-2*M-95});
   if(m.teacher)T(d,m.teacher,W-M,9.6,{size:9,bold:1,align:'right',color:WHITE,maxW:88});
   T(d,m.year,W-M,15.6,{size:8,align:'right',color:[214,222,255]});
 }
 function footer(d,m,i,n){
   d.setDrawColor.apply(d,LINE);d.setLineWidth(0.3);d.line(M,H-11.5,W-M,H-11.5);
-  T(d,'Document généré le '+m.gen+' · Cahier Journalier · EPS v'+A.semver+' – cahier-eps-ma.web.app',M,H-7,{size:7,color:MUTED,maxW:150});
+  T(d,'Document généré le '+m.gen+' · Cahier d’EPS v'+A.semver+' – cahier-eps-ma.web.app',M,H-7,{size:7,color:MUTED,maxW:150});
   T(d,'Page '+i+' / '+n,W-M,H-7,{size:7.5,bold:1,align:'right',color:MUTED});
 }
 function finish(d,m){var n=d.getNumberOfPages();for(var i=1;i<=n;i++){d.setPage(i);header(d,m);footer(d,m,i,n);}
