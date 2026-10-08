@@ -1,4 +1,4 @@
-/* v1.25.1 : un client v1.24.0 (cache HTTP rempli + service worker) reçoit bien le logo B après mise à jour ; données inchangées */
+/* depuis v1.25.1 (générique : version courante lue dans cj-deploy) : un client v1.24.0 (cache HTTP rempli + service worker) reçoit bien le logo B après mise à jour ; données inchangées */
 const puppeteer=require('puppeteer-core');const fs=require('fs');const http=require('http');const path=require('path');const cp=require('child_process');const crypto=require('crypto');
 const seed=require('./seed_v24.js');
 const results=[];function check(n,ok,x){results.push(!!ok);console.log((ok?'PASS':'FAIL')+' - '+n+(x?' :: '+x:''));}
@@ -6,6 +6,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));const KEY='classRegister.v2';co
 const IP={width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true};
 const h=b=>crypto.createHash('sha1').update(b).digest('hex').slice(0,12);
 function arch(tag,dir){if(!fs.existsSync(dir+'/index.html')){fs.mkdirSync(dir,{recursive:true});cp.execSync('git -C '+D+' archive '+tag+' | tar -x -C '+dir);}return dir;}
+const SEM=(fs.readFileSync(D+'/index.html','utf8').match(/var APP_SEMVER='([^']+)'/)||[])[1],CUR=(fs.readFileSync(D+'/sw.js','utf8').match(/const CACHE = '([^']+)'/)||[])[1];
 const R24=arch('v1.24.0','/tmp/v24root'),R250=arch('v1.25.0','/tmp/v250root');
 /* serveur « façon Firebase Hosting » : en-têtes de firebase.json de la version servie, sinon max-age=3600 */
 let ROOT=R24;const MT={'.html':'text/html; charset=utf-8','.js':'text/javascript','.webmanifest':'application/manifest+json','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.ico':'image/x-icon','.jpg':'image/jpeg','.ttf':'font/ttf','.txt':'text/plain','.xml':'application/xml'};
@@ -33,12 +34,12 @@ const before=await p1.evaluate(K=>localStorage.getItem(K),KEY);
 let u1=await upd(p1,R250,'1.25.0');
 const stale=await cached(p1,'cahier-v25','./favicon.ico'),stale2=await cached(p1,'cahier-v25','./icons/icon-192.png');
 check('diagnostic : avec le sw.js de 1.25.0, le nouveau cache recopie les anciennes icônes du cache HTTP (cause confirmée)',u1.s==='1.25.0'&&stale===file(R24,'favicon.ico')&&stale2===file(R24,'icons/icon-192.png')&&stale!==file(R250,'favicon.ico'),'favicon en cache '+stale+' = v1.24 '+file(R24,'favicon.ico')+' ≠ v1.25 '+file(R250,'favicon.ico'));
-// ---------- correctif : ce même appareil (état v1.25.0 « bloqué ») → v1.25.1
-const u2=await upd(p1,D,'1.25.1');
+// ---------- correctif : ce même appareil (état v1.25.0 « bloqué ») → version courante
+const u2=await upd(p1,D,SEM);
 const ck=await p1.evaluate(()=>caches.keys());
-check('mise à jour vers v1.25.1 en '+u2.n+' rechargement(s) normal(aux) ; anciens caches cahier-v24/v25 supprimés',u2.s==='1.25.1'&&u2.n<=2&&JSON.stringify(ck)==='["cahier-v25-1"]',JSON.stringify(ck));
+check('mise à jour vers v'+SEM+' en '+u2.n+' rechargement(s) normal(aux) ; anciens caches cahier-v24/v25 supprimés',u2.s===SEM&&u2.n<=2&&JSON.stringify(ck)===JSON.stringify([CUR]),JSON.stringify(ck));
 const sw=fs.readFileSync(D+'/sw.js','utf8');const assets=[...sw.slice(sw.indexOf('const ASSETS'),sw.indexOf('];')).matchAll(/'\.\/([^']+)'/g)].map(m=>m[1]).filter(x=>x&&!x.endsWith('/'));
-const bad=[];for(const a of assets){const c=await cached(p1,'cahier-v25-1','./'+a);if(c!==file(D,a))bad.push(a);}
+const bad=[];for(const a of assets){const c=await cached(p1,CUR,'./'+a);if(c!==file(D,a))bad.push(a);}
 check('toutes les ressources du nouveau cache = fichiers du serveur (aucune copie périmée, y compris favicon.ico au même nom)',bad.length===0&&assets.length>=15,bad.join(',')||assets.length+' fichiers');
 async function logos(p){return p.evaluate(()=>[...document.querySelectorAll('img.sp-logo,.ln-brand img,.ln-art img,img.g-logo,img.h-logo')].map(i=>({src:i.getAttribute('src'),ok:i.complete&&i.naturalWidth>0})));}
 const L=await logos(p1);
@@ -48,15 +49,15 @@ const head=await p1.evaluate(()=>[...document.querySelectorAll('link[rel~="icon"
 const man=await p1.evaluate(async()=>(await (await fetch('manifest.webmanifest')).json()).icons.map(i=>i.src));
 check('favicons, apple-touch-icon et icônes du manifeste : nouvelles adresses (-b)',head.filter(x=>/icons\//.test(x)).every(x=>/-b[.-]/.test(x))&&man.every(x=>/-b[.-]/.test(x)),JSON.stringify(head)+' '+JSON.stringify(man));
 const after=await p1.evaluate(K=>localStorage.getItem(K),KEY);
-check('classRegister.v2 identique après v1.24.0 → v1.25.0 → v1.25.1 (chaîne brute)',!!before&&before===after,before&&before.length+' car.');
+check('classRegister.v2 identique après v1.24.0 → v1.25.0 → v'+SEM+' (chaîne brute)',!!before&&before===after,before&&before.length+' car.');
 // captures (même appareil mis à jour) : accueil, connexion, en-tête
 await p1.evaluate(()=>window.CJIntro&&window.CJIntro.skipSplash());await sleep(500);
 await p1.screenshot({path:'/tmp/m1.png'});
 await p1.evaluate(()=>window.CJLanding.toLogin());await sleep(500);await p1.screenshot({path:'/tmp/m2.png'});
 await p1.evaluate(()=>{document.documentElement.classList.remove('cj-locked');window.scrollTo(0,0);});await sleep(500);await p1.screenshot({path:'/tmp/m3.png'});
-// ---------- second client : v1.24.0 → v1.25.1 directement
-const p2=await client();const b2=await p2.evaluate(K=>localStorage.getItem(K),KEY);const u3=await upd(p2,D,'1.25.1');const L2=await logos(p2);
-check('client v1.24.0 → v1.25.1 directement : logo B en '+u3.n+' rechargement(s), cache unique cahier-v25-1, données identiques',u3.s==='1.25.1'&&u3.n<=2&&L2.every(x=>x.src==='icons/logo-b.svg'&&x.ok)&&JSON.stringify(await p2.evaluate(()=>caches.keys()))==='["cahier-v25-1"]'&&b2===(await p2.evaluate(K=>localStorage.getItem(K),KEY)));
+// ---------- second client : v1.24.0 → version courante directement
+const p2=await client();const b2=await p2.evaluate(K=>localStorage.getItem(K),KEY);const u3=await upd(p2,D,SEM);const L2=await logos(p2);
+check('client v1.24.0 → v'+SEM+' directement : logo B en '+u3.n+' rechargement(s), cache unique '+CUR+', données identiques',u3.s===SEM&&u3.n<=2&&L2.every(x=>x.src==='icons/logo-b.svg'&&x.ok)&&JSON.stringify(await p2.evaluate(()=>caches.keys()))===JSON.stringify([CUR])&&b2===(await p2.evaluate(K=>localStorage.getItem(K),KEY)));
 check('en-têtes : icônes et favicon.ico servis en no-cache par firebase.json',cc(D,'/icons/logo-b.svg')==='no-cache'&&cc(D,'/favicon.ico')==='no-cache'&&cc(D,'/og-image-b.png')==='no-cache');
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,200));
 srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);
