@@ -1,32 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" width="640" height="160" role="img" aria-label="Cahier EPS"><title>Cahier EPS</title><defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 180" width="760" height="180"><title>Cahier d’EPS</title><defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#14508F"/>
       <stop offset=".55" stop-color="#0B3A6E"/>
       <stop offset="1" stop-color="#072A50"/>
     </linearGradient>
-    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset="1" stop-color="#E4ECF6"/>
-    </linearGradient>
-  </defs><g transform="scale(.3125)"><rect width="512" height="512" rx="112" fill="url(#bg)"/><!-- open notebook -->
-  <path d="M256 318C214 292 158 286 104 298V410C158 398 214 404 256 430Z" fill="url(#pg)"/>
-  <path d="M256 318C298 292 354 286 408 298V410C354 398 298 404 256 430Z" fill="url(#pg)"/>
-  <path d="M256 318V430" stroke="#0B3A6E" stroke-opacity=".28" stroke-width="5" stroke-linecap="round"/>
-  <g stroke="#9DB7D6" stroke-width="7" stroke-linecap="round" fill="none">
-    <path d="M132 334C170 327 205 330 232 342"/>
-    <path d="M132 362C170 355 205 358 232 370"/>
-    <path d="M280 342C307 330 342 327 380 334"/>
-    <path d="M280 370C307 358 342 355 380 362"/>
-  </g>
-  <!-- runner -->
-  <g fill="none" stroke="#E85D04" stroke-linecap="round" stroke-linejoin="round">
+    
+  <linearGradient id="tr" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".25" stop-color="#fff" stop-opacity=".55"/><stop offset=".75" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><g transform="translate(14 14) scale(.296875)"><rect width="512" height="512" rx="112" fill="url(#bg)"/><g fill="none" stroke-linecap="round"><path d="M70 402Q256 352 442 402" stroke="url(#tr)" stroke-width="12"/><path d="M96 436Q256 394 416 436" stroke="url(#tr)" stroke-width="8" opacity=".6"/></g><g transform="translate(-50 -16) scale(1.2)"><g stroke="#FFFFFF" stroke-opacity=".5" stroke-width="10" stroke-linecap="round"><path d="M112 140H170"/><path d="M92 176H152"/><path d="M118 212H150"/></g><g fill="none" stroke="#E85D04" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="300" cy="92" r="31" fill="#E85D04" stroke="none"/>
     <path d="M286 146L244 228" stroke-width="38"/>
     <path d="M276 160L318 192L360 170" stroke-width="26"/>
     <path d="M270 158L226 176L198 214" stroke-width="26"/>
     <path d="M246 230L302 248L312 300" stroke-width="30"/>
     <path d="M242 232L198 262L150 246" stroke-width="30"/>
-  </g>
-  <g stroke="#FFFFFF" stroke-opacity=".55" stroke-width="10" stroke-linecap="round">
-    <path d="M112 140H170"/><path d="M92 176H152"/><path d="M118 212H150"/>
-  </g></g><text x="184" y="104" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-size="76" font-weight="800" letter-spacing="-1.5" fill="#0B3A6E">Cahier <tspan fill="#E85D04">EPS</tspan></text></svg>
+  </g></g></g><text x="200" y="114" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-size="80" font-weight="800" letter-spacing="-1.5" fill="#0B3A6E">Cahier d’<tspan fill="#E85D04">EPS</tspan></text></svg>
