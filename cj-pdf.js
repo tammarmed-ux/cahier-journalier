@@ -546,12 +546,70 @@ if(v!=null&&v<=k.max)acc[k.k].push(v);var star=raw&&k.k==='g1'&&g.essais.length&
   if(raw||evt)y=note(d,y,'Produit (athlétisme) : barème OP 2007 '+sp.lv+(evt?' – '+A.athEvtL(evt):'')+' (garçons / filles) appliqué au meilleur essai ; une performance comprise entre deux paliers prend la note du palier supérieur ; moins bien que le palier 1 : note du palier 1 si l’écart ne dépasse pas celui des paliers 1 et 2, sinon 0 ; palier 20 atteint ou dépassé : note maximale. Performance (comportement moteur) : note saisie par le professeur.'+(man?' * = note Produit saisie à la main (remplace la note du barème).':''));
   y=note(d,y,(sub?'Note procédurale /'+num(sp.procMax)+' = '+sp.proc.map(function(k){return k.t.toLowerCase();}).join(' + ')+'. ':'')+'Note /'+num(sp.total)+' = '+sp.cols.map(function(k){return k.t.toLowerCase();}).join(' + ')+' + note comportementale ; « — » = note incomplète.'+(Object.keys(dsp).length?' Lignes grisées : élèves dispensés.':''));
   return {doc:d,meta:m,name:'Releve-notes_'+A.slug(A.cycleName(p))+'_'+A.slug(c.name)+'_'+A.todayStr()+'.pdf'};}
-var REP={cycle:repCycle,year:repYear,all:repAll,students:repStudents,records:repRecords,student:repStudent,groups:repGroups,tests:repTests,grades:repGrades};
+/* ================= 1.28.0 (-l) : trombinoscope (modèle D choisi par le propriétaire) — lecture seule ================= */
+var PHOTOS={};
+function loadPhotos(){return (A.photoAll?A.photoAll():Promise.resolve({})).then(function(o){PHOTOS=o||{};return PHOTOS;}).catch(function(){PHOTOS={};return PHOTOS;});}
+function ageAt(dob,ref){if(!/^\d{4}-\d\d-\d\d$/.test(dob||''))return null;var y=+ref.slice(0,4)-+dob.slice(0,4);if(ref.slice(5)<dob.slice(5))y--;return y>=0&&y<100?y:null;}
+function ageTxt(s){var a=ageAt(s.dob,A.todayStr());return a==null?'âge —':a+' ans';}
+function dmyT(){var t=A.todayStr();return t.slice(8,10)+'/'+t.slice(5,7)+'/'+t.slice(0,4);}
+function silhouette(d,x,y,w,h){d.setFillColor(236,239,244);d.rect(x,y,w,h,'F');d.setFillColor(193,200,211);d.circle(x+w/2,y+h*0.39,w*0.19,'F');d.ellipse(x+w/2,y+h*1.03,w*0.37,h*0.35,'F');}
+function photo(d,s,x,y,w,h,r,bc){var src=PHOTOS[s.id];d.saveGraphicsState();
+  if(r>=w/2-0.01)d.circle(x+w/2,y+h/2,w/2,null);else d.roundedRect(x,y,w,h,r,r,null);d.clip();d.discardPath();
+  if(src){try{d.addImage(src,'JPEG',x,y,w,h,'ph_'+s.id,'FAST');}catch(e){silhouette(d,x,y,w,h);}}else silhouette(d,x,y,w,h);
+  d.restoreGraphicsState();d.setDrawColor.apply(d,bc||LINE);d.setLineWidth(bc?0.5:0.25);if(r>=w/2-0.01)d.circle(x+w/2,y+h/2,w/2,'S');else d.roundedRect(x,y,w,h,r,r,'S');}
+function nameLines(d,s,w,size){var n=prep(s.name).trim(),l;d.setFontSize(size);font(d,n,true);
+  var m=!isAr(n)&&n.match(/^((?:[A-ZÀ-ÖØ-Þ'’\-]{2,}\s+)*[A-ZÀ-ÖØ-Þ'’\-]{2,})\s+(.+)$/);
+  if(m)l=[m[1],m[2]];else{l=wrapL(d,n,w);if(l.length>2)l=[l[0],l.slice(1).join(' ')];}
+  return l.map(function(x){font(d,x,true);d.setFontSize(size);return fit(d,x,w);});}
+function lines(d,ls,cx,y,size,lh,col,bold){ls.forEach(function(t,i){T(d,t,cx,y+i*lh,{size:size,bold:bold!==false&&(i===0||bold),color:col||INK,align:'center'});});}
+function trSets(cid){var list=A.studentsIn(cid),m=A.grpMembers(cid);
+  if(!m)return [{i:-2,title:A.clsName(cid),col:PRI,soft:[233,239,248],list:list}];
+  var out=m.groups.map(function(a,i){return {i:i,title:A.grpName(m.g,i),col:GC[i],soft:GS[i],list:a};});
+  if(m.none.length)out.push({i:-1,title:'Sans groupe',col:[102,112,133],soft:[242,244,247],list:m.none});return out;}
+function fg(list){var f=0,g=0;list.forEach(function(s){var x=A.sexOf(s);if(x==='F')f++;else if(x==='G')g++;});return f+' F / '+g+' G';}
+function trMeta(cid,mode){var c=A.cls(cid),n=A.countIn(cid),g=A.grpOf(cid),by=mode==='group';
+  var desc=by?'une page par groupe (grandes cartes)':(g?'tous les groupes en blocs colorés':'classe entière en un bloc');
+  return meta((by||g?'Trombinoscope par groupes – ':'Trombinoscope – Classe ')+c.name,pl(n,'élève')+(g?' · '+pl(g.names.length,'groupe'):'')+' · triés par code Massar · âge calculé au '+dmyT()+' · '+desc,'Trombinoscope · '+c.name);}
+/* blocs colorés : un bloc par groupe ; un bloc peut continuer page suivante mais jamais au milieu d’une rangée de cartes ;
+   si l’ensemble dépasse d’un peu la page, les cartes sont légèrement réduites (jusqu’à −15 %) pour tenir sur une seule page */
+function trombiPage(d,y,sets){var mx=0;sets.forEach(function(st){mx=Math.max(mx,st.list.length);});
+  var cols=mx<=8?8:Math.min(10,mx),gap=cols>=10?1.4:1.6,cw=(W-2*M-4-gap*(cols-1))/cols,HB=8.6,BG=3.2;
+  function geo(k){var pw=Math.min(16.5,cw-2.2)*k;return {pw:pw,ch:pw+14};}
+  function total(g){var t=0;sets.forEach(function(st){t+=HB+Math.ceil(st.list.length/cols)*(g.ch+gap)+BG;});return t;}
+  var g=geo(1),avail=H-BOT-y,tt=total(g);if(tt>avail){var k=Math.max(0.85,(avail-sets.length*(HB+BG))/(tt-sets.length*(HB+BG)));if(total(geo(k))<=avail)g=geo(k);}
+  var pw=g.pw,ch=g.ch,fs=cw>18?5.7:5.2;
+  function band(set,yy,cont,h){d.setFillColor.apply(d,set.soft);d.setDrawColor.apply(d,set.col);d.setLineWidth(0.4);d.roundedRect(M,yy,W-2*M,h,2.4,2.4,'FD');
+    d.setFillColor.apply(d,set.col);d.roundedRect(M,yy,W-2*M,7,2.4,2.4,'F');d.rect(M,yy+4,W-2*M,3,'F');
+    T(d,set.title+(cont?' (suite)':''),M+3,yy+5,{bold:1,size:10,color:WHITE,maxW:90});T(d,pl(set.list.length,'élève')+' · '+fg(set.list),W-M-3,yy+5,{size:8,color:WHITE,align:'right',maxW:90});}
+  function card(set,s,x,yy){d.setFillColor(255,255,255);d.roundedRect(x,yy,cw,ch,1.5,1.5,'F');
+    photo(d,s,x+(cw-pw)/2,yy+1.2,pw,pw,pw/2,set.col);lines(d,nameLines(d,s,cw-1.6,fs),x+cw/2,yy+pw+3.9,fs,2.25,INK);
+    if(s.sid)T(d,s.sid,x+cw/2,yy+ch-3.7,{size:4.9,color:MUTED,align:'center',maxW:cw-1.4});T(d,ageTxt(s),x+cw/2,yy+ch-1.1,{size:5.4,bold:1,color:set.col,align:'center'});}
+  sets.forEach(function(set){var rows=[];for(var k=0;k<set.list.length;k+=cols)rows.push(set.list.slice(k,k+cols));if(!rows.length)rows.push([]);
+    var r=0,cont=false;while(r<rows.length){var fit=Math.floor((H-BOT-y-HB-1.5+gap)/(ch+gap));if(fit<1){d.addPage();y=TOP+1;continue;}
+      var seg=rows.slice(r,r+fit),h=HB+seg.length*(ch+gap)+1.5;band(set,y,cont,h);
+      seg.forEach(function(row,ri){row.forEach(function(s,c){card(set,s,M+2+c*(cw+gap),y+HB+ri*(ch+gap));});});
+      r+=seg.length;y+=h+BG;if(r<rows.length){d.addPage();y=TOP+1;cont=true;}}});
+  return y;}
+function trombiGroupPages(d,y,sets,cname){sets.forEach(function(set,si){if(si){d.addPage();y=TOP+1;}
+  d.setFillColor.apply(d,set.col);d.roundedRect(M,y,W-2*M,16,3,3,'F');T(d,set.title,M+6,y+10.6,{bold:1,size:20,color:WHITE,maxW:70});
+  T(d,cname+' · '+pl(set.list.length,'élève')+' · '+fg(set.list),W-M-5,y+10,{size:10,color:WHITE,align:'right',maxW:100});y+=21;
+  var n=set.list.length,cols=n<=8?4:n<=12?4:5,gap=cols===5?3:4,cw=(W-2*M-gap*(cols-1))/cols,pw=Math.min(34,cw-8),ch=pw+28;
+  set.list.forEach(function(s,k){var c=k%cols;if(c===0&&k>0)y+=ch+gap;if(y+ch>H-BOT){d.addPage();y=TOP+1;T(d,set.title+' (suite)',M,y+3,{bold:1,size:11,color:set.col});y+=8;}
+    var x=M+c*(cw+gap);d.setFillColor(255,255,255);d.setDrawColor.apply(d,set.col);d.setLineWidth(0.6);d.roundedRect(x,y,cw,ch,3,3,'FD');
+    photo(d,s,x+(cw-pw)/2,y+4,pw,pw,3);lines(d,nameLines(d,s,cw-4,Math.min(9.4,cw>30?9.4:8)),x+cw/2,y+pw+9.5,Math.min(9.4,cw>30?9.4:8),3.6,INK);
+    T(d,ageTxt(s),x+cw/2,y+ch-7,{size:9,bold:1,color:set.col,align:'center'});if(s.sid)T(d,s.sid,x+cw/2,y+ch-3,{size:7,color:MUTED,align:'center'});});
+  y+=ch+4;});return y;}
+function trombi(o){var cid=o.cid;if(!cid||!A.cls(cid))throw U('Choisissez une classe.');if(!A.countIn(cid))throw U('Aucun élève dans cette classe.');
+  var mode=o.mode==='group'?'group':'page',m=trMeta(cid,mode),d=newDoc(m),y=titleBlock(d,m),sets=trSets(cid);
+  if(mode==='group')trombiGroupPages(d,y,sets,A.clsName(cid));else trombiPage(d,y,sets);
+  return {doc:d,meta:m,name:'Trombinoscope_'+(mode==='group'?'groupes':'classe')+'_'+A.slug(A.clsName(cid))+'_'+A.todayStr()+'.pdf'};}
+
+var REP={cycle:repCycle,year:repYear,all:repAll,students:repStudents,records:repRecords,student:repStudent,groups:repGroups,tests:repTests,grades:repGrades,trombi:trombi};
 window.CJPDF={
   make:function(kind,o){var f=REP[kind];if(!f)return Promise.reject(new Error('type inconnu'));
     HAS_AR=AR.test(JSON.stringify(A.db().students))||AR.test(JSON.stringify(A.db().classes))||AR.test(String(A.db().settings.teacher||''))||AR.test(JSON.stringify(A.db().periods));
     try{if(!BIDI&&window.bidi_js)BIDI=window.bidi_js();}catch(e){BIDI=null;}
-    return Promise.all([loadLogo(),HAS_AR?loadFonts(A.db().settings.arFont).catch(function(){HAS_AR=false;}):null]).then(function(){
+    return Promise.all([kind==='trombi'?loadPhotos():null,loadLogo(),HAS_AR?loadFonts(A.db().settings.arFont).catch(function(){HAS_AR=false;}):null]).then(function(){
       var r=f(o||{});return {blob:finish(r.doc,r.meta),name:r.name};});},
   _test:{ST:ST}
 };

@@ -465,6 +465,21 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 #homeToday .occ-t{background:#fff;border:1px solid var(--pri-line);border-radius:11px;padding:5px 0;color:var(--pri)}
 #homeToday .occ li.occ-as .occ-t{border-color:#f2d7a6;color:var(--acc-d)}
 #homeStats .stat{border:0;background:linear-gradient(180deg,#F7F9FC,#EEF2F8);border-radius:14px}
+/* ===== 1.28.0 (-l) : trombinoscope (Élèves › Trombinoscope) ===== */
+.trb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1F5FA8,#0B3A6E);border-color:transparent;color:#fff;border-radius:999px;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}
+.trb-btn svg{width:19px;height:19px}
+.trb-l{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:12px 0 6px}
+#trbClass{width:100%}
+.trb-opts{display:grid;gap:8px}
+.trb-opt{display:flex;align-items:center;gap:12px;min-height:64px;border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;background:#fff;cursor:pointer;transition:border-color .14s ease,box-shadow .14s ease}
+.trb-opt input{position:absolute;opacity:0;pointer-events:none}
+.trb-opt b{display:block;font-size:15px}.trb-opt small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.trb-opt:has(input:checked){border-color:var(--pri-2);box-shadow:0 0 0 3px rgba(31,95,168,.18);background:#F5F9FF}
+.trb-opt:has(input:focus-visible){box-shadow:var(--focus)}
+.trb-ic{flex:0 0 44px;width:44px;height:44px;border-radius:10px;background:#F2F4F7;display:grid;grid-template-rows:repeat(5,1fr);gap:2px;padding:4px}
+.trb-ic i{display:block;border-radius:2px}
+.trb-ic.big{grid-template-rows:none;grid-template-columns:1fr 1fr;gap:3px}.trb-ic.big i{background:#fff;border:1.5px solid #1c7ed6;border-radius:4px}
+@media (prefers-reduced-motion:reduce){.trb-opt{transition:none}}
 /* ===== 1.28.0 (-k) : Statistiques globales modernisées + évolution semaine précédente → semaine en cours (affichage seulement) ===== */
 #homeStats .hs-cap{margin:-4px 0 10px;line-height:1.35}
 .hs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -905,6 +920,7 @@ table.gbal tfoot td{font-weight:700}
     <div class="actions" style="margin-top:10px">
       <button class="btn sec" id="bulkBtn">⇪ Import en masse (Excel / CSV)</button>
       <button class="btn sec" id="testsBtn">📏 Tests physiques (saisie rapide)</button>
+      <button type="button" class="btn trb-btn" id="trombiBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="8" rx="2"/><rect x="14" y="3" width="7" height="8" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Trombinoscope</button>
     </div>
   </div>
   <div class="card fixbox hidden" id="stuFix"></div>
@@ -1156,6 +1172,21 @@ table.gbal tfoot td{font-weight:700}
 </div>
 
 <!-- 1.28.0 : photo de l’élève (menu + recadrage) -->
+<div class="modal" id="trombiModal" role="dialog" aria-modal="true" aria-labelledby="trbT">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="trbT">Trombinoscope</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>
+    <p class="small muted" style="margin-top:0">PDF A4 à imprimer : photo, nom et prénom, âge et code Massar de chaque élève, par groupe (ordre du code Massar).</p>
+    <label class="trb-l" for="trbClass">Classe</label>
+    <select id="trbClass" aria-label="Classe du trombinoscope"></select>
+    <div class="trb-l" id="trbFmtL">Format</div>
+    <div class="trb-opts" role="radiogroup" aria-labelledby="trbFmtL">
+      <label class="trb-opt"><input type="radio" name="trbFmt" value="page" checked><span class="trb-ic" aria-hidden="true"><i style="background:#d6336c"></i><i style="background:#1c7ed6"></i><i style="background:#5c940d"></i><i style="background:#f76707"></i><i style="background:#6741d9"></i></span><span><b>Tous les groupes sur une page</b><small>Un bloc coloré par groupe (G1 rouge, G2 bleu, G3 vert, G4 orange, G5 violet)</small></span></label>
+      <label class="trb-opt"><input type="radio" name="trbFmt" value="group"><span class="trb-ic big" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span><b>Une page par groupe</b><small>Grandes cartes, à afficher ou à distribuer</small></span></label>
+    </div>
+    <p class="small muted" id="trbInfo" aria-live="polite"></p>
+    <div class="actions"><button type="button" class="btn sec" data-close>Annuler</button><button type="button" class="btn" id="trbGo">📄 Créer le PDF</button></div>
+  </div>
+</div>
 <div class="modal" id="phMenu" role="dialog" aria-modal="true" aria-labelledby="phMenuT">
   <div class="sheet">
     <div class="sheet-head"><h2 id="phMenuT">Photo de l’élève</h2><button type="button" class="x" data-close aria-label="Fermer">×</button></div>
@@ -1446,7 +1477,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28-k';                       /* aperçu test-128 : « -k » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-l';                       /* aperçu test-128 : « -l » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1797,6 +1828,13 @@ $('stuFix').addEventListener('click',function(e){
   if(e.target.closest('#fixReimp')){var b=DB.students.filter(isBroken)[0];if(b)$('stuClassFilter').value=b.classId;bulkMode='class';$('bulkBtn').click();}
 });
 $('testsBtn').addEventListener('click',function(){openTests($('stuClassFilter').value||DB.ui.cls);});
+/* 1.28.0 (-l) : trombinoscope — lecture seule (élèves, groupes, photos) ; PDF généré par cj-pdf.js (modèle D choisi par le propriétaire) */
+function trbInfo(){var cid=$('trbClass').value,g=grpOf(cid),n=countIn(cid),m=g?grpMembers(cid):null;
+  $('trbInfo').textContent=!n?'Aucun élève dans cette classe.':(g?pl2(n,'élève')+' · '+g.names.length+' groupe'+(g.names.length>1?'s':'')+(m.none.length?' · '+m.none.length+' sans groupe (bloc gris « Sans groupe »)':''):pl2(n,'élève')+' · pas de groupes : un seul bloc pour toute la classe');$('trbGo').disabled=!n;}
+function pl2(n,w){return n+' '+w+(n>1?'s':'');}
+$('trombiBtn').addEventListener('click',function(){classOptions($('trbClass'),$('stuClassFilter').value||curCls());trbInfo();openModal('trombiModal');});
+$('trbClass').addEventListener('change',trbInfo);
+$('trbGo').addEventListener('click',function(){var cid=$('trbClass').value,f=document.querySelector('input[name="trbFmt"]:checked');if(!countIn(cid))return;closeModal('trombiModal');runPdf('trombi',{cid:cid,mode:f?f.value:'page'});});
 $('stuSearch').addEventListener('input',renderStudents);
 $('stuClassFilter').addEventListener('change',renderStudents);
 $('stuSort').addEventListener('change',renderStudents);
@@ -3561,7 +3599,8 @@ window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:fun
   cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,colNos:colNos,isVacH:isVacH,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
-window.CJR.photoData=function(id){return PH.cur&&PH.cur.id===id?PH.cur.d:null;};window.CJR.photo={known:function(){return Object.keys(PH.known);},bytes:phBytes,state:function(){return {blocked:PH.blocked,listening:!!PH.unsub,pushing:PH.pushing};},push:function(){phPush();}};   /* 1.28.0 : photo (fiche PDF, tests) */
+window.CJR.photoData=function(id){return PH.cur&&PH.cur.id===id?PH.cur.d:null;};window.CJR.photoAll=function(){try{if(!window.indexedDB)return Promise.resolve({});return phAll('p').then(function(a){var o={};(a||[]).forEach(function(x){if(x&&x.id&&phOk(x.d))o[x.id]=x.d;});return o;}).catch(function(){return {};});}catch(e){return Promise.resolve({});}};   /* 1.28.0 (-l) : trombinoscope (lecture seule) */
+window.CJR.photo={known:function(){return Object.keys(PH.known);},bytes:phBytes,state:function(){return {blocked:PH.blocked,listening:!!PH.unsub,pushing:PH.pushing};},push:function(){phPush();}};   /* 1.28.0 : photo (fiche PDF, tests) */
 window.CJApp={
   key:KEY,
   getJSON:function(){if(VIEW)return localStorage.getItem(KEY)||JSON.stringify(VIEW.own);if(saveT)persistNow();return localStorage.getItem(KEY)||JSON.stringify(DB);},
