@@ -69,7 +69,7 @@ await closeAll();await fiche('s1');await p.click('#detPhoto');await sleep(250);a
 await closeAll();await goTab('students');await sleep(600);
 const LI=await p.evaluate(()=>[...document.querySelectorAll('#stuList li.stu')].map(li=>li.dataset.id+':'+(li.querySelector('.avatar img')?'img':li.querySelector('.avatar').textContent)));
 check('liste des élèves : avatar rond avec la photo (42 px, même place que les initiales), initiales sinon',LI.filter(x=>/:img$/.test(x)).length===5&&LI.some(x=>/^s5:[^i]/.test(x)),LI.join(' '));
-if(SHOT){await p.evaluate(()=>window.scrollTo(0,0));await sleep(2900);await p.screenshot({path:'/tmp/v28p-list.png'});}
+if(SHOT){await p.evaluate(()=>window.scrollTo(0,0));await sleep(600);await p.evaluate(()=>document.getElementById('toast').classList.remove('show'));await sleep(500);await p.evaluate(()=>document.getElementById('toast').classList.remove('show'));await sleep(600);await p.screenshot({path:'/tmp/v28p-list.png'});}
 // persistance
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(600);await fiche('s0');await sleep(500);
 const P2=await p.evaluate(()=>({img:!!document.querySelector('#detPhoto img'),known:window.CJR.photo.known().sort().join(',')}));

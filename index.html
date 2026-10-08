@@ -354,6 +354,62 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 .idcard{display:flex;align-items:flex-start;gap:12px}
 .idcard .kv{flex:1;min-width:0}
 .kv.kv2:empty{display:none}
+/* ===== 1.28.0 : tableau de service modernisé (purement visuel : mêmes créneaux, même formulaire, mêmes calculs) ===== */
+#ttCard .tw-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+#ttCard .tw-h h2{flex:1;margin:0}
+.tw-add{flex:0 0 auto;min-height:44px;border:0;border-radius:999px;padding:0 16px 0 12px;font:inherit;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(135deg,#D85603,#B54703);box-shadow:0 6px 14px -6px rgba(181,71,3,.7);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.tw-add svg{width:20px;height:20px}
+#ttCard .svc{border-radius:16px;padding:12px 14px}
+.week.tw{border:0;border-radius:0;overflow:visible}
+.svc-bar{height:8px;border-radius:999px;background:rgba(11,58,110,.12);overflow:hidden;margin:8px 0 6px}
+.svc-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#1F5FA8,#0B3A6E)}
+.svc.ok .svc-bar i{background:linear-gradient(90deg,#2BA35F,#1f8a4c)}.svc.bad .svc-bar i{background:linear-gradient(90deg,#F07A2A,#C24E03)}
+.tw-chips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:12px 0 8px}
+.tw-chip{min-height:52px;border:1px solid var(--line);border-radius:14px;background:#fff;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;padding:4px 0;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.tw-chip b{font-size:13.5px}.tw-chip span{font-size:11.5px;color:var(--muted);font-weight:600}
+.tw-chip.off{background:#F7F9FC;color:var(--muted)}
+.tw-chip.today{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.today span{color:rgba(255,255,255,.88)}
+.tw-legend{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.tw-legend span{font-size:12px;font-weight:700;border-radius:999px;padding:3px 9px}
+.tw-day{border:1px solid var(--line);border-radius:18px;background:#fff;padding:10px;margin:0 0 10px;scroll-margin-top:90px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.tw-day.today{border-color:var(--acc);box-shadow:0 0 0 3px rgba(232,93,4,.12),0 6px 16px -10px rgba(181,71,3,.5)}
+.tw-dh{display:flex;align-items:center;gap:8px;margin:0 2px 8px;flex-wrap:wrap}
+.tw-dh b{font-size:16px}.tw-dt{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:600}
+.tw-today{font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--acc-d);border-radius:999px;padding:3px 8px}
+.tw-slots{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:560px){.tw-slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tw-slot{--c:#1F5FA8;--s:#E8EFF8;position:relative;min-height:60px;width:100%;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fff,#FAFBFD);font:inherit;color:var(--ink);text-align:left;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px;cursor:pointer;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.05),0 4px 10px -8px rgba(16,24,40,.25)}
+.tw-slot:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
+.tw-time{flex:0 0 58px;text-align:center;border-radius:11px;background:var(--s);color:var(--c);padding:5px 2px;line-height:1.15}
+.tw-time b{display:block;font-size:15px}.tw-time i{display:block;font-style:normal;font-size:12px;opacity:.85}
+.tw-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.tw-main b{font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tw-main small{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tw-lv{flex:0 0 auto;font-size:11.5px;font-weight:800;color:var(--c);background:var(--s);border-radius:999px;padding:3px 8px}
+.tw-ed{flex:0 0 auto;width:20px;height:20px;color:var(--muted);opacity:.7}
+.tw-slot.on{border-color:var(--pri-2);box-shadow:0 0 0 3px rgba(31,95,168,.25)}
+.tw-now{position:absolute;right:8px;top:6px;font-size:10.5px;font-weight:800;color:var(--acc-d);letter-spacing:.03em;text-transform:uppercase}
+.tw-slot.now .tw-lv{display:none}
+.lv-TC{--c:#0F766E;--s:#E3F4F1}.lv-1BAC{--c:#6D28D9;--s:#F1EAFE}.lv-2BAC{--c:#B54703;--s:#FDEEE3}.lv-x{--c:#1F5FA8;--s:#E8EFF8}
+.lv-as{--c:#8A5300;--s:#FFF3DC}.lv-as .tw-time{background:repeating-linear-gradient(135deg,#fff1d6 0 6px,#ffe7b8 6px 12px)}
+.tw-free{font-size:13px;color:var(--muted);background:#F7F9FC;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.tw-empty{text-align:center;border:1.5px dashed var(--pri-line);border-radius:18px;background:linear-gradient(180deg,#F7F9FC,#EEF2F8);padding:22px 16px;margin:12px 0}
+.tw-empty svg{width:56px;height:56px;color:var(--pri);opacity:.75}.tw-empty b{display:block;font-size:16px;margin:6px 0 4px}.tw-empty span{display:block;font-size:13.5px;color:var(--muted);margin-bottom:12px}
+#ttForm{border:1px solid var(--line);border-top:1px solid var(--line);border-radius:18px;background:#F7F9FC;padding:12px 12px 4px;margin-top:14px;scroll-margin-top:90px}
+#ttForm.edit{background:#FFF8F2;border-color:#F6C9A6}
+#ttForm h3{display:flex;align-items:center;gap:8px;margin-top:2px;color:var(--ink);font-size:15.5px;text-transform:none;letter-spacing:0}
+#ttForm h3:before{content:"";width:30px;height:30px;border-radius:10px;flex:0 0 30px;background-position:center,center;background-size:16px 16px,cover;background-repeat:no-repeat,no-repeat;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E"),var(--grad)}
+#ttForm.edit h3:before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E"),linear-gradient(135deg,#D85603,#B54703)}
+#ttForm .actions .btn{border-radius:999px;min-height:46px}
+#ttSave{background:linear-gradient(135deg,#1F5FA8,#0B3A6E);border-color:transparent;color:#fff}
+#ttForm.edit #ttSave{background:linear-gradient(135deg,#D85603,#B54703)}
+#ttDel:before{content:"🗑 "}
+#ttForm.flash{animation:twFlash .9s ease-out}
+@keyframes twFlash{0%{box-shadow:0 0 0 0 rgba(232,93,4,.5)}100%{box-shadow:0 0 0 14px rgba(232,93,4,0)}}
+.tw-add,.tw-chip,.tw-slot{transition:transform .14s ease,box-shadow .14s ease}
+.tw-add:active,.tw-chip:active,.tw-slot:active{transform:scale(.97)}
+.tw-add:focus-visible,.tw-chip:focus-visible,.tw-slot:focus-visible{outline:none;box-shadow:var(--focus)}
+@media(hover:hover){.tw-slot:hover{transform:translateY(-1px)}}
+@media (prefers-reduced-motion:reduce){.tw-add,.tw-chip,.tw-slot{transition:none}.tw-add:active,.tw-chip:active,.tw-slot:active,.tw-slot:hover{transform:none}#ttForm.flash{animation:none}}
 .phbox{flex:0 0 100px;width:100px;height:100px;margin-top:6px;border-radius:16px;border:1.5px dashed var(--pri-line);background:linear-gradient(180deg,#F7F9FC,#EEF2F8);color:var(--pri);padding:0;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:inherit;font-size:11.5px;font-weight:700;line-height:1.15;text-align:center;box-shadow:0 1px 2px rgba(16,24,40,.05);transition:transform .14s ease}
 .phbox svg{width:40px;height:40px;opacity:.55}
 .phbox.has{border:0;background:#E8EFF8;box-shadow:0 4px 12px -6px rgba(11,58,110,.45)}
@@ -1365,7 +1421,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28-g';                       /* aperçu test-128 : « -g » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-h';                       /* aperçu test-128 : « -h » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2638,17 +2694,16 @@ function renderHome(){
     (S.watch.length?'<ul class="list watch">'+S.watch.map(function(w){return '<li data-wsid="'+esc(w.s.id)+'"><div class="wn"><b dir="auto">'+esc(w.s.name)+'</b><span class="small muted">'+esc(w.c.name)+'</span></div><div class="wb">'+w.capped.map(function(i){return '<span class="chip bad">'+esc(TX.capBadge(i+1))+'</span>';}).join('')+(w.y.U>=DB.settings.threshold?'<span class="chip warn">'+esc(TX.njBadge(w.y.U))+'</span>':'')+'</div></li>';}).join('')+'</ul>':'<p class="muted small">'+esc(TX.watchNone)+'</p>')+'</div>';
   /* timetable */
   var SV=service(),svok=SV.tot===SV.ob&&!SV.warn.length&&!SV.dw.length;
-  h+='<div class="card" id="ttCard"><h2>'+esc(TX.ttTitle)+'</h2><div class="svc'+(svok?' ok':' bad')+'" id="svcBox"><div class="svc-main">'+esc(TX.svcLabel)+' <b id="svcTot">'+fmtH(SV.tot)+' / '+fmtH(SV.ob)+'</b>'+(svok?' <span class="chip ok">✓</span>':'')+'</div><div class="small" id="svcBreak">'+esc(TX.svcBreak(fmtH(SV.cm),fmtH(SV.am)))+'</div>'+
+  h+='<div class="card" id="ttCard"><div class="tw-h"><h2>'+esc(TX.ttTitle)+'</h2><button type="button" class="tw-add" data-ttadd="1" aria-label="'+esc(TX.ttAdd)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button></div><div class="svc'+(svok?' ok':' bad')+'" id="svcBox"><div class="svc-main">'+esc(TX.svcLabel)+' <b id="svcTot">'+fmtH(SV.tot)+' / '+fmtH(SV.ob)+'</b>'+(svok?' <span class="chip ok">✓</span>':'')+'</div><div class="svc-bar" aria-hidden="true"><i style="width:'+(SV.ob?Math.min(100,Math.round(SV.tot/SV.ob*100)):0)+'%"></i></div><div class="small" id="svcBreak">'+esc(TX.svcBreak(fmtH(SV.cm),fmtH(SV.am)))+'</div>'+
     '<div class="small svcdays" id="svcDays">'+[1,2,3,4,5,6].map(function(d){return '<span>'+esc(TX.daysShort[d])+' '+fmtH(SV.dm[d])+(SV.da[d]?esc(TX.plusAS(fmtH(SV.da[d]))):'')+'</span>';}).join(' · ')+'</div>'+
     (SV.dw.length?'<div class="warnline" id="svcDayW">'+SV.dw.map(esc).join('<br>')+'</div>':'')+
     (SV.tot!==SV.ob?'<div class="warnline" id="svcDiff">'+esc(TX.svcDiff(fmtH(SV.tot),fmtH(SV.ob)))+'</div>':'')+
     (SV.warn.length?'<div class="warnline" id="svcCls">'+esc(TX.svcCheck(DB.cal.perWeek,SV.warn.map(function(w){return w.c.name+' ('+w.n+'/'+w.x+')';}).join(', ')))+'</div>':'')+
-    '</div><p class="small muted">'+esc(TX.ttHelp)+'</p><div class="week">';
-  for(var d=1;d<=6;d++){var sl=DB.cal.tt.filter(function(x){return x.day===d;}).sort(byStart);
-    h+='<div class="wk-row"><div class="wk-day">'+esc(TX.daysShort[d])+'</div><div class="wk-slots">'+(sl.length?sl.map(function(x){var ci=DB.classes.indexOf(cls(x.classId));return '<button type="button" class="slot'+(isAS(x)?' as':'')+(ttEdit===x.id?' on':'')+'" data-edit="'+esc(x.id)+'"'+(isAS(x)?'':' style="--h:'+((ci*47)%360)+'"')+'><b>'+esc(x.start)+'–'+esc(x.end)+'</b><span>'+esc(slotName(x))+'</span>'+(x.room?'<small>'+esc(x.room)+'</small>':'')+'</button>';}).join(''):'<span class="muted small">—</span>')+'</div></div>';}
+    '</div>'+ttWeekTop()+'<p class="small muted">'+esc(TX.ttHelp)+'</p><div class="week tw">';
+  if(DB.cal.tt.length)for(var d=1;d<=6;d++)h+=ttDayHtml(d,DB.cal.tt.filter(function(x){return x.day===d;}).sort(byStart));   /* 1.28.0 : jours en cartes (vue semaine lisible à 375 px) */
   h+='</div>';
   var e=ttEdit&&DB.cal.tt.filter(function(x){return x.id===ttEdit;})[0];if(!e)ttEdit=null;
-  h+='<div class="ttform" id="ttForm"><h3>'+esc(e?TX.ttEditT:TX.ttAdd)+'</h3><div class="ttgrid">'+
+  h+='<div class="ttform'+(e?' edit':'')+'" id="ttForm"><h3>'+esc(e?TX.ttEditT:TX.ttAdd)+'</h3><div class="ttgrid">'+
     '<div><label class="f" for="ttDay">'+esc(TX.ttDay)+'</label><select id="ttDay">'+[1,2,3,4,5,6].map(function(x){return '<option value="'+x+'">'+esc(TX.days[x])+'</option>';}).join('')+'</select></div>'+
     '<div><label class="f" for="ttClass">'+esc(TX.ttClass)+'</label><select id="ttClass">'+DB.classes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>';}).join('')+'<option value="__as">'+esc(TX.asName)+'</option></select></div>'+
     '<div><label class="f" for="ttStart">'+esc(TX.ttStart)+'</label><input type="time" id="ttStart" step="300"></div>'+
@@ -2666,6 +2721,26 @@ function renderHome(){
   $('ttDay').value=dflt.day;$('ttStart').value=dflt.start;$('ttEnd').value=dflt.end;if(e&&isAS(e))$('ttClass').value='__as';else if(dflt.classId)$('ttClass').value=dflt.classId;$('ttRoom').value=dflt.room||'';
 }
 var ttLast=null;
+/* 1.28.0 : tableau de service modernisé — purement visuel (mêmes créneaux DB.cal.tt, même formulaire #ttForm, mêmes calculs de dates) */
+var TT_LV={TC:'TC','1BAC':'1BAC','2BAC':'2BAC',as:'ASS'};
+function ttLv(x){return isAS(x)?'as':(levelOf(clsName(x.classId))||'x');}
+function ttWeekTop(){var td=wday(todayStr()),tt=DB.cal.tt;
+  if(!tt.length)return '<div class="tw-empty" id="ttEmpty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18M12 14v4M10 16h4"/></svg><b>'+esc(TX.ttEmpty)+'</b><span>Ajoutez vos cours de la semaine : les dates des séances de chaque cycle seront calculées automatiquement.</span><button type="button" class="tw-add" data-ttadd="1">+ Ajouter un créneau</button></div>';
+  var h='<div class="tw-chips" role="group" aria-label="Jours de la semaine">';
+  for(var d=1;d<=6;d++){var n=tt.filter(function(x){return x.day===d;}).length;h+='<button type="button" class="tw-chip'+(d===td?' today':'')+(n?'':' off')+'" data-ttjump="'+d+'" aria-label="'+esc(TX.days[d])+' : '+n+' créneau'+(n>1?'x':'')+(d===td?' (aujourd’hui)':'')+'"><b>'+esc(TX.daysShort[d].replace('.',''))+'</b><span>'+(n||'–')+'</span></button>';}
+  h+='</div>';var lv={};tt.forEach(function(x){lv[ttLv(x)]=1;});
+  return h+'<div class="tw-legend">'+['TC','1BAC','2BAC','x','as'].filter(function(k){return lv[k];}).map(function(k){return '<span class="lv-'+k+'" style="color:var(--c);background:var(--s)">'+esc(k==='x'?'Autres':TT_LV[k])+'</span>';}).join('')+'</div>';}
+function ttDayHtml(d,sl){var td=wday(todayStr())===d,min=0,now=new Date(),nm=now.getHours()*60+now.getMinutes(),nextDone=false;sl.forEach(function(x){min+=tmin(x.end)-tmin(x.start);});
+  var h='<div class="tw-day'+(td?' today':'')+'" id="ttd'+d+'"><div class="tw-dh"><b>'+esc(TX.days[d])+'</b>'+(td?'<span class="tw-today">Aujourd’hui</span>':'')+'<span class="tw-dt">'+(sl.length?sl.length+' créneau'+(sl.length>1?'x':'')+' · '+fmtH(min):'')+'</span></div>';
+  if(!sl.length)return h+'<div class="tw-free">Pas de cours</div></div>';
+  return h+'<div class="tw-slots">'+sl.map(function(x){var lv=ttLv(x),st='';if(td&&!nextDone&&tmin(x.end)>nm){st=tmin(x.start)<=nm?'En cours':'À suivre';nextDone=true;}
+    return '<button type="button" class="tw-slot lv-'+lv+(ttEdit===x.id?' on':'')+(st?' now':'')+'" data-edit="'+esc(x.id)+'" aria-label="Modifier le créneau : '+esc(TX.days[d]+' '+x.start+'–'+x.end+' · '+slotName(x))+'">'+(st?'<span class="tw-now">'+st+'</span>':'')+
+      '<span class="tw-time"><b>'+esc(x.start)+'</b><i>'+esc(x.end)+'</i></span><span class="tw-main"><b dir="auto">'+esc(slotName(x))+'</b><small dir="auto">'+(x.room?esc(x.room):(isAS(x)?esc(TX.asNoSess):'&nbsp;'))+'</small></span>'+
+      (lv!=='x'?'<span class="tw-lv">'+esc(TT_LV[lv])+'</span>':'')+'<svg class="tw-ed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>';}).join('')+'</div></div>';}
+$('homeBody').addEventListener('click',function(e){var b;
+  if((b=e.target.closest('[data-ttjump]'))){var t=$('ttd'+b.dataset.ttjump);if(t&&t.scrollIntoView)t.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return;}
+  if(e.target.closest('[data-ttadd]')){if(ttEdit){ttEdit=null;renderHome();}var f=$('ttForm');if(f){f.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});f.classList.remove('flash');void f.offsetWidth;f.classList.add('flash');}}
+});
 /* 1.28.0 : en-tête moderne de l’Accueil (salutation, date/heure, prochaine séance, mini-indicateurs) + boutons d’accès rapide.
    PUREMENT VISUEL : uniquement des données existantes (emploi du temps, homeStats), les boutons ouvrent des écrans / actions existants. */
 var HJ=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],HM=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
