@@ -1,23 +1,67 @@
 <!DOCTYPE html>
-<html lang="fr" class="cj-locked">
+<html lang="fr" class="cj-locked cj-land">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0732f3">
-<title>Cahier Journalier digital v1.23.0</title>
+<title>Cahier Journalier EPS — registre d’absences et bilans pour professeurs d’EPS au Maroc</title>
+<meta name="description" content="Cahier Journalier EPS : appel et absences, bilans de classe, PDF A4 et exports Excel pour les professeurs d’EPS au Maroc. Fonctionne même hors ligne.">
+<link rel="canonical" href="https://cahier-eps-ma.web.app/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0B3A6E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cahier EPS">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Cahier Journalier EPS — absences et bilans pour professeurs d’EPS au Maroc">
+<meta property="og:description" content="Cahier Journalier EPS : appel et absences, bilans de classe, PDF A4 et exports Excel pour les professeurs d’EPS au Maroc. Fonctionne même hors ligne.">
+<meta property="og:url" content="https://cahier-eps-ma.web.app/">
+<meta property="og:image" content="https://cahier-eps-ma.web.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo Cahier EPS : carnet ouvert et coureur, avec le titre Cahier Journalier pour professeurs d’EPS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cahier Journalier EPS — absences et bilans pour professeurs d’EPS au Maroc">
+<meta name="twitter:description" content="Cahier Journalier EPS : appel et absences, bilans de classe, PDF A4 et exports Excel pour les professeurs d’EPS au Maroc. Fonctionne même hors ligne.">
+<meta name="twitter:image" content="https://cahier-eps-ma.web.app/og-image.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cahier">
-<meta name="application-name" content="Cahier">
+<meta name="apple-mobile-web-app-title" content="Cahier EPS">
+<meta name="application-name" content="Cahier EPS">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "SoftwareApplication",
+ "name": "Cahier Journalier EPS",
+ "alternateName": "Cahier EPS",
+ "description": "Application web (PWA) pour les professeurs d’EPS au Maroc : appel et absences, bilans de classe par cycle, semestre ou année, PDF A4, exports CSV pour Excel et import des listes Massar. Accès gratuit sur invitation.",
+ "applicationCategory": "EducationalApplication",
+ "operatingSystem": "Web, iOS, Android",
+ "inLanguage": "fr",
+ "url": "https://cahier-eps-ma.web.app/",
+ "image": "https://cahier-eps-ma.web.app/og-image.png",
+ "softwareVersion": "1.24.0",
+ "offers": {
+  "@type": "Offer",
+  "price": "0",
+  "priceCurrency": "MAD",
+  "description": "Accès gratuit, sur invitation de l’administrateur."
+ }
+}
+</script>
+<script>/* page d’accueil publique : masquée d’emblée si un compte autorisé est déjà mémorisé sur cet appareil (cahier.authOk), comme avant */
+(function(){try{var a=JSON.parse(localStorage.getItem('cahier.authOk')||'null');if(a&&a.uid&&a.ok!==false)document.documentElement.classList.remove('cj-land');}catch(e){}})();</script>
 <meta name="format-detection" content="telephone=no">
 <style>
 :root{
-  --bg:#f3f5f8;--card:#fff;--ink:#1c2430;--muted:#667085;--line:#e3e7ee;
-  --pri:#0732f3;--pri-2:#4a68f7;--pri-soft:#e8ecfe;--pri-d:#0527c4;--pri-line:#c2cdfc;
+  --bg:#f4f6fa;--card:#fff;--ink:#1c2430;--muted:#667085;--line:#e3e7ee;
+  --pri:#0B3A6E;--pri-2:#1F5FA8;--pri-soft:#E8EFF8;--pri-d:#082B53;--pri-line:#BCD0E8;--acc:#E85D04;--acc-d:#C24E03;--acc-soft:#FDEEE3;
+  --grad:linear-gradient(135deg,#14508F 0%,#0B3A6E 55%,#072A50 100%);--focus:0 0 0 3px rgba(31,95,168,.38);
+  --btn-r:12px;--btn-h:46px;--btn-h-sm:38px;
   --dsp:#c4c9d4;--dsp-d:#4b5563;--dsp-soft:#eceef2;--dsp-ink:#1f2937;
   --ok:#1f8a4c;--ok-soft:#e5f5ec;--bad:#c62f3a;--bad-soft:#fdeaec;--warn:#b86e00;--warn-soft:#fff3dc;
   --radius:14px;--shadow:0 1px 2px rgba(16,24,40,.06),0 2px 8px rgba(16,24,40,.05);
@@ -37,12 +81,13 @@
 :root{--arfont:"CJ-noto"}
 html,body{margin:0;padding:0}
 body{font-family:var(--arfont),system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Arabic",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
-header.top{position:sticky;top:0;z-index:20;background-color:var(--pri);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:32px 32px;background-position:center top;color:#fff;padding:12px 16px calc(12px);padding-top:max(12px,env(safe-area-inset-top));box-shadow:0 2px 6px rgba(0,0,0,.12)}
-header.top h1{margin:0;font-size:18px;font-weight:650;letter-spacing:.2px;display:flex;align-items:center;gap:9px;min-width:0}
-header.top .h-logo{flex:0 0 auto;width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px rgba(255,255,255,.55),0 2px 6px rgba(0,0,20,.25)}
-header.top .h-txt{min-width:0;line-height:1.2}
-header.top .h-logo{display:none}
-@media (min-width:480px){header.top .h-logo{display:block}header.top .sub{padding-left:41px}}
+header.top{position:sticky;top:0;z-index:20;background-color:var(--pri);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:32px 32px,cover;background-position:center top;color:#fff;padding:12px 16px calc(12px);padding-top:max(12px,env(safe-area-inset-top));box-shadow:0 2px 6px rgba(0,0,0,.12)}
+header.top .h-title{margin:0;font-size:18px;font-weight:700;letter-spacing:.1px;display:flex;align-items:center;gap:10px;min-width:0}
+header.top .h-logo{flex:0 0 auto;width:34px;height:34px;border-radius:9px;display:block;box-shadow:0 0 0 1.5px rgba(255,255,255,.35),0 2px 6px rgba(0,0,20,.25)}
+header.top .h-txt{flex:1 1 auto;min-width:0;line-height:1.2;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+header.top .h-ver{font-size:11.5px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);white-space:nowrap}
+header.top .h-ttl b{color:#FFB37A;font-weight:800}
+@media (min-width:480px){header.top .sub{padding-left:44px}}
 header.top .sub{font-size:12.5px;opacity:.85}
 main{max-width:860px;margin:0 auto;padding:14px 12px 96px}
 nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 10px rgba(0,0,0,.05)}
@@ -61,13 +106,20 @@ label.f{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-w
 input[type=text],input[type=tel],input[type=date],input[type=number],input[type=search],input[type=email],input[type=password],select,textarea{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid #cfd6e0;border-radius:10px;background:#fff;color:var(--ink);min-height:46px}
 textarea{min-height:80px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-offset:0;border-color:var(--pri-2)}
-.btn{font:inherit;font-size:15px;font-weight:600;border:1px solid transparent;border-radius:11px;padding:11px 16px;min-height:46px;cursor:pointer;background:var(--pri);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
-.btn:active{transform:translateY(1px)}
-.btn.sec{background:#fff;color:var(--pri);border-color:var(--pri-line)}
-.btn.ghost{background:transparent;color:var(--muted);border-color:transparent}
-.btn.danger{background:#fff;color:var(--bad);border-color:#f0c2c6}
+/* ===== Système de boutons (1.24.0) : primaire, secondaire, fantôme, danger, accent ; cibles tactiles ≥ 44 px ===== */
+.btn{--b-bg:var(--pri);--b-fg:#fff;--b-bd:transparent;--b-bg-h:var(--pri-d);font:inherit;font-size:15px;font-weight:650;letter-spacing:.1px;border:1px solid var(--b-bd);border-radius:var(--btn-r);padding:11px 16px;min-height:var(--btn-h);cursor:pointer;background:var(--b-bg);color:var(--b-fg);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-shadow:0 1px 2px rgba(16,24,40,.08);transition:background-color .15s,border-color .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+@media (hover:hover){.btn:hover{background:var(--b-bg-h)}}
+.btn:active{transform:translateY(1px);filter:brightness(.95)}
+.btn:focus-visible{outline:none;box-shadow:var(--focus)}
+.btn.sec{--b-bg:#fff;--b-fg:var(--pri);--b-bd:var(--pri-line);--b-bg-h:var(--pri-soft)}
+.btn.ghost{--b-bg:transparent;--b-fg:var(--muted);--b-bd:transparent;--b-bg-h:rgba(16,24,40,.05);box-shadow:none}
+.btn.danger{--b-bg:#fff;--b-fg:var(--bad);--b-bd:#f0c2c6;--b-bg-h:var(--bad-soft)}
+.btn.danger.solid{--b-bg:var(--bad);--b-fg:#fff;--b-bd:var(--bad);--b-bg-h:#a8252f}
+.btn.acc{--b-bg:var(--acc);--b-fg:#fff;--b-bd:var(--acc);--b-bg-h:var(--acc-d);box-shadow:0 6px 18px rgba(232,93,4,.32)}
+.btn.lg{min-height:52px;padding:13px 22px;font-size:16.5px;border-radius:14px}
+.btn svg.bi{width:18px;height:18px;flex:0 0 auto}
 .btn.block{width:100%}
-.btn:disabled{opacity:.5;cursor:default}
+.btn:disabled{opacity:.5;cursor:default;transform:none;filter:none}
 .muted{color:var(--muted)}.small{font-size:13px}
 .empty{text-align:center;color:var(--muted);padding:28px 12px}
 .empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
@@ -80,7 +132,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-o
 .stu .meta{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip{display:inline-block;font-size:12px;font-weight:650;padding:3px 8px;border-radius:999px;background:var(--pri-soft);color:var(--pri);white-space:nowrap}
 .chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.ok{background:var(--ok-soft);color:var(--ok)}
-.fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:30px;box-shadow:0 6px 16px rgba(7,50,243,.35);cursor:pointer}
+.fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:30px;box-shadow:0 6px 16px rgba(11,58,110,.35);cursor:pointer}
 @media(min-width:900px){.fab{bottom:28px}}
 /* attendance */
 .att{border-bottom:1px solid var(--line);padding:6px 0}
@@ -386,24 +438,25 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 #modCard .serr{color:var(--bad);font-weight:600}
 
 /* ===== Splash (every launch) ===== */
-#splash{position:fixed;inset:0;z-index:1000;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;cursor:pointer;transition:opacity .4s ease;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}
+#splash{position:fixed;inset:0;z-index:1000;background-color:#0B3A6E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:44px 44px,cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;cursor:pointer;transition:opacity .4s ease;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}
 #splash.out{opacity:0;pointer-events:none}
-#splash .sp-logo{display:block;width:clamp(180px,54vw,220px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:22%;box-shadow:0 14px 40px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.3);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}
+#splash .sp-logo{display:block;margin:0 auto;width:clamp(150px,42vw,190px);height:auto;aspect-ratio:1;border-radius:22%;box-shadow:0 14px 40px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.22);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}
 .cj-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-#splash .sp-ver{margin-top:18px;font-size:14px;font-weight:600;opacity:0;letter-spacing:1px;animation:spVer .5s ease-out 1s forwards}
+#splash .sp-name{margin-top:18px;font-size:30px;font-weight:800;letter-spacing:-.5px;opacity:0;animation:spVer .5s ease-out .5s forwards}#splash .sp-name b{color:#FFB37A}
+#splash .sp-ver{margin-top:8px;font-size:14px;font-weight:600;opacity:0;letter-spacing:1px;animation:spVer .5s ease-out .6s forwards}
 #splash .sp-skip{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom));left:0;right:0;font-size:12.5px;opacity:0;animation:spVer .4s ease-out 1.1s forwards}
-#splash video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0732f3;display:none}
+#splash video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0B3A6E;display:none}
 #splash.vid video{display:block}#splash.vid .sp-box{display:none}
 @keyframes spLogo{to{opacity:1;transform:scale(1)}}
 @keyframes spUp{to{opacity:1;transform:none}}
 @keyframes spVer{to{opacity:.8}}
 @media (prefers-reduced-motion:reduce){
-  #splash .sp-logo,#splash .sp-ver,#splash .sp-skip{transform:none;animation:spFade .3s ease-out forwards}
+  #splash .sp-logo,#splash .sp-name,#splash .sp-ver,#splash .sp-skip{transform:none;animation:spFade .3s ease-out forwards}
   #splash{transition:opacity .25s}
 }
 @keyframes spFade{to{opacity:1}}
 /* ===== Onboarding (first use) ===== */
-#onb{position:fixed;inset:0;z-index:900;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;display:flex;flex-direction:column;color:#fff;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:onbIn .35s ease-out}
+#onb{position:fixed;inset:0;z-index:900;background-color:#0B3A6E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:44px 44px,cover;display:flex;flex-direction:column;color:#fff;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:onbIn .35s ease-out}
 #onb.out{opacity:0;transition:opacity .3s}
 @keyframes onbIn{from{opacity:0}to{opacity:1}}
 #onb .onb-top{display:flex;justify-content:flex-end;padding:12px 14px 0}
@@ -427,29 +480,87 @@ body.cj-ro #onbCard{display:none!important}
 /* ===== Login gate (mandatory sign-in) ===== */
 html.cj-locked body{overflow:hidden}
 html.cj-locked header.top,html.cj-locked main,html.cj-locked nav.tabs,html.cj-locked .fab,html.cj-locked #roBar,html.cj-locked .modal,html.cj-locked #toast,html.cj-locked #onb{visibility:hidden!important}
-#gate{position:fixed;inset:0;z-index:950;display:none;overflow-y:auto;background-color:#0732f3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.2' stroke-width='1.3'/%3E%3C/svg%3E");background-size:44px 44px;color:#fff;padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
+#gate{position:fixed;inset:0;z-index:950;display:none;overflow-y:auto;background-color:#0B3A6E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:44px 44px,cover;color:#fff;padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
 html.cj-locked #gate{display:block}
-#gate .g-wrap{max-width:420px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#gate .g-logo{display:block;width:clamp(170px,50vw,210px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:22%;box-shadow:0 12px 32px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.3)}
-@media (max-height:640px){#gate .g-logo{width:140px}}
 td.clsc{white-space:nowrap}
-#gate .g-ver{font-size:12px;opacity:.7;margin:-8px 0 14px;letter-spacing:.3px}
 .arprev{font-size:20px;margin:8px 0 0;padding:8px 12px;background:var(--pri-soft);border-radius:10px;text-align:center}
 .verline{text-align:center;font-size:12.5px;color:var(--muted);margin:6px 0 0}
-#gate .g-sub{font-size:13.5px;opacity:.85;margin:12px 0 18px}
-#gate .g-card{background:#fff;color:var(--ink);border-radius:20px;width:100%;padding:20px 18px;box-shadow:0 14px 40px rgba(0,0,30,.35)}
-#gate .g-card h2{margin:0 0 4px;font-size:19px;color:var(--pri)}
-#gate label.f:first-of-type{margin-top:6px}
-#gate .btn{width:100%;margin-top:12px}
-#gate .gbtn{background:#fff;color:#1f2937;border-color:#d0d7e2}
-#gate .g-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:14px 0 0}
+#gate .g-wrap{max-width:430px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:center}
+#gate .g-head{display:flex;flex-direction:column;align-items:center;text-align:center;margin:0 0 18px}
+#gate .g-logo{display:block;width:88px;height:88px;border-radius:21px;box-shadow:0 12px 30px rgba(0,0,20,.4),0 0 0 1px rgba(255,255,255,.22)}
+#gate .g-brand{margin:12px 0 0;font-size:27px;font-weight:800;letter-spacing:-.4px;line-height:1.1}
+#gate .g-brand b{color:#FFB37A}
+#gate .g-sub{display:inline-flex;align-items:center;gap:7px;margin:10px 0 0;font-size:13.5px;font-weight:650;padding:6px 13px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
+#gate .g-sub svg{width:15px;height:15px}
+#gate .g-ver{text-align:center;font-size:12.5px;opacity:.75;margin:14px 0 0;letter-spacing:.3px}
+#gate .g-back{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px auto 0;min-height:44px;padding:8px 14px;background:none;border:0;color:#fff;font:inherit;font-size:14px;font-weight:600;opacity:.85;cursor:pointer;border-radius:10px}
+#gate .g-back:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.45)}
+#gate .g-card{background:#fff;color:var(--ink);border-radius:22px;width:100%;padding:22px 20px 20px;box-shadow:0 18px 50px rgba(0,0,30,.38)}
+#gate .g-card h2{margin:0 0 2px;font-size:21px;color:var(--ink);letter-spacing:-.2px}
+#gate .g-lead{margin:0 0 6px;font-size:13.5px;color:var(--muted)}
+#gate label.f:first-of-type{margin-top:8px}
+#gate input[type=email],#gate input[type=password]{min-height:48px;border-radius:12px;background:#f9fafc}
+#gate input[type=email]:focus,#gate input[type=password]:focus{background:#fff;outline:none;border-color:var(--pri-2);box-shadow:var(--focus)}
+#gate .btn{width:100%;margin-top:14px;min-height:48px}
+#gate .gbtn{--b-bg:#fff;--b-fg:#1f2937;--b-bd:#d0d7e2;--b-bg-h:#f5f7fa}
+#gate .g-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:16px 0 2px}
 #gate .g-or::before,#gate .g-or::after{content:'';flex:1;height:1px;background:var(--line)}
-#gate .lnk{background:none;border:0;color:var(--pri);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;padding:8px 0 0}
-#gate .g-err{color:var(--bad);font-weight:600;font-size:14px;margin:12px 0 0}
-#gate .g-info{color:var(--ok);font-weight:600;font-size:14px;margin:12px 0 0}
-#gate .g-note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
+#gate .lnk{background:none;border:0;color:var(--pri-2);font:inherit;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:10px 6px;min-height:44px}
+#gate .g-err{color:var(--bad);font-weight:600;font-size:14px;margin:12px 0 0;padding:9px 11px;border-radius:10px;background:var(--bad-soft)}
+#gate .g-info{color:var(--ok);font-weight:600;font-size:14px;margin:12px 0 0;padding:9px 11px;border-radius:10px;background:var(--ok-soft)}
+#gate .g-note{font-size:12.5px;color:var(--muted);margin:12px 0 0;padding:10px 12px;border-radius:12px;background:#f4f6fa;line-height:1.45}
 #gate .g-load{display:flex;align-items:center;gap:12px;justify-content:center;padding:14px 0;color:#344054;font-weight:600}
 #gate .spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--pri-soft);border-top-color:var(--pri);animation:gspin .8s linear infinite}
+@media (max-height:640px){#gate .g-logo{width:64px;height:64px;border-radius:16px}#gate .g-brand{font-size:22px}}
+/* ===== Page d’accueil publique (avant connexion ; HTML statique indexable) ===== */
+#landing{display:none}
+html.cj-locked.cj-land #landing{display:block;position:fixed;inset:0;z-index:960;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);color:var(--ink);scroll-behavior:smooth}
+html.cj-locked.cj-land #gate{display:none}
+@media (prefers-reduced-motion:reduce){html.cj-locked.cj-land #landing{scroll-behavior:auto}}
+.ln-hero{color:#fff;background-color:#0B3A6E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.07' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:48px 48px,cover;padding:max(14px,env(safe-area-inset-top)) 18px 46px;position:relative;overflow:hidden}
+.ln-hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--acc)}
+.ln-in{max-width:1080px;margin:0 auto}
+.ln-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px}
+.ln-brand{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:800;font-size:19px;letter-spacing:-.2px;color:#fff;text-decoration:none}
+.ln-brand img{width:36px;height:36px;border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+.ln-brand b,.ln-h1 b,.ln-foot b{color:#FFB37A}
+.btn.on-dark{--b-bg:rgba(255,255,255,.08);--b-fg:#fff;--b-bd:rgba(255,255,255,.45);--b-bg-h:rgba(255,255,255,.16);box-shadow:none}
+.ln-grid{display:grid;gap:26px;align-items:center;padding:26px 0 0}
+.ln-art{display:flex;justify-content:center;order:-1}
+.ln-art img{width:108px;height:108px;border-radius:26px;box-shadow:0 20px 50px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.2)}
+.ln-kicker{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:#FFD2B0;margin:0 0 10px}
+.ln-h1{margin:0;font-size:clamp(29px,7.4vw,50px);line-height:1.08;font-weight:800;letter-spacing:-.8px}
+.ln-lead{margin:16px 0 0;font-size:clamp(16px,2.2vw,19px);line-height:1.5;color:rgba(255,255,255,.9);max-width:620px}
+.ln-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.ln-cta .btn{flex:1 1 180px;max-width:280px}
+.ln-chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none}
+.ln-chips li{font-size:13px;font-weight:600;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)}
+@media (min-width:860px){.ln-grid{grid-template-columns:1.25fr .75fr;padding:40px 0 18px}.ln-art{order:0}.ln-art img{width:250px;height:250px;border-radius:56px}.ln-hero{padding-bottom:64px}}
+.ln-sec{padding:44px 18px}
+.ln-sec h2{margin:0 0 8px;font-size:clamp(23px,4.4vw,32px);letter-spacing:-.4px;text-align:center;color:var(--pri)}
+.ln-sec .ln-sub{margin:0 auto 26px;max-width:640px;text-align:center;color:var(--muted);font-size:16px;line-height:1.5}
+.ln-cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+.ln-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 18px;box-shadow:var(--shadow)}
+.ln-card h3{margin:12px 0 6px;font-size:17px;color:var(--ink)}
+.ln-card p{margin:0;color:#475467;font-size:15px;line-height:1.5}
+.ln-ic{width:46px;height:46px;border-radius:13px;background:var(--pri-soft);color:var(--pri);display:flex;align-items:center;justify-content:center}
+.ln-ic svg{width:24px;height:24px}
+.ln-card:nth-child(3n+2) .ln-ic{background:var(--acc-soft);color:var(--acc-d)}
+.ln-trust{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ln-trust .ln-cards{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+@media (min-width:860px){.ln-cards,.ln-trust .ln-cards{grid-template-columns:repeat(3,1fr)}}
+.ln-t{display:flex;gap:14px;align-items:flex-start;padding:6px 4px}
+.ln-t .ln-ic{flex:0 0 auto;background:var(--pri);color:#fff}
+.ln-t h3{margin:2px 0 4px;font-size:16.5px}
+.ln-t p{margin:0;color:#475467;font-size:15px;line-height:1.5}
+.ln-steps{list-style:none;margin:0 auto;padding:0;max-width:760px;display:grid;gap:12px}
+.ln-steps li{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;font-size:15.5px;line-height:1.45}
+.ln-steps li>span{flex:0 0 32px;height:32px;border-radius:50%;background:var(--acc);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.ln-end{text-align:center;margin-top:24px}
+.ln-foot{background:#072A50;color:rgba(255,255,255,.85);padding:26px 18px max(26px,env(safe-area-inset-bottom));font-size:14px}
+.ln-foot .ln-in{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;justify-content:space-between}
+.ln-foot a{color:#fff;font-weight:600;display:inline-flex;align-items:center;min-height:44px}
+.ln-foot .ln-brand{font-size:16px}.ln-foot .ln-brand img{width:28px;height:28px;border-radius:7px}
 @keyframes gspin{to{transform:rotate(360deg)}}
 /* ---- v16: exports PDF + groupes de travail ---- */
 .gbadge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:5px;color:#fff;font-size:10.5px;font-weight:800;margin-inline-end:4px;vertical-align:1px;padding:0 3px;line-height:1}
@@ -466,6 +577,11 @@ table.grid tr.ghead td{background:var(--gs);border-top:2px solid var(--gc);heigh
 .switch{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:650;color:var(--ink);cursor:pointer}
 .switch input{width:20px;height:20px;accent-color:var(--pri);margin:0}
 .btn.sm{min-height:36px;padding:6px 12px;font-size:13.5px}
+@media (pointer:coarse){.btn.sm,.snaprow .btn,#roBar .btn,#modCard .mrow .btn{min-height:44px}.btn.ic{min-height:44px;min-width:44px}}
+/* zone dangereuse : visuellement distincte (fonctionnement inchangé) */
+.card.danger-zone{border:1.5px solid #f3b4ba;background:linear-gradient(0deg,#fff 0%,#fff 55%,#fff5f6 100%);box-shadow:0 1px 2px rgba(198,47,58,.08)}
+.card.danger-zone h2{color:var(--bad);display:flex;align-items:center;gap:8px}
+.card.danger-zone h2 svg{width:20px;height:20px}
 .gcard{border:1px solid var(--gc);border-radius:14px;margin-top:12px;overflow:hidden;background:#fff}
 .gcard .gh{background:var(--gc);color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .gcard .gh input{flex:1 1 120px;min-height:36px;padding:6px 10px;font-weight:700;border:0;border-radius:8px;font-size:15px;width:auto}
@@ -500,25 +616,96 @@ table.gbal tfoot td{font-weight:700}
 </head>
 <body>
 <!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
-<div id="splash" role="img" aria-label="Cahier Journalier digital v1.23.0">
+<div id="splash" role="img" aria-label="Cahier EPS v1.24.0">
   <video id="splashVid" muted playsinline autoplay preload="auto"></video>
-  <div class="sp-box"><img class="sp-logo" src="logo.jpg" alt="Cahier Journalier · EPS ·" width="512" height="512" decoding="async" fetchpriority="high">
-  <div class="sp-ver">v1.23.0</div></div>
+  <div class="sp-box"><img class="sp-logo" src="icons/logo.svg" alt="Cahier EPS" width="190" height="190" decoding="async" fetchpriority="high">
+  <div class="sp-name">Cahier <b>EPS</b></div>
+  <div class="sp-ver">v1.24.0</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
+</div>
+<!-- Page d’accueil publique : HTML statique (indexable). Visible seulement sans session mémorisée (html.cj-land) ; l’application reste masquée (html.cj-locked) -->
+<div id="landing">
+  <header class="ln-hero">
+    <div class="ln-in">
+      <nav class="ln-nav" aria-label="Navigation principale">
+        <a class="ln-brand" href="https://cahier-eps-ma.web.app/"><img src="icons/logo.svg" alt="" width="36" height="36"><span>Cahier <b>EPS</b></span></a>
+        <button type="button" class="btn on-dark sm" data-ln="login">Se connecter</button>
+      </nav>
+      <div class="ln-grid">
+        <div>
+          <p class="ln-kicker">Cahier Journalier · professeurs d’EPS · Maroc</p>
+          <h1 class="ln-h1">Le cahier journalier du professeur d’EPS, <b>dans votre poche</b></h1>
+          <p class="ln-lead">Faites l’appel en quelques touches, suivez les absences et les tenues, et obtenez vos bilans de classe en PDF ou en Excel. Sur iPhone, Android ou ordinateur, même sans connexion.</p>
+          <div class="ln-cta">
+            <button type="button" class="btn acc lg" id="lnLogin" data-ln="login"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Se connecter</button>
+            <a class="btn on-dark lg" id="lnFeat" href="#fonctions" data-ln="feat"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>Voir les fonctions</a>
+          </div>
+          <ul class="ln-chips"><li>iPhone, Android et ordinateur</li><li>Fonctionne hors ligne</li><li>Gratuit, sur invitation</li></ul>
+        </div>
+        <div class="ln-art"><img src="icons/logo.svg" alt="Logo Cahier EPS : carnet ouvert et coureur" width="250" height="250" fetchpriority="high"></div>
+      </div>
+    </div>
+  </header>
+  <section class="ln-sec" id="fonctions" aria-labelledby="lnFTitle">
+    <div class="ln-in">
+      <h2 id="lnFTitle">Ce que fait l’application</h2>
+      <p class="ln-sub">Tout le suivi de vos classes au même endroit, ainsi que les groupes de travail et les tests physiques.</p>
+      <div class="ln-cards">
+        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="m9 15.5 2 2 4-4"/></svg></div><h3>Appel et absences</h3><p>Faites l’appel classe par classe, une touche par élève : absent, sans tenue, maladie, retard, absences justifiées. Les élèves dispensés apparaissent en gris.</p></article>
+        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div><h3>Bilan de la classe</h3><p>Par cycle, par semestre ou sur l’année, pour une classe ou toutes les classes : séances, absences, retards, note comportementale et alertes.</p></article>
+        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-5M15 17v-2"/></svg></div><h3>PDF A4 avec graphiques</h3><p>Bilans et fiches prêts à imprimer, avec les graphiques de présence en vert et rouge. Les noms en arabe s’affichent correctement.</p></article>
+        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></svg></div><h3>Excel et CSV</h3><p>Exportez le registre, le bilan annuel, la liste des élèves et le détail des absences en CSV, à ouvrir dans Excel.</p></article>
+        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></div><h3>Import Massar</h3><p>Importez vos listes d’élèves depuis les fichiers Massar (Excel) ou par copier-coller, avec les codes Massar.</p></article>
+        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 0 0 4.5 13.5 3.5 3.5 0 0 0 7 19z"/><path d="m9.5 14.5 2 2 3.5-3.5"/></svg></div><h3>Hors ligne et synchronisé</h3><p>L’application fonctionne sans connexion. Vos données se synchronisent avec votre compte : le même cahier sur iPhone, Android et ordinateur.</p></article>
+      </div>
+    </div>
+  </section>
+  <section class="ln-sec ln-trust" aria-labelledby="lnTTitle">
+    <div class="ln-in">
+      <h2 id="lnTTitle">Accès et sauvegarde de vos données</h2>
+      <p class="ln-sub">Un outil simple, réservé aux enseignants invités.</p>
+      <div class="ln-cards">
+        <div class="ln-t"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div><h3>Accès sur invitation</h3><p>Pas d’inscription publique : votre compte est créé par l’administrateur, qui vous transmet vos identifiants.</p></div></div>
+        <div class="ln-t"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><div><h3>Données liées à votre compte</h3><p>Votre cahier est enregistré sur votre appareil et synchronisé avec votre compte personnel.</p></div></div>
+        <div class="ln-t"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/></svg></div><div><h3>Sauvegarde JSON</h3><p>Téléchargez à tout moment une copie complète de votre cahier (fichier JSON) et restaurez-la si besoin.</p></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="ln-sec" aria-labelledby="lnSTitle">
+    <div class="ln-in">
+      <h2 id="lnSTitle">Pour commencer</h2>
+      <ol class="ln-steps">
+        <li><span>1</span><div>L’administrateur vous invite : vous recevez votre adresse e-mail de connexion et un mot de passe.</div></li>
+        <li><span>2</span><div>Connectez-vous avec cet e-mail et ce mot de passe, ou avec Google si c’est votre adresse Gmail qui a été invitée.</div></li>
+        <li><span>3</span><div>Sur iPhone, ajoutez l’application à l’écran d’accueil (Safari › Partager › Sur l’écran d’accueil) pour l’ouvrir comme une application.</div></li>
+      </ol>
+      <div class="ln-end"><button type="button" class="btn lg" data-ln="login"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Se connecter</button></div>
+    </div>
+  </section>
+  <footer class="ln-foot">
+    <div class="ln-in">
+      <span class="ln-brand"><img src="icons/logo.svg" alt="" width="28" height="28"><span>Cahier <b>EPS</b></span></span>
+      <span>Cahier Journalier digital · <span id="lnVer">Version 1.24.0</span></span>
+      <a href="https://cahier-eps-ma.web.app/">cahier-eps-ma.web.app</a>
+    </div>
+  </footer>
 </div>
 <!-- Login gate: the app stays hidden (html.cj-locked) until an authorized account is signed in -->
 <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gTitle">
   <div class="g-wrap">
-    <img class="g-logo" src="logo.jpg" alt="" width="512" height="512" decoding="async">
-    <h1 id="gTitle" class="cj-sr">Cahier Journalier digital</h1>
-    <div class="g-sub">Accès sur invitation</div>
-    <div class="g-ver" id="gVer">Version 1.23.0</div>
+    <div class="g-head">
+      <img class="g-logo" src="icons/logo.svg" alt="" width="88" height="88" decoding="async">
+      <p id="gTitle" class="g-brand">Cahier <b>EPS</b></p>
+      <div class="g-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Accès sur invitation</div>
+    </div>
     <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
+    <div class="g-ver" id="gVer">Version 1.24.0</div>
+    <button type="button" class="g-back" id="gBack"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>Retour à l’accueil</button>
   </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
-  <h1><img class="h-logo" src="icons/icon-192.png" alt="" width="32" height="32"><span class="h-txt">Cahier Journalier digital v1.23.0</span></h1>
+  <div class="h-title"><img class="h-logo" src="icons/logo.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier <b>EPS</b></span><span class="h-ver">v1.24.0</span></span></div>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -672,13 +859,13 @@ table.gbal tfoot td{font-weight:700}
     <p class="muted small" style="margin-top:0">Les principales fonctions de l’application en quelques pages.</p>
     <button class="btn sec" id="onbAgain">Revoir la présentation</button>
   </div>
-  <div class="card">
-    <h2 style="color:var(--bad)">Zone dangereuse</h2>
+  <div class="card danger-zone" id="dangerZone">
+    <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Zone dangereuse</h2>
     <p class="muted small" style="margin-top:0">Supprime tous les élèves, toutes les classes et toutes les absences de cet appareil. Téléchargez d’abord une sauvegarde.</p>
-    <button class="btn danger" id="wipeAll">Supprimer toutes les données</button>
+    <button class="btn danger solid" id="wipeAll">Supprimer toutes les données</button>
   </div>
   <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation automatique avec votre compte</p>
-  <p class="verline" id="verLine">Version 1.23.0</p>
+  <p class="verline" id="verLine">Version 1.24.0</p>
 </section>
 </main>
 
@@ -1025,8 +1212,8 @@ function normalize(d){
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_SEMVER='1.23.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.23.0 */
-var APP_VER='cahier-v23';                       /* = nom du cache de sw.js : change à chaque mise à jour de l’application */
+var APP_SEMVER='1.24.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.25.0 */
+var APP_VER='cahier-v24';                       /* = nom du cache de sw.js : change à chaque mise à jour de l’application */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2827,6 +3014,7 @@ function memberRef(email){return S.sdk.F.doc(S.db,'members',lc(email));}
 function profileRef(uid){return S.sdk.F.doc(S.db,'profiles',uid);}
 /* ---- auth ---- */
 function onUser(u){
+  if(u)document.documentElement.classList.remove('cj-land');   /* session Firebase présente : écran de connexion/vérification, pas la page d’accueil */
   S.user=u||null;S.err='';S.info='';S.pwOpen=false;S.pwMsg='';S.pwErr='';S.offline=false;
   if(APP.viewing())APP.exitView();
   stopSync();lockApp();clearTimeout(G.offT);
@@ -3244,7 +3432,7 @@ function drawGate(){
   else if(state==='verify')h='<h2>Vérifiez votre adresse</h2><p class="small" style="margin:6px 0 0">Compte administrateur <b>'+esc(u.email||'')+'</b> : l’adresse e-mail doit être vérifiée avant d’accéder à l’application (ou connectez-vous avec Google).</p><div id="gMsgs">'+gMsgs()+'</div>'+
     '<button class="btn" id="gVerify"'+(S.busy?' disabled':'')+'>Envoyer l’e-mail de vérification</button><button class="btn sec" id="gVerified"'+(S.busy?' disabled':'')+'>J’ai vérifié mon adresse</button><button type="button" class="lnk" id="gOut">Se déconnecter</button>';
   else if(state==='nosdk')h='<h2>Connexion</h2><p class="g-err">'+(navigator.onLine?'Service de connexion indisponible pour le moment.':'Connexion Internet requise pour la première connexion.')+'</p><button class="btn" id="gRetry">Réessayer</button>';
-  else h='<form id="gForm" autocomplete="on" onsubmit="return false"><h2>Connexion</h2>'+
+  else h='<form id="gForm" autocomplete="on" onsubmit="return false"><h2>Connexion</h2><p class="g-lead">Connectez-vous avec le compte fourni par l’administrateur.</p>'+
     '<p class="g-err'+(navigator.onLine?' hidden':'')+'" id="gOff">Connexion Internet requise pour la première connexion.</p>'+
     '<label class="f" for="gEmail">E-mail</label><input type="email" id="gEmail" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false">'+
     '<label class="f" for="gPass">Mot de passe</label><input type="password" id="gPass" autocomplete="current-password">'+
@@ -3369,7 +3557,7 @@ var sp=document.getElementById('splash'),done=false,waiters=[],tHide=null;
 function afterSplash(fn){if(done)fn();else waiters.push(fn);}
 function hideSplash(){if(done)return;done=true;clearTimeout(tHide);if(sp){sp.classList.add('out');var v=document.getElementById('splashVid');try{v.pause();}catch(e){}setTimeout(function(){if(sp&&sp.parentNode)sp.parentNode.removeChild(sp);},450);}
   var w=waiters;waiters=[];w.forEach(function(f){try{f();}catch(e){console.warn(e);}});}
-function cssTimer(){var total=reduce?900:2000,el=(window.performance&&performance.now)?performance.now():0;tHide=setTimeout(hideSplash,Math.max(reduce?500:1400,total-el));}
+function cssTimer(){var land=document.documentElement.classList.contains('cj-land'),total=reduce?900:(land?1100:2000),el=(window.performance&&performance.now)?performance.now():0;tHide=setTimeout(hideSplash,Math.max(reduce?500:(land?700:1400),total-el));}
 if(sp){
   sp.addEventListener('click',hideSplash);
   var v=document.getElementById('splashVid');
@@ -3420,6 +3608,24 @@ function maybeShow(){if(!isDone())afterSplash(function(){if(!isDone()&&window.CJ
 if(window.CJGateOpen)maybeShow();   /* otherwise shown by the login gate after an authorized sign-in */
 var again=document.getElementById('onbAgain');if(again)again.addEventListener('click',function(){afterSplash(show);});
 window.CJIntro={show:function(){afterSplash(show);},onSignIn:maybeShow,skipSplash:hideSplash,splashDone:function(){return done;}};
+})();
+</script>
+<script>
+/* ===== Page d’accueil : « Se connecter » ouvre l’écran de connexion, « Voir les fonctions » fait défiler, « Retour à l’accueil » ===== */
+(function(){
+'use strict';
+var H=document.documentElement;
+function toLogin(){H.classList.remove('cj-land');try{window.CJIntro&&window.CJIntro.skipSplash();}catch(e){}var g=document.getElementById('gate');if(g)g.scrollTop=0;
+  setTimeout(function(){var e=document.getElementById('gEmail');if(e&&!e.value&&window.matchMedia&&matchMedia('(pointer:fine)').matches)try{e.focus({preventScroll:true});}catch(x){}},60);}
+function toLanding(){H.classList.add('cj-land');var l=document.getElementById('landing');if(l)l.scrollTop=0;}
+document.addEventListener('click',function(e){
+  var t=e.target.closest&&e.target.closest('[data-ln],#gBack');if(!t)return;
+  if(t.id==='gBack'){e.preventDefault();toLanding();return;}
+  var a=t.getAttribute('data-ln');
+  if(a==='login'){e.preventDefault();toLogin();}
+  else if(a==='feat'){var f=document.getElementById('fonctions');if(f&&f.scrollIntoView){e.preventDefault();f.scrollIntoView({behavior:'smooth',block:'start'});}}
+});
+window.CJLanding={toLogin:toLogin,toLanding:toLanding,shown:function(){return H.classList.contains('cj-land')&&H.classList.contains('cj-locked');}};
 })();
 </script>
 <!-- Move notice: the app moved to Firebase Hosting; shown only on the old GitHub Pages address -->
