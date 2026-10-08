@@ -29,7 +29,7 @@ const CID=await p.evaluate(()=>window.CJR.db().classes.find(x=>x.name==='2BACSP4
 const goTab=async t=>{await p.evaluate(t=>document.querySelector('#tabs button[data-tab="'+t+'"]').click(),t);await sleep(400);};
 const hv=await p.evaluate(()=>{const H=window.CJR.db().cal.holidays;const a=H.find(h=>h.id==='h01'),b=H.find(h=>h.id==='hT');return {a:a.label,va:window.CJR.isVacH(a),vb:window.CJR.isVacH(b)};});
 check('type : « '+hv.a+' » = vacances, « Jour férié de test » = férié (classement existant Vac. / Férié)',hv.va&&!hv.vb,JSON.stringify(hv));
-await goTab('attendance');await p.evaluate(()=>document.querySelector('#attView button[data-v="abs"]').click());await sleep(300);
+await goTab('attendance');await sleep(300);
 const H=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap thead th')].slice(1,13).map(t=>({t:t.childNodes[0].textContent.replace(/\u00a0/g,'_'),d:(t.querySelector('small')||{}).textContent,c:t.className,s:t.dataset.sess,ti:t.title})));
 const lab=H.map(h=>h.t+' '+h.d).join(',');
 check('en-têtes : S1 28/09 … S5 12/10, S6 15/10 (férié numéroté), 19/10 et 22/10 (vacances : date seule), S7 26/10 … S10 05/11',lab==='S1 28/09,S2 01/10,S3 05/10,S4 08/10,S5 12/10,S6 15/10,_ 19/10,_ 22/10,S7 26/10,S8 29/10,S9 02/11,S10 05/11',lab);

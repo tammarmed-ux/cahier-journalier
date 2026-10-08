@@ -53,11 +53,11 @@ const r1={dlg:dialogs.slice(),v:(await sel())[0].v,aps:await aps(CID,0),cyc:((aw
 check('cycle 1 → Gymnastique alors que des notes « Collectif » existent : confirmation (notes gardées, non comptées) ; refus → rien ne change',r1.dlg.length===1&&/2 élèves/.test(r1.dlg[0])&&/Rien n’est effacé/.test(r1.dlg[0])&&r1.v==='coll'&&r1.aps==='coll'&&!r1.cyc,JSON.stringify(r1));
 dlgAns=true;await setCy(0,'gym');const e0=(await db()).students.find(s=>s.id==='s0').ev[CID+'|0'];
 check('accepté : cycle 1 = Gymnastique ; les notes saisies restent dans s.ev (g1 6, g2 6,5), ev.aps mis à jour',(await aps(CID,0))==='gym'&&e0.g1===6&&e0.g2===6.5&&e0.aps==='gym',JSON.stringify(e0));
-await goTab('attendance');await p.evaluate(()=>document.querySelector('#attView button[data-v="notes"]').click());await sleep(300);
+await goTab('attendance');await sleep(300);
 const hn=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap thead th.t')].map(t=>t.textContent).join('|'));
 check('Notes /20 suit le type du cycle (Gym. /14 · Concept. · Comport. · Note)',/^Gym\.\/14\|Concept\.\/3\|Comport\.\/3\|Note\/20/.test(hn),hn);
 await goTab('settings');await setCy(0,'coll');
-await goTab('attendance');await p.evaluate(()=>document.querySelector('#attView button[data-v="notes"]').click());await sleep(300);
+await goTab('attendance');await sleep(300);
 const back=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap tr[data-sid="s0"] input.gin')].map(i=>i.dataset.k+'='+i.value).join(','));
 check('retour à Sport collectif : les notes reviennent (Indiv. 6, Coll. 6,5)',/g1=6,g2=6,5/.test(back),back);
 // exception pour une classe

@@ -63,7 +63,7 @@ await p.evaluate(KEY=>{const d=JSON.parse(localStorage.getItem(KEY));d.settings.
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);
 const base=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);const CID=base.classes.find(x=>x.name==='2BACSP4').id;
 const goTab=async t=>{await p.evaluate(t=>document.querySelector('#tabs button[data-tab="'+t+'"]').click(),t);await sleep(400);};
-const notes=async()=>{await goTab('attendance');await p.evaluate(()=>document.querySelector('#attView button[data-v="notes"]').click());await sleep(300);};
+const notes=async()=>{await goTab('attendance');await sleep(300);};
 const A='section.view.active ';
 async function type(sid,k,v,i){await p.evaluate((A,sid,k,v,i)=>{const el=document.querySelector(A+'tr[data-sid="'+sid+'"] input[data-k="'+k+'"]'+(i!=null?'[data-i="'+i+'"]':''));el.focus();el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}));el.blur();},A,sid,k,v,i);await sleep(60);}
 const ess=(sid,i,v)=>type(sid,'essai',v,i);
@@ -159,5 +159,5 @@ srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(
 async function shotProc(f){await p.evaluate(()=>{document.activeElement&&document.activeElement.blur();});await sleep(2600);
   await p.evaluate(()=>{const g=document.getElementById('procEval');window.scrollTo(0,g.getBoundingClientRect().top+window.scrollY-150);});await sleep(300);await p.screenshot({path:f});}
 async function shotNotes(f){await p.evaluate(()=>{document.activeElement&&document.activeElement.blur();});await sleep(2600);
-  await p.evaluate(()=>{const g=document.getElementById('attView');window.scrollTo(0,g.getBoundingClientRect().top+window.scrollY-112);const w=document.getElementById('gridWrap');w.scrollLeft=w.scrollWidth;});await sleep(300);await p.screenshot({path:f});}
+  await p.evaluate(()=>{const g=document.getElementById('attEval');window.scrollTo(0,g.getBoundingClientRect().top+window.scrollY-112);const w=document.getElementById('gridWrap');w.scrollLeft=w.scrollWidth;});await sleep(300);await p.screenshot({path:f});}
 })().catch(e=>{console.log('FATAL',e);process.exit(1);});

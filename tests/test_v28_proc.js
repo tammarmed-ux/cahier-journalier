@@ -31,7 +31,7 @@ const base=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);const CI
 const tab=()=>p.evaluate(()=>document.querySelector('#tabs button[data-tab="attendance"]').click());
 const view=async v=>{if(v==='proc'){await p.evaluate(()=>document.querySelector('#tabs button[data-tab="proc"]').click());await sleep(350);return;}
   await p.evaluate(()=>{if(!document.getElementById('view-attendance').classList.contains('active'))document.querySelector('#tabs button[data-tab="attendance"]').click();});await sleep(300);
-  await p.evaluate(v=>document.querySelector('#attView button[data-v="'+v+'"]').click(),v);await sleep(250);};
+  if(v!=='notes')throw new Error('affichage unique Notes /20');await sleep(250);};
 const cycle=async n=>{await p.evaluate(n=>document.querySelector('section.view.active .pchips [data-p="'+n+'"]').click(),n);await sleep(300);};
 const head=()=>p.evaluate(()=>[...document.querySelectorAll('section.view.active thead th.t')].map(t=>t.textContent));
 async function type(sid,k,val){await p.evaluate((sid,k,val)=>{const i=document.querySelector('section.view.active tr[data-sid="'+sid+'"] input[data-k="'+k+'"]');i.focus();i.value=val;i.dispatchEvent(new Event('change',{bubbles:true}));i.blur();},sid,k,val);await sleep(50);}
@@ -39,8 +39,8 @@ const val=(sid,k)=>p.evaluate((sid,k)=>{const i=document.querySelector('section.
 const cell=(sid,c)=>p.evaluate((sid,c)=>{const t=document.querySelector('section.view.active tr[data-sid="'+sid+'"] td.'+c);return t?t.textContent:null;},sid,c);
 await tab();await sleep(500);
 // ---- placement : onglet dédié dans la barre du bas, bascule Absences | Notes /20
-const seg=await p.evaluate(()=>({t:[...document.querySelectorAll('#attView button')].map(b=>b.textContent),on:[...document.querySelectorAll('#attView button.on')].map(b=>b.dataset.v),tabs:[...document.querySelectorAll('#tabs button')].map(b=>b.dataset.tab+':'+b.textContent.trim())}));
-check('écran Absences : bascule revenue à « Absences | Notes /20 » (Notes /20 par défaut), plus d’option Note procédurale',JSON.stringify(seg.t)==='["Absences","Notes /20"]'&&seg.on[0]==='notes',JSON.stringify(seg));
+const seg=await p.evaluate(()=>({sw:!!document.getElementById('attView'),tabs:[...document.querySelectorAll('#tabs button')].map(b=>b.dataset.tab+':'+b.textContent.trim()),h:[...document.querySelectorAll('#gridWrap thead th.t')].map(t=>t.textContent)}));
+check('écran Absences : plus de bascule « Absences | Notes /20 » — affichage Notes /20 seul (colonnes de notes)',!seg.sw&&seg.h.some(t=>/\//.test(t))&&!seg.h.includes('Abs.'),JSON.stringify(seg));
 check('barre du bas à 6 onglets : Accueil | Élèves | Absences | Note procéd. | Rapports | Paramètres',seg.tabs.join('|')==='home:Accueil|students:Élèves|attendance:Absences|proc:Note procéd.|reports:Rapports|settings:Paramètres',seg.tabs.join('|'));
 for(const W of [375,320]){await p.setViewport({width:W,height:812,deviceScaleFactor:2,isMobile:true,hasTouch:true});await sleep(250);
   const fit=await p.evaluate(()=>{const bs=[...document.querySelectorAll('#tabs button')],cv=document.createElement('canvas').getContext('2d');return bs.map(b=>{const cs=getComputedStyle(b),r=b.getBoundingClientRect();cv.font=cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily;const tw=cv.measureText(b.textContent.trim()).width,pad=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight);
@@ -75,7 +75,7 @@ await view('notes');for(const [sid,v] of Object.entries(DEMO))await type(sid,'co
 check('Notes /20 : totaux à partir des notes saisies dans la Note procédurale (s2 : 5 + 4 + 1 + 1,25 = 11,25 ; s6 : 4,5 + 5 + 2 + 2,75 = 14,25 ; s11 incomplet)',await cell('s2','tot')==='11,25'&&await cell('s6','tot')==='14,25'&&await cell('s11','tot')==='—',[await cell('s2','tot'),await cell('s6','tot')].join(' '));
 // captures : Notes /20 (sport collectif)
 const shot=async(file)=>{await p.evaluate(()=>{document.activeElement&&document.activeElement.blur();});await sleep(2600);await p.setViewport({width:390,height:1240,deviceScaleFactor:2,isMobile:true,hasTouch:true});await sleep(300);
-  await p.evaluate(()=>{const g=document.querySelector('section.view.active #attView,section.view.active #procEval');window.scrollTo(0,g.getBoundingClientRect().top+window.scrollY-112);const w=document.querySelector('section.view.active .gridwrap');w.scrollTop=0;w.scrollLeft=w.scrollWidth;});await sleep(300);await p.screenshot({path:file});
+  await p.evaluate(()=>{const g=document.querySelector('section.view.active #attEval,section.view.active #procEval');window.scrollTo(0,g.getBoundingClientRect().top+window.scrollY-112);const w=document.querySelector('section.view.active .gridwrap');w.scrollTop=0;w.scrollLeft=w.scrollWidth;});await sleep(300);await p.screenshot({path:file});
   await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});await sleep(200);};
 await shot('/tmp/v28p-notes-coll.png');
 await view('proc');await shot('/tmp/v28p-proc-coll.png');
@@ -134,8 +134,8 @@ const after=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);
 const canon=o=>Array.isArray(o)?o.map(canon):o&&typeof o==='object'?Object.keys(o).sort().reduce((a,k)=>(a[k]=canon(o[k]),a),{}):o;
 const strip=o=>{const c=JSON.parse(JSON.stringify(o));c.students.forEach(s=>delete s.ev);delete c.evals;delete c.ui;delete c.lastBackup;return canon(c);};
 check('données inchangées hors champs additifs (séances, classes, réglages, élèves hors ev)',JSON.stringify(strip(base))===JSON.stringify(strip(after)));
-// ---- affichage Absences toujours là
-await view('abs');check('affichage Absences : Abs. · R · AJ · Pts · Année',JSON.stringify(await head())==='["Abs.","R","AJ","Pts","Année"]');
+// ---- 1.28.0 (-i) : la bascule Absences n’existe plus ; les compteurs restent dans la fiche
+check('bascule Absences supprimée : pas de #attView, affichage Notes /20 seul',!await p.evaluate(()=>!!document.getElementById('attView'))&&JSON.stringify(await head())!=='["Abs.","R","AJ","Pts","Année"]');
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,300));
 srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);
 })().catch(e=>{console.log('FATAL',e);process.exit(1);});

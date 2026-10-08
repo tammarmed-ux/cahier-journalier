@@ -76,12 +76,11 @@ await p.evaluate(()=>{const g=document.getElementById('attCard');window.scrollTo
 await p.screenshot({path:'/tmp/v28-notes-scroll.png'});console.log('INFO',await p.evaluate(()=>{const w=document.getElementById('gridWrap');return 'wrap '+w.clientWidth+' table '+w.querySelector('table').offsetWidth+' :: '+[...w.querySelectorAll('thead th')].map(t=>t.textContent.slice(0,8)+'='+t.offsetWidth).join(' ');}));
 await p.evaluate(()=>{const w=document.getElementById('gridWrap');w.scrollLeft=0;window.scrollTo(0,0);});await sleep(200);
 await p.screenshot({path:'/tmp/v28-notes-top.png'});
-// ---- bascule Absences : compteurs conservés
-await p.evaluate(()=>document.querySelector('#attView button[data-v="abs"]').click());await sleep(300);
-const headA=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap thead th.t')].map(t=>t.textContent));
-const s2a=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap tr[data-sid="s2"] td.t')].map(t=>t.textContent));
-check('bascule « Absences » : colonnes Abs. · R · AJ · Pts · Année (compteurs intacts : s2 = 2 abs., 1 R, 0 AJ, −1,75 pts)',JSON.stringify(headA)===JSON.stringify(['Abs.','R','AJ','Pts','Année'])&&s2a[0]==='2'&&s2a[1]==='1'&&s2a[2]==='0'&&/1,75/.test(s2a[3]),JSON.stringify(s2a));
-await p.evaluate(()=>document.querySelector('#attView button[data-v="notes"]').click());await sleep(300);
+// ---- 1.28.0 (-i) : plus de bascule « Absences » ; compteurs Abs./R/AJ/Pts/Année visibles dans la fiche élève
+await p.evaluate(()=>document.querySelector('#gridWrap tr[data-sid="s2"] td.comp').click());await sleep(400);
+const fiche=await p.evaluate(()=>document.getElementById('detBody').textContent);
+check('fiche élève : compteurs conservés (s2 : 2 absences, 1 retard, points retirés 1,75, colonne Pts du cycle)',/Année entière/.test(fiche)&&/Absences/.test(fiche)&&/Retards/.test(fiche)&&/Points retirés/.test(fiche)&&/Par cycle/.test(fiche)&&/1,75/.test(fiche),fiche.replace(/\s+/g,' ').slice(0,300));
+await p.evaluate(()=>{const m=document.querySelector('#detModal [data-close]');m&&m.click();});await sleep(200);
 // ---- fiche élève : détail du calcul
 await p.evaluate(()=>document.querySelector('#gridWrap tr[data-sid="s2"] td.comp').click());await sleep(400);
 const det=await p.evaluate(()=>(document.getElementById('detComp')||{}).textContent||'');

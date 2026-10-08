@@ -896,7 +896,7 @@ table.gbal tfoot td{font-weight:700}
     </div>
     <div class="pchips" id="attPeriods" role="tablist" aria-label="Cycle"></div>
     <div class="cyctitle" id="attCycle"></div>
-    <div class="attview"><span class="small muted">Affichage</span><div class="seg vseg" id="attView" role="group" aria-label="Colonnes de synthèse"><button type="button" data-v="abs">Absences</button><button type="button" data-v="notes">Notes /20</button></div></div>
+    <!-- 1.28.0 (-i) : bascule « Absences | Notes /20 » retirée (demande du propriétaire) — seul l’affichage Notes /20 reste ; les absences/retards/maladies restent enregistrés (Comport., Année, fiche, Rapports, PDF, CSV, alertes) -->
     <div class="evalbar hidden" id="attEval"></div>
     <div class="legend2"><span><span class="lg P">P</span>Présent</span><span><span class="lg A">A</span>Absent</span><span><span class="lg S">ST</span>Sans tenue</span><span><span class="lg M">M</span>Maladie non just.</span><span><span class="lg L">R</span>Retard</span><span><span class="lg K">MJ</span>Maladie just.</span><span><span class="lg J">AJ</span>Abs. justifiée</span><span><span class="lg D">🩺</span>Dispensé</span><span id="attInfo"></span></div>
     <div class="grpbox hidden" id="attGrp"></div>
@@ -2081,7 +2081,7 @@ grid.addEventListener('touchmove',function(e){if(!lpStart)return;var t=e.touches
 grid.addEventListener('touchend',function(){clearTimeout(lpTimer);lpStart=null;},{passive:true});
 $('attClass').addEventListener('change',function(){DB.ui.cls=this.value;persist();renderGrpBox();renderEvalBar(DB.ui.cls,DB.ui.per);renderGrid();$('gridWrap').scrollTop=0;});
 /* Notes /20 : bascule d’affichage (non enregistrée), APS du cycle, saisie des notes */
-$('attView').addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b||b.dataset.v===ATT_VIEW)return;ATT_VIEW=b.dataset.v;renderEvalBar(DB.ui.cls,DB.ui.per);renderGrid();});
+/* 1.28.0 (-i) : plus de bascule #attView — ATT_VIEW reste 'notes' (affichage Notes /20 seul) ; aucune donnée d’absence supprimée */
 function apsChange(e){var cid=DB.ui.cls,p=DB.ui.per,pv=current==='proc';function rr(){if(pv){renderProcBar(cid,p);renderProcGrid();}else{renderEvalBar(cid,p);renderGrid();}}
   if(e.target.id==='procEvt'){var nv=e.target.value,k0=evKey(cid,p),nd=studentsIn(cid).filter(function(s){var x=s.ev&&s.ev[k0];return x&&x.essais&&x.perfEvent&&x.perfEvent!==nv;}).length;
     if(nd&&!confirm(nd+(nd>1?' élèves ont des essais déjà saisis':' élève a des essais déjà saisis')+' pour une autre épreuve. '+(nv?'Les notes Produit calculées seront recalculées avec le barème « '+athEvtL(nv)+' »':'Les notes Produit calculées seront effacées')+' ; les essais et les notes saisies à la main ne changent pas. Continuer ?')){e.target.value=evtOf(cid,p);return;}
