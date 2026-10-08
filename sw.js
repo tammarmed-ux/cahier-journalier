@@ -1,21 +1,22 @@
 /* Cahier journalier digital – service worker (cache-first, hors ligne) */
-const CACHE = 'cahier-v25';
+const CACHE = 'cahier-v25-1';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './logo.jpg',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/maskable-192.png',
-  './icons/maskable-512.png',
-  './icons/apple-touch-icon.png',
-  './icons/favicon-32.png',
-  /* logo Cahier d’EPS (1.25.0 : coureur + piste) */
-  './icons/logo.svg',
-  './icons/favicon.svg',
+  /* logo B « Cahier d’EPS » : noms de fichiers versionnés (-b) pour contourner les caches HTTP/iOS des anciennes icônes */
+  './icons/logo-b.svg',
+  './icons/favicon-b.svg',
+  './icons/favicon-b-32.png',
+  './icons/favicon-b.ico',
+  './icons/icon-b-192.png',
+  './icons/icon-b-512.png',
+  './icons/maskable-b-192.png',
+  './icons/maskable-b-512.png',
+  './icons/apple-touch-icon-b.png',
   './favicon.ico',
-  './og-image.png',
+  './og-image-b.png',
   /* exports PDF : bibliothèques et polices locales (aucun CDN) */
   './cj-pdf.js',
   './vendor/jspdf.umd.min.js',
@@ -30,18 +31,26 @@ const FONT_ASSETS = ['Amiri', 'NotoNaskhArabic', 'Cairo', 'Tajawal'].reduce((a, 
 const SDK_PREFIX = 'https://www.gstatic.com/firebasejs/';
 const SDK_FILES = ['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js'].map(f => SDK_PREFIX + '12.19.0/' + f);
 
+/* installation : chaque fichier est téléchargé en contournant le cache HTTP du navigateur (cache: 'reload'),
+   sinon une ancienne copie (ex. anciennes icônes servies avec max-age=3600) pourrait être recopiée dans le nouveau cache */
+const fresh = u => new Request(u, { cache: 'reload' });
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).then(() =>
-    /* best effort: pre-cache the sync SDK; never blocks installation */
-    Promise.all(FONT_ASSETS.map(u => fetch(u).then(r => r.ok ? c.put(u, r) : null).catch(() => null)).concat(SDK_FILES.map(u => fetch(u, { mode: 'cors' }).then(r => r.ok ? c.put(u, r) : null).catch(() => null))))
-  )).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(fresh))).then(() => self.skipWaiting()));
 });
+/* best effort, après l’activation (ne retarde jamais la mise à jour) : autres polices arabes + SDK de synchronisation */
+function warmExtras() {
+  return caches.open(CACHE).then(c => Promise.all(
+    FONT_ASSETS.map(u => c.match(u).then(hit => hit || fetch(fresh(u)).then(r => r.ok ? c.put(u, r) : null)).catch(() => null))
+      .concat(SDK_FILES.map(u => c.match(u).then(hit => hit || fetch(u, { mode: 'cors', cache: 'reload' }).then(r => r.ok ? c.put(u, r) : null)).catch(() => null)))
+  ));
+}
 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys.filter(k => k.startsWith('cahier-') && k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
+      .then(() => { warmExtras(); })
   );
 });
 
