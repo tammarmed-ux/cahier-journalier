@@ -350,6 +350,49 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 #homeStats .s4 .stat{padding:8px 4px}
 #homeStats .stat b{font-size:22px}
 #homeStats .stat span{font-size:12px}
+/* ===== 1.28.0 : Accueil modernisé (purement visuel : mêmes données, mêmes écrans) ===== */
+#homeBody .card{border-radius:18px}
+.hhero{position:relative;overflow:hidden;color:#fff;background:radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad);border-radius:22px;padding:18px 16px 16px;margin:0 0 12px;box-shadow:0 10px 26px -12px rgba(11,58,110,.55),0 2px 6px rgba(11,58,110,.18)}
+.hhero:after{content:"";position:absolute;right:-46px;bottom:-60px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.10),rgba(255,255,255,0) 70%);pointer-events:none}
+.hh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.hh-hello{margin:0;font-size:22px;line-height:1.2;font-weight:800;letter-spacing:-.01em}
+.hh-date{margin-top:4px;font-size:14px;color:rgba(255,255,255,.86);font-weight:500}
+.hh-clock{flex:0 0 auto;font-variant-numeric:tabular-nums;font-size:15px;font-weight:700;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:5px 11px}
+.hh-cyc{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;font-weight:600;background:rgba(255,255,255,.12);border-radius:999px;padding:4px 10px;max-width:100%}
+.hh-cyc i{width:8px;height:8px;border-radius:50%;background:var(--acc);flex:0 0 8px;box-shadow:0 0 0 3px rgba(232,93,4,.3)}
+.hh-cyc span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hh-next{position:relative;z-index:1;margin-top:14px;background:#fff;color:var(--ink);border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px;box-shadow:0 6px 16px -8px rgba(7,42,80,.45)}
+.hh-time{flex:0 0 58px;text-align:center;border-radius:12px;background:var(--pri-soft);color:var(--pri);padding:7px 2px;line-height:1.15}
+.hh-time b{display:block;font-size:17px}.hh-time span{font-size:12px;color:var(--muted)}
+.hh-info{flex:1;min-width:0}.hh-info small{display:block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc-d)}
+.hh-info b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hh-info span{display:block;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hh-go{flex:0 0 auto;min-height:44px;border:0;border-radius:12px;padding:0 14px;font:inherit;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(135deg,#D85603,#B54703);box-shadow:0 4px 10px -4px rgba(181,71,3,.7);cursor:pointer}
+.hh-none{position:relative;z-index:1;margin-top:14px;background:rgba(255,255,255,.12);border:1px dashed rgba(255,255,255,.35);border-radius:16px;padding:12px;font-size:14px}
+.hh-none b{display:block;font-size:15px;margin-bottom:2px}
+.hh-tiles{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.hh-tile{min-height:64px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;border-radius:14px;padding:8px 6px;text-align:center;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.hh-tile b{font-size:21px;line-height:1.1;font-variant-numeric:tabular-nums}.hh-tile span{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.88);line-height:1.2}
+.hh-tile.alert b{color:#FFB98A}
+.qa-h{margin:4px 4px 8px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.qa-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+@media(min-width:560px){.qa-grid{grid-template-columns:repeat(3,1fr)}}
+.qa{position:relative;min-height:96px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#fff 0%,#F7F9FC 100%);color:var(--ink);font:inherit;text-align:left;padding:12px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.05),0 6px 14px -8px rgba(16,24,40,.18);-webkit-tap-highlight-color:transparent}
+.qa .qi{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#1F5FA8,#0B3A6E);box-shadow:0 4px 10px -4px rgba(11,58,110,.6)}
+.qa .qi svg{width:22px;height:22px}
+.qa b{font-size:15.5px;line-height:1.2}.qa span{font-size:12.5px;color:var(--muted);line-height:1.25;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qa.pri{background:linear-gradient(135deg,#D85603 0%,#B54703 100%);border-color:transparent;color:#fff;box-shadow:0 8px 18px -8px rgba(181,71,3,.75)}
+.qa.pri .qi{background:rgba(255,255,255,.18);box-shadow:none}.qa.pri span{color:rgba(255,255,255,.9)}
+.qa.acc .qi{background:linear-gradient(135deg,#F07A2A,#C24E03);box-shadow:0 4px 10px -4px rgba(194,78,3,.6)}
+.qa,.hh-go,.hh-tile{transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}
+.qa:active,.hh-go:active,.hh-tile:active{transform:scale(.97);filter:brightness(.97)}
+@media(hover:hover){.qa:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(16,24,40,.06),0 12px 22px -10px rgba(16,24,40,.28)}.qa.pri:hover{box-shadow:0 12px 24px -10px rgba(181,71,3,.8)}}
+.qa:focus-visible,.hh-go:focus-visible,.hh-tile:focus-visible{outline:none;box-shadow:var(--focus)}
+#homeToday h2{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+#homeToday .occ li{border:0;background:#F7F9FC;border-radius:14px;padding:9px 10px;margin:6px 0}
+#homeToday .occ-t{background:#fff;border:1px solid var(--pri-line);border-radius:11px;padding:5px 0;color:var(--pri)}
+#homeToday .occ li.occ-as .occ-t{border-color:#f2d7a6;color:var(--acc-d)}
+#homeStats .stat{border:0;background:linear-gradient(180deg,#F7F9FC,#EEF2F8);border-radius:14px}
+@media (prefers-reduced-motion:reduce){.qa,.hh-go,.hh-tile{transition:none}.qa:active,.hh-go:active,.hh-tile:active,.qa:hover{transform:none}}
 table.cmp{width:100%;border-collapse:collapse;font-size:13.5px}
 table.cmp th,table.cmp td{padding:7px 3px}
 table.cmp th{position:static;font-size:11px}
@@ -1284,7 +1327,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28-e';                       /* aperçu test-128 : « -e » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-f';                       /* aperçu test-128 : « -f » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2541,6 +2584,7 @@ function renderHome(){
   h+='</div>';
   /* stats */
   var S=homeStats(),T=S.tot;
+  h=homeHero(S,occ,nx,cur)+h;   /* 1.28.0 : en-tête + accès rapide en haut de l’Accueil */
   function tile(v,l,c){return '<div class="stat'+(c?' '+c:'')+'"><b>'+v+'</b><span>'+esc(l)+'</span></div>';}
   h+='<div class="card" id="homeStats"><h2>'+esc(TX.statsTitle)+'</h2><div class="stats s3">'+tile(S.students,TX.tStudents)+tile(S.classes,TX.tClasses)+tile(S.held,TX.tHeld)+'</div>'+
     '<div class="stats s4" style="margin-top:8px">'+tile(T.A,TX.tAbs,'bad')+tile(T.U,TX.tU,'bad')+tile(T.S,TX.tS)+tile(T.M,TX.tM)+tile(T.L,TX.tL,'warn')+tile(T.K,TX.tK)+tile(T.J,TX.tJ,'ok')+'</div></div>';
@@ -2582,6 +2626,51 @@ function renderHome(){
   $('ttDay').value=dflt.day;$('ttStart').value=dflt.start;$('ttEnd').value=dflt.end;if(e&&isAS(e))$('ttClass').value='__as';else if(dflt.classId)$('ttClass').value=dflt.classId;$('ttRoom').value=dflt.room||'';
 }
 var ttLast=null;
+/* 1.28.0 : en-tête moderne de l’Accueil (salutation, date/heure, prochaine séance, mini-indicateurs) + boutons d’accès rapide.
+   PUREMENT VISUEL : uniquement des données existantes (emploi du temps, homeStats), les boutons ouvrent des écrans / actions existants. */
+var HJ=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],HM=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+var HI={appel:'<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/>',proc:'<circle cx="12" cy="14" r="7"/><path d="M12 10v4l2 2M10 3h4M12 3v4"/>',releve:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',reports:'<path d="M3 3v18h18"/><path d="M8 16v-4M12 16V8M16 16v-6"/>',students:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',backup:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/>'};
+function hClock(){var d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes());}
+function hLongDate(){var d=new Date();return HJ[d.getDay()]+' '+d.getDate()+(d.getDate()===1?'er':'')+' '+HM[d.getMonth()]+' '+d.getFullYear();}
+function hNextToday(occ){var now=new Date(),m=now.getHours()*60+now.getMinutes();return occ.filter(function(o){return !isAS(o.slot)&&tmin(o.slot.end)>m;})[0]||null;}
+function homeHero(S,occ,nx,cur){
+  var th=String(DB.settings.teacher||'').split(/\s+[–—-]\s+|,/)[0].trim(),hr=new Date().getHours(),hello=(hr>=18||hr<4?'Bonsoir':'Bonjour')+(th?', '+th:'');
+  var h='<div class="hhero" id="homeHero"><div class="hh-top"><div><h2 class="hh-hello" dir="auto">'+esc(hello)+'</h2><div class="hh-date">'+esc(hLongDate())+'</div></div><div class="hh-clock" id="homeClock" aria-label="Heure">'+hClock()+'</div></div>';
+  if(cur){var wk=0;cur.weeks.forEach(function(m,j){if(m<=todayStr())wk=j+1;});h+='<div class="hh-cyc"><i></i><span>'+esc(cycleLabel(cur.i))+(wk?' · '+esc(TX.weekOf(wk,cur.weeks.length)):'')+'</span></div>';}
+  var n=hNextToday(occ),cl=occ.filter(function(o){return !isAS(o.slot);});
+  if(n){var t=n.slot,now=tmin(hClock())>=tmin(t.start);
+    h+='<div class="hh-next" id="homeNext"><div class="hh-time"><b>'+esc(t.start)+'</b><span>'+esc(t.end)+'</span></div><div class="hh-info"><small>'+(now?'En cours':'Prochaine séance')+'</small><b>'+esc(clsName(t.classId))+'</b><span>'+(n.cyc>=0?esc(cycleName(n.cyc))+(n.s>=0?' · S'+sessNo(t.classId,n.cyc,n.s):''):esc(TX.outCycle))+(t.room?' · '+esc(t.room):'')+'</span></div>'+
+      (n.cyc>=0?'<button type="button" class="hh-go" data-open="'+esc(t.classId)+'" data-p="'+n.cyc+'">Appel</button>':'')+'</div>';}
+  else{var f=nx.filter(function(o){return !isAS(o.slot);})[0];
+    h+='<div class="hh-none" id="homeNext"><b>'+(cl.length?'Séances du jour terminées':'Aucune séance aujourd’hui')+'</b>'+(f?'Prochaine : '+esc(HJ[new Date(f.date+'T12:00').getDay()])+' '+shortDate(f.date)+' à '+esc(f.slot.start)+' · '+esc(clsName(f.slot.classId)):'')+'</div>';}
+  var ab=0,den=0;S.per.forEach(function(r){ab+=r.abs;den+=r.n*r.held;});
+  function tile(id,v,l,c,lab){return '<button type="button" class="hh-tile'+(c?' '+c:'')+'" data-qa="'+id+'" aria-label="'+esc(lab)+'"><b>'+v+'</b><span>'+esc(l)+'</span></button>';}
+  h+='<div class="hh-tiles">'+tile('today',cl.length,cl.length>1?'séances aujourd’hui':'séance aujourd’hui','',cl.length+' séance(s) aujourd’hui : voir la liste')+
+    tile('rate',den?pct(1-ab/den):'—','présence · année','','Taux de présence de l’année : voir la comparaison des classes')+
+    tile('watch',S.watch.length,S.watch.length>1?'alertes':'alerte',S.watch.length?'alert':'',S.watch.length+' élève(s) à surveiller')+'</div></div>';
+  var cn=cls(DB.ui.cls)?clsName(DB.ui.cls)+' · '+cycleName(DB.ui.per):'';
+  var ba=backupAge(),bs=ba==null?'jamais faite':ba===0?'faite aujourd’hui':'il y a '+ba+' j';
+  function qa(id,ic,t,sub,c){return '<button type="button" class="qa'+(c?' '+c:'')+'" data-qa="'+id+'"><span class="qi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+HI[ic]+'</svg></span><b>'+esc(t)+'</b><span>'+esc(sub)+'</span></button>';}
+  h+='<div class="qa-h">Accès rapide</div><div class="qa-grid" id="homeQuick">'+
+    qa('appel','appel','Faire l’appel',n&&n.cyc>=0?clsName(n.slot.classId)+' · '+n.slot.start:'Registre d’absences','pri')+
+    qa('proc','proc','Note procéd.',cn||'Saisie des notes')+
+    qa('releve','releve','Relevé de notes',cn?'PDF · '+cn:'PDF par classe','acc')+
+    qa('reports','reports','Rapports','Bilans et PDF')+
+    qa('students','students','Élèves',S.students+' élèves · '+S.classes+' classes')+
+    qa('backup','backup','Sauvegarde','Dernière : '+bs)+'</div>';
+  return h;
+}
+$('homeBody').addEventListener('click',function(e){var b=e.target.closest('[data-qa]');if(!b)return;var q=b.dataset.qa;
+  function go(id){var c=$(id);if(c&&c.scrollIntoView)c.scrollIntoView({block:'start',behavior:'smooth'});}
+  if(q==='appel'){var n=hNextToday(occurrences(todayStr(),todayStr()));if(n&&n.cyc>=0)openGridFor(n.slot.classId,n.cyc);else showTab('attendance');}
+  else if(q==='proc')showTab('proc');
+  else if(q==='releve'){if(cls(DB.ui.cls))runPdf('grades',{cid:DB.ui.cls,p:DB.ui.per});else showTab('proc');}
+  else if(q==='reports')showTab('reports');
+  else if(q==='students')showTab('students');
+  else if(q==='backup'){$('bkExport').click();renderHome();}
+  else if(q==='today')go('homeToday');else if(q==='rate')go('homeCmp');else if(q==='watch')go('homeWatch');
+});
+setInterval(function(){var c=$('homeClock');if(c&&current==='home')c.textContent=hClock();},15000);
 $('homeBody').addEventListener('change',function(e){
   if(e.target.id==='ttStart'&&/^\d\d:\d\d$/.test(e.target.value))$('ttEnd').value=addMin(e.target.value,$('ttClass').value==='__as'?180:60);
   if(e.target.id==='ttClass'&&/^\d\d:\d\d$/.test($('ttStart').value)){var dur=tmin($('ttEnd').value||'00:00')-tmin($('ttStart').value);if(e.target.value==='__as'&&dur===60)$('ttEnd').value=addMin($('ttStart').value,180);else if(e.target.value!=='__as'&&dur===180)$('ttEnd').value=addMin($('ttStart').value,60);}
