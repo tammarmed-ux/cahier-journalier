@@ -329,7 +329,10 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 .cygrid{display:flex;flex-direction:column;gap:8px}
 .cyrow{display:flex;align-items:center;gap:10px}
 .cyrow span{flex:0 0 64px;font-weight:650;font-size:14px}
-.cyrow input{flex:1}
+.cyrow input{flex:1;min-width:0}
+.cyrow{flex-wrap:wrap}.cyrow select.cytype{flex:0 0 auto;min-height:40px;padding:6px 8px;font-size:16px;max-width:100%}.cyrow select.cytype.auto{border-style:dashed;color:#475467}.cyrow .cyov{flex:1 1 100%;margin-left:74px;color:#b45309}
+@media (max-width:480px){.cyrow select.cytype{flex:1 1 auto;margin-left:74px}}   /* téléphone : le type passe sous le nom de l’activité */
+.evalbar .apsn{font-size:11.5px;color:#475467}.evalbar .apsn.ov{color:#b45309;font-weight:650}
 .curcyc{display:flex;flex-direction:column;gap:2px;background:var(--pri-soft);border-radius:10px;padding:10px 12px;font-size:15px}
 .curcyc b{color:var(--pri)}
 .holnote{margin-top:8px;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-weight:600;font-size:14px}
@@ -1274,13 +1277,14 @@ function normEv(v){if(!v||typeof v!=='object')return null;var o={},n=0;Object.ke
   Object.keys(e).forEach(function(f){if(!(f in r)&&['g1','g2','con','pr','perfRaw','perfEvent','perfAuto','essais','prodAuto','aps','t'].indexOf(f)<0&&/^[a-z]\w{0,15}$/i.test(f)&&(typeof e[f]==='string'||typeof e[f]==='number'||typeof e[f]==='boolean'))r[f]=typeof e[f]==='string'?e[f].slice(0,64):e[f];});   /* champs ajoutés par une version future : conservés */
   o[k]=r;n++;});return n?o:null;}
 function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
-  ['aps','evt'].forEach(function(f){var src=v[f];if(!src||typeof src!=='object')return;var a={},c=0;Object.keys(src).forEach(function(k){var m=/^([^|]+)\|(\d+)$/.exec(k),x=src[k];if(m&&ids[m[1]]&&(f==='aps'?isAps(x):typeof x==='string'&&x&&x.length<=40)){a[k]=x;c++;}});if(c){o[f]=a;n++;}});
-  return n?o:null;}   /* aps : APS du cycle · evt : épreuve d’athlétisme du cycle (barèmes de performance, quand ils seront fournis) */
+  ['aps','evt','ntr'].forEach(function(f){var src=v[f];if(!src||typeof src!=='object')return;var a={},c=0;Object.keys(src).forEach(function(k){var m=/^([^|]+)\|(\d+)$/.exec(k),x=src[k];if(m&&ids[m[1]]&&(f==='aps'?isAps(x):f==='ntr'?(x===+x&&x>=1&&x<=6):typeof x==='string'&&x&&x.length<=40)){a[k]=x;c++;}});if(c){o[f]=a;n++;}});
+  var cy=v.cyc,a2={},c2=0;if(cy&&typeof cy==='object')Object.keys(cy).forEach(function(k){if(/^\d{1,2}$/.test(k)&&isAps(cy[k])){a2[k]=cy[k];c2++;}});if(c2){o.cyc=a2;n++;}
+  return n?o:null;}   /* cyc : type d’activité du cycle pour toutes les classes (Paramètres) · aps : choix propre à une classe (prioritaire) · evt : épreuve d’athlétisme · ntr : nombre d’essais */
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28-c';                       /* aperçu test-128 : « -c » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-d';                       /* aperçu test-128 : « -d » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1473,11 +1477,26 @@ function apsGuess(name){var s=String(name||'').toLowerCase();try{s=s.normalize('
   if(/athl|course|endurance|vitesse|demi.?fond|haies|relais|saut|lancer|poids|javelot|disque|marche|sprint/.test(s))return 'athle';return 'coll';}
 function evKey(cid,p){return cid+'|'+p;}
 function gradeLv(cid){return levelOf(clsName(cid))||'2BAC';}
-function apsOf(cid,p){var k=evKey(cid,p),a=DB.evals&&DB.evals.aps&&DB.evals.aps[k];if(APS[a])return a;
+/* Type d’activité (APS) d’un cycle — 1.28 : choisi à côté du nom du cycle (Paramètres › Année scolaire) pour TOUTES les classes : DB.evals.cyc["<cycle>"].
+   Exception possible pour une classe (sélecteur de la barre Notes /20 / Note procéd.) : DB.evals.aps["<classe>|<cycle>"], enregistrée seulement si elle diffère du type du cycle.
+   Ordre : exception de la classe → type du cycle → APS des notes déjà saisies (données relues d’un ancien client) → déduction d’après le nom de l’activité. */
+function cycApsOf(p){var a=DB.evals&&DB.evals.cyc&&DB.evals.cyc[p];return APS[a]?a:'';}
+function cycAps(p){return cycApsOf(p)||apsGuess(DB.periods[p]||'');}
+function apsOver(cid,p){var a=DB.evals&&DB.evals.aps&&DB.evals.aps[evKey(cid,p)];return APS[a]?a:'';}
+function apsOf(cid,p){return apsOver(cid,p)||apsBase(cid,p);}
+function apsBase(cid,p){var k=evKey(cid,p),a=cycApsOf(p);if(a)return a;
   var cnt={},best='';DB.students.forEach(function(s){var e=s.classId===cid&&s.ev&&s.ev[k];if(e&&APS[e.aps])cnt[e.aps]=(cnt[e.aps]||0)+1;});
   Object.keys(cnt).forEach(function(x){if(!best||cnt[x]>cnt[best])best=x;});return best||apsGuess(DB.periods[p]||'');}
-function apsSet(cid,p,a){if(!APS[a])return;var k=evKey(cid,p);if(!DB.evals||typeof DB.evals!=='object')DB.evals={aps:{}};if(!DB.evals.aps)DB.evals.aps={};DB.evals.aps[k]=a;
+function apsSet(cid,p,a){if(!APS[a])return;var k=evKey(cid,p);if(!DB.evals||typeof DB.evals!=='object')DB.evals={};if(!DB.evals.aps)DB.evals.aps={};
+  if(a===apsBase(cid,p))delete DB.evals.aps[k];else DB.evals.aps[k]=a;   /* identique au type du cycle → plus d’exception */
   DB.students.forEach(function(s){var e=s.classId===cid&&s.ev&&s.ev[k];if(e)e.aps=a;});}
+/* notes déjà saisies qui dépassent le barème d’une APS ou n’y ont pas de colonne (gardées, non comptées) */
+function apsOverCount(cid,p,a){var mx=APS[a].max[gradeLv(cid)];return studentsIn(cid).filter(function(s){var ev=evGet(s.id,cid,p);if(!ev)return false;return (ev.g1!=null&&ev.g1>mx[0])||(ev.g2!=null&&(mx.length<2||ev.g2>mx[1]));}).length;}
+/* type du cycle pour toutes les classes (Paramètres) : les exceptions de classe de ce cycle sont retirées */
+function cycSet(p,a){if(!APS[a])return;if(!DB.evals||typeof DB.evals!=='object')DB.evals={};if(!DB.evals.cyc)DB.evals.cyc={};DB.evals.cyc[p]=a;
+  if(DB.evals.aps)DB.classes.forEach(function(c){delete DB.evals.aps[evKey(c.id,p)];});
+  DB.students.forEach(function(s){var e=s.ev&&s.ev[evKey(s.classId,p)];if(e)e.aps=a;});}
+function apsNoteHtml(cid,p){var o=apsOver(cid,p);return '<span class="apsn'+(o?' ov':'')+'">'+(o?'propre à cette classe · cycle : '+esc(APS[apsBase(cid,p)].l):'type du cycle'+(cycApsOf(p)?'':' (déduit du nom)')+' · Paramètres')+'</span>';}
 function gradeSpec(cid,p){var a=apsOf(cid,p),lv=gradeLv(cid),A=APS[a],mx=A.max[lv],cap=capOf(cid),cols=A.g.map(function(g,i){return {k:g.k,l:g.l,lf:g.lf,t:g.t,max:mx[i]};});
   var pm=0;cols.forEach(function(c){pm+=c.max;});var proc=cols.slice();
   cols.push({k:'con',l:'Concept.',lf:'Conceptuel',t:'Note conceptuelle',max:CON_MAX});var tot=cap;cols.forEach(function(c){tot+=c.max;});
@@ -1692,7 +1711,7 @@ function openDetail(id){
   if(!hist.length)h+='<p class="muted small">Aucune absence, aucun retard. 🎉</p>';
   else h+='<ul class="hist">'+hist.map(function(x){
     var chip=x.code==='M'?'<span class="chip mchip">Maladie non justifiée</span>':x.code==='K'?'<span class="chip kchip">Maladie justifiée</span>':x.code==='S'?'<span class="chip schip">Sans tenue</span>':x.code==='L'?'<span class="chip warn">Retard</span>':(x.code==='J'?'<span class="chip ok">Justifiée</span>':'<span class="chip bad">Absent</span>');
-    return '<li><span class="d">'+esc(cycleName(x.p))+' · S'+(x.s+1)+'<br><span class="small muted" style="font-weight:500">'+(x.date?esc(fmtDate(x.date)):'sans date')+'</span></span>'+chip+'<span class="r" dir="auto">'+esc(x.r)+(x.cid!==s.classId?' ('+esc(clsName(x.cid))+')':'')+'</span></li>';
+    return '<li><span class="d">'+esc(cycleName(x.p))+' · S'+sessNo(x.cid,x.p,x.s)+'<br><span class="small muted" style="font-weight:500">'+(x.date?esc(fmtDate(x.date)):'sans date')+'</span></span>'+chip+'<span class="r" dir="auto">'+esc(x.r)+(x.cid!==s.classId?' ('+esc(clsName(x.cid))+')':'')+'</span></li>';
   }).join('')+'</ul>';
   h+='<div class="actions"><button class="btn sec" data-close>Fermer</button><button class="btn sec" id="detDsp">🩺 Dispensé</button><button class="btn sec" id="detPdf">📄 Fiche PDF</button><button class="btn" id="detEdit">Modifier</button></div>';
   $('detBody').innerHTML=h;
@@ -1763,7 +1782,7 @@ function renderGrid(){
   if(!list.length){$('gridWrap').innerHTML='<div class="empty"><b>Aucun élève dans '+esc(clsName(cid))+'</b>Ajoutez-les dans l’onglet Élèves (l’import en masse est le plus rapide).</div>';$('attInfo').textContent='';return;}
   S=cols.n;var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
   var h='<table class="grid'+(ATT_VIEW==='notes'?' gv':'')+'"><thead><tr><th class="nm">Élève</th>';
-  cols.forEach(function(c){if(c.hol){h+='<th class="holh" title="'+esc(c.hol.label)+'">'+esc(holShort(c.hol)===TX.vacShort?TX.vacHead:TX.holHead)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';});
+  cols.forEach(function(c,ci){if(c.hol){h+='<th class="holh" title="'+esc('Séance '+(ci+1)+' – '+(holShort(c.hol)===TX.vacShort?TX.vacShort:TX.holHead)+' : '+c.hol.label+' (non comptée)')+'">S'+(ci+1)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(ci+1)+hd.title+'">'+hd.html+'</th>';});
   h+=sumHead(cid,p)+'<th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';var nb=sumCount(cid,p);
   var gq=grpOf(cid),byG=!!(gq&&DB.ui.grp),secs;
   if(byG){var gm=grpMembers(cid);secs=gm.groups.map(function(a,i){return {i:i,list:a};}).filter(function(x){return x.list.length;});if(gm.none.length)secs.push({i:-1,list:gm.none});}
@@ -1836,12 +1855,12 @@ function yrCell(y,th){return '<td class="t yr'+(y.A?'':' z')+(y.U>=th?' bad':'')
 function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;document.querySelectorAll('#attView button').forEach(function(b){b.classList.toggle('on',b.dataset.v===ATT_VIEW);});
   if(ATT_VIEW==='abs'||!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
   var sp=gradeSpec(cid,p);el.classList.remove('hidden');
-  el.innerHTML='<b>Barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b><select id="attAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select>'+
+  el.innerHTML='<b>Barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b><select id="attAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select>'+apsNoteHtml(cid,p)+
     '<button type="button" class="btn sec" id="attGradesPdf">📄 Relevé de notes</button>'+
     '<span class="scale">'+sp.cols.map(function(c){return esc(c.l)+' /'+fmtNum(c.max);}).join(' + ')+' + Comport. /'+fmtNum(sp.comp)+' = '+fmtNum(sp.total)+' · Évaluation OP 2007</span>';}
 function renderProcBar(cid,p){var el=$('procEval');if(!el)return;if(!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
   var sp=gradeSpec(cid,p),ev=sp.aps==='athle'?evtOf(cid,p):'';
-    el.innerHTML='<b>Note procédurale · barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b><select id="procAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select>'+
+    el.innerHTML='<b>Note procédurale · barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b><select id="procAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select>'+apsNoteHtml(cid,p)+
       (sp.aps==='athle'&&ATH_EVT.length?'<select id="procEvt" aria-label="Épreuve (barème OP 2007)"><option value="">Épreuve : à choisir (sinon Produit saisi à la main)</option>'+ATH_EVT.map(function(k){return '<option value="'+k+'"'+(k===ev?' selected':'')+'>'+esc(athEvtL(k))+'</option>';}).join('')+'</select>'+
         (ev?'<select id="procNtr" aria-label="Nombre d’essais">'+[1,2,3,4,5,6].map(function(n){return '<option value="'+n+'"'+(n===ntrOf(cid,p)?' selected':'')+'>'+n+' essai'+(n>1?'s':'')+'</option>';}).join('')+'</select>':''):'')+
       '<button type="button" class="btn sec" id="procGradesPdf">📄 Relevé de notes</button>'+
@@ -1883,7 +1902,7 @@ function refreshRow(tr){
 function refreshColumn(s){
   var cid=DB.ui.cls,p=DB.ui.per,r=rec(cid,p,s),wrap=$('gridWrap');
   var th=wrap.querySelector('th[data-sess="'+s+'"]');
-  if(th){var hd=sessHead(s);th.className=hd.cls;th.innerHTML=hd.html;th.title='Séance '+(s+1)+hd.title;}
+  if(th){var hd=sessHead(s);th.className=hd.cls;th.innerHTML=hd.html;th.title='Séance '+sessNo(cid,p,s)+hd.title;}
   var f=wrap.querySelector('td[data-f="'+s+'"]');if(f)f.textContent=footVal(r);
   wrap.querySelectorAll('td.c[data-s="'+s+'"]').forEach(function(td){
     var sid=td.parentNode.dataset.sid,m=r&&r.marks[sid],code=codeOf(m);td.className=cellClass(code,!!r,m&&m.r,dspAt(sid,cid,p,s));td.textContent=r?CODE_TXT[code]:'';
@@ -1930,9 +1949,9 @@ function apsChange(e){var cid=DB.ui.cls,p=DB.ui.per,pv=current==='proc';function
     evtSet(cid,p,nv);athAutoAll(cid,p);persist();rr();toast(e.target.value?'Épreuve : '+athEvtL(e.target.value):'Note Produit : saisie à la main');return;}
   if(e.target.id==='procNtr'){ntrSet(cid,p,+e.target.value);persist();rr();return;}
   if(e.target.id!=='attAps'&&e.target.id!=='procAps')return;var a=e.target.value;
-  var over=studentsIn(cid).filter(function(s){var ev=evGet(s.id,cid,p);if(!ev)return false;var mx=APS[a].max[gradeLv(cid)];return (ev.g1!=null&&ev.g1>mx[0])||(ev.g2!=null&&(mx.length<2||ev.g2>mx[1]));}).length;
+  var over=apsOverCount(cid,p,a);
   if(over&&!confirm(plural(over,'élève')+' : des notes déjà saisies dépassent le barème « '+APS[a].l+' » ou n’y ont pas de colonne. Rien n’est effacé : une note sans colonne n’est pas comptée (elle revient si vous rechoisissez l’APS d’origine) et une note hors barème est exclue de la note /20 jusqu’à correction. Continuer ?')){e.target.value=apsOf(cid,p);return;}
-  apsSet(cid,p,a);persist();rr();toast('APS du '+cycleName(p)+' : '+APS[a].l);}
+  apsSet(cid,p,a);persist();rr();toast(clsName(cid)+' · '+cycleName(p)+' : '+APS[a].l+(apsOver(cid,p)?' (cette classe uniquement)':' (type du cycle)'));}
 $('attEval').addEventListener('change',apsChange);$('procEval').addEventListener('change',apsChange);
 $('attEval').addEventListener('click',function(e){if(e.target.closest('#attGradesPdf'))runPdf('grades',{cid:DB.ui.cls,p:DB.ui.per});});
 $('procEval').addEventListener('click',function(e){if(e.target.closest('#procGradesPdf'))runPdf('grades',{cid:DB.ui.cls,p:DB.ui.per});});
@@ -1971,7 +1990,7 @@ var cellTd=null,cellVal='P';
 function openCell(td){
   cellTd=td;var sid=td.parentNode.dataset.sid,s=+td.dataset.s,r=rec(DB.ui.cls,DB.ui.per,s),m=r&&r.marks[sid];
   var st=byId(sid);$('cellTitle').textContent=st?st.name:'';
-  var sd=sessDate(DB.ui.cls,DB.ui.per,s);$('cellSub').textContent=clsName(DB.ui.cls)+' · '+cycleName(DB.ui.per)+' · Séance '+(s+1)+(sd?' · '+fmtDate(sd):'');
+  var sd=sessDate(DB.ui.cls,DB.ui.per,s);$('cellSub').textContent=clsName(DB.ui.cls)+' · '+cycleName(DB.ui.per)+' · Séance '+sessNo(DB.ui.cls,DB.ui.per,s)+(sd?' · '+fmtDate(sd):'');
   cellVal=codeOf(m);$('cellJust').checked=!!(m&&m.j);$('cellReason').value=m?m.r:'';
   syncCell();openModal('cellModal');
 }
@@ -2016,7 +2035,7 @@ $('cellSave').addEventListener('click',function(){
 var sessS=0;
 function openSession(s){
   sessS=s;var r=rec(DB.ui.cls,DB.ui.per,s);
-  $('sessTitle').textContent='Séance '+(s+1);
+  $('sessTitle').textContent='Séance '+sessNo(DB.ui.cls,DB.ui.per,s);
   $('sessSub').textContent=clsName(DB.ui.cls)+' · '+cycleLabel(DB.ui.per)+' · '+(r?'effectuée – '+Object.keys(r.marks).filter(function(k){return byId(k);}).length+' élève(s) non présent(s)':'pas encore effectuée');
   var ad=autoDateOf(DB.ui.cls,DB.ui.per,s),man=isManual(DB.ui.cls,DB.ui.per,s);
   $('sessDate').value=sessDate(DB.ui.cls,DB.ui.per,s);
@@ -2029,9 +2048,9 @@ function sessDateSet(v){var r=ensureRec(DB.ui.cls,DB.ui.per,sessS);r.date=v&&v!=
 $('sessAutoBtn').addEventListener('click',function(){sessDateSet('');});
 $('sessDate').addEventListener('change',function(){sessDateSet(this.value);});
 $('sessToday').addEventListener('click',function(){sessDateSet(todayStr());});
-$('sessHeld').addEventListener('click',function(){var r=ensureRec(DB.ui.cls,DB.ui.per,sessS),v=$('sessDate').value;if(v)r.date=v!==autoDateOf(DB.ui.cls,DB.ui.per,sessS)?v:'';persist();closeModal('sessModal');renderGrid();toast('Séance '+(sessS+1)+' marquée comme effectuée');});
-$('sessReset').addEventListener('click',function(){if(!confirm('Marquer tout le monde présent pour la séance '+(sessS+1)+' ?'))return;var r=rec(DB.ui.cls,DB.ui.per,sessS);if(r)r.marks={};persist();closeModal('sessModal');renderGrid();});
-$('sessClear').addEventListener('click',function(){if(!confirm('Effacer la séance '+(sessS+1)+' ? Toutes ses marques et sa date seront supprimées et elle ne comptera plus comme effectuée.'))return;delete DB.sessions[skey(DB.ui.cls,DB.ui.per,sessS)];persist();closeModal('sessModal');renderGrid();});
+$('sessHeld').addEventListener('click',function(){var r=ensureRec(DB.ui.cls,DB.ui.per,sessS),v=$('sessDate').value;if(v)r.date=v!==autoDateOf(DB.ui.cls,DB.ui.per,sessS)?v:'';persist();closeModal('sessModal');renderGrid();toast('Séance '+sessNo(DB.ui.cls,DB.ui.per,sessS)+' marquée comme effectuée');});
+$('sessReset').addEventListener('click',function(){if(!confirm('Marquer tout le monde présent pour la séance '+sessNo(DB.ui.cls,DB.ui.per,sessS)+' ?'))return;var r=rec(DB.ui.cls,DB.ui.per,sessS);if(r)r.marks={};persist();closeModal('sessModal');renderGrid();});
+$('sessClear').addEventListener('click',function(){if(!confirm('Effacer la séance '+sessNo(DB.ui.cls,DB.ui.per,sessS)+' ? Toutes ses marques et sa date seront supprimées et elle ne comptera plus comme effectuée.'))return;delete DB.sessions[skey(DB.ui.cls,DB.ui.per,sessS)];persist();closeModal('sessModal');renderGrid();});
 
 /* ===== Tests anthropométriques et physiques =====
    student.phys = {h,w,dv,dh,fc,nav,vma,v30,soup,mb,eq} (valeurs facultatives, synchronisées avec le reste des données).
@@ -2434,6 +2453,9 @@ function colsOf(cid,p){
   out.n=k;return (C.cols[key]=out);
 }
 function sessCount(cid,p){return colsOf(cid,p).n;}
+/* numéro AFFICHÉ d’une séance (1.28) : rang de la colonne dans le cycle, jours fériés / vacances compris (S1, S2… en continu).
+   Affichage seulement : les séances restent enregistrées sous leur index s (fériés exclus) — rien n’est renuméroté dans les données. */
+function sessNo(cid,p,s){var cols=colsOf(cid,p);for(var i=0;i<cols.length;i++)if(cols[i].s===s)return i+1;return s+1;}
 function holShort(h){var l=String(h.label||'');if(h.to&&h.to>h.from&&/vacances|intermédiaire|break|mi-année|mid-year/i.test(l))return TX.vacShort;return l.replace(/\s*\([^)]*\)\s*/g,' ').replace(/^Anniversaire de (la |l’|l')?/i,'').trim()||TX.holShortDef;}
 function holMotif(h){var sh=holShort(h);return sh===TX.vacShort?sh:TX.holMotif(sh);}
 function autoDates(cid,p){
@@ -2455,7 +2477,7 @@ function autoCycles(st,W){var H=cal().H,out=[],mon=addDays(st,1-wday(st)),guard=
 function cycWarn(){var w=[],cs=DB.cal.cycles;for(var i=0;i<DB.periods.length;i++){var c=cs[i]||{};if(!isoOk(c.from)||!isoOk(c.to))w.push(TX.cycBad(i+1));else if(i&&cs[i-1]&&isoOk(cs[i-1].to)&&c.from<=cs[i-1].to)w.push(TX.cycOverlap(i+1,i));}return w;}
 function sessHead(s){
   var cid=DB.ui.cls,p=DB.ui.per,r=rec(cid,p,s),d=sessDate(cid,p,s),man=isManual(cid,p,s);
-  return {cls:(r?'effectuée':'')+(man?' man':''),html:'S'+(s+1)+'<small>'+(d?shortDate(d):(r?'✓':'–'))+'</small>',title:man?TX.manTitle:''};
+  return {cls:(r?'effectuée':'')+(man?' man':''),html:'S'+sessNo(cid,p,s)+'<small>'+(d?shortDate(d):(r?'✓':'–'))+'</small>',title:man?TX.manTitle:''};
 }
 function cycleInfoHtml(cid,p){
   var c=cal().cycles[p],ad=autoDates(cid,p),h='<b>'+esc(cycleLabel(p))+'</b>';
@@ -2484,7 +2506,7 @@ function occurrences(from,to){
 function occList(list,noDate){
   return '<ul class="list occ">'+list.map(function(o){var t=o.slot;
     if(isAS(t))return '<li class="occ-as"><div class="occ-t"><b>'+esc(t.start)+'</b><span>'+esc(t.end)+'</span></div><div class="occ-m"><b>'+esc(TX.asName)+'</b><span class="small muted">'+(noDate?'':esc(TX.daysShort[t.day])+' '+shortDate(o.date)+' · ')+esc(TX.asNoSess)+(t.room?' · '+esc(t.room):'')+'</span></div></li>';
-    return '<li><div class="occ-t"><b>'+esc(t.start)+'</b><span>'+esc(t.end)+'</span></div><div class="occ-m"><b>'+esc(clsName(t.classId))+'</b><span class="small muted">'+(noDate?'':esc(TX.daysShort[t.day])+' '+shortDate(o.date)+' · ')+(o.cyc>=0?esc(TX.cyc+(o.cyc+1))+(o.s>=0?' · S'+(o.s+1)+(o.s>=DB.spp?esc(TX.extra):''):''):esc(TX.outCycle))+(t.room?' · '+esc(t.room):'')+'</span></div>'+(o.cyc>=0?'<button class="btn sec sm" data-open="'+esc(t.classId)+'" data-p="'+o.cyc+'">'+esc(TX.openGrid)+'</button>':'')+'</li>';
+    return '<li><div class="occ-t"><b>'+esc(t.start)+'</b><span>'+esc(t.end)+'</span></div><div class="occ-m"><b>'+esc(clsName(t.classId))+'</b><span class="small muted">'+(noDate?'':esc(TX.daysShort[t.day])+' '+shortDate(o.date)+' · ')+(o.cyc>=0?esc(TX.cyc+(o.cyc+1))+(o.s>=0?' · S'+sessNo(t.classId,o.cyc,o.s)+(o.s>=DB.spp?esc(TX.extra):''):''):esc(TX.outCycle))+(t.room?' · '+esc(t.room):'')+'</span></div>'+(o.cyc>=0?'<button class="btn sec sm" data-open="'+esc(t.classId)+'" data-p="'+o.cyc+'">'+esc(TX.openGrid)+'</button>':'')+'</li>';
   }).join('')+'</ul>';
 }
 function homeStats(){
@@ -3062,6 +3084,10 @@ function capLine(c){var i=capInfo(c.id),dv=fmtNum(i.def);
     '<input type="number" class="capin" min="0" max="60" step="0.25" inputmode="decimal" value="'+i.v+'"'+(i.man?'':' disabled')+' title="Note comportementale (points par cycle)" aria-label="Note comportementale (points par cycle)"><span>pts / cycle</span>'+
     (i.man?'<span class="capinfo">Valeur personnalisée (par défaut'+(i.lv?' '+esc(i.lv):'')+' : '+dv+' pts).</span>':i.lv?'':'<span class="capinfo">Niveau non reconnu dans le nom (TC…, 1BAC…, 2BAC…) : '+dv+' pts par défaut.</span>')+
     (i.old!=null?'<span class="capold">Avant la version 1.27 : '+esc(fmtNum(i.old))+' pts (valeur personnalisée, conservée). Choisissez « Valeur personnalisée » pour la reprendre.</span>':'')+'</div>';}
+/* sélecteur « Sport collectif / Athlétisme / Gymnastique » à côté du nom du cycle ; tant qu’aucun choix n’est fait : déduit du nom de l’activité (« auto ») */
+function cycSelHtml(i){var x=cycApsOf(i),a=cycAps(i),ov=DB.classes.filter(function(c){var o=apsOver(c.id,i);return o&&o!==a;}).map(function(c){return c.name;});
+  return '<select class="cytype'+(x?'':' auto')+'" data-cy="'+i+'" aria-label="Type d’activité du cycle '+(i+1)+'" title="'+esc(x?'Type du cycle (toutes les classes)':'Déduit du nom de l’activité – choisissez pour confirmer')+'">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===a?' selected':'')+'>'+esc(APS[k].l)+(k===a&&!x?' (auto)':'')+'</option>';}).join('')+'</select>'+
+    (ov.length?'<small class="cyov">Choix propre à : '+esc(ov.join(', '))+'</small>':'');}
 function renderSettings(){
   classOptions($('expClass'),$('expClass').value||curCls(),'Toutes les classes');
   periodOptions($('expPeriod'),$('expPeriod').value||String(DB.ui.per),false);
@@ -3069,7 +3095,7 @@ function renderSettings(){
   renderCalSettings();
   document.querySelectorAll('#clsManage .clsrow').forEach(function(r){var cnt=r.querySelector('.cnt');if(!cnt)return;if(r.classList.contains('clshead')){cnt.insertAdjacentHTML('beforebegin','<span style="flex:0 0 52px">'+esc(TX.pwShort)+'</span>');return;}var c=cls(r.dataset.cid);cnt.insertAdjacentHTML('beforebegin','<input type="number" class="pwin" min="1" max="10" inputmode="numeric" value="'+clsPw(c)+'" title="'+esc(TX.clsPw)+'" aria-label="'+esc(TX.clsPw)+'">');});
   storeInfo();renderSnaps();
-  $('periodNames').innerHTML=DB.periods.map(function(n,i){return '<label class="cyrow"><span>'+esc(cycleName(i))+'</span><input type="text" dir="auto" data-pi="'+i+'" value="'+esc(n)+'" maxlength="40" placeholder="'+esc(TX.actPh)+'" aria-label="Activité du cycle '+(i+1)+'"></label>';}).join('');
+  $('periodNames').innerHTML=DB.periods.map(function(n,i){return '<div class="cyrow"><span>'+esc(cycleName(i))+'</span><input type="text" dir="auto" data-pi="'+i+'" value="'+esc(n)+'" maxlength="40" placeholder="'+esc(TX.actPh)+'" aria-label="Activité du cycle '+(i+1)+'">'+cycSelHtml(i)+'</div>';}).join('');
   document.querySelectorAll('[data-pt]').forEach(function(i){i.value=DB.settings.points[i.dataset.pt];});
   $('setSpp').value=DB.spp;$('setThreshold').value=DB.settings.threshold;$('setTeacher').value=DB.settings.teacher;$('setArFont').value=arFontKey(DB.settings.arFont);$('verLine').textContent='Version '+APP_SEMVER;$('setAutoDate').checked=DB.settings.autoDate;
   var n=Object.keys(DB.sessions).length;
@@ -3140,7 +3166,15 @@ $('addClassBtn').addEventListener('click',function(){
   if(DB.classes.some(function(x){return x.name.toLowerCase()===v.toLowerCase();})){toast('Cette classe existe déjà');return;}
   DB.classes.push({id:'c'+uid(),name:v});$('newClassName').value='';persistNow();toast('Classe ajoutée');renderSettings();updateHeader();
 });
-$('periodNames').addEventListener('change',function(e){var i=+e.target.dataset.pi,v=e.target.value.trim().replace(/\s+/g,' ');e.target.value=v;DB.periods[i]=v;persistNow();calReset();toast(cycleLabel(i));});
+$('periodNames').addEventListener('change',function(e){
+  if(e.target.dataset.cy!=null){var ci=+e.target.dataset.cy,na=e.target.value,old=cycAps(ci),ov=0,ovc=[];
+    DB.classes.forEach(function(c){var cur=apsOf(c.id,ci);if(cur===na)return;var n=apsOverCount(c.id,ci,na);if(n){ov+=n;ovc.push(c.name);}});
+    var exc=DB.classes.filter(function(c){var o=apsOver(c.id,ci);return o&&o!==na;}).map(function(c){return c.name;});
+    if((ov||exc.length)&&!confirm(cycleName(ci)+' : « '+APS[na].l+' » pour toutes les classes.'+(exc.length?' Choix propre remplacé pour : '+exc.join(', ')+'.':'')+(ov?' '+plural(ov,'élève')+' ('+ovc.join(', ')+') : des notes déjà saisies dépassent ce barème ou n’y ont pas de colonne. Rien n’est effacé : une note sans colonne n’est pas comptée (elle revient si vous rechoisissez l’activité d’origine) et une note hors barème est exclue de la note /20 jusqu’à correction.':'')+' Continuer ?')){var r0=document.createElement('div');r0.innerHTML=cycSelHtml(ci);e.target.replaceWith(r0.firstChild);return;}
+    cycSet(ci,na);persistNow();var row=e.target.closest('.cyrow');row.querySelectorAll('select.cytype,small.cyov').forEach(function(x){x.remove();});row.insertAdjacentHTML('beforeend',cycSelHtml(ci));
+    toast(cycleName(ci)+' : '+APS[na].l+' (toutes les classes)');return;}
+  var i=+e.target.dataset.pi,v=e.target.value.trim().replace(/\s+/g,' ');e.target.value=v;DB.periods[i]=v;persistNow();calReset();
+  var rw=e.target.closest('.cyrow');if(rw){rw.querySelectorAll('select.cytype,small.cyov').forEach(function(x){x.remove();});rw.insertAdjacentHTML('beforeend',cycSelHtml(i));}toast(cycleLabel(i));});
 $('setSpp').addEventListener('change',function(){var v=parseInt(this.value,10);if(v>0&&v<=30){if(v<DB.spp&&!confirm('Afficher seulement '+v+' séances par cycle ? Les marques des séances au-delà de '+v+' sont conservées mais masquées et non comptées.')){this.value=DB.spp;return;}DB.spp=v;persistNow();toast(v+' séances par cycle');}else this.value=DB.spp;});
 $('setThreshold').addEventListener('change',function(){var v=parseInt(this.value,10);if(v>0&&v<100){DB.settings.threshold=v;persistNow();toast('Seuil d’alerte : '+v);}else this.value=DB.settings.threshold;});
 document.querySelectorAll('[data-pt]').forEach(function(inp){inp.addEventListener('change',function(){var k=inp.dataset.pt,v=parseFloat(String(inp.value).replace(',','.'));if(v>=0&&v<100){DB.settings.points[k]=v;persistNow();toast(CODE_LABEL[k]+' : -'+fmtNum(v)+' pt');}else inp.value=DB.settings.points[k];});});
@@ -3175,7 +3209,7 @@ window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();r
 
 /* ================= API for cloud sync (see sync script below) ================= */
 window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
-  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,normEv:normEv,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
+  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJApp={
