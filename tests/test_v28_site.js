@@ -38,7 +38,7 @@ check('logo B : coureur orange #E85D04 + piste courbe, carré bleu #0B3A6E, sans
 check('favicon.svg : piste épaissie (visible en 32 px), sans livre',/stroke-width="30"/.test(fv)&&/#E85D04/.test(fv)&&!/url\(#pg\)/.test(fv));
 check('marque « Cahier d’EPS » partout (accueil, connexion, en-tête, splash, pied, manifeste, JSON-LD, og:site_name) ; plus aucun « Cahier EPS »',(idx.match(/Cahier d’<b>EPS<\/b>/g)||[]).length===5&&!/Cahier EPS|Cahier <b>EPS<\/b>/.test(idx)&&man.short_name==='Cahier d’EPS'&&/^Cahier d’EPS v1\.28\.0$/.test(man.name)&&ld.name==='Cahier d’EPS'&&/<meta property="og:site_name" content="Cahier d’EPS">/.test(head)&&/<meta name="apple-mobile-web-app-title" content="Cahier d’EPS">/.test(head)&&!/Cahier EPS/.test(fs.readFileSync(D+'cj-pdf.js','utf8')));
 const sw=fs.readFileSync(D+'sw.js','utf8');
-check('sw.js cahier-v28 met en cache logo (dont logo PDF), favicons, icônes, image og',/CACHE = 'cahier-v28'/.test(sw)&&['icons/logo-b.svg','icons/logo-b-pdf.png','icons/favicon-b.svg','icons/favicon-b.ico','icons/favicon-b-32.png','favicon.ico','og-image-b.png','icons/icon-b-192.png','icons/icon-b-512.png','icons/maskable-b-192.png','icons/maskable-b-512.png','icons/apple-touch-icon-b.png'].every(f=>sw.includes("'./"+f+"'")));
+check('sw.js cahier-v28 met en cache logo (dont logo PDF), favicons, icônes, image og',/CACHE = 'cahier-v28(-[a-z])?'/.test(sw)&&['icons/logo-b.svg','icons/logo-b-pdf.png','icons/favicon-b.svg','icons/favicon-b.ico','icons/favicon-b-32.png','favicon.ico','og-image-b.png','icons/icon-b-192.png','icons/icon-b-512.png','icons/maskable-b-192.png','icons/maskable-b-512.png','icons/apple-touch-icon-b.png'].every(f=>sw.includes("'./"+f+"'")));
 const fj=JSON.parse(fs.readFileSync(D+'firebase.json','utf8')).hosting.ignore;
 check('firebase.json exclut .git/.firebase/tests/RELEASE/backups, sert robots/sitemap',['.git','**/.*/**','tests','RELEASE*','backups','**/backups/**'].every(x=>fj.includes(x))&&!fj.some(x=>/robots|sitemap/.test(x)));
 // ================= 2. Preuve : clés de stockage et logique inchangées par rapport à v1.27.0 =================
@@ -53,7 +53,7 @@ const REM_OK=["var sx=String(s.sex||'').toUpperCase();","Object.keys(s).forEach(
 const okRem=rem.every(l=>REM_OK.some(x=>l.startsWith(x)));
 /* chaque ligne retirée a sa remplaçante (mêmes compteurs Abs./R/AJ/Pts dans l’affichage Absences, normalisation élève + ev) */
 const okAdd=add.some(l=>l.startsWith("return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class=\"t pts'"))&&add.some(l=>l.includes("&&k!=='ev'&&"))&&add.some(l=>/var ev=normEv\(s\.ev\);if\(ev\)o\.ev=ev;/.test(l));
-const noWrite=add.every(l=>!/setItem|removeItem|indexedDB|\.clear\(|F\.doc|setDoc|writeBatch|applyJSON|resetLocal|DB\.(?!evals\b|ui\.)[\w.]+\s*=[^=]|DB\.(?!evals\b)\w+\.(push|splice)|sessions\[[^\]]*\]\s*=|\.marks\[[^\]]*\]\s*=|\.marks\.\w+\s*=[^=]|delete\s+(?!e\[k\]|s\.ev)/.test(l));
+const noWrite=add.every(l=>!/setItem|removeItem|indexedDB|\.clear\(|F\.doc|setDoc|writeBatch|applyJSON|resetLocal|DB\.(?!evals\b|ui\.)[\w.]+\s*=[^=]|DB\.(?!evals\b)\w+\.(push|splice)|sessions\[[^\]]*\]\s*=|\.marks\[[^\]]*\]\s*=|\.marks\.\w+\s*=[^=]|delete\s+(?!e\[k\]|s\.ev|DB\.evals\.evt\[)/.test(l));
 check('logique JS : lignes retirées limitées à la version, aux colonnes de synthèse (déplacées dans sumHead/sumFoot/totalsHtml) et à la normalisation élève (+ ev) ('+rem.length+' retirées, '+add.length+' ajoutées)',okRem&&okAdd,JSON.stringify(rem.filter(l=>!REM_OK.some(x=>l.startsWith(x)))).slice(0,300));
 check('aucune écriture ajoutée sur les séances, marques, classes ou réglages : seules s.ev (notes de l’élève) et DB.evals (APS) sont écrites',noWrite,JSON.stringify(add.filter(l=>/DB\.(?!evals\b|ui\.)[\w.]+\s*=[^=]|delete\s/.test(l))).slice(0,300));
 /* v1.28.0 : cj-pdf.js — ajout du relevé de notes */
@@ -163,7 +163,7 @@ ROOT=D.replace(/\/$/,'');
 let sem2='';for(let i=0;i<6&&sem2!=='1.28.0';i++){await U.reload({waitUntil:'networkidle2'});await sleep(1200);sem2=await U.evaluate(()=>window.CJR&&window.CJR.semver);}
 await sleep(1500);const after=await all(U);
 const caches=await U.evaluate(()=>caches.keys());
-check('mise à jour réelle par le service worker : v'+oldsem+' → v'+sem2+' (cache cahier-v28 seul)',oldsem==='1.27.0'&&sem2==='1.28.0'&&caches.includes('cahier-v28')&&!caches.includes('cahier-v27'),JSON.stringify(caches));
+check('mise à jour réelle par le service worker : v'+oldsem+' → v'+sem2+' (cache cahier-v28 seul)',oldsem==='1.27.0'&&sem2==='1.28.0'&&caches.some(c=>/^cahier-v28(-[a-z])?$/.test(c))&&!caches.includes('cahier-v27'),JSON.stringify(caches));
 const deq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 check('classRegister.v2 : contenu identique avant/après (deep-equal) et chaîne brute identique',deq(JSON.parse(before[KEY]),JSON.parse(after[KEY]))&&before[KEY]===after[KEY],(before[KEY]||'').length+' car.');
 const changed=Object.keys(after).filter(k=>before[k]!==after[k]),gone=Object.keys(before).filter(k=>!(k in after));

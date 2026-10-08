@@ -8,7 +8,9 @@ const idx=fs.readFileSync(D+'index.html','utf8'),sw=fs.readFileSync(D+'sw.js','u
 const sem=(idx.match(/APP_SEMVER='([^']+)'/)||[])[1],appv=(idx.match(/APP_VER='([^']+)'/)||[])[1],cache=(sw.match(/CACHE = '([^']+)'/)||[])[1];
 check('version format 1.<n>.<p>',/^1\.\d+\.\d+$/.test(sem),sem);
 check('APP_SEMVER = 1.28.0',sem==='1.28.0');
-check('APP_VER = cache sw.js = cahier-v<version>[-<correctif>] (cahier-v28)',appv===cache&&cache===('cahier-v'+sem.split('.')[1]+(sem.split('.')[2]!=='0'?'-'+sem.split('.')[2]:''))&&cache==='cahier-v28');
+/* aperçu test-128 : suffixe de reconstruction « -b, -c… » accepté (remis à cahier-v28 pour la publication) */
+const cacheBase=cache.replace(/-[a-z]$/,'');
+check('APP_VER = cache sw.js = cahier-v<version>[-<correctif>] (cahier-v28'+(cache!==cacheBase?', aperçu '+cache:'')+')',appv===cache&&cacheBase===('cahier-v'+sem.split('.')[1]+(sem.split('.')[2]!=='0'?'-'+sem.split('.')[2]:''))&&cacheBase==='cahier-v28',cache);
 check('titre SEO + versions v'+sem+' (splash, en-tête, connexion, page d’accueil, Paramètres, manifeste)',idx.includes('<title>Cahier Journalier EPS — registre d’absences et bilans pour professeurs d’EPS au Maroc</title>')&&idx.includes('<div class="sp-ver">v'+sem+'</div>')&&idx.includes('<span class="h-ver">v'+sem+'</span>')&&idx.includes('id="gVer">Version '+sem+'<')&&idx.includes('id="lnVer">Version '+sem+'<')&&idx.includes('id="verLine">Version '+sem+'<')&&man.includes(' v'+sem+'"'));
 check('pied de page PDF lié à APP_SEMVER',fs.readFileSync(D+'cj-pdf.js','utf8').includes("EPS v'+A.semver"));
 check('pas d’ancienne version v1.1 affichée',!/digital v1\.1["<]/.test(idx)&&!/"v1\.1"/.test(man));

@@ -270,12 +270,19 @@ table.grid th.t.g,table.grid th.t.comp,table.grid th.t.tot{background:#eef3fa;co
 table.grid td.t.comp{width:54px;min-width:54px;color:#0f766e;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
 table.grid td.t.tot{width:56px;min-width:56px;color:var(--pri);background:#eef3fa;font-size:14.5px}
 table.grid td.t.tot.lo{color:var(--bad)}
-@media (max-width:480px){table.grid.gv .nm{width:118px;min-width:118px;max-width:118px}table.grid.gv td.t.g{width:46px;min-width:46px;padding:3px 2px}table.grid.gv th.t.g,table.grid.gv th.t.comp,table.grid.gv th.t.tot{font-size:11px;padding:0 1px}table.grid.gv td.t.comp{width:48px;min-width:48px}table.grid.gv td.t.tot{width:50px;min-width:50px}table.grid.gv .yr{display:none}}   /* téléphone, affichage Notes : colonnes compactes, « Année » visible dans l’affichage Absences */
+table.grid th.t.sub{background:#eef3fa;color:var(--pri)}table.grid td.t.sub{width:58px;min-width:58px;color:var(--pri);background:#eef3fa;font-size:14.5px}table.grid td.t.sub.lo{color:var(--bad)}
+table.grid.gp td.t.g{width:64px;min-width:64px}
+table.grid td.t.raw{width:70px;min-width:70px;padding:3px 2px;background:#fff}table.grid td.t.raw input.pin{width:100%;height:36px;min-height:0;border:1px dashed var(--pri-line);border-radius:8px;text-align:center;font:inherit;font-weight:600;font-size:16px;letter-spacing:-.02em;padding:0 2px;background:#fbfcfe;color:var(--ink)}
+table.grid th.t.raw{color:#667085;font-weight:600}
+@media (max-width:480px){table.grid.gv .nm{width:118px;min-width:118px;max-width:118px}table.grid.gv td.t.g{width:46px;min-width:46px;padding:3px 2px}table.grid.gv th.t.g,table.grid.gv th.t.comp,table.grid.gv th.t.tot{font-size:11px;padding:0 1px}table.grid.gv td.t.comp{width:48px;min-width:48px}table.grid.gv td.t.tot{width:50px;min-width:50px}table.grid.gv .yr{display:none}table.grid.gp td.t.g{width:56px;min-width:56px}table.grid.gp td.t.raw{width:60px;min-width:60px}table.grid.gp th.t.raw small{display:none}table.grid.gp td.t.sub{width:52px;min-width:52px}}   /* téléphone, affichage Notes : colonnes compactes, « Année » visible dans l’affichage Absences */
 .attview{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
 .evalbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--pri-soft);font-size:12.5px;color:var(--pri)}
 .evalbar select{min-height:36px;padding:4px 8px;font-size:13px;max-width:100%}
 .evalbar .scale{flex:1 1 100%;font-weight:650}
 .evalbar .btn{min-height:36px;padding:6px 12px;font-size:13px}
+.attview .vseg{flex:1 1 auto;display:flex;max-width:440px}.attview .vseg button{flex:1 1 auto;padding:7px 8px;white-space:nowrap}
+@media (max-width:480px){.attview>.small{display:none}.attview .vseg{max-width:none;width:100%}.attview .vseg button{font-size:12.5px;padding:7px 4px}}
+.evalbar label.rawt{display:inline-flex;align-items:center;gap:6px;font-weight:600;min-height:36px;cursor:pointer}.evalbar label.rawt input{width:18px;height:18px;accent-color:var(--pri)}
 .stbtns button[data-v=M].on{background:#f3e8ff;border-color:#7e22ce;color:#7e22ce}
 .stbtns button[data-v=S].on{background:#dff5f2;border-color:#0f766e;color:#0f766e}
 .stbtns button[data-v=K].on{background:#faf5ff;border-color:#9333ea;color:#9333ea}
@@ -766,7 +773,7 @@ table.gbal tfoot td{font-weight:700}
     </div>
     <div class="pchips" id="attPeriods" role="tablist" aria-label="Cycle"></div>
     <div class="cyctitle" id="attCycle"></div>
-    <div class="attview"><span class="small muted">Affichage</span><div class="seg vseg" id="attView" role="group" aria-label="Colonnes de synthèse"><button type="button" data-v="notes">Notes /20</button><button type="button" data-v="abs">Absences</button></div></div>
+    <div class="attview"><span class="small muted">Affichage</span><div class="seg vseg" id="attView" role="group" aria-label="Colonnes de synthèse"><button type="button" data-v="abs">Absences</button><button type="button" data-v="proc" title="Note procédurale (OP 2007)">Note procédurale</button><button type="button" data-v="notes">Notes /20</button></div></div>
     <div class="evalbar hidden" id="attEval"></div>
     <div class="legend2"><span><span class="lg P">P</span>Présent</span><span><span class="lg A">A</span>Absent</span><span><span class="lg S">ST</span>Sans tenue</span><span><span class="lg M">M</span>Maladie non just.</span><span><span class="lg L">R</span>Retard</span><span><span class="lg K">MJ</span>Maladie just.</span><span><span class="lg J">AJ</span>Abs. justifiée</span><span><span class="lg D">🩺</span>Dispensé</span><span id="attInfo"></span></div>
     <div class="grpbox hidden" id="attGrp"></div>
@@ -1238,14 +1245,19 @@ function normalize(d){
 /* Notes /20 (1.28.0) — champs additifs : s.ev["<classe>|<cycle>"] = {g1,g2,con,aps,t} dans l’élève, DB.evals.aps["<classe>|<cycle>"] = APS du cycle */
 function isAps(a){return a==='coll'||a==='athle'||a==='gym';}
 function normEv(v){if(!v||typeof v!=='object')return null;var o={},n=0;Object.keys(v).forEach(function(k){var e=v[k];if(!/^[^|]+\|\d+$/.test(k)||!e||typeof e!=='object')return;var r={};
-  ['g1','g2','con'].forEach(function(f){var x=parseFloat(e[f]);if(e[f]!=null&&e[f]!==''&&x>=0&&x<=20)r[f]=Math.round(x*100)/100;});if(r.g1==null&&r.g2==null&&r.con==null)return;
-  if(isAps(e.aps))r.aps=e.aps;if(+e.t>0)r.t=+e.t;o[k]=r;n++;});return n?o:null;}
-function normEvals(v,ids){if(!v||typeof v!=='object'||!v.aps||typeof v.aps!=='object')return null;var a={},n=0;Object.keys(v.aps).forEach(function(k){var m=/^([^|]+)\|(\d+)$/.exec(k);if(m&&ids[m[1]]&&isAps(v.aps[k])){a[k]=v.aps[k];n++;}});return n?{aps:a}:null;}
+  ['g1','g2','con'].forEach(function(f){var x=parseFloat(e[f]);if(e[f]!=null&&e[f]!==''&&x>=0&&x<=20)r[f]=Math.round(x*100)/100;});
+  if(typeof e.pr==='string'&&e.pr.trim())r.pr=e.pr.trim().slice(0,24);if(r.g1==null&&r.g2==null&&r.con==null&&r.pr==null)return;
+  if(isAps(e.aps))r.aps=e.aps;if(+e.t>0)r.t=+e.t;
+  Object.keys(e).forEach(function(f){if(!(f in r)&&['g1','g2','con','pr','aps','t'].indexOf(f)<0&&/^[a-z]\w{0,15}$/i.test(f)&&(typeof e[f]==='string'||typeof e[f]==='number'||typeof e[f]==='boolean'))r[f]=typeof e[f]==='string'?e[f].slice(0,64):e[f];});   /* champs ajoutés par une version future : conservés */
+  o[k]=r;n++;});return n?o:null;}
+function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
+  ['aps','evt'].forEach(function(f){var src=v[f];if(!src||typeof src!=='object')return;var a={},c=0;Object.keys(src).forEach(function(k){var m=/^([^|]+)\|(\d+)$/.exec(k),x=src[k];if(m&&ids[m[1]]&&(f==='aps'?isAps(x):typeof x==='string'&&x&&x.length<=40)){a[k]=x;c++;}});if(c){o[f]=a;n++;}});
+  return n?o:null;}   /* aps : APS du cycle · evt : épreuve d’athlétisme du cycle (barèmes de performance, quand ils seront fournis) */
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28';                       /* = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-b';                       /* aperçu test-128 : « -b » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1374,10 +1386,25 @@ function capInfo(cid){var c=cls(cid);if(!c)return {v:3,lv:'',man:false,def:3,old
    Athlétisme : habileté motrice 6/7/7 + comportement moteur (performance) 6/6/7 · Sports collectifs : individuel 6/6/7 + collectif 6/7/7 ·
    Gymnastique : 12/13/14 · Conceptuel : 3 · Comportemental : note comportementale de la classe (5/4/3), calculée d’après les absences, M, R, ST. */
 var APS={
-  coll:{l:'Sport collectif',g:[{k:'g1',l:'Indiv.',t:'Note individuelle'},{k:'g2',l:'Coll.',t:'Note collective'}],max:{TC:[6,6],'1BAC':[6,7],'2BAC':[7,7]}},
-  athle:{l:'Athlétisme',g:[{k:'g1',l:'Habil.',t:'Habileté motrice'},{k:'g2',l:'Perf.',t:'Comportement moteur (performance)'}],max:{TC:[6,6],'1BAC':[7,6],'2BAC':[7,7]}},
-  gym:{l:'Gymnastique',g:[{k:'g1',l:'Gym.',t:'Note de gymnastique'}],max:{TC:[12],'1BAC':[13],'2BAC':[14]}}};
-var APS_KEYS=['coll','athle','gym'],CON_MAX=3,ATT_VIEW='notes';
+  coll:{l:'Sport collectif',g:[{k:'g1',l:'Indiv.',lf:'Individuel',t:'Note individuelle'},{k:'g2',l:'Coll.',lf:'Collectif',t:'Note collective'}],max:{TC:[6,6],'1BAC':[6,7],'2BAC':[7,7]}},
+  athle:{l:'Athlétisme',g:[{k:'g1',l:'Produit',lf:'Produit',t:'Produit (habileté motrice)'},{k:'g2',l:'Perf.',lf:'Performance',t:'Performance (comportement moteur)'}],max:{TC:[6,6],'1BAC':[7,6],'2BAC':[7,7]}},
+  gym:{l:'Gymnastique',g:[{k:'g1',l:'Gym.',lf:'Gymnastique',t:'Note de gymnastique'}],max:{TC:[12],'1BAC':[13],'2BAC':[14]}}};
+var APS_KEYS=['coll','athle','gym'],CON_MAX=3,ATT_VIEW='notes',PERF_RAW=false;   /* ATT_VIEW : 'abs' | 'proc' (note procédurale) | 'notes' — affichage non enregistré */
+/* Barèmes de conversion performance → note « Performance » (athlétisme, OP 2007) — À COMPLÉTER avec les grilles officielles : aucune valeur n’est inventée ici.
+   Format d’une épreuve : PERF_TABLES['vitesse80'] = {l:'Vitesse 80 m',u:'s',low:true,   // low : une valeur plus petite est meilleure (temps)
+     TC:{G:[[perf,note],…],F:[[perf,note],…]}, '1BAC':{…}, '2BAC':{…}}   // lignes triées de la meilleure à la moins bonne : la 1re ligne atteinte donne la note
+   L’épreuve du cycle est enregistrée dans DB.evals.evt["<classe>|<cycle>"] et la performance brute de l’élève dans ev.pr (texte) : aucun changement de schéma. */
+var PERF_TABLES={};
+function perfParse(t){t=String(t==null?'':t).trim().toLowerCase().replace(/,/g,'.');if(!t)return null;var m;
+  if((m=/^(\d+)\s*(?:'|’|′|:|min|mn)\s*(\d+(?:\.\d+)?)\s*(?:"|″|s)?$/.exec(t)))return +m[1]*60+ +m[2];        /* 1'45 · 1:45.3 · 3 min 20 */
+  if((m=/^(\d+(?:\.\d+)?)\s*(s|sec|m|cm)?$/.exec(t)))return m[2]==='cm'?+m[1]/100:+m[1];                       /* 12.4 · 12,4 s · 4,20 m · 420 cm */
+  return null;}
+function evtOf(cid,p){var e=DB.evals&&DB.evals.evt&&DB.evals.evt[evKey(cid,p)];return PERF_TABLES[e]?e:'';}
+function evtSet(cid,p,e){var k=evKey(cid,p);if(!DB.evals||typeof DB.evals!=='object')DB.evals={};if(!DB.evals.evt)DB.evals.evt={};if(e)DB.evals.evt[k]=e;else delete DB.evals.evt[k];}
+function perfMark(cid,p,sid,raw){var T=PERF_TABLES[evtOf(cid,p)],v=perfParse(raw),s=byId(sid);if(!T||v==null)return null;var lv=T[gradeLv(cid)];if(!lv)return null;
+  var rows=lv[s&&s.sex==='F'?'F':'G']||lv.G||lv.F;if(!rows||!rows.length)return null;var mx=gradeSpec(cid,p).cols[1].max;
+  for(var i=0;i<rows.length;i++){if(T.low?v<=rows[i][0]:v>=rows[i][0])return Math.min(mx,rows[i][1]);}return 0;}
+function rawOn(cid,p){if(apsOf(cid,p)!=='athle')return false;if(PERF_RAW||evtOf(cid,p))return true;var k=evKey(cid,p);return studentsIn(cid).some(function(s){return s.ev&&s.ev[k]&&s.ev[k].pr;});}
 function apsGuess(name){var s=String(name||'').toLowerCase();try{s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){}
   if(/gym|acrobat|agres|\bsol\b|saut de cheval|barre|poutre|trampo/.test(s))return 'gym';
   if(/athl|course|endurance|vitesse|demi.?fond|haies|relais|saut|lancer|poids|javelot|disque|marche|sprint/.test(s))return 'athle';return 'coll';}
@@ -1388,13 +1415,14 @@ function apsOf(cid,p){var k=evKey(cid,p),a=DB.evals&&DB.evals.aps&&DB.evals.aps[
   Object.keys(cnt).forEach(function(x){if(!best||cnt[x]>cnt[best])best=x;});return best||apsGuess(DB.periods[p]||'');}
 function apsSet(cid,p,a){if(!APS[a])return;var k=evKey(cid,p);if(!DB.evals||typeof DB.evals!=='object')DB.evals={aps:{}};if(!DB.evals.aps)DB.evals.aps={};DB.evals.aps[k]=a;
   DB.students.forEach(function(s){var e=s.classId===cid&&s.ev&&s.ev[k];if(e)e.aps=a;});}
-function gradeSpec(cid,p){var a=apsOf(cid,p),lv=gradeLv(cid),A=APS[a],mx=A.max[lv],cap=capOf(cid),cols=A.g.map(function(g,i){return {k:g.k,l:g.l,t:g.t,max:mx[i]};});
-  cols.push({k:'con',l:'Concept.',t:'Note conceptuelle',max:CON_MAX});var tot=cap;cols.forEach(function(c){tot+=c.max;});
-  return {aps:a,apsL:A.l,lv:lv,lvKnown:!!levelOf(clsName(cid)),cols:cols,comp:cap,total:r2(tot)};}
+function gradeSpec(cid,p){var a=apsOf(cid,p),lv=gradeLv(cid),A=APS[a],mx=A.max[lv],cap=capOf(cid),cols=A.g.map(function(g,i){return {k:g.k,l:g.l,lf:g.lf,t:g.t,max:mx[i]};});
+  var pm=0;cols.forEach(function(c){pm+=c.max;});var proc=cols.slice();
+  cols.push({k:'con',l:'Concept.',lf:'Conceptuel',t:'Note conceptuelle',max:CON_MAX});var tot=cap;cols.forEach(function(c){tot+=c.max;});
+  return {aps:a,apsL:A.l,lv:lv,lvKnown:!!levelOf(clsName(cid)),cols:cols,proc:proc,procMax:pm,comp:cap,total:r2(tot)};}   /* proc : colonnes de la note procédurale (/12, /13, /14) */
 function evGet(sid,cid,p){var s=byId(sid);return (s&&s.ev&&s.ev[evKey(cid,p)])||null;}
 function evSet(sid,cid,p,k,v){var s=byId(sid);if(!s)return;var key=evKey(cid,p);if(!s.ev||typeof s.ev!=='object')s.ev={};var e=s.ev[key]||{};
   if(v==null)delete e[k];else e[k]=v;e.aps=apsOf(cid,p);e.t=Date.now();
-  if(e.g1==null&&e.g2==null&&e.con==null){delete s.ev[key];if(!Object.keys(s.ev).length)delete s.ev;}else s.ev[key]=e;}
+  if(e.g1==null&&e.g2==null&&e.con==null&&e.pr==null){delete s.ev[key];if(!Object.keys(s.ev).length)delete s.ev;}else s.ev[key]=e;}
 /* Comport. = N − min(N, A×pA + AJ×pAJ + M×pM + MJ×pMJ + R×pR + ST×pST) : N = note comportementale de la classe, p… = points retirés (Paramètres) */
 function compOf(cid,sid,p){var st=perStat(cid,sid,p);return {v:r2(Math.max(0,st.cap-st.ded)),max:st.cap,raw:st.raw,ded:st.ded,st:st,P:DB.settings.points};}
 function compFormula(c){var P=c.P,st=c.st,parts=[];function a(n,co,l){if(n&&co)parts.push(fmtNum(co)+' × '+n+' '+l);}
@@ -1402,7 +1430,8 @@ function compFormula(c){var P=c.P,st=c.st,parts=[];function a(n,co,l){if(n&&co)p
   return fmtNum(c.max)+' − '+(parts.length?(parts.length>1?'(':'')+parts.join(' + ')+(parts.length>1?')':''):'0')+(c.raw>c.max?' → retrait limité à '+fmtNum(c.max):'')+' = '+fmtNum(c.v);}
 function gradeOf(cid,sid,p){var sp=gradeSpec(cid,p),e=evGet(sid,cid,p)||{},c=compOf(cid,sid,p),sum=c.v,ok=true,over=false,vals={};
   sp.cols.forEach(function(k){var v=e[k.k];vals[k.k]=v==null?null:v;if(v==null)ok=false;else if(v>k.max){over=true;ok=false;}else sum+=v;});
-  return {spec:sp,vals:vals,comp:c,complete:ok,over:over,total:ok?r2(sum):null,partial:r2(sum)};}
+  var ps=0,pok=true;sp.proc.forEach(function(k){var v=e[k.k];if(v==null||v>k.max)pok=false;else ps+=v;});
+  return {spec:sp,vals:vals,comp:c,complete:ok,over:over,total:ok?r2(sum):null,partial:r2(sum),proc:pok?r2(ps):null,procPartial:r2(ps),pr:e.pr||''};}
 function capTxt(cid){var i=capInfo(cid);return fmtNum(i.v)+' pts par cycle'+(i.man?' (personnalisée'+(i.lv?', '+i.lv:'')+')':i.lv?' ('+i.lv+')':'');}
 function r2(x){return Math.round(x*100)/100;}
 function addPts(st,cid){var P=DB.settings.points;st.raw=r2(st.U*P.A+st.J*P.J+st.L*P.L+st.M*P.M+st.K*P.K+st.S*P.S);st.cap=capOf(cid);st.ded=r2(Math.min(st.raw,st.cap));st.capped=st.raw>0&&st.raw>=st.cap;return st;}
@@ -1562,9 +1591,9 @@ $('stuDelete').addEventListener('click',function(){
 
 function gradeDetailHtml(s){var cid=s.classId,cur=Math.min(DB.ui.per,DB.periods.length-1),rows='';
   DB.periods.forEach(function(n,i){if(i!==cur&&!evGet(s.id,cid,i))return;var g=gradeOf(cid,s.id,i);
-    rows+='<tr><td>'+esc(cycleName(i))+'<br><small class="muted">'+esc(g.spec.apsL)+'</small></td><td>'+g.spec.cols.map(function(c){var v=g.vals[c.k];return esc(c.l)+' '+(v==null?'–':fmtNum(v))+'/'+fmtNum(c.max);}).join('<br>')+'</td><td>'+fmtNum(g.comp.v)+'/'+fmtNum(g.comp.max)+'</td><td><b>'+(g.total==null?'—':fmtNum(g.total))+'</b>/'+fmtNum(g.spec.total)+'</td></tr>';});
+    rows+='<tr><td>'+esc(cycleName(i))+'<br><small class="muted">'+esc(g.spec.apsL)+'</small></td><td>'+g.spec.cols.map(function(c){var v=g.vals[c.k];return esc(c.l)+' '+(v==null?'–':fmtNum(v))+'/'+fmtNum(c.max);}).join('<br>')+'</td><td>'+(g.proc==null?'—':fmtNum(g.proc))+'/'+fmtNum(g.spec.procMax)+(g.pr?'<br><small class="muted">perf. '+esc(g.pr)+'</small>':'')+'</td><td>'+fmtNum(g.comp.v)+'/'+fmtNum(g.comp.max)+'</td><td><b>'+(g.total==null?'—':fmtNum(g.total))+'</b>/'+fmtNum(g.spec.total)+'</td></tr>';});
   var gc=gradeOf(cid,s.id,cur);
-  return '<h3>Notes /20 – Évaluation OP 2007</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Notes saisies</th><th>Comport.</th><th>Note</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+  return '<h3>Notes /20 – Évaluation OP 2007</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Notes saisies</th><th>Procéd.</th><th>Comport.</th><th>Note</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
     '<p class="small muted" id="detComp">Comport. ('+esc(cycleName(cur))+') = '+esc(compFormula(gc.comp))+'<br>Calcul : note comportementale de la classe ('+fmtNum(gc.comp.max)+') moins les points retirés du cycle : '+['A','AJ','M','MJ','R','ST'].map(function(l,ix){var k=['A','J','M','K','L','S'][ix];return l+' '+fmtNum(DB.settings.points[k]);}).join(' · ')+' (Paramètres › Points retirés).</p>';}
 function openDetail(id){
   var s=byId(id);if(!s)return;var y=yearStat(s.classId,id),th=DB.settings.threshold;
@@ -1669,7 +1698,7 @@ function renderGrid(){
   if(!cid){$('gridWrap').innerHTML='<div class="empty"><b>Aucune classe</b>Ajoutez une classe dans Paramètres.</div>';$('attInfo').textContent='';return;}
   if(!list.length){$('gridWrap').innerHTML='<div class="empty"><b>Aucun élève dans '+esc(clsName(cid))+'</b>Ajoutez-les dans l’onglet Élèves (l’import en masse est le plus rapide).</div>';$('attInfo').textContent='';return;}
   S=cols.n;var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
-  var h='<table class="grid'+(ATT_VIEW==='notes'?' gv':'')+'"><thead><tr><th class="nm">Élève</th>';
+  var h='<table class="grid'+(ATT_VIEW==='notes'?' gv':ATT_VIEW==='proc'?' gv gp':'')+'"><thead><tr><th class="nm">Élève</th>';
   cols.forEach(function(c){if(c.hol){h+='<th class="holh" title="'+esc(c.hol.label)+'">'+esc(holShort(c.hol)===TX.vacShort?TX.vacHead:TX.holHead)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';});
   h+=sumHead(cid,p)+'<th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';var nb=sumCount(cid,p);
   var gq=grpOf(cid),byG=!!(gq&&DB.ui.grp),secs;
@@ -1686,7 +1715,7 @@ function renderGrid(){
     h+=totalsHtml(cid,st.id,p)+'</tr>';firstRow=false;
    });
   });
-  h+='</tbody><tfoot><tr><th class="nm"'+(ATT_VIEW==='notes'?' title="Absents par séance · moyennes de la classe pour les notes">Absents · Moy.':'>Absents')+'</th>';
+  h+='</tbody><tfoot><tr><th class="nm"'+(ATT_VIEW!=='abs'?' title="Absents par séance · moyennes de la classe pour les notes">Absents · Moy.':'>Absents')+'</th>';
   cols.forEach(function(c){h+=c.hol?'<td class="holf"></td>':'<td data-f="'+c.s+'">'+footVal(recs[c.s])+'</td>';});
   h+=sumFoot(cid,p,list)+'<td class="yr"></td></tr></tfoot></table>';
   $('gridWrap').innerHTML=h;
@@ -1694,28 +1723,46 @@ function renderGrid(){
   updateInfo();
 }
 function footVal(r){if(!r)return '';var n=0;for(var k in r.marks)if(r.marks[k].s==='A'&&byId(k)&&byId(k).classId===DB.ui.cls)n++;return n;}
-function sumCount(cid,p){return ATT_VIEW==='notes'?gradeSpec(cid,p).cols.length+2:4;}
-function sumHead(cid,p){if(ATT_VIEW!=='notes')return '<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th>';
+function sumCount(cid,p){if(ATT_VIEW==='proc'){var sp=gradeSpec(cid,p);return sp.proc.length+(rawOn(cid,p)?1:0)+1;}return ATT_VIEW==='notes'?gradeSpec(cid,p).cols.length+2:4;}
+function procHead(cid,p){var sp=gradeSpec(cid,p),raw=rawOn(cid,p),h='';sp.proc.forEach(function(c){if(raw&&c.k==='g2')h+='<th class="t raw" title="Performance brute (temps ou distance), facultative">Perf. brute<small>temps/dist.</small></th>';h+='<th class="t g" title="'+esc(c.t)+' (sur '+fmtNum(c.max)+')">'+esc(c.lf)+'<small>/'+fmtNum(c.max)+'</small></th>';});
+  return h+'<th class="t sub" title="Note procédurale = '+esc(sp.proc.map(function(c){return c.lf;}).join(' + '))+' (sur '+fmtNum(sp.procMax)+')">Procéd.<small>/'+fmtNum(sp.procMax)+'</small></th>';}
+function sumHead(cid,p){if(ATT_VIEW==='proc')return procHead(cid,p);if(ATT_VIEW!=='notes')return '<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th>';
   var sp=gradeSpec(cid,p),h='';sp.cols.forEach(function(c){h+='<th class="t g" title="'+esc(c.t)+' (sur '+fmtNum(c.max)+')">'+esc(c.l)+'<small>/'+fmtNum(c.max)+'</small></th>';});
   return h+'<th class="t comp" title="Note comportementale calculée d’après A, M, R, ST (sur '+fmtNum(sp.comp)+')">Comport.<small>/'+fmtNum(sp.comp)+'</small></th><th class="t tot" title="Note du cycle">Note<small>/'+fmtNum(sp.total)+'</small></th>';}
 function avgOf(a){return a.length?r2(a.reduce(function(x,y){return x+y;},0)/a.length):null;}
-function sumFoot(cid,p,list){if(ATT_VIEW!=='notes')return '<td></td><td></td><td></td><td></td>';var sp=gradeSpec(cid,p),acc={},cp=[],tt=[];sp.cols.forEach(function(c){acc[c.k]=[];});
+function sumFoot(cid,p,list){if(ATT_VIEW==='proc')return procFoot(cid,p,list);if(ATT_VIEW!=='notes')return '<td></td><td></td><td></td><td></td>';var sp=gradeSpec(cid,p),acc={},cp=[],tt=[];sp.cols.forEach(function(c){acc[c.k]=[];});
   list.forEach(function(s){var g=gradeOf(cid,s.id,p);sp.cols.forEach(function(c){var v=g.vals[c.k];if(v!=null&&v<=c.max)acc[c.k].push(v);});cp.push(g.comp.v);if(g.total!=null)tt.push(g.total);});
   function f(v){return v==null?'':fmtNum(v);}var h='';sp.cols.forEach(function(c){h+='<td class="gf" title="Moyenne">'+f(avgOf(acc[c.k]))+'</td>';});return h+'<td title="Moyenne">'+f(avgOf(cp))+'</td><td title="Moyenne de la classe">'+f(avgOf(tt))+'</td>';}
+function procFoot(cid,p,list){var sp=gradeSpec(cid,p),raw=rawOn(cid,p),acc={},pp=[];sp.proc.forEach(function(c){acc[c.k]=[];});
+  list.forEach(function(s){var g=gradeOf(cid,s.id,p);sp.proc.forEach(function(c){var v=g.vals[c.k];if(v!=null&&v<=c.max)acc[c.k].push(v);});if(g.proc!=null)pp.push(g.proc);});
+  function f(v){return v==null?'':fmtNum(v);}var h='';sp.proc.forEach(function(c){if(raw&&c.k==='g2')h+='<td></td>';h+='<td class="gf" title="Moyenne">'+f(avgOf(acc[c.k]))+'</td>';});return h+'<td title="Moyenne de la classe">'+f(avgOf(pp))+'</td>';}
+function ginHtml(c,v,nm){return '<input class="gin" type="text" inputmode="decimal" autocomplete="off" data-k="'+c.k+'" data-max="'+c.max+'" value="'+(v==null?'':fmtNum(v))+'" placeholder="–" aria-label="'+esc(c.t+' /'+fmtNum(c.max)+' – '+nm)+'">';}
+function subCell(g){var m=g.spec.procMax;return '<td class="t sub'+(g.proc!=null&&g.proc<m/2?' lo':'')+(g.proc==null?' z':'')+'" title="'+esc(g.proc==null?'Note procédurale incomplète (saisie partielle : '+fmtNum(g.procPartial)+')':'Note procédurale sur '+fmtNum(m))+'">'+(g.proc==null?'—':fmtNum(g.proc))+'</td>';}
+function procCells(cid,sid,p){var g=gradeOf(cid,sid,p),raw=rawOn(cid,p),h='',st=byId(sid),nm=st?st.name:'';
+  g.spec.proc.forEach(function(c){var v=g.vals[c.k];if(raw&&c.k==='g2')h+='<td class="t raw"><input class="pin" type="text" inputmode="text" autocomplete="off" maxlength="24" data-k="pr" value="'+esc(g.pr)+'" placeholder="–" title="Performance brute : temps (ex. 12,4 ou 1\'45) ou distance (ex. 4,20 m)" aria-label="'+esc('Performance brute (temps ou distance) – '+nm)+'"></td>';
+    h+='<td class="t g'+(v!=null&&v>c.max?' over':'')+'">'+ginHtml(c,v,nm)+'</td>';});
+  return h+subCell(g);}
 function gradeCells(cid,sid,p){var g=gradeOf(cid,sid,p),h='',st=byId(sid),nm=st?st.name:'';
-  g.spec.cols.forEach(function(c){var v=g.vals[c.k];h+='<td class="t g'+(v!=null&&v>c.max?' over':'')+'"><input class="gin" type="text" inputmode="decimal" autocomplete="off" data-k="'+c.k+'" data-max="'+c.max+'" value="'+(v==null?'':fmtNum(v))+'" placeholder="–" aria-label="'+esc(c.t+' /'+fmtNum(c.max)+' – '+nm)+'"></td>';});
+  g.spec.cols.forEach(function(c){var v=g.vals[c.k];h+='<td class="t g'+(v!=null&&v>c.max?' over':'')+'">'+ginHtml(c,v,nm)+'</td>';});
   return h+compTotCells(g);}
 function compTotCells(g){return '<td class="t comp" title="'+esc('Comport. = '+compFormula(g.comp))+'">'+fmtNum(g.comp.v)+'</td><td class="t tot'+(g.total!=null&&g.total<g.spec.total/2?' lo':'')+(g.total==null?' z':'')+'" title="'+esc(g.total==null?'Note incomplète (saisie partielle : '+fmtNum(g.partial)+')':'Note du cycle')+'">'+(g.total==null?'—':fmtNum(g.total))+'</td>';}
 function totalsHtml(cid,sid,p){
   var st=perStat(cid,sid,p),y=yearStat(cid,sid),th=DB.settings.threshold;
   function t(n,extra){return '<td class="t'+(n?'':' z')+(extra||'')+'">'+n+'</td>';}
   if(ATT_VIEW==='notes')return gradeCells(cid,sid,p)+yrCell(y,th);
+  if(ATT_VIEW==='proc')return procCells(cid,sid,p)+yrCell(y,th);
   return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class="t pts'+(st.ded?'':' z')+(st.capped?' cap':'')+'" title="'+fmtPts(st.raw)+' / '+fmtNum(st.cap)+'">'+fmtPts(st.ded)+'</td>'+yrCell(y,th);
 }
 function yrCell(y,th){return '<td class="t yr'+(y.A?'':' z')+(y.U>=th?' bad':'')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';}
 function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;document.querySelectorAll('#attView button').forEach(function(b){b.classList.toggle('on',b.dataset.v===ATT_VIEW);});
-  if(ATT_VIEW!=='notes'||!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
+  if(ATT_VIEW==='abs'||!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
   var sp=gradeSpec(cid,p);el.classList.remove('hidden');
+  if(ATT_VIEW==='proc'){var ek=Object.keys(PERF_TABLES),ev=evtOf(cid,p);
+    el.innerHTML='<b>Note procédurale · barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b><select id="attAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select>'+
+      (sp.aps==='athle'?(ek.length?'<select id="attEvt" aria-label="Épreuve (barème de performance)"><option value="">Épreuve : saisie manuelle</option>'+ek.map(function(k){return '<option value="'+esc(k)+'"'+(k===ev?' selected':'')+'>'+esc(PERF_TABLES[k].l||k)+'</option>';}).join('')+'</select>':'')+
+        '<label class="rawt"><input type="checkbox" id="attRaw"'+(rawOn(cid,p)?' checked':'')+(PERF_RAW||!rawOn(cid,p)?'':' disabled title="Des performances sont déjà saisies"')+'> Performance brute (facultatif)</label>':'')+
+      '<button type="button" class="btn sec" id="attGradesPdf">📄 Relevé de notes</button>'+
+      '<span class="scale">'+sp.proc.map(function(c){return esc(c.lf)+' /'+fmtNum(c.max);}).join(' + ')+' = '+fmtNum(sp.procMax)+' · mêmes notes que l’affichage Notes /20 · OP 2007'+(sp.aps==='athle'&&!ev?' · note Performance saisie à la main (barèmes officiels à venir)':'')+'</span>';return;}
   el.innerHTML='<b>Barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b><select id="attAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select>'+
     '<button type="button" class="btn sec" id="attGradesPdf">📄 Relevé de notes</button>'+
     '<span class="scale">'+sp.cols.map(function(c){return esc(c.l)+' /'+fmtNum(c.max);}).join(' + ')+' + Comport. /'+fmtNum(sp.comp)+' = '+fmtNum(sp.total)+' · Évaluation OP 2007</span>';}
@@ -1776,20 +1823,30 @@ grid.addEventListener('touchend',function(){clearTimeout(lpTimer);lpStart=null;}
 $('attClass').addEventListener('change',function(){DB.ui.cls=this.value;persist();renderGrpBox();renderEvalBar(DB.ui.cls,DB.ui.per);renderGrid();$('gridWrap').scrollTop=0;});
 /* Notes /20 : bascule d’affichage (non enregistrée), APS du cycle, saisie des notes */
 $('attView').addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b||b.dataset.v===ATT_VIEW)return;ATT_VIEW=b.dataset.v;renderEvalBar(DB.ui.cls,DB.ui.per);renderGrid();});
-$('attEval').addEventListener('change',function(e){if(e.target.id!=='attAps')return;var cid=DB.ui.cls,p=DB.ui.per,a=e.target.value;
+$('attEval').addEventListener('change',function(e){var cid=DB.ui.cls,p=DB.ui.per;
+  if(e.target.id==='attRaw'){PERF_RAW=e.target.checked;renderEvalBar(cid,p);renderGrid();return;}
+  if(e.target.id==='attEvt'){evtSet(cid,p,e.target.value);persist();renderEvalBar(cid,p);renderGrid();toast(e.target.value?'Barème de performance : '+(PERF_TABLES[e.target.value].l||e.target.value):'Note Performance : saisie manuelle');return;}
+  if(e.target.id!=='attAps')return;var a=e.target.value;
   var over=studentsIn(cid).filter(function(s){var ev=evGet(s.id,cid,p);if(!ev)return false;var mx=APS[a].max[gradeLv(cid)];return (ev.g1!=null&&ev.g1>mx[0])||(ev.g2!=null&&(mx.length<2||ev.g2>mx[1]));}).length;
   if(over&&!confirm(plural(over,'élève')+' : des notes déjà saisies dépassent le barème « '+APS[a].l+' » ou n’y ont pas de colonne. Rien n’est effacé : une note sans colonne n’est pas comptée (elle revient si vous rechoisissez l’APS d’origine) et une note hors barème est exclue de la note /20 jusqu’à correction. Continuer ?')){e.target.value=apsOf(cid,p);return;}
   apsSet(cid,p,a);persist();renderEvalBar(cid,p);renderGrid();toast('APS du '+cycleName(p)+' : '+APS[a].l);});
 $('attEval').addEventListener('click',function(e){if(e.target.closest('#attGradesPdf'))runPdf('grades',{cid:DB.ui.cls,p:DB.ui.per});});
-grid.addEventListener('change',function(e){var i=e.target.closest('input.gin');if(!i)return;var tr=i.closest('tr[data-sid]');if(!tr)return;
+/* une seule source : s.ev["<classe>|<cycle>"] — les affichages Note procédurale et Notes /20 lisent et écrivent les mêmes champs (g1, g2, con, pr) */
+function gradeRowUpd(tr,cid,sid,p){var g=gradeOf(cid,sid,p),tmp=document.createElement('tr'),ct=tr.querySelector('td.comp'),tt=tr.querySelector('td.tot'),sb=tr.querySelector('td.sub');
+  if(ct&&tt){tmp.innerHTML=compTotCells(g);ct.replaceWith(tmp.children[0]);tt.replaceWith(tmp.children[0]);}
+  if(sb){tmp.innerHTML=subCell(g);sb.replaceWith(tmp.children[0]);}
+  tr.querySelectorAll('input.gin').forEach(function(x){if(document.activeElement===x)return;var v=g.vals[x.dataset.k];x.value=v==null?'':fmtNum(v);x.parentNode.classList.toggle('over',v!=null&&v>+x.dataset.max);});}
+grid.addEventListener('change',function(e){var pi=e.target.closest('input.pin');if(pi){var ptr=pi.closest('tr[data-sid]');if(!ptr)return;var psid=ptr.dataset.sid,pc=DB.ui.cls,pp=DB.ui.per,pv=String(pi.value).replace(/[<>]/g,'').trim().slice(0,24);
+    evSet(psid,pc,pp,'pr',pv||null);var pm=pv?perfMark(pc,pp,psid,pv):null;if(pm!=null)evSet(psid,pc,pp,'g2',Math.round(pm*4)/4);persist();pi.value=pv;gradeRowUpd(ptr,pc,psid,pp);gradeFootUpd();
+    if(pv&&perfParse(pv)==null)toast('Performance enregistrée telle quelle (format non reconnu : ex. 12,4 · 1\'45 · 4,20 m)');return;}
+  var i=e.target.closest('input.gin');if(!i)return;var tr=i.closest('tr[data-sid]');if(!tr)return;
   var sid=tr.dataset.sid,cid=DB.ui.cls,p=DB.ui.per,k=i.dataset.k,mx=+i.dataset.max,raw=String(i.value).trim().replace(',','.'),v=null,old=evGet(sid,cid,p);
   if(raw!==''){v=parseFloat(raw);if(isNaN(v)||!/^\d*\.?\d*$/.test(raw)||v<0||v>mx){toast('Note entre 0 et '+fmtNum(mx));i.value=old&&old[k]!=null?fmtNum(old[k]):'';return;}v=Math.round(v*4)/4;}
   evSet(sid,cid,p,k,v);persist();i.value=v==null?'':fmtNum(v);i.parentNode.classList.toggle('over',v!=null&&v>mx);
-  var g=gradeOf(cid,sid,p),ct=tr.querySelector('td.comp'),tt=tr.querySelector('td.tot');if(ct&&tt){var tmp=document.createElement('tr');tmp.innerHTML=compTotCells(g);ct.replaceWith(tmp.children[0]);tt.replaceWith(tmp.children[0]);}
-  gradeFootUpd();});
-function gradeFootUpd(){if(ATT_VIEW!=='notes')return;var cid=DB.ui.cls,p=DB.ui.per,tf=$('gridWrap').querySelector('tfoot tr');if(!tf)return;var cells=tf.querySelectorAll('td'),n=sumCount(cid,p),tmp=document.createElement('tr');tmp.innerHTML=sumFoot(cid,p,studentsIn(cid));var nc=tmp.querySelectorAll('td'),off=cells.length-1-n;for(var q=0;q<n&&off+q>=0;q++)cells[off+q].textContent=nc[q].textContent;}
-grid.addEventListener('keydown',function(e){var i=e.target.closest('input.gin');if(!i||e.key!=='Enter')return;e.preventDefault();var tr=i.closest('tr[data-sid]'),nx=tr&&tr.nextElementSibling;while(nx&&!nx.dataset.sid)nx=nx.nextElementSibling;
-  i.blur();var ni=nx&&nx.querySelector('input.gin[data-k="'+i.dataset.k+'"]');if(ni){ni.focus();ni.select&&ni.select();}});
+  gradeRowUpd(tr,cid,sid,p);gradeFootUpd();});
+function gradeFootUpd(){if(ATT_VIEW==='abs')return;var cid=DB.ui.cls,p=DB.ui.per,tf=$('gridWrap').querySelector('tfoot tr');if(!tf)return;var cells=tf.querySelectorAll('td'),n=sumCount(cid,p),tmp=document.createElement('tr');tmp.innerHTML=sumFoot(cid,p,studentsIn(cid));var nc=tmp.querySelectorAll('td'),off=cells.length-1-n;for(var q=0;q<n&&off+q>=0;q++)cells[off+q].textContent=nc[q].textContent;}
+grid.addEventListener('keydown',function(e){var i=e.target.closest('input.gin,input.pin');if(!i||e.key!=='Enter')return;e.preventDefault();var tr=i.closest('tr[data-sid]'),nx=tr&&tr.nextElementSibling;while(nx&&!nx.dataset.sid)nx=nx.nextElementSibling;
+  i.blur();var ni=nx&&nx.querySelector('input[data-k="'+i.dataset.k+'"]');if(ni){ni.focus();ni.select&&ni.select();}});
 $('attPeriods').addEventListener('click',function(e){var b=e.target.closest('[data-p]');if(!b)return;DB.ui.per=+b.dataset.p;persist();renderAttendance();});
 document.querySelectorAll('#view-attendance .seg:not(.vseg) button').forEach(function(b){b.addEventListener('click',function(){DB.ui.mode=b.dataset.mode;persist();renderAttendance();toast(DB.ui.mode==='edit'?'Touchez une case pour choisir le statut (A, ST, M, R, MJ, AJ), le motif ou 🩺 Dispensé':'Touchez une case pour alterner P → A → ST → M → R → MJ → AJ');});});
 
@@ -3002,7 +3059,7 @@ window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();r
 
 /* ================= API for cloud sync (see sync script below) ================= */
 window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
-  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
+  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,PERF_TABLES:PERF_TABLES,perfParse:perfParse,perfMark:perfMark,evtOf:evtOf,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJApp={
