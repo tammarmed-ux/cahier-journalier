@@ -1,7 +1,7 @@
 {
-  "name": "Cahier Journalier digital v1.23.0",
-  "short_name": "Cahier",
-  "description": "Cahier journalier de l’enseignant : élèves, présences, absences, emploi du temps et cycles.",
+  "name": "Cahier Journalier EPS v1.24.0",
+  "short_name": "Cahier EPS",
+  "description": "Cahier journalier du professeur d’EPS : élèves, appel et absences, bilans de classe, PDF et exports Excel, même hors ligne.",
   "lang": "fr",
   "dir": "ltr",
   "id": "./",
@@ -9,13 +9,42 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "theme_color": "#0732f3",
-  "background_color": "#f3f5f8",
-  "categories": ["education", "productivity"],
+  "theme_color": "#0B3A6E",
+  "background_color": "#0B3A6E",
+  "categories": [
+    "education",
+    "productivity"
+  ],
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

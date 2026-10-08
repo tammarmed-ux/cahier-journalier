@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cahier-eps-ma.web.app/sitemap.xml
