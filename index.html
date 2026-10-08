@@ -465,6 +465,31 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 #homeToday .occ-t{background:#fff;border:1px solid var(--pri-line);border-radius:11px;padding:5px 0;color:var(--pri)}
 #homeToday .occ li.occ-as .occ-t{border-color:#f2d7a6;color:var(--acc-d)}
 #homeStats .stat{border:0;background:linear-gradient(180deg,#F7F9FC,#EEF2F8);border-radius:14px}
+/* ===== 1.28.0 (-k) : Statistiques globales modernisées + évolution semaine précédente → semaine en cours (affichage seulement) ===== */
+#homeStats .hs-cap{margin:-4px 0 10px;line-height:1.35}
+.hs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(min-width:560px){.hs-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.hs{--c:var(--pri);--s:#E8EFF8;position:relative;min-width:0;border-radius:16px;background:linear-gradient(180deg,#fff,#F7F9FC);border:1px solid var(--line);box-shadow:0 1px 2px rgba(16,24,40,.05),0 6px 14px -10px rgba(16,24,40,.28);padding:10px 10px 9px;display:flex;flex-direction:column;gap:3px}
+.hs.wide{grid-column:1/-1}
+.hs-top{display:flex;align-items:center;gap:8px;min-width:0}
+.hs-ic{flex:0 0 32px;width:32px;height:32px;border-radius:10px;background:var(--s);color:var(--c);display:flex;align-items:center;justify-content:center}
+.hs-ic svg{width:18px;height:18px}
+.hs-v{font-size:24px;font-weight:800;line-height:1;color:var(--c);font-variant-numeric:tabular-nums}
+.hs-l{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.25}
+.hs.st{flex-direction:row;align-items:center;gap:8px}.hs.st .hs-top{flex:0 0 auto}.hs.st .hs-v{color:var(--ink)}
+.hs-ev{display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 7px;margin-top:4px;min-height:26px}
+.hs-bars{flex:0 0 auto;width:34px;height:24px;overflow:visible}
+.hs-bars rect{transform-box:fill-box;transform-origin:bottom;animation:hsGrow .5s ease-out both}
+.hs-bars .pv{fill:#C9D2DE}.hs-bars .cu{fill:currentColor}
+.hs-b{font-size:12.5px;font-weight:800;border-radius:999px;padding:2px 7px;white-space:nowrap;background:var(--bs);color:var(--bc)}
+.hs-vs{font-size:11.5px;color:var(--muted);white-space:nowrap;align-self:center}
+.hs-ev.good{--bc:#166534;--bs:#E3F5EA;color:#22A05A}.hs-ev.bad{--bc:#B42318;--bs:#FDEBEC;color:#E5484D}
+.hs-ev.neu{--bc:#1F4F8A;--bs:#E8EFF8;color:#2F6DB5}.hs-ev.flat{--bc:#475467;--bs:#EEF1F5;color:#98A2B3}
+.hs-ev.none .hs-b{background:#F2F4F7;color:#667085;font-weight:700}
+.hs .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hs.k-A,.hs.k-U{--c:#C2262E;--s:#FDEBEC}.hs.k-S{--c:#0F766E;--s:#E3F4F1}.hs.k-M{--c:#7E22CE;--s:#F3E8FF}.hs.k-L{--c:#B86E00;--s:#FFF3DC}.hs.k-K{--c:#9333EA;--s:#FAF5FF}.hs.k-held{--c:#0B3A6E;--s:#E8EFF8}
+@keyframes hsGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.hs-bars rect{animation:none}}
 @media (prefers-reduced-motion:reduce){.qa,.hh-go,.hh-tile{transition:none}.qa:active,.hh-go:active,.hh-tile:active,.qa:hover{transform:none}}
 table.cmp{width:100%;border-collapse:collapse;font-size:13.5px}
 table.cmp th,table.cmp td{padding:7px 3px}
@@ -1421,7 +1446,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28-j';                       /* aperçu test-128 : « -j » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v28-k';                       /* aperçu test-128 : « -k » (remettre 'cahier-v28' dans index.html et sw.js pour la publication) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2650,6 +2675,31 @@ function occList(list,noDate){
     return '<li><div class="occ-t"><b>'+esc(t.start)+'</b><span>'+esc(t.end)+'</span></div><div class="occ-m"><b>'+esc(clsName(t.classId))+'</b><span class="small muted">'+(noDate?'':esc(TX.daysShort[t.day])+' '+shortDate(o.date)+' · ')+(o.cyc>=0?esc(TX.cyc+(o.cyc+1))+(o.s>=0?' · S'+sessNo(t.classId,o.cyc,o.s)+(o.s>=DB.spp?esc(TX.extra):''):''):esc(TX.outCycle))+(t.room?' · '+esc(t.room):'')+'</span></div>'+(o.cyc>=0?'<button class="btn sec sm" data-open="'+esc(t.classId)+'" data-p="'+o.cyc+'">'+esc(TX.openGrid)+'</button>':'')+'</li>';
   }).join('')+'</ul>';
 }
+/* 1.28.0 (-k) : évolution semaine précédente → semaine en cours — AFFICHAGE SEULEMENT, calculée à partir des séances enregistrées
+   (DB.sessions) et de leur date (sessDate : date saisie ou date déduite de l’emploi du temps ; jours fériés / vacances jamais comptés).
+   Base équitable : semaine en cours du lundi à aujourd’hui, comparée à la même période de la semaine précédente (lundi → même jour). */
+function weekRange(t){var wd=wday(t),m0=addDays(t,1-wd);return {from:m0,to:t,pfrom:addDays(m0,-7),pto:addDays(t,-7),full:wd===7};}
+function weekStat(a,b){var st=emptyStat();DB.classes.forEach(function(c){var list=studentsIn(c.id);for(var p=0;p<DB.periods.length;p++){var S=sessCount(c.id,p);
+  for(var s=0;s<S;s++){var r=DB.sessions[skey(c.id,p,s)];if(!r)continue;var d=sessDate(c.id,p,s);if(!d||d<a||d>b)continue;st.held++;list.forEach(function(x){addMark(st,r.marks&&r.marks[x.id]);});}}});return st;}
+function weekCmp(t){var R=weekRange(t||todayStr());R.cur=weekStat(R.from,R.to);R.prev=weekStat(R.pfrom,R.pto);R.ok=R.cur.held>0&&R.prev.held>0;return R;}
+var HS_IC={stu:'<path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M21 19v-1a4 4 0 0 0-3-3.9M15.5 4.1a3.5 3.5 0 0 1 0 6.8"/>',
+  cls:'<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>',held:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18M9 15l2 2 4-4"/>',
+  A:'<circle cx="9" cy="8" r="4"/><path d="M3 20a6 6 0 0 1 12 0M17 8l4 4M21 8l-4 4"/>',U:'<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/>',
+  S:'<path d="M8 3 4 6l2 4 2-1v12h8V9l2 1 2-4-4-3a4 4 0 0 1-8 0Z"/>',M:'<path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/><path d="M12 17v.5"/>',
+  L:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>',K:'<path d="M5 3v6a5 5 0 0 0 10 0V3M5 3H3M15 3h2M10 14v2a5 5 0 0 0 10 0v-3"/><circle cx="20" cy="11" r="2"/>'};
+function hsIc(k){return '<span class="hs-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+HS_IC[k]+'</svg></span>';}
+function hsEv(W,k,lab,neutral){if(!W.ok)return '<div class="hs-ev none" data-dir="none"><span class="hs-b">— pas de comparaison</span></div>';
+  var a=k==='held'?W.prev.held:W.prev[k],b=k==='held'?W.cur.held:W.cur[k],d=b-a,dir=d>0?'up':d<0?'down':'flat',cl=dir==='flat'?'flat':neutral?'neu':(dir==='down'?'good':'bad'),mx=Math.max(a,b,1);
+  function bar(x,v,c){var hh=v?Math.max(3,Math.round(v/mx*22)):1.5;return '<rect class="'+c+'" x="'+x+'" y="'+(24-hh)+'" width="13" height="'+hh+'" rx="3"/>';}
+  var badge=dir==='flat'?'= stable':(dir==='up'?'▲ +':'▼ −')+Math.abs(d),txt=lab+' : semaine dernière '+a+', cette semaine '+b+(dir==='flat'?', stable':', '+(dir==='up'?'en hausse':'en baisse')+' de '+Math.abs(d))+(neutral||dir==='flat'?'':(cl==='good'?' (bon signe)':' (à surveiller)'));
+  return '<div class="hs-ev '+cl+'" data-dir="'+dir+'" data-prev="'+a+'" data-cur="'+b+'" title="'+esc(txt)+'"><svg class="hs-bars" viewBox="0 0 34 24" aria-hidden="true">'+bar(1,a,'pv')+bar(19,b,'cu')+'</svg><span class="hs-b" aria-hidden="true">'+badge+'</span><span class="hs-vs" aria-hidden="true">'+a+' → '+b+'</span><span class="sr">'+esc(txt)+'</span></div>';}
+function homeStatsHtml(S,T){var W=weekCmp(),dm=function(x){return TX.daysShort[wday(x)].toLowerCase()+' '+x.slice(8,10)+'/'+x.slice(5,7);};
+  function st(k,v,l){return '<div class="hs st k-'+k+'">'+'<div class="hs-top">'+hsIc(k)+'</div><div><b class="hs-v">'+v+'</b><div class="hs-l">'+esc(l)+'</div></div></div>';}
+  function tl(k,v,l,wide,neutral){return '<div class="hs k-'+k+(wide?' wide':'')+'" data-k="'+k+'"><div class="hs-top">'+hsIc(k)+'<b class="hs-v">'+v+'</b></div><div class="hs-l">'+esc(l)+'</div>'+hsEv(W,k,l,neutral)+'</div>';}
+  var cap=W.full?'Évolution : semaine du '+dm(W.from)+' au '+dm(W.to)+' comparée à la semaine précédente.':'Évolution : semaine en cours ('+dm(W.from)+' → '+dm(W.to)+') comparée à la même période de la semaine dernière ('+dm(W.pfrom)+' → '+dm(W.pto)+').';
+  return '<div class="card" id="homeStats"><h2>'+esc(TX.statsTitle)+'</h2><p class="small muted hs-cap" id="hsCap">'+esc(cap)+(W.ok?' Vert = baisse des absences (bon signe), rouge = hausse.':' Pas de comparaison : aucune séance enregistrée sur l’une des deux périodes (début d’année, vacances…).')+'</p><div class="hs-grid">'+
+    st('stu',S.students,TX.tStudents)+st('cls',S.classes,TX.tClasses)+tl('held',S.held,TX.tHeld,true,true)+
+    tl('A',T.A,TX.tAbs)+tl('U',T.U,TX.tU)+tl('S',T.S,TX.tS)+tl('M',T.M,TX.tM)+tl('L',T.L,TX.tL)+tl('K',T.K,TX.tK)+'</div></div>';}
 function homeStats(){
   var th=DB.settings.threshold,tot=emptyStat(),held=0,per=[],watch=[],K=['A','J','U','L','M','K','S'];
   DB.classes.forEach(function(c){
@@ -2681,9 +2731,7 @@ function renderHome(){
   /* stats */
   var S=homeStats(),T=S.tot;
   h=homeHero(S,occ,nx,cur)+h;   /* 1.28.0 : en-tête + accès rapide en haut de l’Accueil */
-  function tile(v,l,c){return '<div class="stat'+(c?' '+c:'')+'"><b>'+v+'</b><span>'+esc(l)+'</span></div>';}
-  h+='<div class="card" id="homeStats"><h2>'+esc(TX.statsTitle)+'</h2><div class="stats s3">'+tile(S.students,TX.tStudents)+tile(S.classes,TX.tClasses)+tile(S.held,TX.tHeld)+'</div>'+
-    '<div class="stats s4" style="margin-top:8px">'+tile(T.A,TX.tAbs,'bad')+tile(T.U,TX.tU,'bad')+tile(T.S,TX.tS)+tile(T.M,TX.tM)+tile(T.L,TX.tL,'warn')+tile(T.K,TX.tK)+tile(T.J,TX.tJ,'ok')+'</div></div>';
+  h+=homeStatsHtml(S,T);   /* 1.28.0 (-k) : tuiles modernisées + évolution hebdomadaire ; tuile « Justifiées (AJ) » retirée (demande du propriétaire) */
   /* comparison */
   var mx=0;S.per.forEach(function(r){if(r.rate>mx)mx=r.rate;});
   h+='<div class="card" id="homeCmp"><h2>'+esc(TX.cmpTitle)+'</h2><table class="cmp"><thead><tr>'+TX.cmpHead.map(function(x,i){return '<th'+(i?'':' style="text-align:left"')+'>'+esc(x)+'</th>';}).join('')+'</tr></thead><tbody>'+
