@@ -4,7 +4,7 @@
 var A=window.CJR;if(!A||!window.jspdf)return;
 var jsPDF=window.jspdf.jsPDF;
 var W=210,H=297,M=14,TOP=30,BOT=17;
-var PRI=[7,50,243],INK=[28,36,48],MUTED=[102,112,133],LINE=[222,227,236],WHITE=[255,255,255];
+var PRI=[11,58,110],INK=[28,36,48],MUTED=[102,112,133],LINE=[222,227,236],WHITE=[255,255,255];
 /* présence = vert, reste (absences) = rouge : couleurs accessibles fortes */
 var PG=[22,163,74],PR=[220,38,38];
 function restPct(r){return r==null?'—':pct(1-r,r>=0.995||r<=0.005?0:1);}
