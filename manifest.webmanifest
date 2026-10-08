@@ -1,5 +1,5 @@
 {
-  "name": "Cahier d’EPS v1.25.0",
+  "name": "Cahier d’EPS v1.25.1",
   "short_name": "Cahier d’EPS",
   "description": "Cahier journalier du professeur d’EPS : élèves, appel et absences, bilans de classe, PDF et exports Excel, même hors ligne.",
   "lang": "fr",
@@ -17,31 +17,31 @@
   ],
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "icons/icon-b-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icons/icon-b-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/logo.svg",
+      "src": "icons/logo-b.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "icons/maskable-192.png",
+      "src": "icons/maskable-b-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icons/maskable-512.png",
+      "src": "icons/maskable-b-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
