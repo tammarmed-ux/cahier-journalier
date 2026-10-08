@@ -1,5 +1,5 @@
 /* Cahier journalier digital – service worker (cache-first, hors ligne) */
-const CACHE = 'cahier-v24';
+const CACHE = 'cahier-v25';
 const ASSETS = [
   './',
   './index.html',
@@ -11,7 +11,7 @@ const ASSETS = [
   './icons/maskable-512.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
-  /* logo Cahier EPS (1.24.0) */
+  /* logo Cahier d’EPS (1.25.0 : coureur + piste) */
   './icons/logo.svg',
   './icons/favicon.svg',
   './favicon.ico',
