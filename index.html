@@ -44,7 +44,7 @@
  "inLanguage": "fr",
  "url": "https://cahier-eps-ma.web.app/",
  "image": "https://cahier-eps-ma.web.app/og-image-b.png",
- "softwareVersion": "1.26.0",
+ "softwareVersion": "1.27.0",
  "offers": {
   "@type": "Offer",
   "price": "0",
@@ -271,6 +271,14 @@ table.grid td.t.cap{background:var(--bad-soft);color:var(--bad)}
 #repTable td.capc{background:var(--bad-soft)!important;color:var(--bad);font-weight:700}
 #repTable td.ptsc small{font-weight:600;font-size:11px}
 .capin{flex:0 0 72px!important;width:72px;padding:8px!important;text-align:center}
+.clsrow.hascap{border-bottom:0;padding-bottom:2px}
+.capline{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:2px 0 10px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.capline .caplbl{flex:1 1 auto}
+.capline .capsel{flex:1 1 100%;order:5;min-width:0;max-width:100%;min-height:40px;font-size:12.5px;padding:6px 8px}
+.capline .capin{flex:0 0 60px!important;width:60px;min-height:38px;padding:6px!important}
+.capline .capinfo,.capline .capold{order:6}
+.capline .capinfo{flex:1 1 100%;line-height:1.35}
+.capline .capold{flex:1 1 100%;color:var(--warn)}
 .clshead{font-size:12px;color:var(--muted);font-weight:650;border-bottom:1px solid var(--line)}
 table.grid td.c.K{background:#faf5ff;color:#9333ea}
 /* Dispensé (exempted from sport): purple cell struck by a vertical line; marks stay visible on top */
@@ -616,11 +624,11 @@ table.gbal tfoot td{font-weight:700}
 </head>
 <body>
 <!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
-<div id="splash" role="img" aria-label="Cahier d’EPS v1.26.0">
+<div id="splash" role="img" aria-label="Cahier d’EPS v1.27.0">
   <video id="splashVid" muted playsinline autoplay preload="auto"></video>
   <div class="sp-box"><img class="sp-logo" src="icons/logo-b.svg" alt="Cahier d’EPS" width="190" height="190" decoding="async" fetchpriority="high">
   <div class="sp-name">Cahier d’<b>EPS</b></div>
-  <div class="sp-ver">v1.26.0</div></div>
+  <div class="sp-ver">v1.27.0</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
 </div>
 <!-- Page d’accueil publique : HTML statique (indexable). Visible seulement sans session mémorisée (html.cj-land) ; l’application reste masquée (html.cj-locked) -->
@@ -685,7 +693,7 @@ table.gbal tfoot td{font-weight:700}
   <footer class="ln-foot">
     <div class="ln-in">
       <span class="ln-brand"><img src="icons/logo-b.svg" alt="" width="28" height="28"><span>Cahier d’<b>EPS</b></span></span>
-      <span>Cahier Journalier digital · <span id="lnVer">Version 1.26.0</span></span>
+      <span>Cahier Journalier digital · <span id="lnVer">Version 1.27.0</span></span>
       <a href="https://cahier-eps-ma.web.app/">cahier-eps-ma.web.app</a>
     </div>
   </footer>
@@ -699,13 +707,13 @@ table.gbal tfoot td{font-weight:700}
       <div class="g-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Accès sur invitation</div>
     </div>
     <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
-    <div class="g-ver" id="gVer">Version 1.26.0</div>
+    <div class="g-ver" id="gVer">Version 1.27.0</div>
     <button type="button" class="g-back" id="gBack"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>Retour à l’accueil</button>
   </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
-  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.26.0</span></span></div>
+  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.27.0</span></span></div>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -822,7 +830,7 @@ table.gbal tfoot td{font-weight:700}
   </div>
   <div class="card">
     <h2>Classes</h2>
-    <p class="muted small" style="margin-top:0">Renommez une classe en modifiant son nom (ex. « 1BACLSH1 »). Note comportementale = nombre maximum de points retirés par élève et par cycle (par défaut 4 pour les classes 1BAC…, 3 pour les 2BAC… et les autres ; videz la case pour revenir à la valeur par défaut).</p>
+    <p class="muted small" style="margin-top:0">Renommez une classe en modifiant son nom (ex. « 1BACLSH1 »). Note comportementale = nombre maximum de points retirés par élève et par cycle. Par défaut selon le niveau reconnu dans le nom de la classe — Connaissances comportementales (OP 2007) : TC 5 · 1BAC 4 · 2BAC 3 (autres classes : 3). Une valeur personnalisée reste possible pour chaque classe.</p>
     <div id="clsManage"></div>
     <div class="row" style="margin-top:10px"><input type="text" class="grow" id="newClassName" dir="auto" placeholder="Nom de la nouvelle classe" maxlength="40"><button class="btn sec" id="addClassBtn">+ Ajouter</button></div>
   </div>
@@ -865,7 +873,7 @@ table.gbal tfoot td{font-weight:700}
     <button class="btn danger solid" id="wipeAll">Supprimer toutes les données</button>
   </div>
   <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation automatique avec votre compte</p>
-  <p class="verline" id="verLine">Version 1.26.0</p>
+  <p class="verline" id="verLine">Version 1.27.0</p>
 </section>
 </main>
 
@@ -1046,7 +1054,7 @@ var TX={
  add:'Ajouter',addStu:'Ajouter un élève',addStuSub:function(c){return c?'Dans la classe '+c:'Vous choisirez la classe dans la fiche';},
  addCls:'Ajouter une classe',addClsSub:'Nom, note comportementale, séances par semaine',addImp:'Importer une liste',addImpSub:'Excel (.xlsx, .xls), CSV ou liste Massar',
  clsTitle:'Nouvelle classe',clsName:'Nom de la classe',clsNamePh:'ex. TCS3',clsCap:'Note comportementale (points par cycle)',clsCapPh:'automatique',
- clsCapAuto:function(v){return 'Laissez la note comportementale vide pour la règle automatique : 4 points pour les classes 1BAC…, 3 pour les autres (ici : '+v+').';},
+ clsCapAuto:function(v){return 'Laissez la note comportementale vide pour la valeur par défaut selon le niveau — Connaissances comportementales (OP 2007) : TC 5 · 1BAC 4 · 2BAC 3, autres classes 3 (ici : '+v+').';},
  clsPw:'Séances par semaine',clsCreate:'Créer la classe',clsNeed:'Indiquez le nom de la classe.',clsExists:'Cette classe existe déjà.',
  clsAdded:function(n){return 'Classe '+n+' créée';},pwShort:'S/sem.',pwSet:function(c,n){return c+' : '+(n>1?n+' séances':'1 séance')+' par semaine';},
  bkRemind:function(d){return d==null?'💾 Aucune sauvegarde téléchargée pour l’instant.':'💾 Dernière sauvegarde il y a '+d+(d>1?' jours.':' jour.');},
@@ -1178,7 +1186,7 @@ function isBackup(d){return d&&typeof d==='object'&&Array.isArray(d.classes)&&Ar
 function normalize(d){
   var b=blank();if(!isBackup(d))return b;
   var ids={};
-  b.classes=d.classes.filter(function(c){return c&&c.id&&!ids[c.id]&&(ids[c.id]=1);}).map(function(c){var o={id:String(c.id),name:String(c.name||'Classe')},cp=parseFloat(c.cap);if(c.cap!=null&&c.cap!==''&&cp>=0)o.cap=cp;var pw=parseInt(c.pw,10);if(pw>=1&&pw<=10)o.pw=pw;var gq=normGrp(c.grp);if(gq)o.grp=gq;return o;});
+  b.classes=d.classes.filter(function(c){return c&&c.id&&!ids[c.id]&&(ids[c.id]=1);}).map(function(c){var o={id:String(c.id),name:String(c.name||'Classe')},cp=parseFloat(c.cap);if(c.cap!=null&&c.cap!==''&&cp>=0)o.cap=cp;var cm=parseFloat(c.capM);if(c.capM!=null&&c.capM!==''&&cm>=0&&cm<=60)o.capM=cm;var pw=parseInt(c.pw,10);if(pw>=1&&pw<=10)o.pw=pw;var gq=normGrp(c.grp);if(gq)o.grp=gq;return o;});
   var ver=parseInt(d.version,10)||2;
   if(Array.isArray(d.periods)&&d.periods.length){b.periods=d.periods.slice(0,12).map(function(p){p=String(p==null?'':p).trim();if(ver<3&&/^(p[ée]riode|[p]eriod|cycle)\s*\d+$/i.test(p))p='';return p;});if(ver<3&&!b.periods[0])b.periods[0]=TX.act1;}
   if(d.cal&&typeof d.cal==='object'){var dc=d.cal;var wk=parseInt(dc.weeks,10);if(wk>=1&&wk<=20)b.cal.weeks=wk;
@@ -1212,8 +1220,8 @@ function normalize(d){
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_SEMVER='1.26.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.27.0 */
-var APP_VER='cahier-v26';                       /* = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_SEMVER='1.27.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.28.0 */
+var APP_VER='cahier-v27';                       /* = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1325,8 +1333,20 @@ function setCode(r,sid,code){
 function emptyStat(){return {A:0,J:0,U:0,L:0,M:0,K:0,S:0,held:0,raw:0,ded:0};}
 function addMark(st,m){if(!m)return;if(m.s==='L')st.L++;else if(m.s==='M'){if(m.j)st.K++;else st.M++;}else if(m.s==='ST')st.S++;else{st.A++;if(m.j)st.J++;else st.U++;}}
 /* points deduction: per marked session, capped per student per period by the class cap */
-function defaultCap(name){return /^1BAC/i.test(String(name).trim())?4:3;}
-function capOf(cid){var c=cls(cid);return c?(c.cap!=null?c.cap:defaultCap(c.name)):3;}
+/* note comportementale par défaut selon le niveau, lu dans le nom de la classe — Connaissances comportementales (OP 2007) : TC 5 · 1BAC 4 · 2BAC 3 ; autres classes 3.
+   c.capM = valeur personnalisée (1.27.0+). L’ancien champ c.cap (valeur personnalisée avant 1.27.0) est conservé tel quel dans les données mais n’est plus appliqué. */
+var LEVEL_CAP={TC:5,'1BAC':4,'2BAC':3},CAP_RULE='TC 5 · 1BAC 4 · 2BAC 3';
+function levelOf(name){var r=String(name==null?'':name),s=r;
+  if(/جذع/.test(r))return 'TC';if(/باك/.test(r)){if(/أولى|اولى/.test(r))return '1BAC';if(/ثانية/.test(r))return '2BAC';}
+  try{s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){}s=s.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(/^(TC|TRONCCOMMUN)/.test(s))return 'TC';
+  if(/^(1(ERE|RE|ER|E)?(ANNEE)?(DU|DE|D)?BAC|PREMIEREANNEE(DU|DE|D)?BAC)/.test(s))return '1BAC';
+  if(/^(2(EME|E|ND|NDE|IEME)?(ANNEE)?(DU|DE|D)?BAC|DEUXIEMEANNEE(DU|DE|D)?BAC)/.test(s))return '2BAC';
+  return '';}
+function defaultCap(name){var l=levelOf(name);return l?LEVEL_CAP[l]:3;}
+function capOf(cid){var c=cls(cid);return c?(c.capM!=null?c.capM:defaultCap(c.name)):3;}
+function capInfo(cid){var c=cls(cid);if(!c)return {v:3,lv:'',man:false,def:3,old:null};var lv=levelOf(c.name),dv=defaultCap(c.name);return {v:capOf(cid),lv:lv,man:c.capM!=null,def:dv,old:c.cap!=null&&c.capM==null&&c.cap!==dv?c.cap:null};}
+function capTxt(cid){var i=capInfo(cid);return fmtNum(i.v)+' pts par cycle'+(i.man?' (personnalisée'+(i.lv?', '+i.lv:'')+')':i.lv?' ('+i.lv+')':'');}
 function r2(x){return Math.round(x*100)/100;}
 function addPts(st,cid){var P=DB.settings.points;st.raw=r2(st.U*P.A+st.J*P.J+st.L*P.L+st.M*P.M+st.K*P.K+st.S*P.S);st.cap=capOf(cid);st.ded=r2(Math.min(st.raw,st.cap));st.capped=st.raw>0&&st.raw>=st.cap;return st;}
 function fmtNum(x){return String(r2(x)).replace('.',DEC);}
@@ -2011,8 +2031,9 @@ function renderReports(){
   if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' à la note comportementale maximale.</b>';
   var dspN=d.rows.filter(function(r){return year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope);}).length;
   if(dspN)$('repLegend').innerHTML+='<br><span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';
-  var caps=[];cl.forEach(function(c){var v=capOf(c.id);if(caps.indexOf(v)<0)caps.push(v);});caps.sort(function(a,b){return a-b;});
-  $('repInfo').textContent+=' · note comportementale : '+(caps.length>1?fmtNum(caps[0])+' à '+fmtNum(caps[caps.length-1]):fmtNum(caps[0]||0))+' pts par cycle'+(all&&caps.length>1?' (selon la classe)':'');
+  if(!all&&cl[0])$('repInfo').textContent+=' · note comportementale : '+capTxt(cl[0].id);
+  else if(cl.length){var cg=[],cgk={};cl.forEach(function(c){var i=capInfo(c.id),k=fmtNum(i.v)+' pts'+(i.man?' (personnalisée)':i.lv?' ('+i.lv+')':'');if(!cgk[k]){cgk[k]={k:k,v:i.v,n:[]};cg.push(cgk[k]);}cgk[k].n.push(c.name);});
+    cg.sort(function(a,b){return b.v-a.v;});$('repInfo').textContent+=' · note comportementale par cycle : '+cg.map(function(g){return g.k+' : '+g.n.join(', ');}).join(' · ');}
   // alerts across all classes
   var al=[];DB.students.forEach(function(s){var y=yearStat(s.classId,s.id);if(y.U>=th)al.push({s:s,y:y});});
   al.sort(function(a,b){return b.y.U-a.y.U||cmpStu(a.s,b.s);});
@@ -2734,7 +2755,7 @@ function extraModals(){
     '<p class="small muted" id="ncCapHint"></p><div class="actions"><button type="button" class="btn sec" data-close>'+esc(TX.cancel)+'</button><button type="button" class="btn" id="ncSave">'+esc(TX.clsCreate)+'</button></div></div></div>';
 }
 function clsPw(c){return c&&c.pw?c.pw:DB.cal.perWeek;}
-function ncHint(){$('ncCapHint').textContent=TX.clsCapAuto(fmtNum(defaultCap($('ncName').value||'')));}
+function ncHint(){var n=$('ncName').value||'',l=levelOf(n);$('ncCapHint').textContent=TX.clsCapAuto(fmtNum(defaultCap(n))+' pts'+(l?', '+l:''));}
 function wireAdd(){
   $('addStuChoice').addEventListener('click',function(){closeModal('addChoice');openForm(null);});
   $('addClsChoice').addEventListener('click',function(){closeModal('addChoice');$('ncName').value='';$('ncCap').value='';$('ncPw').value=DB.cal.perWeek;ncHint();openModal('clsModal');setTimeout(function(){$('ncName').focus();},50);});
@@ -2744,7 +2765,7 @@ function wireAdd(){
     var v=$('ncName').value.trim().replace(/\s+/g,' ');if(!v){toast(TX.clsNeed);$('ncName').focus();return;}
     if(DB.classes.some(function(x){return x.name.toLowerCase()===v.toLowerCase();})){toast(TX.clsExists);return;}
     var c={id:'c'+uid(),name:v},cp=String($('ncCap').value).trim(),pw=parseInt($('ncPw').value,10);
-    if(cp!==''){var nv=parseFloat(cp.replace(',','.'));if(nv>=0&&nv<=60&&nv!==defaultCap(v))c.cap=nv;}
+    if(cp!==''){var nv=parseFloat(cp.replace(',','.'));if(nv>=0&&nv<=60&&nv!==defaultCap(v))c.capM=nv;}
     if(pw>=1&&pw<=10&&pw!==DB.cal.perWeek)c.pw=pw;
     DB.classes.push(c);persistNow();calReset();closeModal('clsModal');toast(TX.clsAdded(v));
     $('stuClassFilter').value=c.id;DB.ui.cls=c.id;render();
@@ -2761,10 +2782,16 @@ function backupReminderHtml(){
   return '<div class="card remind" id="bkRemind"><b>'+esc(TX.bkRemind(a))+'</b><p class="small">'+esc(TX.bkRemindSub)+'</p><button type="button" class="btn sec" id="bkRemindBtn">'+esc(TX.bkRemindBtn)+'</button></div>';
 }
 /* ================= Settings ================= */
+function capLine(c){var i=capInfo(c.id),dv=fmtNum(i.def);
+  return '<div class="capline" data-cid="'+esc(c.id)+'">'+(i.lv?'<span class="chip">'+esc(i.lv)+'</span>':'')+'<span class="caplbl">Note comportementale</span>'+
+    '<select class="capsel" aria-label="Note comportementale de '+esc(c.name)+'"><option value="auto"'+(i.man?'':' selected')+'>Par défaut selon le niveau ('+CAP_RULE+')</option><option value="m"'+(i.man?' selected':'')+'>Valeur personnalisée</option></select>'+
+    '<input type="number" class="capin" min="0" max="60" step="0.25" inputmode="decimal" value="'+i.v+'"'+(i.man?'':' disabled')+' title="Note comportementale (points par cycle)" aria-label="Note comportementale (points par cycle)"><span>pts / cycle</span>'+
+    (i.man?'<span class="capinfo">Valeur personnalisée (par défaut'+(i.lv?' '+esc(i.lv):'')+' : '+dv+' pts).</span>':i.lv?'':'<span class="capinfo">Niveau non reconnu dans le nom (TC…, 1BAC…, 2BAC…) : '+dv+' pts par défaut.</span>')+
+    (i.old!=null?'<span class="capold">Avant la version 1.27 : '+esc(fmtNum(i.old))+' pts (valeur personnalisée, conservée). Choisissez « Valeur personnalisée » pour la reprendre.</span>':'')+'</div>';}
 function renderSettings(){
   classOptions($('expClass'),$('expClass').value||curCls(),'Toutes les classes');
   periodOptions($('expPeriod'),$('expPeriod').value||String(DB.ui.per),false);
-  $('clsManage').innerHTML=(DB.classes.length?'<div class="clsrow clshead"><span style="flex:1">Classe</span><span style="flex:0 0 72px;font-size:11px;line-height:1.15">Note comportementale</span><span class="cnt"></span><span style="flex:0 0 44px"></span></div>':'')+DB.classes.map(function(c){var n=countIn(c.id);return '<div class="clsrow" data-cid="'+esc(c.id)+'"><input type="text" dir="auto" value="'+esc(c.name)+'" maxlength="40" aria-label="Nom de la classe"><input type="number" class="capin" min="0" max="60" step="0.25" inputmode="decimal" value="'+capOf(c.id)+'" title="Note comportementale (points par cycle)" aria-label="Note comportementale (points par cycle)"><span class="cnt">'+plural(n,'élève')+'</span><button class="btn danger" data-del="1" aria-label="Supprimer la classe">✕</button></div>';}).join('')||'<p class="muted">Aucune classe.</p>';
+  $('clsManage').innerHTML=(DB.classes.length?'<div class="clsrow clshead"><span style="flex:1">Classe</span><span class="cnt"></span><span style="flex:0 0 44px"></span></div>':'')+DB.classes.map(function(c){var n=countIn(c.id);return '<div class="clsrow hascap" data-cid="'+esc(c.id)+'"><input type="text" dir="auto" value="'+esc(c.name)+'" maxlength="40" aria-label="Nom de la classe"><span class="cnt">'+plural(n,'élève')+'</span><button class="btn danger" data-del="1" aria-label="Supprimer la classe">✕</button></div>'+capLine(c);}).join('')||'<p class="muted">Aucune classe.</p>';
   renderCalSettings();
   document.querySelectorAll('#clsManage .clsrow').forEach(function(r){var cnt=r.querySelector('.cnt');if(!cnt)return;if(r.classList.contains('clshead')){cnt.insertAdjacentHTML('beforebegin','<span style="flex:0 0 52px">'+esc(TX.pwShort)+'</span>');return;}var c=cls(r.dataset.cid);cnt.insertAdjacentHTML('beforebegin','<input type="number" class="pwin" min="1" max="10" inputmode="numeric" value="'+clsPw(c)+'" title="'+esc(TX.clsPw)+'" aria-label="'+esc(TX.clsPw)+'">');});
   storeInfo();renderSnaps();
@@ -2812,14 +2839,18 @@ $('expStudents').addEventListener('click',function(){exportStudents($('expClass'
 $('expRecords').addEventListener('click',function(){exportRecords($('expClass').value);});
 $('clsManage').addEventListener('change',function(e){
   if(e.target.classList.contains('pwin')){e.stopImmediatePropagation();var c=cls(e.target.closest('.clsrow').dataset.cid),v=parseInt(e.target.value,10);if(!(v>=1&&v<=10)){e.target.value=clsPw(c);return;}if(v===DB.cal.perWeek)delete c.pw;else c.pw=v;persistNow();toast(TX.pwSet(c.name,v));return;}
+  var cl=e.target.closest('.capline');
+  if(cl){var cc=cls(cl.dataset.cid);if(!cc)return;
+    if(e.target.classList.contains('capsel')){if(e.target.value==='auto')delete cc.capM;else cc.capM=cc.cap!=null?cc.cap:defaultCap(cc.name);}
+    else if(e.target.classList.contains('capin')){var nv=parseFloat(String(e.target.value).trim().replace(',','.'));if(!(nv>=0&&nv<=60)){e.target.value=capOf(cc.id);return;}cc.capM=nv;}
+    else return;
+    persistNow();var fo=e.target.classList.contains('capsel')&&cc.capM!=null;cl.outerHTML=capLine(cc);if(fo){var ni=document.querySelector('#clsManage .capline[data-cid="'+cc.id+'"] .capin');if(ni)ni.focus();}
+    toast('Note comportementale de '+cc.name+' : '+capTxt(cc.id));return;}
   var row=e.target.closest('.clsrow');if(!row||e.target.tagName!=='INPUT')return;var c=cls(row.dataset.cid);
-  if(e.target.classList.contains('capin')){var raw=e.target.value.trim();
-    if(raw===''){delete c.cap;}else{var nv=parseFloat(raw.replace(',','.'));if(!(nv>=0&&nv<=60)){e.target.value=capOf(c.id);return;}if(nv===defaultCap(c.name))delete c.cap;else c.cap=nv;}
-    e.target.value=capOf(c.id);persistNow();toast('Note comportementale de '+c.name+' : '+fmtNum(capOf(c.id))+' pts');return;}
   var v=e.target.value.trim().replace(/\s+/g,' ');
   if(!v){e.target.value=c.name;return;}
   if(DB.classes.some(function(x){return x!==c&&x.name.toLowerCase()===v.toLowerCase();})){toast('Une classe porte déjà ce nom');e.target.value=c.name;return;}
-  c.name=v;if(c.cap==null)row.querySelector('.capin').value=capOf(c.id);persistNow();updateHeader();toast('Classe renommée : '+v);
+  c.name=v;persistNow();var cl2=document.querySelector('#clsManage .capline[data-cid="'+c.id+'"]');if(cl2)cl2.outerHTML=capLine(c);updateHeader();toast('Classe renommée : '+v+(c.capM==null?' · note comportementale '+capTxt(c.id):''));
 });
 $('clsManage').addEventListener('click',function(e){
   var b=e.target.closest('[data-del]');if(!b)return;var c=cls(b.closest('.clsrow').dataset.cid),n=countIn(c.id);
@@ -2869,7 +2900,7 @@ window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();r
 
 /* ================= API for cloud sync (see sync script below) ================= */
 window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
-  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
+  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJApp={
