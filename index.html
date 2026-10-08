@@ -44,7 +44,7 @@
  "inLanguage": "fr",
  "url": "https://cahier-eps-ma.web.app/",
  "image": "https://cahier-eps-ma.web.app/og-image-b.png",
- "softwareVersion": "1.27.0",
+ "softwareVersion": "1.28.0",
  "offers": {
   "@type": "Offer",
   "price": "0",
@@ -262,6 +262,20 @@ table.grid td.c.S{background:#dff5f2;color:#0f766e}
 .lg.M{background:#f3e8ff;color:#7e22ce}.lg.S{background:#dff5f2;color:#0f766e}
 table.grid td.t.pts,table.grid th.pts{width:50px;min-width:50px}
 table.grid td.t.cap{background:var(--bad-soft);color:var(--bad)}
+table.grid td.t.g{width:50px;min-width:50px;padding:3px;background:#fff}
+table.grid td.t.g input.gin{width:100%;height:36px;min-height:0;border:1px solid var(--pri-line);border-radius:8px;text-align:center;font:inherit;font-weight:700;font-size:16px;letter-spacing:-.02em;padding:0 1px;background:#fff;color:var(--ink)}
+table.grid td.t.g input.gin:focus{outline:2px solid var(--pri-2);outline-offset:0;border-color:var(--pri-2)}
+table.grid td.t.g.over input.gin{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+table.grid th.t.g,table.grid th.t.comp,table.grid th.t.tot{background:#eef3fa;color:var(--pri)}
+table.grid td.t.comp{width:54px;min-width:54px;color:#0f766e;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+table.grid td.t.tot{width:56px;min-width:56px;color:var(--pri);background:#eef3fa;font-size:14.5px}
+table.grid td.t.tot.lo{color:var(--bad)}
+@media (max-width:480px){table.grid.gv .nm{width:118px;min-width:118px;max-width:118px}table.grid.gv td.t.g{width:46px;min-width:46px;padding:3px 2px}table.grid.gv th.t.g,table.grid.gv th.t.comp,table.grid.gv th.t.tot{font-size:11px;padding:0 1px}table.grid.gv td.t.comp{width:48px;min-width:48px}table.grid.gv td.t.tot{width:50px;min-width:50px}table.grid.gv .yr{display:none}}   /* téléphone, affichage Notes : colonnes compactes, « Année » visible dans l’affichage Absences */
+.attview{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.evalbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--pri-soft);font-size:12.5px;color:var(--pri)}
+.evalbar select{min-height:36px;padding:4px 8px;font-size:13px;max-width:100%}
+.evalbar .scale{flex:1 1 100%;font-weight:650}
+.evalbar .btn{min-height:36px;padding:6px 12px;font-size:13px}
 .stbtns button[data-v=M].on{background:#f3e8ff;border-color:#7e22ce;color:#7e22ce}
 .stbtns button[data-v=S].on{background:#dff5f2;border-color:#0f766e;color:#0f766e}
 .stbtns button[data-v=K].on{background:#faf5ff;border-color:#9333ea;color:#9333ea}
@@ -624,11 +638,11 @@ table.gbal tfoot td{font-weight:700}
 </head>
 <body>
 <!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
-<div id="splash" role="img" aria-label="Cahier d’EPS v1.27.0">
+<div id="splash" role="img" aria-label="Cahier d’EPS v1.28.0">
   <video id="splashVid" muted playsinline autoplay preload="auto"></video>
   <div class="sp-box"><img class="sp-logo" src="icons/logo-b.svg" alt="Cahier d’EPS" width="190" height="190" decoding="async" fetchpriority="high">
   <div class="sp-name">Cahier d’<b>EPS</b></div>
-  <div class="sp-ver">v1.27.0</div></div>
+  <div class="sp-ver">v1.28.0</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
 </div>
 <!-- Page d’accueil publique : HTML statique (indexable). Visible seulement sans session mémorisée (html.cj-land) ; l’application reste masquée (html.cj-locked) -->
@@ -693,7 +707,7 @@ table.gbal tfoot td{font-weight:700}
   <footer class="ln-foot">
     <div class="ln-in">
       <span class="ln-brand"><img src="icons/logo-b.svg" alt="" width="28" height="28"><span>Cahier d’<b>EPS</b></span></span>
-      <span>Cahier Journalier digital · <span id="lnVer">Version 1.27.0</span></span>
+      <span>Cahier Journalier digital · <span id="lnVer">Version 1.28.0</span></span>
       <a href="https://cahier-eps-ma.web.app/">cahier-eps-ma.web.app</a>
     </div>
   </footer>
@@ -707,13 +721,13 @@ table.gbal tfoot td{font-weight:700}
       <div class="g-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Accès sur invitation</div>
     </div>
     <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
-    <div class="g-ver" id="gVer">Version 1.27.0</div>
+    <div class="g-ver" id="gVer">Version 1.28.0</div>
     <button type="button" class="g-back" id="gBack"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>Retour à l’accueil</button>
   </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
-  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.27.0</span></span></div>
+  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.28.0</span></span></div>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -752,6 +766,8 @@ table.gbal tfoot td{font-weight:700}
     </div>
     <div class="pchips" id="attPeriods" role="tablist" aria-label="Cycle"></div>
     <div class="cyctitle" id="attCycle"></div>
+    <div class="attview"><span class="small muted">Affichage</span><div class="seg vseg" id="attView" role="group" aria-label="Colonnes de synthèse"><button type="button" data-v="notes">Notes /20</button><button type="button" data-v="abs">Absences</button></div></div>
+    <div class="evalbar hidden" id="attEval"></div>
     <div class="legend2"><span><span class="lg P">P</span>Présent</span><span><span class="lg A">A</span>Absent</span><span><span class="lg S">ST</span>Sans tenue</span><span><span class="lg M">M</span>Maladie non just.</span><span><span class="lg L">R</span>Retard</span><span><span class="lg K">MJ</span>Maladie just.</span><span><span class="lg J">AJ</span>Abs. justifiée</span><span><span class="lg D">🩺</span>Dispensé</span><span id="attInfo"></span></div>
     <div class="grpbox hidden" id="attGrp"></div>
   </div>
@@ -798,6 +814,7 @@ table.gbal tfoot td{font-weight:700}
       <button class="btn sec" id="pdfStudents">📄 Liste des élèves</button>
       <button class="btn sec" id="pdfRecords">📄 Détail des absences</button>
       <button class="btn sec" id="pdfGroups">📄 Groupes de travail</button>
+      <button class="btn sec" id="pdfGrades">📄 Relevé de notes /20</button>
       <button class="btn sec" id="pdfTests">📄 Tests physiques</button>
     </div>
     <p class="small muted">Le bilan du cycle porte sur une classe. Avec « Toutes les classes », le bilan annuel devient une synthèse de toutes les classes ; la liste, le détail et les groupes couvrent toutes les classes.</p>
@@ -873,7 +890,7 @@ table.gbal tfoot td{font-weight:700}
     <button class="btn danger solid" id="wipeAll">Supprimer toutes les données</button>
   </div>
   <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation automatique avec votre compte</p>
-  <p class="verline" id="verLine">Version 1.27.0</p>
+  <p class="verline" id="verLine">Version 1.28.0</p>
 </section>
 </main>
 
@@ -1200,9 +1217,9 @@ function normalize(d){
   b.students=d.students.filter(function(s){return s&&s.id&&typeof s.name==='string'&&ids[s.classId];}).map(function(s){
     var o={id:String(s.id),classId:String(s.classId),name:String(s.name),dob:String(s.dob||''),sid:String(s.sid||''),parent:String(s.parent||''),phone:String(s.phone||''),notes:String(s.notes||''),created:s.created||Date.now()};
     var dp=s.dispense;if(dp&&typeof dp==='object'&&(dp.type==='S1'||dp.type==='annee'))o.dispense={type:dp.type,since:/^\d{4}-\d{2}-\d{2}$/.test(dp.since||'')?dp.since:''};
-    var sx=String(s.sex||'').toUpperCase();if(sx==='F'||sx==='G')o.sex=sx;var ph=normPhys(s.phys);if(ph)o.phys=ph;
+    var sx=String(s.sex||'').toUpperCase();if(sx==='F'||sx==='G')o.sex=sx;var ph=normPhys(s.phys);if(ph)o.phys=ph;var ev=normEv(s.ev);if(ev)o.ev=ev;
     /* champs inconnus (ex. données d’une autre version) : conservés tels quels, jamais supprimés silencieusement */
-    Object.keys(s).forEach(function(k){if(!(k in o)&&k!=='sex'&&k!=='phys'&&k!=='dispense'&&s[k]!=null&&typeof s[k]!=='function'){try{o[k]=JSON.parse(JSON.stringify(s[k]));}catch(e){}}});
+    Object.keys(s).forEach(function(k){if(!(k in o)&&k!=='sex'&&k!=='phys'&&k!=='dispense'&&k!=='ev'&&s[k]!=null&&typeof s[k]!=='function'){try{o[k]=JSON.parse(JSON.stringify(s[k]));}catch(e){}}});
     return o;
   });
   Object.keys(d.sessions).forEach(function(k){
@@ -1215,13 +1232,20 @@ function normalize(d){
     if(d.settings.points)['A','L','M','K','S','J'].forEach(function(k){var v=parseFloat(d.settings.points[k]);if(v>=0&&v<100)b.settings.points[k]=v;});}
   if(d.ui){b.ui.cls=String(d.ui.cls||'');b.ui.per=Math.max(0,Math.min(b.periods.length-1,parseInt(d.ui.per,10)||0));b.ui.mode=d.ui.mode==='edit'?'edit':'cycle';b.ui.grp=!!d.ui.grp;}
   b.lastBackup=d.lastBackup||null;
+  var evs=normEvals(d.evals,ids);if(evs)b.evals=evs;
   return b;
 }
+/* Notes /20 (1.28.0) — champs additifs : s.ev["<classe>|<cycle>"] = {g1,g2,con,aps,t} dans l’élève, DB.evals.aps["<classe>|<cycle>"] = APS du cycle */
+function isAps(a){return a==='coll'||a==='athle'||a==='gym';}
+function normEv(v){if(!v||typeof v!=='object')return null;var o={},n=0;Object.keys(v).forEach(function(k){var e=v[k];if(!/^[^|]+\|\d+$/.test(k)||!e||typeof e!=='object')return;var r={};
+  ['g1','g2','con'].forEach(function(f){var x=parseFloat(e[f]);if(e[f]!=null&&e[f]!==''&&x>=0&&x<=20)r[f]=Math.round(x*100)/100;});if(r.g1==null&&r.g2==null&&r.con==null)return;
+  if(isAps(e.aps))r.aps=e.aps;if(+e.t>0)r.t=+e.t;o[k]=r;n++;});return n?o:null;}
+function normEvals(v,ids){if(!v||typeof v!=='object'||!v.aps||typeof v.aps!=='object')return null;var a={},n=0;Object.keys(v.aps).forEach(function(k){var m=/^([^|]+)\|(\d+)$/.exec(k);if(m&&ids[m[1]]&&isAps(v.aps[k])){a[k]=v.aps[k];n++;}});return n?{aps:a}:null;}
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_SEMVER='1.27.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.28.0 */
-var APP_VER='cahier-v27';                       /* = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
+var APP_VER='cahier-v28';                       /* = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1346,6 +1370,39 @@ function levelOf(name){var r=String(name==null?'':name),s=r;
 function defaultCap(name){var l=levelOf(name);return l?LEVEL_CAP[l]:3;}
 function capOf(cid){var c=cls(cid);return c?(c.capM!=null?c.capM:defaultCap(c.name)):3;}
 function capInfo(cid){var c=cls(cid);if(!c)return {v:3,lv:'',man:false,def:3,old:null};var lv=levelOf(c.name),dv=defaultCap(c.name);return {v:capOf(cid),lv:lv,man:c.capM!=null,def:dv,old:c.cap!=null&&c.capM==null&&c.cap!==dv?c.cap:null};}
+/* ===== Notes /20 — Évaluation OP 2007 (TC / 1BAC / 2BAC) =====
+   Athlétisme : habileté motrice 6/7/7 + comportement moteur (performance) 6/6/7 · Sports collectifs : individuel 6/6/7 + collectif 6/7/7 ·
+   Gymnastique : 12/13/14 · Conceptuel : 3 · Comportemental : note comportementale de la classe (5/4/3), calculée d’après les absences, M, R, ST. */
+var APS={
+  coll:{l:'Sport collectif',g:[{k:'g1',l:'Indiv.',t:'Note individuelle'},{k:'g2',l:'Coll.',t:'Note collective'}],max:{TC:[6,6],'1BAC':[6,7],'2BAC':[7,7]}},
+  athle:{l:'Athlétisme',g:[{k:'g1',l:'Habil.',t:'Habileté motrice'},{k:'g2',l:'Perf.',t:'Comportement moteur (performance)'}],max:{TC:[6,6],'1BAC':[7,6],'2BAC':[7,7]}},
+  gym:{l:'Gymnastique',g:[{k:'g1',l:'Gym.',t:'Note de gymnastique'}],max:{TC:[12],'1BAC':[13],'2BAC':[14]}}};
+var APS_KEYS=['coll','athle','gym'],CON_MAX=3,ATT_VIEW='notes';
+function apsGuess(name){var s=String(name||'').toLowerCase();try{s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){}
+  if(/gym|acrobat|agres|\bsol\b|saut de cheval|barre|poutre|trampo/.test(s))return 'gym';
+  if(/athl|course|endurance|vitesse|demi.?fond|haies|relais|saut|lancer|poids|javelot|disque|marche|sprint/.test(s))return 'athle';return 'coll';}
+function evKey(cid,p){return cid+'|'+p;}
+function gradeLv(cid){return levelOf(clsName(cid))||'2BAC';}
+function apsOf(cid,p){var k=evKey(cid,p),a=DB.evals&&DB.evals.aps&&DB.evals.aps[k];if(APS[a])return a;
+  var cnt={},best='';DB.students.forEach(function(s){var e=s.classId===cid&&s.ev&&s.ev[k];if(e&&APS[e.aps])cnt[e.aps]=(cnt[e.aps]||0)+1;});
+  Object.keys(cnt).forEach(function(x){if(!best||cnt[x]>cnt[best])best=x;});return best||apsGuess(DB.periods[p]||'');}
+function apsSet(cid,p,a){if(!APS[a])return;var k=evKey(cid,p);if(!DB.evals||typeof DB.evals!=='object')DB.evals={aps:{}};if(!DB.evals.aps)DB.evals.aps={};DB.evals.aps[k]=a;
+  DB.students.forEach(function(s){var e=s.classId===cid&&s.ev&&s.ev[k];if(e)e.aps=a;});}
+function gradeSpec(cid,p){var a=apsOf(cid,p),lv=gradeLv(cid),A=APS[a],mx=A.max[lv],cap=capOf(cid),cols=A.g.map(function(g,i){return {k:g.k,l:g.l,t:g.t,max:mx[i]};});
+  cols.push({k:'con',l:'Concept.',t:'Note conceptuelle',max:CON_MAX});var tot=cap;cols.forEach(function(c){tot+=c.max;});
+  return {aps:a,apsL:A.l,lv:lv,lvKnown:!!levelOf(clsName(cid)),cols:cols,comp:cap,total:r2(tot)};}
+function evGet(sid,cid,p){var s=byId(sid);return (s&&s.ev&&s.ev[evKey(cid,p)])||null;}
+function evSet(sid,cid,p,k,v){var s=byId(sid);if(!s)return;var key=evKey(cid,p);if(!s.ev||typeof s.ev!=='object')s.ev={};var e=s.ev[key]||{};
+  if(v==null)delete e[k];else e[k]=v;e.aps=apsOf(cid,p);e.t=Date.now();
+  if(e.g1==null&&e.g2==null&&e.con==null){delete s.ev[key];if(!Object.keys(s.ev).length)delete s.ev;}else s.ev[key]=e;}
+/* Comport. = N − min(N, A×pA + AJ×pAJ + M×pM + MJ×pMJ + R×pR + ST×pST) : N = note comportementale de la classe, p… = points retirés (Paramètres) */
+function compOf(cid,sid,p){var st=perStat(cid,sid,p);return {v:r2(Math.max(0,st.cap-st.ded)),max:st.cap,raw:st.raw,ded:st.ded,st:st,P:DB.settings.points};}
+function compFormula(c){var P=c.P,st=c.st,parts=[];function a(n,co,l){if(n&&co)parts.push(fmtNum(co)+' × '+n+' '+l);}
+  a(st.U,P.A,'A');a(st.J,P.J,'AJ');a(st.M,P.M,'M');a(st.K,P.K,'MJ');a(st.L,P.L,'R');a(st.S,P.S,'ST');
+  return fmtNum(c.max)+' − '+(parts.length?(parts.length>1?'(':'')+parts.join(' + ')+(parts.length>1?')':''):'0')+(c.raw>c.max?' → retrait limité à '+fmtNum(c.max):'')+' = '+fmtNum(c.v);}
+function gradeOf(cid,sid,p){var sp=gradeSpec(cid,p),e=evGet(sid,cid,p)||{},c=compOf(cid,sid,p),sum=c.v,ok=true,over=false,vals={};
+  sp.cols.forEach(function(k){var v=e[k.k];vals[k.k]=v==null?null:v;if(v==null)ok=false;else if(v>k.max){over=true;ok=false;}else sum+=v;});
+  return {spec:sp,vals:vals,comp:c,complete:ok,over:over,total:ok?r2(sum):null,partial:r2(sum)};}
 function capTxt(cid){var i=capInfo(cid);return fmtNum(i.v)+' pts par cycle'+(i.man?' (personnalisée'+(i.lv?', '+i.lv:'')+')':i.lv?' ('+i.lv+')':'');}
 function r2(x){return Math.round(x*100)/100;}
 function addPts(st,cid){var P=DB.settings.points;st.raw=r2(st.U*P.A+st.J*P.J+st.L*P.L+st.M*P.M+st.K*P.K+st.S*P.S);st.cap=capOf(cid);st.ded=r2(Math.min(st.raw,st.cap));st.capped=st.raw>0&&st.raw>=st.cap;return st;}
@@ -1503,6 +1560,12 @@ $('stuDelete').addEventListener('click',function(){
   persistNow();closeModal('stuModal');closeModal('detModal');toast('Élève supprimé');render();
 });
 
+function gradeDetailHtml(s){var cid=s.classId,cur=Math.min(DB.ui.per,DB.periods.length-1),rows='';
+  DB.periods.forEach(function(n,i){if(i!==cur&&!evGet(s.id,cid,i))return;var g=gradeOf(cid,s.id,i);
+    rows+='<tr><td>'+esc(cycleName(i))+'<br><small class="muted">'+esc(g.spec.apsL)+'</small></td><td>'+g.spec.cols.map(function(c){var v=g.vals[c.k];return esc(c.l)+' '+(v==null?'–':fmtNum(v))+'/'+fmtNum(c.max);}).join('<br>')+'</td><td>'+fmtNum(g.comp.v)+'/'+fmtNum(g.comp.max)+'</td><td><b>'+(g.total==null?'—':fmtNum(g.total))+'</b>/'+fmtNum(g.spec.total)+'</td></tr>';});
+  var gc=gradeOf(cid,s.id,cur);
+  return '<h3>Notes /20 – Évaluation OP 2007</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Notes saisies</th><th>Comport.</th><th>Note</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<p class="small muted" id="detComp">Comport. ('+esc(cycleName(cur))+') = '+esc(compFormula(gc.comp))+'<br>Calcul : note comportementale de la classe ('+fmtNum(gc.comp.max)+') moins les points retirés du cycle : '+['A','AJ','M','MJ','R','ST'].map(function(l,ix){var k=['A','J','M','K','L','S'][ix];return l+' '+fmtNum(DB.settings.points[k]);}).join(' · ')+' (Paramètres › Points retirés).</p>';}
 function openDetail(id){
   var s=byId(id);if(!s)return;var y=yearStat(s.classId,id),th=DB.settings.threshold;
   var tel=s.phone.replace(/[^\d+]/g,'');
@@ -1526,6 +1589,7 @@ function openDetail(id){
     '<div class="stat ok"><b>'+y.J+'</b><span>Justifiées</span></div>'+
     '<div class="stat bad"><b>'+fmtPts(y.ded)+'</b><span>Points retirés (année)</span></div></div>';
   if(y.U>=th)h+='<p class="small" style="color:var(--bad);font-weight:650">⚠ Seuil d’alerte atteint ('+th+' absences non justifiées).</p>';
+  h+=gradeDetailHtml(s);
   h+='<h3>Par cycle</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Séances</th><th>Abs.</th><th>Non just.</th><th>'+CODE_TXT.S+'</th><th>M</th><th>Retards</th><th>'+CODE_TXT.K+'</th><th>Just.</th><th>Pts</th></tr></thead><tbody>';
   y.per.forEach(function(st,i){function c(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
     h+='<tr><td>'+esc(cycleLabel(i))+'</td>'+c(st.held)+c(st.A)+c(st.U,st.U>=th?'bad-t':'')+c(st.S)+c(st.M)+c(st.L)+c(st.K)+c(st.J)+'<td class="'+(st.ded?(st.capped?'bad-t':''):'z')+'">'+fmtPts(st.ded)+(st.ded?' / '+fmtNum(st.cap):'')+'</td></tr>';});
@@ -1592,10 +1656,10 @@ function curCls(){if(!cls(DB.ui.cls)){var c=DB.classes.filter(function(c){return
 function renderAttendance(){
   var cid=curCls(),p=Math.min(DB.ui.per,DB.periods.length-1);DB.ui.per=p;
   classOptions($('attClass'),cid);
-  document.querySelectorAll('#view-attendance .seg button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===DB.ui.mode);});
+  document.querySelectorAll('#view-attendance .seg:not(.vseg) button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===DB.ui.mode);});
   $('attPeriods').innerHTML=DB.periods.map(function(n,i){return '<button class="pchip'+(i===p?' on':'')+'" data-p="'+i+'" role="tab" aria-selected="'+(i===p)+'">'+esc(cycleName(i))+'</button>';}).join('');
   $('attCycle').innerHTML=cycleInfoHtml(cid,p);
-  renderGrpBox();
+  renderGrpBox();renderEvalBar(cid,p);
   var on=$('attPeriods').querySelector('.on');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
   renderGrid();
 }
@@ -1605,9 +1669,9 @@ function renderGrid(){
   if(!cid){$('gridWrap').innerHTML='<div class="empty"><b>Aucune classe</b>Ajoutez une classe dans Paramètres.</div>';$('attInfo').textContent='';return;}
   if(!list.length){$('gridWrap').innerHTML='<div class="empty"><b>Aucun élève dans '+esc(clsName(cid))+'</b>Ajoutez-les dans l’onglet Élèves (l’import en masse est le plus rapide).</div>';$('attInfo').textContent='';return;}
   S=cols.n;var recs=[];for(var s=0;s<S;s++)recs.push(rec(cid,p,s));
-  var h='<table class="grid"><thead><tr><th class="nm">Élève</th>';
+  var h='<table class="grid'+(ATT_VIEW==='notes'?' gv':'')+'"><thead><tr><th class="nm">Élève</th>';
   cols.forEach(function(c){if(c.hol){h+='<th class="holh" title="'+esc(c.hol.label)+'">'+esc(holShort(c.hol)===TX.vacShort?TX.vacHead:TX.holHead)+'<small>'+shortDate(c.date)+'</small></th>';return;}var s=c.s,hd=sessHead(s);h+='<th data-sess="'+s+'" class="'+hd.cls+'" title="Séance '+(s+1)+hd.title+'">'+hd.html+'</th>';});
-  h+='<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th><th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';
+  h+=sumHead(cid,p)+'<th class="t yr" title="Absences sur l’année (non justifiées)">Année</th></tr></thead><tbody>';var nb=sumCount(cid,p);
   var gq=grpOf(cid),byG=!!(gq&&DB.ui.grp),secs;
   if(byG){var gm=grpMembers(cid);secs=gm.groups.map(function(a,i){return {i:i,list:a};}).filter(function(x){return x.list.length;});if(gm.none.length)secs.push({i:-1,list:gm.none});}
   else secs=[{i:null,list:list}];
@@ -1615,26 +1679,46 @@ function renderGrid(){
   secs.forEach(function(sec,si){
    if(byG){var gc=sec.i>=0?GRP_COL[sec.i]:'#667085',gs=sec.i>=0?GRP_SOFT[sec.i]:'#f2f4f7',gst=grpStats(sec.list,10);
     h+='<tr class="ghead" style="--gc:'+gc+';--gs:'+gs+'"><th class="nm">'+(sec.i>=0?'<span class="gbadge" style="background:'+gc+'">'+(sec.i+1)+'</span>'+esc(grpName(gq,sec.i)):'Sans groupe')+'<small>'+plural(gst.n,'élève')+(gst.f||gst.m?' · '+gst.f+' F / '+gst.m+' G':'')+'</small></th>';
-    cols.forEach(function(c){if(c.hol&&si)return;h+='<td></td>';});h+='<td></td><td></td><td></td><td></td><td class="yr"></td></tr>';}
+    cols.forEach(function(c){if(c.hol&&si)return;h+='<td></td>';});h+=new Array(nb+1).join('<td></td>')+'<td class="yr"></td></tr>';}
    sec.list.forEach(function(st,i){var gi=grpIdx(gq,st.id);
     h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+(gi>=0?' – '+esc(grpName(gq,gi)):'')+'"><span class="n">'+(i+1)+'</span>'+(gi>=0?'<span class="gbadge" style="background:'+GRP_COL[gi]+'" aria-label="'+esc(grpName(gq,gi))+'">'+(gi+1)+'</span>':'')+(dspInCycle(st,p)?'<span class="dspb" title="Dispensé – '+esc(dspShort(dspOf(st)))+'">🩺</span>':'')+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>';
     cols.forEach(function(c){if(c.hol){if(firstRow)h+='<td class="holc" rowspan="'+span+'" aria-label="'+esc(c.hol.label+' – '+dmy(c.date))+'"><span class="holv">'+esc(holShort(c.hol))+'</span></td>';return;}var s=c.s,r=recs[s],m=r&&r.marks[st.id],code=codeOf(m);h+='<td class="'+cellClass(code,!!r,m&&m.r,dspAt(st,cid,p,s))+'" data-s="'+s+'">'+(r?CODE_TXT[code]:'')+'</td>';});
     h+=totalsHtml(cid,st.id,p)+'</tr>';firstRow=false;
    });
   });
-  h+='</tbody><tfoot><tr><th class="nm">Absents</th>';
+  h+='</tbody><tfoot><tr><th class="nm"'+(ATT_VIEW==='notes'?' title="Absents par séance · moyennes de la classe pour les notes">Absents · Moy.':'>Absents')+'</th>';
   cols.forEach(function(c){h+=c.hol?'<td class="holf"></td>':'<td data-f="'+c.s+'">'+footVal(recs[c.s])+'</td>';});
-  h+='<td></td><td></td><td></td><td></td><td class="yr"></td></tr></tfoot></table>';
+  h+=sumFoot(cid,p,list)+'<td class="yr"></td></tr></tfoot></table>';
   $('gridWrap').innerHTML=h;
   flagRows();
   updateInfo();
 }
 function footVal(r){if(!r)return '';var n=0;for(var k in r.marks)if(r.marks[k].s==='A'&&byId(k)&&byId(k).classId===DB.ui.cls)n++;return n;}
+function sumCount(cid,p){return ATT_VIEW==='notes'?gradeSpec(cid,p).cols.length+2:4;}
+function sumHead(cid,p){if(ATT_VIEW!=='notes')return '<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th>';
+  var sp=gradeSpec(cid,p),h='';sp.cols.forEach(function(c){h+='<th class="t g" title="'+esc(c.t)+' (sur '+fmtNum(c.max)+')">'+esc(c.l)+'<small>/'+fmtNum(c.max)+'</small></th>';});
+  return h+'<th class="t comp" title="Note comportementale calculée d’après A, M, R, ST (sur '+fmtNum(sp.comp)+')">Comport.<small>/'+fmtNum(sp.comp)+'</small></th><th class="t tot" title="Note du cycle">Note<small>/'+fmtNum(sp.total)+'</small></th>';}
+function avgOf(a){return a.length?r2(a.reduce(function(x,y){return x+y;},0)/a.length):null;}
+function sumFoot(cid,p,list){if(ATT_VIEW!=='notes')return '<td></td><td></td><td></td><td></td>';var sp=gradeSpec(cid,p),acc={},cp=[],tt=[];sp.cols.forEach(function(c){acc[c.k]=[];});
+  list.forEach(function(s){var g=gradeOf(cid,s.id,p);sp.cols.forEach(function(c){var v=g.vals[c.k];if(v!=null&&v<=c.max)acc[c.k].push(v);});cp.push(g.comp.v);if(g.total!=null)tt.push(g.total);});
+  function f(v){return v==null?'':fmtNum(v);}var h='';sp.cols.forEach(function(c){h+='<td class="gf" title="Moyenne">'+f(avgOf(acc[c.k]))+'</td>';});return h+'<td title="Moyenne">'+f(avgOf(cp))+'</td><td title="Moyenne de la classe">'+f(avgOf(tt))+'</td>';}
+function gradeCells(cid,sid,p){var g=gradeOf(cid,sid,p),h='',st=byId(sid),nm=st?st.name:'';
+  g.spec.cols.forEach(function(c){var v=g.vals[c.k];h+='<td class="t g'+(v!=null&&v>c.max?' over':'')+'"><input class="gin" type="text" inputmode="decimal" autocomplete="off" data-k="'+c.k+'" data-max="'+c.max+'" value="'+(v==null?'':fmtNum(v))+'" placeholder="–" aria-label="'+esc(c.t+' /'+fmtNum(c.max)+' – '+nm)+'"></td>';});
+  return h+compTotCells(g);}
+function compTotCells(g){return '<td class="t comp" title="'+esc('Comport. = '+compFormula(g.comp))+'">'+fmtNum(g.comp.v)+'</td><td class="t tot'+(g.total!=null&&g.total<g.spec.total/2?' lo':'')+(g.total==null?' z':'')+'" title="'+esc(g.total==null?'Note incomplète (saisie partielle : '+fmtNum(g.partial)+')':'Note du cycle')+'">'+(g.total==null?'—':fmtNum(g.total))+'</td>';}
 function totalsHtml(cid,sid,p){
   var st=perStat(cid,sid,p),y=yearStat(cid,sid),th=DB.settings.threshold;
   function t(n,extra){return '<td class="t'+(n?'':' z')+(extra||'')+'">'+n+'</td>';}
-  return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class="t pts'+(st.ded?'':' z')+(st.capped?' cap':'')+'" title="'+fmtPts(st.raw)+' / '+fmtNum(st.cap)+'">'+fmtPts(st.ded)+'</td><td class="t yr'+(y.A?'':' z')+(y.U>=th?' bad':'')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';
+  if(ATT_VIEW==='notes')return gradeCells(cid,sid,p)+yrCell(y,th);
+  return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class="t pts'+(st.ded?'':' z')+(st.capped?' cap':'')+'" title="'+fmtPts(st.raw)+' / '+fmtNum(st.cap)+'">'+fmtPts(st.ded)+'</td>'+yrCell(y,th);
 }
+function yrCell(y,th){return '<td class="t yr'+(y.A?'':' z')+(y.U>=th?' bad':'')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';}
+function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;document.querySelectorAll('#attView button').forEach(function(b){b.classList.toggle('on',b.dataset.v===ATT_VIEW);});
+  if(ATT_VIEW!=='notes'||!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
+  var sp=gradeSpec(cid,p);el.classList.remove('hidden');
+  el.innerHTML='<b>Barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b><select id="attAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select>'+
+    '<button type="button" class="btn sec" id="attGradesPdf">📄 Relevé de notes</button>'+
+    '<span class="scale">'+sp.cols.map(function(c){return esc(c.l)+' /'+fmtNum(c.max);}).join(' + ')+' + Comport. /'+fmtNum(sp.comp)+' = '+fmtNum(sp.total)+' · Évaluation OP 2007</span>';}
 function flagRows(){
   var th=DB.settings.threshold,cid=DB.ui.cls;
   $('gridWrap').querySelectorAll('tbody tr[data-sid]').forEach(function(tr){tr.classList.toggle('flag',yearStat(cid,tr.dataset.sid).U>=th);});
@@ -1646,7 +1730,7 @@ function updateInfo(){
 function refreshRow(tr){
   var sid=tr.dataset.sid,cells=tr.querySelectorAll('td.t');cells.forEach(function(c){c.remove();});
   tr.insertAdjacentHTML('beforeend',totalsHtml(DB.ui.cls,sid,DB.ui.per));
-  tr.classList.toggle('flag',yearStat(DB.ui.cls,sid).U>=DB.settings.threshold);
+  tr.classList.toggle('flag',yearStat(DB.ui.cls,sid).U>=DB.settings.threshold);gradeFootUpd();
 }
 function refreshColumn(s){
   var cid=DB.ui.cls,p=DB.ui.per,r=rec(cid,p,s),wrap=$('gridWrap');
@@ -1679,6 +1763,7 @@ grid.addEventListener('click',function(e){
     applyCode(td,CYCLE[cur]);return;
   }
   var th=e.target.closest('th[data-sess]');if(th){openSession(+th.dataset.sess);return;}
+  var cpc=e.target.closest('td.comp');if(cpc&&cpc.parentNode.dataset.sid){openDetail(cpc.parentNode.dataset.sid);return;}
   var nm=e.target.closest('tbody th.nm');if(nm){openDetail(nm.parentNode.dataset.sid);}
 });
 grid.addEventListener('contextmenu',function(e){var td=e.target.closest('td.c');if(td){e.preventDefault();clearTimeout(lpTimer);lpFired=true;openCell(td);setTimeout(function(){lpFired=false;},600);}});
@@ -1688,9 +1773,25 @@ grid.addEventListener('touchstart',function(e){
 },{passive:true});
 grid.addEventListener('touchmove',function(e){if(!lpStart)return;var t=e.touches[0];if(Math.abs(t.clientX-lpStart[0])>8||Math.abs(t.clientY-lpStart[1])>8)clearTimeout(lpTimer);},{passive:true});
 grid.addEventListener('touchend',function(){clearTimeout(lpTimer);lpStart=null;},{passive:true});
-$('attClass').addEventListener('change',function(){DB.ui.cls=this.value;persist();renderGrpBox();renderGrid();$('gridWrap').scrollTop=0;});
+$('attClass').addEventListener('change',function(){DB.ui.cls=this.value;persist();renderGrpBox();renderEvalBar(DB.ui.cls,DB.ui.per);renderGrid();$('gridWrap').scrollTop=0;});
+/* Notes /20 : bascule d’affichage (non enregistrée), APS du cycle, saisie des notes */
+$('attView').addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b||b.dataset.v===ATT_VIEW)return;ATT_VIEW=b.dataset.v;renderEvalBar(DB.ui.cls,DB.ui.per);renderGrid();});
+$('attEval').addEventListener('change',function(e){if(e.target.id!=='attAps')return;var cid=DB.ui.cls,p=DB.ui.per,a=e.target.value;
+  var over=studentsIn(cid).filter(function(s){var ev=evGet(s.id,cid,p);if(!ev)return false;var mx=APS[a].max[gradeLv(cid)];return (ev.g1!=null&&ev.g1>mx[0])||(ev.g2!=null&&(mx.length<2||ev.g2>mx[1]));}).length;
+  if(over&&!confirm(plural(over,'élève')+' : des notes déjà saisies dépassent le barème « '+APS[a].l+' » ou n’y ont pas de colonne. Rien n’est effacé : une note sans colonne n’est pas comptée (elle revient si vous rechoisissez l’APS d’origine) et une note hors barème est exclue de la note /20 jusqu’à correction. Continuer ?')){e.target.value=apsOf(cid,p);return;}
+  apsSet(cid,p,a);persist();renderEvalBar(cid,p);renderGrid();toast('APS du '+cycleName(p)+' : '+APS[a].l);});
+$('attEval').addEventListener('click',function(e){if(e.target.closest('#attGradesPdf'))runPdf('grades',{cid:DB.ui.cls,p:DB.ui.per});});
+grid.addEventListener('change',function(e){var i=e.target.closest('input.gin');if(!i)return;var tr=i.closest('tr[data-sid]');if(!tr)return;
+  var sid=tr.dataset.sid,cid=DB.ui.cls,p=DB.ui.per,k=i.dataset.k,mx=+i.dataset.max,raw=String(i.value).trim().replace(',','.'),v=null,old=evGet(sid,cid,p);
+  if(raw!==''){v=parseFloat(raw);if(isNaN(v)||!/^\d*\.?\d*$/.test(raw)||v<0||v>mx){toast('Note entre 0 et '+fmtNum(mx));i.value=old&&old[k]!=null?fmtNum(old[k]):'';return;}v=Math.round(v*4)/4;}
+  evSet(sid,cid,p,k,v);persist();i.value=v==null?'':fmtNum(v);i.parentNode.classList.toggle('over',v!=null&&v>mx);
+  var g=gradeOf(cid,sid,p),ct=tr.querySelector('td.comp'),tt=tr.querySelector('td.tot');if(ct&&tt){var tmp=document.createElement('tr');tmp.innerHTML=compTotCells(g);ct.replaceWith(tmp.children[0]);tt.replaceWith(tmp.children[0]);}
+  gradeFootUpd();});
+function gradeFootUpd(){if(ATT_VIEW!=='notes')return;var cid=DB.ui.cls,p=DB.ui.per,tf=$('gridWrap').querySelector('tfoot tr');if(!tf)return;var cells=tf.querySelectorAll('td'),n=sumCount(cid,p),tmp=document.createElement('tr');tmp.innerHTML=sumFoot(cid,p,studentsIn(cid));var nc=tmp.querySelectorAll('td'),off=cells.length-1-n;for(var q=0;q<n&&off+q>=0;q++)cells[off+q].textContent=nc[q].textContent;}
+grid.addEventListener('keydown',function(e){var i=e.target.closest('input.gin');if(!i||e.key!=='Enter')return;e.preventDefault();var tr=i.closest('tr[data-sid]'),nx=tr&&tr.nextElementSibling;while(nx&&!nx.dataset.sid)nx=nx.nextElementSibling;
+  i.blur();var ni=nx&&nx.querySelector('input.gin[data-k="'+i.dataset.k+'"]');if(ni){ni.focus();ni.select&&ni.select();}});
 $('attPeriods').addEventListener('click',function(e){var b=e.target.closest('[data-p]');if(!b)return;DB.ui.per=+b.dataset.p;persist();renderAttendance();});
-document.querySelectorAll('#view-attendance .seg button').forEach(function(b){b.addEventListener('click',function(){DB.ui.mode=b.dataset.mode;persist();renderAttendance();toast(DB.ui.mode==='edit'?'Touchez une case pour choisir le statut (A, ST, M, R, MJ, AJ), le motif ou 🩺 Dispensé':'Touchez une case pour alterner P → A → ST → M → R → MJ → AJ');});});
+document.querySelectorAll('#view-attendance .seg:not(.vseg) button').forEach(function(b){b.addEventListener('click',function(){DB.ui.mode=b.dataset.mode;persist();renderAttendance();toast(DB.ui.mode==='edit'?'Touchez une case pour choisir le statut (A, ST, M, R, MJ, AJ), le motif ou 🩺 Dispensé':'Touchez une case pour alterner P → A → ST → M → R → MJ → AJ');});});
 
 /* cell editor */
 var cellTd=null,cellVal='P';
@@ -2833,6 +2934,7 @@ $('pdfStudents').addEventListener('click',function(){var pv=$('expPeriod').value
 $('pdfRecords').addEventListener('click',function(){var pv=$('expPeriod').value;runPdf('records',isSem(pv)?{cid:$('expClass').value,scope:pv}:{cid:$('expClass').value});});
 $('pdfTests').addEventListener('click',function(){runPdf('tests',{cid:$('expClass').value});});
 $('pdfGroups').addEventListener('click',function(){runPdf('groups',{cid:$('expClass').value});});
+$('pdfGrades').addEventListener('click',function(){var c=$('expClass').value,pv=$('expPeriod').value;if(!cls(c)){toast('Choisissez une classe pour le relevé de notes');return;}if(isSem(pv)){toast('Choisissez un cycle pour le relevé de notes');return;}runPdf('grades',{cid:c,p:+pv});});
 $('expGrid').addEventListener('click',function(){var pv=$('expPeriod').value;if(isSem(pv))exportYear($('expClass').value,pv);else exportGrid($('expClass').value,+pv);});
 $('expYear').addEventListener('click',function(){exportYear($('expClass').value);});
 $('expStudents').addEventListener('click',function(){exportStudents($('expClass').value);});
@@ -2900,7 +3002,7 @@ window.addEventListener('storage',function(e){if(e.key===KEY&&!VIEW){DB=load();r
 
 /* ================= API for cloud sync (see sync script below) ================= */
 window.CJR={semver:APP_SEMVER,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
-  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
+  cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJApp={
