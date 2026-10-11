@@ -21,7 +21,7 @@ const su=await j(AUTH+'/identitytoolkit.googleapis.com/v1/accounts:signUp?key=fa
 await j(`${FS}/v1/projects/${P}/databases/(default)/documents/members/${EM}`,{method:'PATCH',headers:{Authorization:'Bearer owner','content-type':'application/json'},body:JSON.stringify({fields:{email:{stringValue:EM},active:{booleanValue:true},uid:{stringValue:UID},name:{stringValue:'Test Photo'}}})});
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:90000,args:['--no-sandbox','--disable-dev-shm-usage']});
 async function dev(label,seedFn){const ctx=await b.createBrowserContext();const p=await ctx.newPage();await p.setViewport({width:375,height:812,deviceScaleFactor:2,isMobile:true,hasTouch:true});
-  await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});p.on('dialog',d=>d.accept());
+  await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});p.on('dialog',d=>d.accept());
   p.on('pageerror',e=>ERR.push(label+' pageerror '+e.message));p.on('console',m=>{if(m.type()==='error')ERR.push(label+' console '+m.text());});
   await p.goto('http://localhost:8024/?emu=1',{waitUntil:'networkidle2'});await p.waitForFunction(()=>window.CJSync&&window.CJSync.state.sdk,{timeout:20000});
   await p.evaluate(seedFn,KEY);await p.reload({waitUntil:'networkidle2'});await p.waitForFunction(()=>window.CJSync&&window.CJSync.state.sdk,{timeout:20000});

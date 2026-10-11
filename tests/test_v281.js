@@ -21,7 +21,7 @@ const tok=(uid,email,ver)=>{const t=Math.floor(Date.now()/1000);return b64({alg:
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:120000,args:['--no-sandbox','--disable-dev-shm-usage']});
 // ================= 0. statique =================
 const idx=fs.readFileSync(D+'/index.html','utf8'),sw=fs.readFileSync(D+'/sw.js','utf8'),fj=JSON.parse(fs.readFileSync(D+'/firebase.json','utf8'));
-check('version 1.28.1 / cache cahier-v28-1 (APP_VER = sw.js)',/var APP_SEMVER='1\.28\.1'/.test(idx)&&/var APP_VER='cahier-v28-1'/.test(idx)&&/const CACHE = 'cahier-v28-1'/.test(sw));
+check('version 1.29.0 / cache cahier-v29-a (APP_VER = sw.js) — test 1.28.1 rejoué sur 1.29.0',/var APP_SEMVER='1\.29\.0'/.test(idx)&&/var APP_VER='cahier-v29-a'/.test(idx)&&/const CACHE = 'cahier-v29-a'/.test(sw));
 const rulesDiff=cp.execSync('git -C '+D+' diff v1.28.0 -- firestore.rules').toString();
 check('firestore.rules identique à v1.28.0',rulesDiff==='');
 const keys=h=>[...new Set((h.match(/['"](classRegister\.v2[\w.]*|cahier\.[A-Za-z][\w.]*)['"]/g)||[]).map(x=>x.slice(1,-1)))].sort().join();
@@ -37,7 +37,7 @@ const NAMES=['lun.','mar.','mer.','jeu.','ven.','sam.','dim.','dim.'];
 for(let di=0;di<DAYS.length;di++){const day=DAYS[di];
   const p=await (await b.createBrowserContext()).newPage();await p.emulateTimezone('Africa/Casablanca');await p.setViewport({width:375,height:812,deviceScaleFactor:2,isMobile:true,hasTouch:true});
   const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('dialog',d=>d.accept());
-  await p.evaluateOnNewDocument(t=>{const R=Date,T=new R(t).getTime(),o=R.now();class Fk extends R{constructor(...a){super(...(a.length?a:[T+(R.now()-o)]));}static now(){return T+(R.now()-o);}}window.Date=Fk;try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}},day+'T10:30:00');
+  await p.evaluateOnNewDocument(t=>{const R=Date,T=new R(t).getTime(),o=R.now();class Fk extends R{constructor(...a){super(...(a.length?a:[T+(R.now()-o)]));}static now(){return T+(R.now()-o);}}window.Date=Fk;try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}},day+'T10:30:00');
   await p.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});
   await p.evaluate(KEY=>{const d=JSON.parse(localStorage.getItem(KEY));d.settings.teacher='Mohamed Tammar – Lycée qualifiant Baja';d.lastBackup=Date.now();
     const C=['2BACSP4','1BACLSH2','TCS1'].map(n=>d.classes.find(x=>x.name===n)||d.classes[0]);
@@ -61,15 +61,15 @@ for(let di=0;di<DAYS.length;di++){const day=DAYS[di];
   await p.browserContext().close();}
 // ================= 1b. mise à jour réelle v1.28.0 → v1.28.1 (téléphones actuels) =================
 {const V0='/tmp/v280root';if(!fs.existsSync(V0+'/index.html')){fs.mkdirSync(V0,{recursive:true});cp.execSync('git -C '+D+' archive v1.28.0 | tar -x -C '+V0);}
-  ROOT=V0;const p=await (await b.createBrowserContext()).newPage();/* 1.28.0 plante sur l’Accueil le dimanche : on simule un lundi pour la partie 1.28.0 */await p.evaluateOnNewDocument(()=>{const R=Date,T=new R('2026-10-12T10:30:00').getTime(),o=R.now();class Fk extends R{constructor(...a){super(...(a.length?a:[T+(R.now()-o)]));}static now(){return T+(R.now()-o);}}window.Date=Fk;try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+  ROOT=V0;const p=await (await b.createBrowserContext()).newPage();/* 1.28.0 plante sur l’Accueil le dimanche : on simule un lundi pour la partie 1.28.0 */await p.evaluateOnNewDocument(()=>{const R=Date,T=new R('2026-10-12T10:30:00').getTime(),o=R.now();class Fk extends R{constructor(...a){super(...(a.length?a:[T+(R.now()-o)]));}static now(){return T+(R.now()-o);}}window.Date=Fk;try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
   await p.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});
   await p.evaluate((KEY)=>{const d=JSON.parse(localStorage.getItem(KEY));d.students=[];for(let i=0;i<40;i++)d.students.push({id:'u'+i,classId:d.classes[i%9].id,name:'Élève '+i,sid:'J1'+(1000+i),dob:'2009-01-0'+(1+i%9),notes:'',created:1,sex:i%2?'F':'G',ev:i===3?{[d.classes[3].id+'|0']:{g1:5,aps:'coll'}}:undefined,phys:i%3?{h:160}:undefined,dispense:i===7?{type:'annee',since:'2026-09-20'}:undefined});
     d.sessions={[d.classes[0].id+'|0|0']:{date:'2026-09-15',marks:{u0:{s:'A',j:true,r:''},u9:{s:'L',j:false,r:''},u18:{s:'M',j:false,r:'x'},u27:{s:'ST',j:false,r:''}}}};d.evals={aps:{[d.classes[3].id+'|0']:'coll'}};return window.CJApp.applyJSON(JSON.stringify(d));},KEY);
   await p.reload({waitUntil:'networkidle2'});await p.evaluate(()=>navigator.serviceWorker.ready.then(()=>true));await sleep(1500);
   const v0=await p.evaluate(()=>window.CJR.semver),raw0=await p.evaluate(K=>localStorage.getItem(K),KEY);
-  ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.28.1';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
+  ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.0';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
   await sleep(1200);const raw1=await p.evaluate(K=>localStorage.getItem(K),KEY),cs=await p.evaluate(()=>caches.keys());
-  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.28.1'&&raw0===raw1&&cs.includes('cahier-v28-1')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
+  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.29.0'&&raw0===raw1&&cs.includes('cahier-v29-a')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
   await p.browserContext().close();}
 // ================= 2. lien invitation ↔ compte (émulateurs) =================
 await fetch(`${FSU}/emulator/v1/projects/${P}/databases/(default)/documents`,{method:'DELETE'});
@@ -86,7 +86,7 @@ await fput('members/double@test.ma',{name:sv('Mme Double'),email:sv('double@test
 await fput('profiles/OLD-DOUBLE-UID',{uid:sv('OLD-DOUBLE-UID'),email:sv('double@test.ma'),name:sv('Mme Double'),classCount:sv(1),studentCount:sv(3)});
 // le collègue « ancien » utilise l’application (vraie connexion, synchro, profil) AVANT la mise à jour du modérateur
 const newPage=async(label,errs)=>{const ctx=await b.createBrowserContext();const pg=await ctx.newPage();await pg.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});
-  await pg.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});pg.on('dialog',d=>d.accept());pg.on('pageerror',e=>errs.push(label+' '+e.message));
+  await pg.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});pg.on('dialog',d=>d.accept());pg.on('pageerror',e=>errs.push(label+' '+e.message));
   await pg.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});await pg.waitForFunction(()=>window.CJSync&&window.CJSync.state.sdk&&window.CJSync.state.user!==undefined,{timeout:20000});
   await pg.evaluate(()=>window.CJIntro&&(window.CJIntro.skipSplash(),window.CJLanding&&window.CJLanding.shown()&&window.CJLanding.toLogin()));await sleep(400);return pg;};
 const signIn=async(pg,email,pw)=>{await pg.waitForSelector('#gEmail',{visible:true,timeout:15000});await pg.$eval('#gEmail',e=>e.value='');await pg.$eval('#gPass',e=>e.value='');await pg.type('#gEmail',email);await pg.type('#gPass',pw);await pg.click('#gGo');

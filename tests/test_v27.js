@@ -20,7 +20,7 @@ check('firebase.json exclut .git, .firebase, *.md, RELEASE*',/\.git/.test(fj)&&/
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
-await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
 await p.goto('http://localhost:8000/',{waitUntil:'networkidle2'});
 const NAMES=['Youssef الإدريسي','محمد (أ) 2','لا إله إلا الله','أحمد بن عبد الله (2)','Sara Benali'];
 await p.evaluate((KEY,N)=>{const d=JSON.parse(localStorage.getItem(KEY));d.settings.teacher='Mohamed Tammar – Lycée qualifiant Baja';

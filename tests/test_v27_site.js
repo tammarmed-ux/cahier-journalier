@@ -65,7 +65,7 @@ check('Firestore : mêmes chemins (users/{uid}/cahier/meta, chunk_i, members, pr
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const errs=[];
 async function newPage(vp,{onb=true}={}){const ctx=await b.createBrowserContext();const p=await ctx.newPage();await p.setViewport(vp);p.ctx=ctx;
-  p.on('pageerror',e=>errs.push(e.message));if(onb)await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+  p.on('pageerror',e=>errs.push(e.message));if(onb)await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
   await p.evaluateOnNewDocument(()=>{document.addEventListener('DOMContentLoaded',()=>{window.__dcl={land:document.documentElement.classList.contains('cj-land'),locked:document.documentElement.classList.contains('cj-locked')};});});
   p.on('dialog',d=>d.accept());return p;}
 const st=p=>p.evaluate(()=>{const H=document.documentElement,l=document.getElementById('landing'),g=document.getElementById('gate'),m=document.querySelector('main');const r=l.getBoundingClientRect();

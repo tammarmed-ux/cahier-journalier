@@ -20,7 +20,7 @@ const URL='http://localhost:8011/?emu=1';
 (async()=>{
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});const errs=[];
 async function client(){const ctx=await b.createBrowserContext();const p=await ctx.newPage();await p.setViewport(IP);p.on('pageerror',e=>errs.push(e.message));
-  await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+  await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
   ROOT=R24;await p.goto(URL,{waitUntil:'networkidle2'});await p.evaluate('('+seed.toString()+')('+JSON.stringify(KEY)+',"Lycée qualifiant Baja")');
   await p.reload({waitUntil:'networkidle2'});await p.evaluate(()=>navigator.serviceWorker.ready.then(()=>true));await sleep(1200);return p;}
 const semver=p=>p.evaluate(()=>window.CJR&&window.CJR.semver);

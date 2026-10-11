@@ -14,7 +14,7 @@ const URL='http://localhost:8013/?emu=1';
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:60000,args:['--no-sandbox','--disable-dev-shm-usage']});
 const ctx=await b.createBrowserContext();const p=await ctx.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const errs=[],dialogs=[];p.on('pageerror',e=>errs.push(e.message));p.on('dialog',d=>{dialogs.push(d.message());d.accept();});
-await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
 const unlock=()=>p.evaluate(()=>{window.CJIntro&&window.CJIntro.skipSplash&&window.CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked','cj-land');const g=document.getElementById('gate');if(g)g.style.display='none';});
 await p.goto(URL,{waitUntil:'networkidle2'});
 // ---- données de démonstration : 2BACSP4, sport collectif (Basket-ball), Lycée qualifiant Baja
@@ -127,7 +127,7 @@ check('Paramètres › Exports : bouton « Relevé de notes /20 » (classe + cyc
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="attendance"]').click());await sleep(300);
 // ---- compatibilité : ancien client v1.27.0 conserve les notes (champ élève inconnu préservé)
 const raw28=await p.evaluate(K=>localStorage.getItem(K),KEY);const ctx2=await b.createBrowserContext();const q=await ctx2.newPage();q.on('pageerror',e=>errs.push('old:'+e.message));
-await q.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});await q.goto(URL.replace('8013','8014'),{waitUntil:'networkidle2'});
+await q.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});await q.goto(URL.replace('8013','8014'),{waitUntil:'networkidle2'});
 await q.evaluate((K,r)=>localStorage.setItem(K,r),KEY,raw28);await q.reload({waitUntil:'networkidle2'});
 const oldSem=await q.evaluate(()=>window.CJR.semver);
 await q.evaluate(()=>{const A=window.CJR,DB=A.db();DB.settings.threshold=DB.settings.threshold;});

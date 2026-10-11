@@ -7,10 +7,10 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));const KEY='classRegister.v2';co
 const idx=fs.readFileSync(D+'index.html','utf8'),sw=fs.readFileSync(D+'sw.js','utf8'),man=fs.readFileSync(D+'manifest.webmanifest','utf8');
 const sem=(idx.match(/APP_SEMVER='([^']+)'/)||[])[1],appv=(idx.match(/APP_VER='([^']+)'/)||[])[1],cache=(sw.match(/CACHE = '([^']+)'/)||[])[1];
 check('version format 1.<n>.<p>',/^1\.\d+\.\d+$/.test(sem),sem);
-check('APP_SEMVER = 1.28.1',sem==='1.28.1');
+check('APP_SEMVER = 1.29.0',sem==='1.29.0');
 /* aperçu test-128 : suffixe de reconstruction « -b, -c… » accepté (remis à cahier-v28 pour la publication) */
 const cacheBase=cache.replace(/-[a-z]$/,'');
-check('APP_VER = cache sw.js = cahier-v<version>[-<correctif>] (cahier-v28'+(cache!==cacheBase?', aperçu '+cache:'')+')',appv===cache&&cacheBase===('cahier-v'+sem.split('.')[1]+(sem.split('.')[2]!=='0'?'-'+sem.split('.')[2]:''))&&cacheBase==='cahier-v28-1',cache);
+check('APP_VER = cache sw.js = cahier-v<version>[-<correctif>] (cahier-v28'+(cache!==cacheBase?', aperçu '+cache:'')+')',appv===cache&&cacheBase===('cahier-v'+sem.split('.')[1]+(sem.split('.')[2]!=='0'?'-'+sem.split('.')[2]:''))&&cacheBase==='cahier-v29',cache);
 check('titre SEO + versions v'+sem+' (splash, en-tête, connexion, page d’accueil, Paramètres, manifeste)',idx.includes('<title>Cahier Journalier EPS — registre d’absences et bilans pour professeurs d’EPS au Maroc</title>')&&idx.includes('<div class="sp-ver">v'+sem+'</div>')&&idx.includes('<span class="h-ver">v'+sem+'</span>')&&idx.includes('id="gVer">Version '+sem+'<')&&idx.includes('id="lnVer">Version '+sem+'<')&&idx.includes('id="verLine">Version '+sem+'<')&&man.includes(' v'+sem+'"'));
 check('pied de page PDF lié à APP_SEMVER',fs.readFileSync(D+'cj-pdf.js','utf8').includes("EPS v'+A.semver"));
 check('pas d’ancienne version v1.1 affichée',!/digital v1\.1["<]/.test(idx)&&!/"v1\.1"/.test(man));
@@ -22,7 +22,7 @@ check('firebase.json exclut .git, .firebase, *.md, RELEASE*',/\.git/.test(fj)&&/
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const p=await b.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
-await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
 await p.goto('http://localhost:8000/',{waitUntil:'networkidle2'});
 const NAMES=['Youssef الإدريسي','محمد (أ) 2','لا إله إلا الله','أحمد بن عبد الله (2)','Sara Benali'];
 await p.evaluate((KEY,N)=>{const d=JSON.parse(localStorage.getItem(KEY));d.settings.teacher='Mohamed Tammar – Lycée qualifiant Baja';
@@ -82,7 +82,7 @@ const txt=f=>require('child_process').execSync('pdftotext -layout '+f+' -').toSt
 const pS1=await pdf(()=>{const s=document.getElementById('repScope');s.value='s1';s.dispatchEvent(new Event('change'));document.getElementById('repExportPdf').click();});
 check('PDF bilan S1 généré (nom Semestre-1)',pS1&&/Semestre_1/.test(pS1.name),pS1&&pS1.name);
 if(pS1){const t=txt(pS1.f);check('PDF S1 : titre « Semestre 1 », cycles C1-C3, pas C4',/Bilan Semestre 1/.test(t)&&/Cycle 3/.test(t)&&!/Cycle 4/.test(t),t.split('\n').slice(0,6).join(' / ').slice(0,200));
-  check('PDF S1 : pied de page « Cahier d’EPS v1.28.0 »',/Cahier d’EPS v1\.28\.1/.test(t));
+  check('PDF S1 : pied de page « Cahier d’EPS v1.28.0 »',/Cahier d’EPS v1\.29\.0/.test(t));
   check('PDF : en-tête « Cahier d’EPS » (apostrophe courbe), plus de « Cahier Journalier · EPS »',/^\s*Cahier d’EPS/m.test(t)&&!/Cahier Journalier/.test(t));
   const im=require('child_process').execSync('pdfimages -list '+pS1.f).toString().split('\n').filter(l=>/^\s*\d+\s+\d+\s+(image|smask)/.test(l)).map(l=>l.trim().split(/\s+/));
   const logo=im.filter(x=>x[2]==='image'&&x[3]==='360'&&x[4]==='360'),sm=im.filter(x=>x[2]==='smask'&&x[3]==='360');
@@ -101,7 +101,7 @@ check('PDF « Bilan du cycle » avec S1 = bilan de semestre',pC&&/Semestre_1/.te
 // ---- police arabe : Paramètres
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(300);
 check('choix de police arabe : 5 polices, Noto Sans Arabic par défaut',await p.evaluate(()=>{const s=document.getElementById('setArFont');return s&&s.options.length===5&&s.value==='noto'&&window.CJR.db().settings.arFont==='noto';}));
-check('ligne « Version 1.28.0 » dans Paramètres',await p.evaluate(()=>document.getElementById('verLine').textContent==='Version 1.28.1'));
+check('ligne « Version 1.28.0 » dans Paramètres',await p.evaluate(()=>document.getElementById('verLine').textContent==='Version 1.29.0'));
 const keyBefore=await p.evaluate(KEY=>Object.keys(localStorage).filter(k=>k.indexOf(KEY)===0&&k.indexOf('.snap')<0),KEY);
 const res={};
 for(const f of ['amiri','naskh','cairo','tajawal','noto']){

@@ -12,7 +12,7 @@ const URL='http://localhost:8015/?emu=1';
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:60000,args:['--no-sandbox','--disable-dev-shm-usage']});
 const ctx=await b.createBrowserContext();const p=await ctx.newPage();await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const errs=[],dialogs=[];p.on('pageerror',e=>errs.push(e.message));p.on('dialog',d=>{dialogs.push(d.message());d.accept();});
-await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
 const unlock=()=>p.evaluate(()=>{window.CJIntro&&window.CJIntro.skipSplash&&window.CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked','cj-land');const g=document.getElementById('gate');if(g)g.style.display='none';});
 await p.goto(URL,{waitUntil:'networkidle2'});
 const NAMES=[['AIT BENALI Yassine','G','J130245871'],['BENNANI Salma','F','J132457812'],['CHAKIR Omar','G','J135784521'],['DAOUDI Imane','F','J136985214'],['EL AMRANI Hamza','G','J138521479'],['محمد الإدريسي','G','J139874563'],['FASSI Nour','F','K140258963'],['GHALI Anas','G','K141369852'],['HAJJI Khadija','F','K142587413'],['فاطمة الزهراء العلوي','F','K143698521'],['IDRISSI Mehdi','G','K144785236'],['JABRI Sara','F','K145896314']];

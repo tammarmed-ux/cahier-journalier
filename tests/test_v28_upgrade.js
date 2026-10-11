@@ -40,7 +40,7 @@ function buildData(base){const d=JSON.parse(JSON.stringify(base));
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:180000,args:['--no-sandbox','--disable-dev-shm-usage']});
 const p=await (await b.createBrowserContext()).newPage();await p.emulateTimezone('Africa/Casablanca');await p.setViewport({width:375,height:812,deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('dialog',d=>d.accept());
-await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
 const unlock=()=>p.evaluate(()=>{window.CJIntro&&window.CJIntro.skipSplash&&window.CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked','cj-land');const g=document.getElementById('gate');if(g)g.style.display='none';});
 await p.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});
 const base=await p.evaluate(KEY=>JSON.parse(localStorage.getItem(KEY)),KEY);
@@ -64,10 +64,10 @@ const photos=()=>p.evaluate(()=>new Promise(res=>{const r=indexedDB.open('cahier
 const fp27=await FP();const raw27=await raw();const ph27=await photos();
 check('v1.27.0 chargée avec 9 classes, 343 élèves, '+fp27.sessions+' séances, marques '+JSON.stringify(fp27.tally),fp27.sem==='1.27.0'&&fp27.classes===9&&fp27.students===343&&fp27.tally.A>0&&fp27.tally.AJ>0&&fp27.tally.L>0&&fp27.tally.M>0&&fp27.tally.MJ>0&&fp27.tally.ST>0);
 // ---------- mise à jour : le serveur sert maintenant 1.28.0 ----------
-ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.28.1';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
+ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.0';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
 await unlock();await sleep(1200);
 const caches=await p.evaluate(()=>caches.keys());
-check('mise à jour réelle par le service worker v1.27.0 → v'+sem+', cache '+caches.join(','),sem==='1.28.1'&&caches.includes('cahier-v28-1')&&!caches.includes('cahier-v27'));
+check('mise à jour réelle par le service worker v1.27.0 → v'+sem+', cache '+caches.join(','),sem==='1.29.0'&&caches.includes('cahier-v29-a')&&!caches.includes('cahier-v27'));
 const raw28=await raw();
 check('classRegister.v2 identique octet pour octet après la mise à jour ('+raw27.length+' car.)',raw27===raw28);
 const fp28=await FP();

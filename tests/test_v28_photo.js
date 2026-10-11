@@ -15,7 +15,7 @@ const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless
 const ctx=await b.createBrowserContext();const p=await ctx.newPage();await p.setViewport({width:375,height:812,deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const cdp=await p.target().createCDPSession();await cdp.send('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:DL,browserContextId:ctx.id}).catch(async()=>{await cdp.send('Page.setDownloadBehavior',{behavior:'allow',downloadPath:DL});});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push('console: '+m.text());});p.on('dialog',d=>d.accept());
-await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
 const unlock=()=>p.evaluate(()=>{window.CJIntro&&window.CJIntro.skipSplash&&window.CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked','cj-land');const g=document.getElementById('gate');if(g)g.style.display='none';});
 await p.goto('http://localhost:8023/?emu=1',{waitUntil:'networkidle2'});
 await p.evaluate(KEY=>{const d=JSON.parse(localStorage.getItem(KEY));d.settings.teacher='Mohamed Tammar – Lycée qualifiant Baja';const c=d.classes.find(x=>x.name==='2BACSP4');
