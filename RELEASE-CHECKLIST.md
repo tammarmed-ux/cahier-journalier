@@ -2,23 +2,23 @@
 
 Fichier interne : jamais servi par Firebase Hosting (exclu par `firebase.json` > `hosting.ignore` : `**/*.md`, `RELEASE*`, `.firebase/`, `.git`).
 
-Format de version : **1.<version>.<correctif>** (actuelle : 1.28.0 · suivante : 1.29.0). Étiquette Git : `v1.28.0`. Cache du service worker : `cahier-v28` (règle : `cahier-v<version>`, suivi de `-<correctif>` si le correctif n’est pas 0) (= `APP_VER`).
+Format de version : **1.<version>.<correctif>** (actuelle : 1.28.1 · suivante : 1.29.0). Étiquette Git : `v1.28.1`. Cache du service worker : `cahier-v28-1` (règle : `cahier-v<version>`, suivi de `-<correctif>` si le correctif n’est pas 0) (= `APP_VER`).
 
 ## Avant de publier
-1. `index.html` : `APP_SEMVER` (« 1.28.0 »), `APP_VER` (« cahier-v28 »), splash `.sp-ver`, en-tête `.h-ver`, écran de connexion `#gVer`, page d’accueil `#lnVer`, Paramètres `#verLine`, `softwareVersion` du JSON-LD. Le `<title>` SEO ne porte pas de version.
-2. `manifest.webmanifest` : `name` = « Cahier d’EPS v1.28.0 », `short_name` = « Cahier d’EPS ».
-3. `sw.js` : `CACHE = 'cahier-v28'` ; toute nouvelle ressource (polices, scripts, logos, icônes, image og) ajoutée à `ASSETS` ou `FONT_ASSETS`.
+1. `index.html` : `APP_SEMVER` (« 1.28.1 »), `APP_VER` (« cahier-v28-1 »), splash `.sp-ver` + `aria-label` du splash, en-tête `.h-ver`, écran de connexion `#gVer`, page d’accueil `#lnVer`, Paramètres `#verLine`, `softwareVersion` du JSON-LD. Le `<title>` SEO ne porte pas de version.
+2. `manifest.webmanifest` : `name` = « Cahier d’EPS v1.28.1 », `short_name` = « Cahier d’EPS ».
+3. `sw.js` : `CACHE = 'cahier-v28-1'` ; toute nouvelle ressource (polices, scripts, logos, icônes, image og) ajoutée à `ASSETS` ou `FONT_ASSETS`.
 4. La clé de stockage `classRegister.v2` ne change JAMAIS.
 5. Tests (dossier `cj-emu`, émulateurs Firebase actifs) : `test_gate` 61+, `test_move`, `test_pdf`, `test_order`, `test_snap`, `test_import`, `test_v28`, `test_v28_site`, `test_v28_notes`, `test_v28_proc`, `test_v28_athle`, `test_v28_cyc`, `test_v28_sno`, `test_v28_vac`, `test_v28_home`, `test_v28_photo`, `test_v28_photo_sync`, `test_v28_tt` (tableau de service : rendu, aujourd’hui, ajout/modification/suppression au même format, 375 px, ≥ 44 px, mouvement réduit), `test_v27_cap` et `test_v251_logo` (générique : version courante) (copies dans `tests/`, non servies ; versions, polices arabes, bidi, semestres, vert/rouge, toutes les classes, page d’accueil, SEO, connexion, synchro, sauvegarde JSON, mise à jour v25 → v25.1 sans changement de `classRegister.v2`).
 7. Sauvegarde avant publication : étiquette `backup-pre-<version>` poussée sur GitHub + archive tar dans `/workspace/backups/` (dossier exclu de l’hébergement).
 6. Aperçus PDF à regarder (PNG) : logo B et « Cahier d’EPS » dans l’en-tête, nom centré (latin + arabe), vert/rouge présence, polices arabes, semestres.
 
 ## Publier
-1. `git commit` puis `git push origin main`, puis `git tag -a v1.28.0 && git push origin v1.28.0`.
+1. `git commit` puis `git push origin main` (met aussi à jour l’ancienne adresse GitHub Pages, avis de déménagement), puis `git tag -a v1.28.1 && git push origin v1.28.1`.
 2. `firebase deploy --only hosting:app --project cahier-journalier-2830a`.
 
 ## Vérifier en ligne
-- `/sw.js` contient `cahier-v28` ; `/robots.txt` et `/sitemap.xml` en 200 ; titre, meta, og et JSON-LD présents dans le HTML servi ; `/index.html` et `/cj-pdf.js` identiques aux fichiers locaux.
+- `/sw.js` contient `cahier-v28-1` ; `curl -I /` montre les en-têtes de sécurité (voir 1.28.1) ; `/robots.txt` et `/sitemap.xml` en 200 ; titre, meta, og et JSON-LD présents dans le HTML servi ; `/index.html` et `/cj-pdf.js` identiques aux fichiers locaux.
 - 404 sur `/.git/HEAD`, `/firebase.json`, `/RELEASE-CHECKLIST.md`, `/.firebase/`, `/tests/…`, `/backups/` ; 200 sur `/`.
 
 ## Marque et logo
@@ -63,3 +63,9 @@ Format de version : **1.<version>.<correctif>** (actuelle : 1.28.0 · suivante :
 - Trombinoscope (demande du propriétaire, 08/10/2026, modèle D) : bouton sur l’onglet Élèves → sélecteur classe + format (« Tous les groupes sur une page » / « Une page par groupe ») ; PDF via cj-pdf.js (photos IndexedDB, silhouette sinon, âge, Massar, arabe RTL) ; Sans groupe = bloc gris ; pas de groupes = un seul bloc ; lecture seule. Test `test_v28_trombi`.
 - Aperçu `test-128` : caches `cahier-v28-a` … `cahier-v28-l` pendant la mise au point. Publication 1.28.0 (09/10/2026) : `cahier-v28` remis dans `index.html` (APP_VER) et `sw.js` (CACHE).
 - Tests `test_v28_notes`, `test_v28_proc` (onglet dédié, 6 onglets à 375/320 px, synchronisation dans les deux sens, maxima par niveau, PDF) `test_v28_cyc` (type de cycle, exceptions, notes conservées, PDF), `test_v28_sno` (numérotation continue, stockage inchangé, PDF), `test_v28_vac` (férié numéroté, vacances sans numéro, reprise après les vacances), `test_v28_home` (Accueil : boutons, indicateurs, 375 px, mouvement réduit), `test_v28_photo` / `test_v28_photo_sync` (photos : local, compression, synchro, règles absentes) et `test_v28_athle` (720 valeurs, monotonie, palier supérieur avec l’exemple 920 cm → 5,25, temps, essais, forçage du Produit, sexe manquant, PDF) ; `test_v28_notes` : barèmes, saisie validée (0..max, pas de 0,25, virgule acceptée), formule comportementale, bascule, APS, persistance, ancien client v1.27.0, PDF.
+
+## Correctif 1.28.1 (11/10/2026)
+- Accueil vide le dimanche (1.28.0) : `homeStatsHtml` lisait `TX.daysShort[7]` (tableau Lun.…Sam.) → « dim. » par défaut. Toutes les autres recherches de jour vérifiées : `t.day` des créneaux (1…6), `HJ` / `WD` / liste des dates (indices `getDay()` 0…6, dimanche inclus), `wday` (dimanche = 7) seulement comparé ou utilisé pour le lundi de la semaine. Test `test_v281` : Accueil, statistiques, Aujourd’hui, tableau de service chaque jour du lundi au dimanche + PDF (registre, bilan, trombinoscope, relevé) le dimanche. **Règle : tout nouveau test qui dépend de la date doit aussi tourner un dimanche.**
+- En-têtes de sécurité (`firebase.json`, source `**`) : `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Strict-Transport-Security: max-age=31536000; includeSubDomains`, `X-Frame-Options: SAMEORIGIN`, `Content-Security-Policy: frame-ancestors 'self'` (pas de CSP de scripts), `Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=(), usb=()`. Pas de COOP/COEP (la connexion Google s’ouvre dans une fenêtre).
+- Base Firestore : protection contre la suppression ACTIVÉE (`firebase firestore:databases:update "(default)" --delete-protection ENABLED`, gratuite, sans facturation).
+- Espace modérateur › Utilisateurs : état du lien de chaque invitation (« 🔗 Invitation liée à son compte » / « ⚠ Invitation non liée » / « à lier après sa première synchro »), bouton « 🔗 Lier l’invitation / les N invitations » (uniquement les cas sans ambiguïté), « 🔗 Lier au compte n » si plusieurs comptes portent l’adresse, « Délier ». Le lien écrit `members/{e-mail}.uid` = uid trouvé dans `profiles/{uid}` (écrit par le compte de la personne à sa synchro) — champ déjà prévu par `firestore.rules` et déjà écrit par « Créer l’accès » : **aucune règle, collection ni donnée de cahier modifiée**. Délier = retrait de `uid` (état d’avant). Test `test_v281` (émulateurs) : invitations 1.28.0 non liées toujours valides, lien → seul ce compte passe, collègue reconnecté avec ses données, modérateur intact.

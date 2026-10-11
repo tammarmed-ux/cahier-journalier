@@ -25,20 +25,20 @@ check('JSON-LD valide SoftwareApplication',!!ld&&ld['@context']==='https://schem
 check('JSON-LD offre gratuite sur invitation (0 MAD), sans note/avis inventés',ld&&ld.offers&&ld.offers.price==='0'&&ld.offers.priceCurrency==='MAD'&&/invitation/.test(ld.offers.description)&&!ld.aggregateRating&&!ld.review);
 check('un seul <h1> dans le HTML',(idx.match(/<h1[\s>]/g)||[]).length===1);
 const land=idx.slice(idx.indexOf('<div id="landing">'),idx.indexOf('<!-- Login gate'));
-check('page d’accueil en HTML statique (h1, 2 boutons, 4–6 fonctions, confiance, pied)',/<h1 class="ln-h1">/.test(land)&&/id="lnLogin"[^>]*>[\s\S]*?Se connecter/.test(land)&&/id="lnFeat"[^>]*>[\s\S]*?Voir les fonctions/.test(land)&&(n=>n>=4&&n<=6)((land.match(/class="ln-card"/g)||[]).length)&&/Accès sur invitation/.test(land)&&/Sauvegarde JSON/.test(land)&&/id="lnVer">Version 1\.28\.0</.test(land));
+check('page d’accueil en HTML statique (h1, 2 boutons, 4–6 fonctions, confiance, pied)',/<h1 class="ln-h1">/.test(land)&&/id="lnLogin"[^>]*>[\s\S]*?Se connecter/.test(land)&&/id="lnFeat"[^>]*>[\s\S]*?Voir les fonctions/.test(land)&&(n=>n>=4&&n<=6)((land.match(/class="ln-card"/g)||[]).length)&&/Accès sur invitation/.test(land)&&/Sauvegarde JSON/.test(land)&&/id="lnVer">Version 1\.28\.1</.test(land));
 check('pas de faux chiffres ni faux témoignages',!/témoignage|avis client|\d+\s?(utilisateurs|enseignants|professeurs|écoles)|★|⭐/i.test(land));
 const robots=fs.readFileSync(D+'robots.txt','utf8'),smap=fs.readFileSync(D+'sitemap.xml','utf8');
 check('robots.txt (Allow /, Sitemap) + sitemap.xml (URL canonique)',/User-agent: \*/.test(robots)&&/Allow: \//.test(robots)&&/Sitemap: https:\/\/cahier-eps-ma\.web\.app\/sitemap\.xml/.test(robots)&&/<loc>https:\/\/cahier-eps-ma\.web\.app\/<\/loc>/.test(smap));
 const man=JSON.parse(fs.readFileSync(D+'manifest.webmanifest','utf8'));
 const iconOk=man.icons.filter(i=>/png$/.test(i.src)).every(i=>pngSize(D+i.src).join('x')===i.sizes);
-check('manifeste : icônes 192/512 + maskable, couleurs, v1.28.0',iconOk&&man.icons.some(i=>i.purpose==='maskable'&&i.sizes==='512x512')&&man.theme_color==='#0B3A6E'&&!!man.background_color&&/v1\.28\.0/.test(man.name));
+check('manifeste : icônes 192/512 + maskable, couleurs, v1.28.0',iconOk&&man.icons.some(i=>i.purpose==='maskable'&&i.sizes==='512x512')&&man.theme_color==='#0B3A6E'&&!!man.background_color&&/v1\.28\.1/.test(man.name));
 check('favicon ico/svg/png 32 + apple-touch-icon 180',fs.existsSync(D+'favicon.ico')&&fs.existsSync(D+'icons/favicon-b.ico')&&fs.existsSync(D+'icons/favicon-b.svg')&&pngSize(D+'icons/favicon-b-32.png').join('x')==='32x32'&&pngSize(D+'icons/apple-touch-icon-b.png').join('x')==='180x180'&&/rel="apple-touch-icon" sizes="180x180" href="icons\/apple-touch-icon-b\.png"/.test(head));
 const lg=fs.readFileSync(D+'icons/logo-b.svg','utf8'),fv=fs.readFileSync(D+'icons/favicon-b.svg','utf8');
 check('logo B : coureur orange #E85D04 + piste courbe, carré bleu #0B3A6E, sans livre ; logo.jpg conservé',/#0B3A6E/.test(lg)&&/#E85D04/.test(lg)&&/stroke="url\(#tr\)"/.test(lg)&&/rx="112"/.test(lg)&&!/url\(#pg\)/.test(lg)&&fs.existsSync(D+'logo.jpg'));
 check('favicon.svg : piste épaissie (visible en 32 px), sans livre',/stroke-width="30"/.test(fv)&&/#E85D04/.test(fv)&&!/url\(#pg\)/.test(fv));
-check('marque « Cahier d’EPS » partout (accueil, connexion, en-tête, splash, pied, manifeste, JSON-LD, og:site_name) ; plus aucun « Cahier EPS »',(idx.match(/Cahier d’<b>EPS<\/b>/g)||[]).length===5&&!/Cahier EPS|Cahier <b>EPS<\/b>/.test(idx)&&man.short_name==='Cahier d’EPS'&&/^Cahier d’EPS v1\.28\.0$/.test(man.name)&&ld.name==='Cahier d’EPS'&&/<meta property="og:site_name" content="Cahier d’EPS">/.test(head)&&/<meta name="apple-mobile-web-app-title" content="Cahier d’EPS">/.test(head)&&!/Cahier EPS/.test(fs.readFileSync(D+'cj-pdf.js','utf8')));
+check('marque « Cahier d’EPS » partout (accueil, connexion, en-tête, splash, pied, manifeste, JSON-LD, og:site_name) ; plus aucun « Cahier EPS »',(idx.match(/Cahier d’<b>EPS<\/b>/g)||[]).length===5&&!/Cahier EPS|Cahier <b>EPS<\/b>/.test(idx)&&man.short_name==='Cahier d’EPS'&&/^Cahier d’EPS v1\.28\.1$/.test(man.name)&&ld.name==='Cahier d’EPS'&&/<meta property="og:site_name" content="Cahier d’EPS">/.test(head)&&/<meta name="apple-mobile-web-app-title" content="Cahier d’EPS">/.test(head)&&!/Cahier EPS/.test(fs.readFileSync(D+'cj-pdf.js','utf8')));
 const sw=fs.readFileSync(D+'sw.js','utf8');
-check('sw.js cahier-v28 met en cache logo (dont logo PDF), favicons, icônes, image og',/CACHE = 'cahier-v28(-[a-z])?'/.test(sw)&&['icons/logo-b.svg','icons/logo-b-pdf.png','icons/favicon-b.svg','icons/favicon-b.ico','icons/favicon-b-32.png','favicon.ico','og-image-b.png','icons/icon-b-192.png','icons/icon-b-512.png','icons/maskable-b-192.png','icons/maskable-b-512.png','icons/apple-touch-icon-b.png'].every(f=>sw.includes("'./"+f+"'")));
+check('sw.js cahier-v28 met en cache logo (dont logo PDF), favicons, icônes, image og',/CACHE = 'cahier-v28(-[a-z0-9]+)?'/.test(sw)&&['icons/logo-b.svg','icons/logo-b-pdf.png','icons/favicon-b.svg','icons/favicon-b.ico','icons/favicon-b-32.png','favicon.ico','og-image-b.png','icons/icon-b-192.png','icons/icon-b-512.png','icons/maskable-b-192.png','icons/maskable-b-512.png','icons/apple-touch-icon-b.png'].every(f=>sw.includes("'./"+f+"'")));
 const fj=JSON.parse(fs.readFileSync(D+'firebase.json','utf8')).hosting.ignore;
 check('firebase.json exclut .git/.firebase/tests/RELEASE/backups, sert robots/sitemap',['.git','**/.*/**','tests','RELEASE*','backups','**/backups/**'].every(x=>fj.includes(x))&&!fj.some(x=>/robots|sitemap/.test(x)));
 // ================= 2. Preuve : clés de stockage et logique inchangées par rapport à v1.27.0 =================
@@ -60,6 +60,7 @@ REM_OK.push("h+='<h3 style=\"margin-top:4px\">Informations personnelles</h3><dl 
 REM_OK.push("cols.forEach(function(c){if(c.hol){h+='<th class=\"holh\" title=\"'+esc(c.hol.label)+'\">'","$('periodNames').innerHTML=DB.periods.map(function(n,i){return '<label class=\"cyrow\">","$('periodNames').addEventListener('change',function(e){var i=+e.target.dataset.pi,v=e.target.value.trim()");
 REM_OK.push("h+='<div class=\"card\" id=\"ttCard\"><h2>'+esc(TX.ttTitle)+'</h2>","'</div><p class=\"small muted\">'+esc(TX.ttHelp)+'</p><div class=\"week\">';","for(var d=1;d<=6;d++){var sl=DB.cal.tt.filter(function(x){return x.day===d;}).sort(byStart);","h+='<div class=\"wk-row\">","h+='<div class=\"ttform\" id=\"ttForm\"><h3>'");   /* v1.28.0 (-h) : tableau de service modernisé (purement visuel) */
 REM_OK.push("if(nx.length)h+='<h3>'+esc(TX.nextSess)+'</h3>'+occList(nx);");   /* v1.28.0 (-i) : carte « Aujourd’hui » = séances du jour seulement */
+REM_OK.push("var prof={},byMail={};r[1].forEach(function(d){var p=d.data();p.uid=p.uid||d.id;prof[p.uid]=p;if(p.email)byMail[lc(p.email)]=p;});","var list=[];r[0].forEach(function(d){var m=d.data();m.id=d.id;var p=(m.uid&&prof[m.uid])||byMail[d.id]||null;m.p=p;if(!m.uid&&p)m.vuid=p.uid;list.push(m);});","if(t.dataset.mact==='view')modView(id);else if(t.dataset.mact==='toggle')modToggle(id);else if(t.dataset.mact==='reset')modReset(id);}");   /* v1.28.1 : lien invitation ↔ compte (members.uid, champ déjà prévu par les règles) */
 REM_OK.push("$('attView').addEventListener('click',function(e){var b=e.target.closest('[data-v]');");   /* v1.28.0 (-i) : bascule Absences | Notes /20 retirée */
 REM_OK.push("function tile(v,l,c){return '<div class=\"stat'","h+='<div class=\"card\" id=\"homeStats\"><h2>'+esc(TX.statsTitle)+'</h2><div class=\"stats s3\">'","'<div class=\"stats s4\" style=\"margin-top:8px\">'+tile(T.A,TX.tAbs,'bad')");   /* v1.28.0 (-k) : Statistiques globales modernisées (homeStatsHtml), tuile AJ retirée */
 const okTT=add.some(l=>l.startsWith("h+='<div class=\"card\" id=\"ttCard\"><div class=\"tw-h\"><h2>'+esc(TX.ttTitle)+'</h2><button type=\"button\" class=\"tw-add\" data-ttadd=\"1\"")&&l.includes('id=\"svcBox\"')&&l.includes('<b id=\"svcTot\">'))&&add.some(l=>l.startsWith("if(DB.cal.tt.length)for(var d=1;d<=6;d++)h+=ttDayHtml(d,DB.cal.tt.filter(function(x){return x.day===d;}).sort(byStart));"))&&add.some(l=>l.startsWith("h+='<div class=\"ttform'+(e?' edit':'')+'\" id=\"ttForm\"><h3>'"));
@@ -108,7 +109,7 @@ check('« Voir les fonctions » fait défiler jusqu’aux fonctions',fz.sc>200&&
 await v.click('#lnLogin');await v.waitForSelector('#gEmail',{visible:true,timeout:10000});await sleep(300);
 s=await st(v);
 const lt=await v.$eval('#gate',e=>e.innerText);
-check('« Se connecter » ouvre l’écran de connexion (logo, accès sur invitation, e-mail/mot de passe, Google, oubli, note iPhone)',!s.land&&s.gd==='block'&&s.mv==='hidden'&&/Accès sur invitation/.test(lt)&&/E-mail/.test(lt)&&/Mot de passe/.test(lt)&&/Se connecter avec Google/.test(lt)&&/Mot de passe oublié/.test(lt)&&/\bou\b/.test(lt)&&/iPhone/.test(lt)&&/Version 1\.28\.0/.test(lt)&&!!(await v.$('#gate img.g-logo[src="icons/logo-b.svg"]')));
+check('« Se connecter » ouvre l’écran de connexion (logo, accès sur invitation, e-mail/mot de passe, Google, oubli, note iPhone)',!s.land&&s.gd==='block'&&s.mv==='hidden'&&/Accès sur invitation/.test(lt)&&/E-mail/.test(lt)&&/Mot de passe/.test(lt)&&/Se connecter avec Google/.test(lt)&&/Mot de passe oublié/.test(lt)&&/\bou\b/.test(lt)&&/iPhone/.test(lt)&&/Version 1\.28\.1/.test(lt)&&!!(await v.$('#gate img.g-logo[src="icons/logo-b.svg"]')));
 sm=await small(v,'#gate button,#gate input');check('iPhone : boutons et champs de connexion ≥ 44 px',sm.length===0,JSON.stringify(sm));
 await v.click('#gBack');await sleep(300);s=await st(v);check('« Retour à l’accueil » réaffiche la page d’accueil',s.land&&s.gd==='none');
 await v.click('#lnLogin');await v.waitForSelector('#gGoogle',{visible:true});
@@ -131,7 +132,7 @@ check('présentation (onboarding) affichée après la première connexion',!!(aw
 await v.evaluate(()=>{const x=document.querySelector('#onb .onb-skip');if(x)x.click();});await sleep(500);
 check('un seul h1 dans l’application ouverte',(await v.evaluate(()=>document.querySelectorAll('h1').length))===1);
 const hd=await v.evaluate(()=>{const r=document.querySelector('header.top .h-logo').getBoundingClientRect();return {logo:document.querySelector('header.top .h-logo').getAttribute('src'),w:r.width,ver:document.querySelector('header.top .h-ver').textContent,ttl:document.querySelector('header.top .h-ttl').textContent};});
-check('en-tête : logo discret + titre + version',hd.logo==='icons/logo-b.svg'&&hd.w>=28&&hd.w<=40&&hd.ver==='v1.28.0'&&hd.ttl==='Cahier d’EPS',JSON.stringify(hd));
+check('en-tête : logo discret + titre + version',hd.logo==='icons/logo-b.svg'&&hd.w>=28&&hd.w<=40&&hd.ver==='v1.28.1'&&hd.ttl==='Cahier d’EPS',JSON.stringify(hd));
 // --- 3d. synchronisation vers l’émulateur
 await v.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(300);
 await v.evaluate(()=>{const t=document.getElementById('setTeacher');t.value='Lycée qualifiant Baja';t.dispatchEvent(new Event('input',{bubbles:true}));t.dispatchEvent(new Event('change',{bubbles:true}));});
@@ -179,10 +180,10 @@ await U.reload({waitUntil:'networkidle2'});await U.evaluate(()=>navigator.servic
 const all=p=>p.evaluate(()=>{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);o[k]=localStorage.getItem(k);}return o;});
 const oldsem=await U.evaluate(()=>window.CJR&&window.CJR.semver);const before=await all(U);
 ROOT=D.replace(/\/$/,'');
-let sem2='';for(let i=0;i<6&&sem2!=='1.28.0';i++){await U.reload({waitUntil:'networkidle2'});await sleep(1200);sem2=await U.evaluate(()=>window.CJR&&window.CJR.semver);}
+let sem2='';for(let i=0;i<6&&sem2!=='1.28.1';i++){await U.reload({waitUntil:'networkidle2'});await sleep(1200);sem2=await U.evaluate(()=>window.CJR&&window.CJR.semver);}
 await sleep(1500);const after=await all(U);
 const caches=await U.evaluate(()=>caches.keys());
-check('mise à jour réelle par le service worker : v'+oldsem+' → v'+sem2+' (cache cahier-v28 seul)',oldsem==='1.27.0'&&sem2==='1.28.0'&&caches.some(c=>/^cahier-v28(-[a-z])?$/.test(c))&&!caches.includes('cahier-v27'),JSON.stringify(caches));
+check('mise à jour réelle par le service worker : v'+oldsem+' → v'+sem2+' (cache cahier-v28 seul)',oldsem==='1.27.0'&&sem2==='1.28.1'&&caches.some(c=>/^cahier-v28(-[a-z0-9]+)?$/.test(c))&&!caches.includes('cahier-v27'),JSON.stringify(caches));
 const deq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 check('classRegister.v2 : contenu identique avant/après (deep-equal) et chaîne brute identique',deq(JSON.parse(before[KEY]),JSON.parse(after[KEY]))&&before[KEY]===after[KEY],(before[KEY]||'').length+' car.');
 const changed=Object.keys(after).filter(k=>before[k]!==after[k]),gone=Object.keys(before).filter(k=>!(k in after));

@@ -44,7 +44,7 @@
  "inLanguage": "fr",
  "url": "https://cahier-eps-ma.web.app/",
  "image": "https://cahier-eps-ma.web.app/og-image-b.png",
- "softwareVersion": "1.28.0",
+ "softwareVersion": "1.28.1",
  "offers": {
   "@type": "Offer",
   "price": "0",
@@ -621,6 +621,8 @@ body.cj-ro header.top{background:#78350f}
 body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStudentBtn,body.cj-ro #bulkBtn,body.cj-ro #wipeAll,body.cj-ro #bkImportBtn,body.cj-ro #addClassBtn,body.cj-ro #syncPill,body.cj-ro #bkRemind{display:none!important}
 #modCard .mrow{border:1px solid #e6ebf2;border-radius:12px;padding:10px 12px;margin:8px 0}
 #modCard .mrow.off{background:#f8f9fb;opacity:.85}
+#modCard .mlink.on{color:var(--ok);font-weight:600}#modCard .mlink.no{color:var(--acc-d,#b45309);font-weight:600}
+#modCard .mlinkall{border:1px solid #f2d7a6;background:#FFF8EC;border-radius:12px;padding:10px 12px;margin:10px 0}
 #modCard .badge{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
 #modCard .badge.on{background:#dcfce7;color:#166534}#modCard .badge.no{background:#fee2e2;color:#991b1b}
 #modCard .mrow .actions{margin-top:8px}#modCard .mrow .btn{min-height:36px;padding:6px 12px;font-size:14px}
@@ -808,11 +810,11 @@ table.gbal tfoot td{font-weight:700}
 </head>
 <body>
 <!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
-<div id="splash" role="img" aria-label="Cahier d’EPS v1.28.0">
+<div id="splash" role="img" aria-label="Cahier d’EPS v1.28.1">
   <video id="splashVid" muted playsinline autoplay preload="auto"></video>
   <div class="sp-box"><img class="sp-logo" src="icons/logo-b.svg" alt="Cahier d’EPS" width="190" height="190" decoding="async" fetchpriority="high">
   <div class="sp-name">Cahier d’<b>EPS</b></div>
-  <div class="sp-ver">v1.28.0</div></div>
+  <div class="sp-ver">v1.28.1</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
 </div>
 <!-- Page d’accueil publique : HTML statique (indexable). Visible seulement sans session mémorisée (html.cj-land) ; l’application reste masquée (html.cj-locked) -->
@@ -877,7 +879,7 @@ table.gbal tfoot td{font-weight:700}
   <footer class="ln-foot">
     <div class="ln-in">
       <span class="ln-brand"><img src="icons/logo-b.svg" alt="" width="28" height="28"><span>Cahier d’<b>EPS</b></span></span>
-      <span>Cahier Journalier digital · <span id="lnVer">Version 1.28.0</span></span>
+      <span>Cahier Journalier digital · <span id="lnVer">Version 1.28.1</span></span>
       <a href="https://cahier-eps-ma.web.app/">cahier-eps-ma.web.app</a>
     </div>
   </footer>
@@ -891,13 +893,13 @@ table.gbal tfoot td{font-weight:700}
       <div class="g-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Accès sur invitation</div>
     </div>
     <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
-    <div class="g-ver" id="gVer">Version 1.28.0</div>
+    <div class="g-ver" id="gVer">Version 1.28.1</div>
     <button type="button" class="g-back" id="gBack"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>Retour à l’accueil</button>
   </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
-  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.28.0</span></span></div>
+  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.28.1</span></span></div>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -1075,7 +1077,7 @@ table.gbal tfoot td{font-weight:700}
     <button class="btn danger solid" id="wipeAll">Supprimer toutes les données</button>
   </div>
   <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation automatique avec votre compte</p>
-  <p class="verline" id="verLine">Version 1.28.0</p>
+  <p class="verline" id="verLine">Version 1.28.1</p>
 </section>
 </main>
 
@@ -1476,8 +1478,8 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_SEMVER='1.28.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
-var APP_VER='cahier-v28';                         /* publication 1.28.0 (09/10/2026) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_SEMVER='1.28.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.29.0 */
+var APP_VER='cahier-v28-1';                       /* publication 1.28.1 (11/10/2026) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2731,7 +2733,7 @@ function hsEv(W,k,lab,neutral){if(!W.ok)return '<div class="hs-ev none" data-dir
   function bar(x,v,c){var hh=v?Math.max(3,Math.round(v/mx*22)):1.5;return '<rect class="'+c+'" x="'+x+'" y="'+(24-hh)+'" width="13" height="'+hh+'" rx="3"/>';}
   var badge=dir==='flat'?'= stable':(dir==='up'?'▲ +':'▼ −')+Math.abs(d),txt=lab+' : semaine dernière '+a+', cette semaine '+b+(dir==='flat'?', stable':', '+(dir==='up'?'en hausse':'en baisse')+' de '+Math.abs(d))+(neutral||dir==='flat'?'':(cl==='good'?' (bon signe)':' (à surveiller)'));
   return '<div class="hs-ev '+cl+'" data-dir="'+dir+'" data-prev="'+a+'" data-cur="'+b+'" title="'+esc(txt)+'"><svg class="hs-bars" viewBox="0 0 34 24" aria-hidden="true">'+bar(1,a,'pv')+bar(19,b,'cu')+'</svg><span class="hs-b" aria-hidden="true">'+badge+'</span><span class="hs-vs" aria-hidden="true">'+a+' → '+b+'</span><span class="sr">'+esc(txt)+'</span></div>';}
-function homeStatsHtml(S,T){var W=weekCmp(),dm=function(x){return TX.daysShort[wday(x)].toLowerCase()+' '+x.slice(8,10)+'/'+x.slice(5,7);};
+function homeStatsHtml(S,T){var W=weekCmp(),dm=function(x){return (TX.daysShort[wday(x)]||'Dim.').toLowerCase()+' '+x.slice(8,10)+'/'+x.slice(5,7);};   /* 1.28.1 : dimanche (wday = 7) hors du tableau Lun.…Sam. → « dim. » (l’Accueil restait vide le dimanche) */
   function st(k,v,l){return '<div class="hs st k-'+k+'">'+'<div class="hs-top">'+hsIc(k)+'</div><div><b class="hs-v">'+v+'</b><div class="hs-l">'+esc(l)+'</div></div></div>';}
   function tl(k,v,l,wide,neutral){return '<div class="hs k-'+k+(wide?' wide':'')+'" data-k="'+k+'"><div class="hs-top">'+hsIc(k)+'<b class="hs-v">'+v+'</b></div><div class="hs-l">'+esc(l)+'</div>'+hsEv(W,k,l,neutral)+'</div>';}
   var cap=W.full?'Évolution : semaine du '+dm(W.from)+' au '+dm(W.to)+' comparée à la semaine précédente.':'Évolution : semaine en cours ('+dm(W.from)+' → '+dm(W.to)+') comparée à la même période de la semaine dernière ('+dm(W.pfrom)+' → '+dm(W.pto)+').';
@@ -4015,8 +4017,8 @@ function modLoad(){
   if(S.role!=='mod'||!S.sdk)return;
   var F=S.sdk.F;S.mod.loading=true;S.mod.err='';ui();
   Promise.all([F.getDocsFromServer(F.collection(S.db,'members')),F.getDocsFromServer(F.collection(S.db,'profiles'))]).then(function(r){
-    var prof={},byMail={};r[1].forEach(function(d){var p=d.data();p.uid=p.uid||d.id;prof[p.uid]=p;if(p.email)byMail[lc(p.email)]=p;});
-    var list=[];r[0].forEach(function(d){var m=d.data();m.id=d.id;var p=(m.uid&&prof[m.uid])||byMail[d.id]||null;m.p=p;if(!m.uid&&p)m.vuid=p.uid;list.push(m);});
+    var prof={},byMail={},allMail={};r[1].forEach(function(d){var p=d.data();p.uid=p.uid||d.id;prof[p.uid]=p;if(p.email){byMail[lc(p.email)]=p;(allMail[lc(p.email)]=allMail[lc(p.email)]||[]).push(p);}});
+    var list=[];r[0].forEach(function(d){var m=d.data();m.id=d.id;var p=(m.uid&&prof[m.uid])||byMail[d.id]||null;m.p=p;if(!m.uid&&p)m.vuid=p.uid;m.cands=m.uid?[]:(allMail[d.id]||[]).slice().sort(function(a,b){return tsMs(b.lastSeen)-tsMs(a.lastSeen);});list.push(m);});
     list.sort(function(a,b){return String(a.name||a.email).localeCompare(String(b.name||b.email),'fr');});
     S.mod.list=list;
   }).catch(function(e){log('mod list err',e&&e.code);S.mod.err=(e&&e.code==='permission-denied')?'Lecture de la liste refusée : publiez les nouvelles règles Firestore (voir firestore.rules).':('Liste indisponible : '+((e&&(e.code||e.message))||'erreur'));})
@@ -4076,6 +4078,28 @@ function modReset(id){
   if(!confirm('Envoyer un e-mail de réinitialisation du mot de passe à '+m.email+' ?'))return;
   S.sdk.U.sendPasswordResetEmail(S.auth,m.email).then(function(){APP.toast('E-mail de réinitialisation envoyé à '+m.email);}).catch(function(e){APP.toast(eErr(e));});
 }
+/* 1.28.1 : lien invitation ↔ compte. Le modérateur inscrit l’uid du compte déjà utilisé (trouvé dans profiles/{uid}, écrit par ce compte lors de sa synchro)
+   dans members/{e-mail}.uid — champ déjà prévu par firestore.rules et déjà écrit par « Créer l’accès ». Ensuite, seul ce compte peut utiliser l’invitation.
+   Aucune règle, collection ni donnée de cahier modifiée ; « Délier » retire uid (retour exact à l’état d’avant). */
+function modLinkOne(m,uid){var F=S.sdk.F;return F.updateDoc(memberRef(m.id),{email:m.id,uid:uid,updatedAt:F.serverTimestamp()});}
+function modLink(id,uid){
+  var m=modFind(id);if(!m||S.role!=='mod')return;var c=(m.cands||[]).filter(function(p){return p.uid===uid;})[0];if(!c)return;
+  var last=c.lastSyncAt||tsMs(c.lastSeen);
+  if(!confirm('Lier l’invitation de '+(m.name||m.email)+' au compte qui synchronise actuellement'+(last?' (dernière synchro : '+whenStr(last)+', '+(c.studentCount||0)+' élèves)':'')+' ?\nEnsuite, seul ce compte pourra utiliser cette invitation. Ses données ne changent pas.'+(m.cands.length>1?'\n\nAttention : '+m.cands.length+' comptes utilisent cette adresse ; les autres n’auront plus accès.':'')))return;
+  modLinkOne(m,uid).then(function(){APP.toast('Invitation liée au compte');modLoad();}).catch(function(e){APP.toast(eErr(e));});
+}
+function modLinkAll(){
+  if(S.role!=='mod')return;var L=(S.mod.list||[]).filter(function(m){return !m.uid&&m.cands&&m.cands.length===1;});if(!L.length)return;
+  if(!confirm('Lier '+L.length+' invitation'+(L.length>1?'s':'')+' au compte que chaque personne utilise déjà ?\nRien ne change pour elles ; un inconnu ne pourra plus utiliser leur adresse.'))return;
+  S.mod.busy=true;ui(true);var ok=0,ko=0;
+  L.reduce(function(pr,m){return pr.then(function(){return modLinkOne(m,m.cands[0].uid).then(function(){ok++;},function(){ko++;});});},Promise.resolve())
+    .then(function(){S.mod.busy=false;APP.toast(ok+' invitation'+(ok>1?'s':'')+' liée'+(ok>1?'s':'')+(ko?' · '+ko+' échec'+(ko>1?'s':''):''));modLoad();});
+}
+function modUnlink(id){
+  var m=modFind(id);if(!m||!m.uid||S.role!=='mod')return;
+  if(!confirm('Délier l’invitation de '+(m.name||m.email)+' ?\nL’adresse pourra de nouveau être utilisée par n’importe quel compte portant cette adresse (comme avant). Ses données ne changent pas.'))return;
+  var F=S.sdk.F;F.updateDoc(memberRef(id),{uid:F.deleteField(),updatedAt:F.serverTimestamp()}).then(function(){APP.toast('Invitation déliée');modLoad();}).catch(function(e){APP.toast(eErr(e));});
+}
 function modView(id){
   var m=modFind(id);if(!m)return;var uid=m.uid||m.vuid;
   if(!uid){APP.toast('Cet utilisateur ne s’est pas encore connecté');return;}
@@ -4119,12 +4143,16 @@ function drawMod(){
   h+='<div class="row" style="justify-content:space-between;margin-top:14px"><h3 style="margin:0;font-size:16px">Utilisateurs'+(L?' ('+L.length+')':'')+'</h3><button class="btn sec" id="mdRefresh" style="min-height:34px;padding:4px 12px"'+(D.loading?' disabled':'')+'>⟳ Actualiser</button></div>';
   if(D.loading&&!L)h+='<p class="small muted">Chargement…</p>';
   if(L&&!L.length)h+='<p class="small muted">Aucun accès pour le moment.</p>';
+  var nl=(L||[]).filter(function(m){return !m.uid&&m.cands&&m.cands.length===1;}).length;
+  if(nl)h+='<div class="mlinkall"><p class="small" style="margin:0">'+nl+' invitation'+(nl>1?'s ne sont pas liées':' n’est pas liée')+' au compte de la personne : un inconnu qui créerait un compte avec la même adresse pourrait l’utiliser. Le lien ne change rien pour vos collègues.</p><div class="actions"><button class="btn" id="mdLinkAll"'+(D.busy?' disabled':'')+'>🔗 Lier '+(nl>1?'les '+nl+' invitations':'l’invitation')+'</button></div></div>';
   (L||[]).forEach(function(m){
     var p=m.p,act=m.active===true,last=p&&(p.lastSyncAt||tsMs(p.lastSeen));
     h+='<div class="mrow'+(act?'':' off')+'" data-mid="'+esc(m.id)+'"><b dir="auto">'+esc(m.name||'(sans nom)')+'</b><span class="badge '+(act?'on':'no')+'">'+(act?'Actif':'Désactivé')+'</span>'+
       '<br><span class="small">'+esc(m.email)+'</span><br><span class="small muted">'+
       (p?('Dernière synchro : '+(last?whenStr(last):'—')+' · '+p.classCount+' classe'+(p.classCount>1?'s':'')+' · '+p.studentCount+' élève'+(p.studentCount>1?'s':'')):(m.uid?'Jamais connecté':'Pas encore connecté (compte existant)'))+'</span>'+
+      '<br><span class="small mlink '+(m.uid?'on':'no')+'">'+(m.uid?'🔗 Invitation liée à son compte':(m.cands&&m.cands.length?'⚠ Invitation non liée'+(m.cands.length>1?' · '+m.cands.length+' comptes avec cette adresse':''):'Invitation non liée · à lier après sa première synchro'))+'</span>'+
       '<div class="actions"><button class="btn sec" data-mact="view"'+((m.uid||m.vuid)?'':' disabled')+'>👁 Voir son cahier</button>'+
+      (m.uid?'<button class="btn sec" data-mact="unlink">Délier</button>':(m.cands||[]).map(function(c,i){var l=c.lastSyncAt||tsMs(c.lastSeen);return '<button class="btn sec" data-mact="link" data-uid="'+esc(c.uid)+'">🔗 Lier'+(m.cands.length>1?' au compte '+(i+1)+(l?' ('+esc(whenStr(l))+')':''):' au compte')+'</button>';}).join(''))+
       '<button class="btn '+(act?'danger':'sec')+'" data-mact="toggle">'+(act?'Désactiver':'Réactiver')+'</button>'+
       '<button class="btn sec" data-mact="reset">Réinitialiser le mot de passe</button></div></div>';
   });
@@ -4216,12 +4244,14 @@ document.addEventListener('click',function(e){
     if(t.id==='mdCreate')modCreate();
     else if(t.id==='mdAllow')modAllowExisting();
     else if(t.id==='mdRefresh')modLoad();
+    else if(t.id==='mdLinkAll')modLinkAll();
     else if(t.id==='mdCopyPw'&&S.mod.cred)copyText(S.mod.cred.pw,'Mot de passe copié');
     else if(t.id==='mdCopyMsg'&&S.mod.cred)copyText(shareMsg(S.mod.cred),'Message copié');
     else if(t.id==='mdShare'&&S.mod.cred){navigator.share({title:'Accès – Cahier Journalier digital',text:shareMsg(S.mod.cred)}).catch(function(){});}
     else if(t.id==='mdDone'){S.mod.cred=null;ui(true);}
     else if(t.dataset.mact){var row=t.closest('[data-mid]');if(!row)return;var id=row.dataset.mid;
-      if(t.dataset.mact==='view')modView(id);else if(t.dataset.mact==='toggle')modToggle(id);else if(t.dataset.mact==='reset')modReset(id);}
+      if(t.dataset.mact==='view')modView(id);else if(t.dataset.mact==='toggle')modToggle(id);else if(t.dataset.mact==='reset')modReset(id);
+      else if(t.dataset.mact==='link')modLink(id,t.dataset.uid);else if(t.dataset.mact==='unlink')modUnlink(id);}
     return;
   }
   if(t.closest('#gate')){
