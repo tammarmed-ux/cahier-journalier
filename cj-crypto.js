@@ -56,11 +56,11 @@ function queue(k){GEN[k]=(GEN[k]||0)+1;DIRTY[k]=1;if(!BUSY){BUSY=true;Promise.re
 function idle(){var w=WAIT;WAIT=[];w.forEach(function(f){f();});}
 function pump(){var ks=Object.keys(DIRTY);if(!ks.length||MODE!=='open'){BUSY=false;idle();return;}
   var k=ks[0],g=GEN[k],v=CACHE[k];delete DIRTY[k];if(v==null){pump();return;}
-  seal(k,v).then(function(env){if(GEN[k]!==g||MODE!=='open')return;writeEnv(k,env);}).catch(function(e){LAST_ERR='chiffrement : '+(e&&e.message||e);warn();DIRTY[k]=1;})
+  seal(k,v).then(function(env){if(GEN[k]!==g||MODE!=='open')return;writeEnv(k,env);}).catch(function(e){LAST_ERR='chiffrement\u00a0: '+(e&&e.message||e);warn();DIRTY[k]=1;})
     .then(function(){setTimeout(pump,0);});}
 /* écriture atomique : un seul setItem remplace l’ancienne valeur ; stockage plein → on libère le plus ancien instantané (comme persistNow) */
 function writeEnv(k,env){for(var tr=0;tr<12;tr++){try{oSet.call(LS,k,env);return true;}catch(e){if(!freeSnap(k))break;}}
-  LAST_ERR='stockage plein : « '+k+' » non enregistré';warn();return false;}
+  LAST_ERR='stockage plein\u00a0: «\u00a0'+k+'\u00a0» non enregistré';warn();return false;}
 function freeSnap(except){var P=KEY+'.snap.',ts=rawKeys().filter(function(k){return k.indexOf(P)===0&&k!==except;}).map(function(k){return +k.slice(P.length);}).filter(Boolean).sort(function(a,b){return a-b;});
   if(!ts.length)return false;var t=ts[0];try{oRem.call(LS,P+t);oRem.call(LS,KEY+'.snapm.'+t);}catch(e){}delete CACHE[P+t];return true;}
 function flush(){return new Promise(function(res){if(!BUSY&&!Object.keys(DIRTY).length)res();else{WAIT.push(res);if(!BUSY){BUSY=true;setTimeout(pump,0);}}});}
@@ -142,24 +142,24 @@ function busy(t){overlay(HEAD+'<p class="s"><span class="busy"></span>'+h(t)+'</
 /* écran de verrouillage */
 function lockScreen(msg){var m=readMeta();if(!m)return;var w=waitLeft();
   pinForm({len:m.len||PIN_MIN,title:'Entrez votre code pour ouvrir le cahier',bio:!!(m.bio&&bioAvail()),onBio:bioUnlock,
-    msg:msg||(w?'Trop d’essais : réessayez dans '+fmtWait(w)+'.':''),
-    extra:'<button type="button" class="lk" id="cjForgot">Code oublié ?</button>',
+    msg:msg||(w?'Trop d’essais\u00a0: réessayez dans '+fmtWait(w)+'.':''),
+    extra:'<button type="button" class="lk" id="cjForgot">Code oublié\u00a0?</button>',
     wire:function(r){r.querySelector('#cjForgot').addEventListener('click',forgot);}}).then(function(pin){
-    var w2=waitLeft();if(w2){lockScreen('Trop d’essais : réessayez dans '+fmtWait(w2)+'.');return;}
+    var w2=waitLeft();if(w2){lockScreen('Trop d’essais\u00a0: réessayez dans '+fmtWait(w2)+'.');return;}
     busy('Ouverture…');var t0=performance.now();
     tryPin(pin).then(function(raw){T.unlock=Math.round(performance.now()-t0);var t1=performance.now();return openApp(raw).then(function(){T.unlockLoad=Math.round(performance.now()-t1);closeOverlay();});},function(e){
-      var mm=readMeta()||{},w3=waitLeft();lockScreen(e&&e.message==='bad'?('Code incorrect'+(w3?' — réessayez dans '+fmtWait(w3):'')+'.'):'Erreur : '+(e&&e.message||e));});});
+      var mm=readMeta()||{},w3=waitLeft();lockScreen(e&&e.message==='bad'?('Code incorrect'+(w3?' — réessayez dans '+fmtWait(w3):'')+'.'):'Erreur\u00a0: '+(e&&e.message||e));});});
   if(m.bio&&bioAvail()&&!msg&&!w&&m.bioAuto!==false&&!lockScreen.tried){lockScreen.tried=true;setTimeout(bioUnlock,300);}}
 /* ---------- code oublié ---------- */
 function forgot(){var M={};try{M=JSON.parse(rawGet(MKEY)||'{}')||{};}catch(e){}
   var dirty=!!M.dirty,never=!M.syncedUid;
-  overlay(HEAD+'<p class="s">Code oublié</p><div class="txt"><p>Les données de cet appareil sont chiffrées avec votre code : sans lui, personne (pas même l’application) ne peut les relire.</p>'+
+  overlay(HEAD+'<p class="s">Code oublié</p><div class="txt"><p>Les données de cet appareil sont chiffrées avec votre code\u00a0: sans lui, personne (pas même l’application) ne peut les relire.</p>'+
     '<p>Vous pouvez <b>effacer la copie chiffrée de cet appareil</b>, vous <b>reconnecter avec votre compte</b>, puis récupérer votre cahier <b>depuis la synchronisation en ligne</b>. Vous choisirez ensuite un nouveau code.</p>'+
-    (dirty||never?'<p style="color:#FFD2B0"><b>⚠ Attention :</b> '+(never?'ce cahier n’a jamais été synchronisé en ligne sur cet appareil.':'des modifications faites sur cet appareil n’ont pas encore été envoyées en ligne.')+' Elles seront <b>définitivement perdues</b>. Essayez d’abord de retrouver votre code.</p>':'<p>Dernière synchronisation : tout était envoyé en ligne.</p>')+'</div>'+
+    (dirty||never?'<p style="color:#FFD2B0"><b>⚠ Attention\u00a0:</b> '+(never?'ce cahier n’a jamais été synchronisé en ligne sur cet appareil.':'des modifications faites sur cet appareil n’ont pas encore été envoyées en ligne.')+' Elles seront <b>définitivement perdues</b>. Essayez d’abord de retrouver votre code.</p>':'<p>Dernière synchronisation\u00a0: tout était envoyé en ligne.</p>')+'</div>'+
     '<button type="button" class="b" id="cjWipe">'+(dirty||never?'Effacer quand même et me reconnecter':'Effacer et me reconnecter')+'</button><button type="button" class="b s2" id="cjBack">Retour</button>');
   document.getElementById('cjBack').addEventListener('click',function(){lockScreen();});
   document.getElementById('cjWipe').addEventListener('click',function(){
-    if((dirty||never)&&!confirm('Les modifications non synchronisées seront perdues. Continuer ?'))return;
+    if((dirty||never)&&!confirm('Les modifications non synchronisées seront perdues. Continuer\u00a0?'))return;
     busy('Effacement de la copie locale…');wipeLocal().then(function(){location.reload();});});}
 function delDb(n){return new Promise(function(res){try{var r=indexedDB.deleteDatabase(n);r.onsuccess=r.onerror=r.onblocked=function(){res();};}catch(e){res();}});}
 /* efface UNIQUEMENT la copie locale chiffrée + la session de connexion (pour imposer une reconnexion) ; les données en ligne ne sont pas touchées */
@@ -223,7 +223,7 @@ function disable(){if(MODE!=='open')return Promise.reject(new Error('verrouillé
     .then(function(o){
       /* clés localStorage : en clair ; si le stockage est plein, on s’arrête et on garde le chiffrement (mélange accepté) */
       var undo=[];try{pairs.forEach(function(p){var cur=rawGet(p[0]);oSet.call(LS,p[0],p[1]);undo.push([p[0],cur]);});}
-      catch(e){undo.forEach(function(u){try{oSet.call(LS,u[0],u[1]);}catch(x){}});throw new Error('stockage plein : désactivation impossible pour le moment');}
+      catch(e){undo.forEach(function(u){try{oSet.call(LS,u[0],u[1]);}catch(x){}});throw new Error('stockage plein\u00a0: désactivation impossible pour le moment');}
       return (o.P.db?idbPutAll(o.P.db,'p',o.ph):Promise.resolve()).then(function(){return o.S.db?idbPutAll(o.S.db,'s',o.sn):null;}).then(function(){
         [o.P.db,o.S.db].forEach(function(d){try{d&&d.close();}catch(e){}});
         oRem.call(LS,CKEY);MODE='plain';uninstall();DEK=null;CACHE={};META=null;});});});}
@@ -244,7 +244,7 @@ function bioEnroll(pin){var raw,salt=b64(rnd(32));return tryPin(pin).then(functi
     return (f?Promise.resolve(f):prfGet(id,salt)).then(function(out){return prfKey(out);}).then(function(k){return wrapRaw(k,raw,'cj-dek-bio-v1');}).then(function(w){var m=readMeta();m.bio={id:id,salt:salt,wrap:w};writeMeta(m);});});}
 function bioUnlock(){var m=readMeta();if(!m||!m.bio)return;var t0=performance.now();
   prfGet(m.bio.id,m.bio.salt).then(prfKey).then(function(k){return unwrapRaw(k,m.bio.wrap,'cj-dek-bio-v1');}).then(function(raw){busy('Ouverture…');T.unlock=Math.round(performance.now()-t0);return openApp(raw).then(closeOverlay);})
-  .catch(function(){setMsg('Face ID non utilisé : touchez « Face ID » ou entrez votre code.');});}
+  .catch(function(){setMsg('Face ID non utilisé\u00a0: touchez «\u00a0Face ID\u00a0» ou entrez votre code.');});}
 /* ---------- verrouillage automatique ---------- */
 function lockNow(){if(MODE!=='open')return;flush().then(function(){location.reload();});}
 document.addEventListener('visibilitychange',function(){if(MODE!=='open')return;var m=readMeta();if(!m)return;
@@ -254,38 +254,38 @@ window.addEventListener('pagehide',function(){if(MODE==='open'){hiddenAt=hiddenA
 /* ---------- première ouverture : proposer le code ---------- */
 var LATER='cahier.cryptoLater';
 function setupFlow(fromSettings){
-  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b> Choisissez un code de 6 chiffres (ou plus) : les données enregistrées sur ce téléphone (élèves, codes Massar, notes, absences, photos, sauvegardes de sécurité) seront <b>chiffrées en AES-256</b>. Sans le code, elles sont illisibles.</p>'+
+  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b> Choisissez un code de 6 chiffres (ou plus)\u00a0: les données enregistrées sur ce téléphone (élèves, codes Massar, notes, absences, photos, sauvegardes de sécurité) seront <b>chiffrées en AES-256</b>. Sans le code, elles sont illisibles.</p>'+
     '<p>Le code vous sera demandé à chaque ouverture et après 5 minutes en arrière-plan (réglable dans Paramètres). Il n’est jamais envoyé sur Internet.</p>'+
-    '<p>En cas d’oubli : « Code oublié ? » efface la copie de ce téléphone ; vous la récupérez depuis votre compte synchronisé.</p></div>';
+    '<p>En cas d’oubli\u00a0: «\u00a0Code oublié\u00a0?\u00a0» efface la copie de ce téléphone\u00a0; vous la récupérez depuis votre compte synchronisé.</p></div>';
   function step1(msg){pinForm({free:true,title:'Choisissez votre code',intro:intro,msg:msg,cancel:true,extra:'<button type="button" class="lk" id="cjDl">Télécharger d’abord une sauvegarde (JSON)</button>',
       wire:function(r){r.querySelector('#cjDl').addEventListener('click',dlBackup);}}).then(function(a){
     if(a==null){if(!fromSettings)try{oSet.call(LS,LATER,String(now()));}catch(e){}closeOverlay();return;}
     pinForm({free:true,title:'Confirmez votre code',cancel:true}).then(function(b){if(b==null){step1();return;}if(a!==b){step1('Les deux codes ne correspondent pas. Recommencez.');return;}
       busy('Sauvegarde puis chiffrement de vos données…');
       enable(a).then(function(){try{oRem.call(LS,LATER);}catch(e){}
-        overlay(HEAD+'<p class="s">Code activé</p><div class="txt"><p>✅ Vos données sur ce téléphone sont maintenant chiffrées (vérifiées après écriture).</p><p>Une sauvegarde de sécurité « Avant chiffrement » a été créée. Vous pouvez aussi en télécharger une copie.</p></div>'+
+        overlay(HEAD+'<p class="s">Code activé</p><div class="txt"><p>✅ Vos données sur ce téléphone sont maintenant chiffrées (vérifiées après écriture).</p><p>Une sauvegarde de sécurité «\u00a0Avant chiffrement\u00a0» a été créée. Vous pouvez aussi en télécharger une copie.</p></div>'+
           '<button type="button" class="b" id="cjDone">Continuer</button><button type="button" class="b s2" id="cjDl2">Télécharger une sauvegarde (JSON)</button>');
         document.getElementById('cjDone').addEventListener('click',function(){closeOverlay();renderCard();});
         document.getElementById('cjDl2').addEventListener('click',dlBackup);renderCard();
-      },function(e){overlay(HEAD+'<p class="s">Chiffrement non effectué</p><div class="txt"><p>⚠ '+h(e&&e.message||e)+'</p><p>Rien n’a été modifié : vos données restent enregistrées comme avant (en clair).</p></div><button type="button" class="b" id="cjDone">Fermer</button>');
+      },function(e){overlay(HEAD+'<p class="s">Chiffrement non effectué</p><div class="txt"><p>⚠ '+h(e&&e.message||e)+'</p><p>Rien n’a été modifié\u00a0: vos données restent enregistrées comme avant (en clair).</p></div><button type="button" class="b" id="cjDone">Fermer</button>');
         document.getElementById('cjDone').addEventListener('click',closeOverlay);renderCard();});});});}
   step1();}
-function dlBackup(){try{var js=CJApp.getJSON();CJApp.download('sauvegarde-cahier-journalier_'+CJApp.stamp()+'.json',js);}catch(e){alert('Téléchargement impossible : '+(e&&e.message||e));}}
+function dlBackup(){try{var js=CJApp.getJSON();CJApp.download('sauvegarde-cahier-journalier_'+CJApp.stamp()+'.json',js);}catch(e){alert('Téléchargement impossible\u00a0: '+(e&&e.message||e));}}
 function maybeAsk(){if(MODE!=='plain'||readMeta()||!subtle)return;var tries=0;var iv=setInterval(function(){tries++;if(tries>600){clearInterval(iv);return;}
   if(!window.CJGateOpen||document.getElementById('cjLock')||document.getElementById('onb')||document.getElementById('splash')||!rawGet('cahier.onboardingDone'))return;
   var l=+rawGet(LATER)||0;clearInterval(iv);if(l&&now()-l<7*864e5)return;if(window.CJApp&&CJApp.viewing&&CJApp.viewing())return;setupFlow(false);},1000);}
 /* ---------- carte Paramètres › Sécurité ---------- */
 function renderCard(){var c=document.getElementById('secCard');if(!c)return;var m=readMeta(),on=MODE==='open'&&m;
   var hh='<h2>🔒 Sécurité de cet appareil</h2>';
-  if(!on){hh+='<p class="small muted" style="margin-top:0">Code d’accès : <b>désactivé</b>. Les données de ce téléphone sont enregistrées en clair dans le navigateur.</p>'+
-    '<p class="small muted">Activez un code de 6 chiffres (ou plus) : les données locales (élèves, codes Massar, notes, photos, sauvegardes de sécurité) seront chiffrées en AES-256 et le code sera demandé à chaque ouverture.</p>'+
+  if(!on){hh+='<p class="small muted" style="margin-top:0">Code d’accès\u00a0: <b>désactivé</b>. Les données de ce téléphone sont enregistrées en clair dans le navigateur.</p>'+
+    '<p class="small muted">Activez un code de 6 chiffres (ou plus)\u00a0: les données locales (élèves, codes Massar, notes, photos, sauvegardes de sécurité) seront chiffrées en AES-256 et le code sera demandé à chaque ouverture.</p>'+
     (subtle?'<div class="actions"><button class="btn" id="secOn">🔒 Activer le code d’accès</button></div>':'<p class="small">Ce navigateur ne permet pas le chiffrement.</p>');}
-  else{hh+='<p class="small" style="margin-top:0">Code d’accès : <span class="ok">activé</span> · données locales chiffrées (AES-256-GCM ; clé protégée par votre code, PBKDF2-SHA-256 '+(m.it/1000|0)+' 000 itérations).</p>'+
+  else{hh+='<p class="small" style="margin-top:0">Code d’accès\u00a0: <span class="ok">activé</span> · données locales chiffrées (AES-256-GCM\u00a0; clé protégée par votre code, PBKDF2-SHA-256 '+(m.it/1000|0)+' 000 itérations).</p>'+
     '<div class="row"><label for="secAl" class="small">Verrouiller après</label><select id="secAl">'+[[0,'immédiatement'],[1,'1 min en arrière-plan'],[5,'5 min en arrière-plan'],[15,'15 min en arrière-plan'],[30,'30 min en arrière-plan'],[60,'1 h en arrière-plan']].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===(m.al==null?5:m.al)?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select></div>'+
     '<div class="actions"><button class="btn" id="secLock">🔒 Verrouiller maintenant</button><button class="btn sec" id="secPin">Changer le code</button>'+
     '<button class="btn sec hidden" id="secBio">'+(m.bio?'Désactiver Face ID':'Activer Face ID')+'</button><button class="btn sec" id="secOff">Désactiver le chiffrement</button></div>'+
-    '<p class="small muted" id="secBioInfo"></p>'+(T.unlock!=null?'<p class="small muted" id="secTime">Dernière ouverture : '+T.unlock+' ms (code) + '+(T.load||0)+' ms (déchiffrement).</p>':'')+
-    '<p class="small muted">Limites : pendant l’utilisation, les données sont déchiffrées en mémoire ; les données en ligne sont protégées par le chiffrement de Google et les règles d’accès de votre compte (pas par ce code) ; les exports PDF, CSV et JSON sont en clair.</p>';}
+    '<p class="small muted" id="secBioInfo"></p>'+(T.unlock!=null?'<p class="small muted" id="secTime">Dernière ouverture\u00a0: '+T.unlock+' ms (code) + '+(T.load||0)+' ms (déchiffrement).</p>':'')+
+    '<p class="small muted">Limites\u00a0: pendant l’utilisation, les données sont déchiffrées en mémoire\u00a0; les données en ligne sont protégées par le chiffrement de Google et les règles d’accès de votre compte (pas par ce code)\u00a0; les exports PDF, CSV et JSON sont en clair.</p>';}
   c.innerHTML=hh;
   var b=document.getElementById('secOn');if(b)b.addEventListener('click',function(){setupFlow(true);});
   if(!on)return;
@@ -294,19 +294,19 @@ function renderCard(){var c=document.getElementById('secCard');if(!c)return;var 
   document.getElementById('secPin').addEventListener('click',function(){var mm=readMeta();
     pinForm({len:mm.len||PIN_MIN,title:'Code actuel',cancel:true}).then(function(old){if(old==null){closeOverlay();return;}busy('Vérification…');
       tryPin(old).then(function(){return ask2('Nouveau code');},function(){closeOverlay();alert('Code incorrect.');return null;}).then(function(nw){if(nw==null){closeOverlay();return;}
-        busy('Changement du code…');changePin(old,nw).then(function(){closeOverlay();renderCard();CJApp.toast('Code modifié');},function(e){closeOverlay();alert('Échec : '+(e&&e.message||e));});});});});
+        busy('Changement du code…');changePin(old,nw).then(function(){closeOverlay();renderCard();CJApp.toast('Code modifié');},function(e){closeOverlay();alert('Échec\u00a0: '+(e&&e.message||e));});});});});
   document.getElementById('secOff').addEventListener('click',function(){var mm=readMeta();
-    if(!confirm('Désactiver le chiffrement ? Les données de ce téléphone seront de nouveau enregistrées en clair et le code ne sera plus demandé.'))return;
+    if(!confirm('Désactiver le chiffrement\u00a0? Les données de ce téléphone seront de nouveau enregistrées en clair et le code ne sera plus demandé.'))return;
     pinForm({len:mm.len||PIN_MIN,title:'Entrez votre code pour désactiver',cancel:true}).then(function(p){if(p==null){closeOverlay();return;}busy('Déchiffrement…');
       tryPin(p).then(function(){return disable().then(function(){closeOverlay();renderCard();CJApp.toast('Chiffrement désactivé');});},function(){closeOverlay();alert('Code incorrect.');})
-      .catch(function(e){closeOverlay();alert('Échec : '+(e&&e.message||e)+'\nVos données restent chiffrées et intactes.');});});});
+      .catch(function(e){closeOverlay();alert('Échec\u00a0: '+(e&&e.message||e)+'\nVos données restent chiffrées et intactes.');});});});
   bioCheck().then(function(ok){var bb=document.getElementById('secBio'),inf=document.getElementById('secBioInfo');if(!bb)return;
-    if(!ok){if(inf)inf.textContent='Face ID / Touch ID : non disponible dans ce navigateur (code uniquement).';return;}
+    if(!ok){if(inf)inf.textContent='Face ID / Touch ID\u00a0: non disponible dans ce navigateur (code uniquement).';return;}
     bb.classList.remove('hidden');bb.addEventListener('click',function(){var mm=readMeta();
       if(mm.bio){delete mm.bio;writeMeta(mm);renderCard();return;}
       pinForm({len:mm.len||PIN_MIN,title:'Entrez votre code pour activer Face ID',cancel:true}).then(function(p){if(p==null){closeOverlay();return;}busy('Face ID…');
         bioEnroll(p).then(function(){closeOverlay();renderCard();CJApp.toast('Face ID activé');},function(e){closeOverlay();renderCard();
-          var t=document.getElementById('secBioInfo');if(t)t.textContent=e&&e.message==='bad'?'Code incorrect.':'Face ID ne peut pas protéger la clé sur cet appareil (extension WebAuthn PRF non prise en charge) : code uniquement.';});});});});}
+          var t=document.getElementById('secBioInfo');if(t)t.textContent=e&&e.message==='bad'?'Code incorrect.':'Face ID ne peut pas protéger la clé sur cet appareil (extension WebAuthn PRF non prise en charge)\u00a0: code uniquement.';});});});});}
 function ask2(title){return pinForm({free:true,title:title,cancel:true}).then(function(a){if(a==null)return null;return pinForm({free:true,title:'Confirmez le nouveau code',cancel:true}).then(function(b){
   if(b==null)return null;if(a!==b){alert('Les deux codes ne correspondent pas.');return ask2(title);}return a;});});}
 function afterRelease(){renderCard();var tries=0;var iv=setInterval(function(){if(document.getElementById('secCard')){renderCard();clearInterval(iv);}else if(++tries>20)clearInterval(iv);},250);maybeAsk();}

@@ -63,9 +63,9 @@ check('retour à Sport collectif : les notes reviennent (Indiv. 6, Coll. 6,5)',/
 // exception pour une classe
 dialogs.length=0;await p.evaluate(()=>{const s=document.getElementById('attAps');s.value='athle';s.dispatchEvent(new Event('change',{bubbles:true}));});await sleep(300);
 const ov={d:(await db()).evals.aps,a:await aps(CID,0),b:await aps('c1b',0),note:await p.evaluate(()=>document.querySelector('#attEval .apsn').textContent)};
-check('exception de classe (barre Notes /20) : 2BACSP4 cycle 1 = Athlétisme, 1BACSE2 reste Sport collectif ; « propre à cette classe · cycle : Sport collectif »',ov.d&&ov.d[CID+'|0']==='athle'&&ov.a==='athle'&&ov.b==='coll'&&/propre à cette classe · cycle : Sport collectif/.test(ov.note),JSON.stringify(ov));
+check('exception de classe (barre Notes /20) : 2BACSP4 cycle 1 = Athlétisme, 1BACSE2 reste Sport collectif ; « propre à cette classe · cycle : Sport collectif »',ov.d&&ov.d[CID+'|0']==='athle'&&ov.a==='athle'&&ov.b==='coll'&&/propre à cette classe · cycle\u00a0: Sport collectif/.test(ov.note),JSON.stringify(ov));
 await goTab('settings');const ovl=await p.evaluate(()=>(document.querySelector('#periodNames .cyrow small.cyov')||{}).textContent||'');
-check('Paramètres signale la classe qui a son propre choix',/Choix propre à : 2BACSP4/.test(ovl),ovl);
+check('Paramètres signale la classe qui a son propre choix',/Choix propre à\u00a0: 2BACSP4/.test(ovl),ovl);
 await goTab('attendance');await p.evaluate(()=>{const s=document.getElementById('attAps');s.value='coll';s.dispatchEvent(new Event('change',{bubbles:true}));});await sleep(300);
 check('rechoisir le type du cycle dans la barre → exception supprimée',!((await db()).evals.aps||{})[CID+'|0']&&await aps(CID,0)==='coll');
 await p.evaluate(()=>{const s=document.getElementById('attAps');s.value='athle';s.dispatchEvent(new Event('change',{bubbles:true}));});await sleep(300);

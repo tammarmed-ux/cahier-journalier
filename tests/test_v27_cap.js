@@ -54,11 +54,11 @@ await p.evaluate(()=>{document.querySelector('#tabs button[data-tab="reports"]')
 await p.evaluate(()=>{const s=document.getElementById('repClass');s.value='';s.dispatchEvent(new Event('change'));const t=document.getElementById('repScope');t.value='0';t.dispatchEvent(new Event('change'));});await sleep(400);
 const infoAll=await p.evaluate(()=>document.getElementById('repInfo').textContent);
 await p.evaluate(()=>window.scrollTo(0,0));await sleep(200);{const bb=await p.evaluate(()=>{const r=document.getElementById('repInfo').closest('.card').getBoundingClientRect();return {y:r.top,h:r.height};});await p.screenshot({path:'/tmp/v27-rapports-all.png',clip:{x:0,y:0,width:390,height:Math.min(844,bb.y+bb.h+10)}});}
-check('Rapports, toutes les classes : valeur par classe (5 pts (TC) : TCS1… · 4 pts (1BAC) : … · 3 pts …)',/note comportementale par cycle : 5 pts \(TC\) : TCS1, TC LSH 2, Tronc commun sciences 3 · 4 pts \(1BAC\) : 1BACLSH1, 1BACLSH2, 1BACLSH3, 1BACLSH4, 1ère année bac SM · 3 pts \(2BAC\) : 2BACSP4/.test(infoAll)&&/3 pts : 3AC1/.test(infoAll)&&!/selon la classe/.test(infoAll),infoAll.slice(infoAll.indexOf('note')));
+check('Rapports, toutes les classes : valeur par classe (5 pts (TC) : TCS1… · 4 pts (1BAC) : … · 3 pts …)',/note comportementale par cycle\u00a0: 5 pts \(TC\)\u00a0: TCS1, TC LSH 2, Tronc commun sciences 3 · 4 pts \(1BAC\)\u00a0: 1BACLSH1, 1BACLSH2, 1BACLSH3, 1BACLSH4, 1ère année bac SM · 3 pts \(2BAC\)\u00a0: 2BACSP4/.test(infoAll)&&/3 pts\u00a0: 3AC1/.test(infoAll)&&!/selon la classe/.test(infoAll),infoAll.slice(infoAll.indexOf('note')));
 await p.evaluate(()=>{const s=document.getElementById('repClass');s.value='cTC2';s.dispatchEvent(new Event('change'));});await sleep(300);
 const infoOne=await p.evaluate(()=>document.getElementById('repInfo').textContent);
 const cell=await p.evaluate(()=>{const td=document.querySelector('#repTable tbody tr td.ptsc');return td?td.textContent:'';});
-check('Rapports, classe TC : « note comportementale : 5 pts par cycle (TC) » et points « / 5 »',/note comportementale : 5 pts par cycle \(TC\)/.test(infoOne)&&/\/ 5/.test(cell),infoOne.slice(infoOne.indexOf('note'))+' | '+cell);
+check('Rapports, classe TC : « note comportementale : 5 pts par cycle (TC) » et points « / 5 »',/note comportementale\u00a0: 5 pts par cycle \(TC\)/.test(infoOne)&&/\/ 5/.test(cell),infoOne.slice(infoOne.indexOf('note'))+' | '+cell);
 await p.screenshot({path:'/tmp/v27-rapports.png'});
 // ---- PDF
 async function pdf(fn){await p.evaluate(()=>{window.__lastPdf=null;});await p.evaluate(fn);try{await p.waitForFunction(()=>window.__lastPdf,{timeout:30000});}catch(e){return null;}
@@ -78,7 +78,7 @@ if(pa){const t=cp.execSync('pdftotext -layout '+pa.f+' -').toString();fs.copyFil
 await p.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();});await sleep(500);
 const ui=await p.evaluate(()=>{const l=document.querySelector('#clsManage .capline[data-cid="cTC1"]');return {n:document.querySelectorAll('#clsManage .capline').length,sel:l.querySelector('.capsel').value,opt:l.querySelector('.capsel option').textContent,dis:l.querySelector('.capin').disabled,v:l.querySelector('.capin').value,chip:(l.querySelector('.chip')||{}).textContent,info:(l.querySelector('.capinfo')||{}).textContent||'',help:document.querySelector('#clsManage').closest('.card').querySelector('p').textContent,old:(l.querySelector('.capold')||{}).textContent||''};});
 check('Paramètres › Classes : option « Par défaut selon le niveau (TC 5 · 1BAC 4 · 2BAC 3) » sélectionnée, 5 pts, niveau TC, source OP 2007',ui.n===15&&ui.sel==='auto'&&ui.opt==='Par défaut selon le niveau (TC 5 · 1BAC 4 · 2BAC 3)'&&ui.dis&&ui.v==='5'&&ui.chip==='TC'&&/Connaissances comportementales \(OP 2007\)\s:\sTC 5 · 1BAC 4 · 2BAC 3/.test(ui.help),JSON.stringify(ui).slice(0,300));
-check('ancienne valeur personnalisée signalée et conservée (TCS1 : 4 pts avant 1.27)',/Avant la version 1\.27 : 4 pts/.test(ui.old),ui.old);
+check('ancienne valeur personnalisée signalée et conservée (TCS1 : 4 pts avant 1.27)',/Avant la version 1\.27\u00a0: 4 pts/.test(ui.old),ui.old);
 const rec=()=>p.evaluate(()=>{const A=window.CJR;return {cap:A.capOf('cTC1'),ded:A.yearStat('cTC1','s9_0').per[0].ded,raw:A.yearStat('cTC1','s9_0').per[0].raw,cls:JSON.parse(localStorage.getItem('classRegister.v2')).classes.find(c=>c.id==='cTC1')};});
 await p.select('#clsManage .capline[data-cid="cTC1"] .capsel','m');await sleep(300);
 const m1=await rec();

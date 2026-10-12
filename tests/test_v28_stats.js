@@ -48,7 +48,7 @@ const exp=await p.evaluate(W=>{const A=window.CJR,d=A.db();const z=()=>({A:0,J:0
   return {pr,cu};},W);
 const T=await p.evaluate(()=>[...document.querySelectorAll('#homeStats .hs')].map(x=>{const e=x.querySelector('.hs-ev');return {k:x.dataset.k||'',l:x.querySelector('.hs-l').textContent,v:x.querySelector('.hs-v').textContent,dir:e&&e.dataset.dir,pv:e&&e.dataset.prev,cu:e&&e.dataset.cur,cl:e&&[...e.classList].filter(c=>c!=='hs-ev').join(),b:e&&(e.querySelector('.hs-b')||{}).textContent,sr:e&&(e.querySelector('.sr')||{}).textContent};}));
 const by=Object.fromEntries(T.filter(x=>x.k).map(x=>[x.k,x]));
-check('9 tuiles : Élèves, Classes, Séances, Absences (A + AJ), Non justifiées, ST, M, R, MJ — plus de « Justifiées (AJ) »',T.map(x=>x.l).join('|')==='Élèves|Classes|Séances effectuées|Absences (A\u00a0+\u00a0AJ)|Non justifiées (A)|Sans tenue (ST)|Maladie (M)|Retards (R)|Maladie just. (MJ)'&&!T.some(x=>/^Justifiées/.test(x.l)),T.map(x=>x.l).join('|'));
+check('9 tuiles : Élèves, Classes, Séances, Absences (A + AJ), Non justifiées, ST, M, R, MJ — plus de « Justifiées (AJ) »',T.map(x=>x.l).join('|')==='Élèves|Classes|Séances effectuées|Absences (A\u00a0+\u00a0AJ)|Non justifiées (A)|Sans tenue (ST)|Malade (M)|Retards (R)|Malade just. (MJ)'&&!T.some(x=>/^Justifiées/.test(x.l)),T.map(x=>x.l).join('|'));
 const tot=await p.evaluate(()=>{const A=window.CJR,d=A.db(),t={A:0,U:0,L:0,M:0,K:0,S:0};d.students.forEach(s=>{const y=A.yearStat(s.classId,s.id);Object.keys(t).forEach(k=>t[k]+=y[k]);});return t;});
 check('valeurs totales inchangées (mêmes calculs qu’avant)',['A','U','L','M','K','S'].every(k=>+by[k].v===tot[k]),JSON.stringify(tot));
 const keys=['held','A','U','S','M','L','K'];

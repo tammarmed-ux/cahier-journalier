@@ -46,7 +46,7 @@ const opts=await p.evaluate(()=>[...document.querySelectorAll('#repScope option'
 console.log(JSON.stringify(opts));
 const iy=opts.findIndex(o=>o[0]==='year');
 check('menu Cycle : 6 cycles, S1, S2, Année entière (dans cet ordre)',opts.length===9&&opts[5][0]==='5'&&opts[6][0]==='s1'&&opts[7][0]==='s2'&&iy===8);
-check('libellés exacts des semestres',opts[6][1]==='1er semestre (Cycles 1 à 3)'&&opts[7][1]==='2ème semestre (Cycles 4 à 6)',opts[6][1]+' | '+opts[7][1]);
+check('libellés exacts des semestres',opts[6][1]==='1er semestre (cycles 1 à 3)'&&opts[7][1]==='2e semestre (cycles 4 à 6)',opts[6][1]+' | '+opts[7][1]);
 const ag=await p.evaluate(()=>{const A=window.CJR,c=A.db().classes[0].id;const o={};
   ['s0','s1'].forEach(id=>{const y=A.yearStat(c,id),s1=A.scopeStat(c,id,'s1'),s2=A.scopeStat(c,id,'s2');
     o[id]={y:[y.A,y.U,y.L,y.held,y.ded],s1:[s1.A,s1.U,s1.L,s1.held,s1.ded],s2:[s2.A,s2.U,s2.L,s2.held,s2.ded],n1:s1.per.length,n2:s2.per.length};});return o;});
@@ -73,7 +73,7 @@ await p.evaluate(()=>{const s=document.getElementById('repScope');s.size=1;});
 // ---- CSV S1
 const csv=await p.evaluate(async()=>{let txt=null;const old=window.URL.createObjectURL;window.URL.createObjectURL=function(bl){bl.text().then(t=>{txt=t;});return old.call(this,bl);};
   const s=document.getElementById('repScope');s.value='s1';s.dispatchEvent(new Event('change'));document.getElementById('repExportCsv').click();await new Promise(r=>setTimeout(r,600));window.URL.createObjectURL=old;return txt;});
-check('CSV S1 : titre semestre, 3 cycles, absences',csv&&/1er semestre \(Cycles 1 à 3\)/.test(csv)&&/Cycle 3 – absences/.test(csv)&&!/Cycle 4 – absences/.test(csv)&&/Youssef/.test(csv),(csv||'').slice(0,160));
+check('CSV S1 : titre semestre, 3 cycles, absences',csv&&/1er semestre \(cycles 1 à 3\)/.test(csv)&&/Cycle 3 – absences/.test(csv)&&!/Cycle 4 – absences/.test(csv)&&/Youssef/.test(csv),(csv||'').slice(0,160));
 // ---- PDF semestres
 async function pdf(fn){await p.evaluate(()=>{window.__lastPdf=null;});await p.evaluate(fn);try{await p.waitForFunction(()=>window.__lastPdf,{timeout:30000});}catch(e){return null;}
   const r=await p.evaluate(async()=>{const x=window.__lastPdf,buf=new Uint8Array(await x.blob.arrayBuffer());let s='';for(let i=0;i<buf.length;i+=8192)s+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return {name:x.name,b64:btoa(s)};});
@@ -185,7 +185,7 @@ check('CSV toutes classes : colonne Classe, 8 lignes, ordre classe puis Massar',
 await p.evaluate(()=>{const t=document.getElementById('repScope');t.value='s2';t.dispatchEvent(new Event('change'));});
 const csv3=await p.evaluate(async()=>{let txt=null;const old=window.URL.createObjectURL;window.URL.createObjectURL=function(bl){bl.text().then(t=>{txt=t;});return old.call(this,bl);};
   document.getElementById('repExportCsv').click();await new Promise(r=>setTimeout(r,600));window.URL.createObjectURL=old;return txt;});
-check('CSV toutes classes S2 : Cycles 4 à 6 seulement',/2ème semestre/.test(csv3)&&/Cycle 6 – absences/.test(csv3)&&!/Cycle 3 – absences/.test(csv3));
+check('CSV toutes classes S2 : Cycles 4 à 6 seulement',/2e semestre/.test(csv3)&&/Cycle 6 – absences/.test(csv3)&&!/Cycle 3 – absences/.test(csv3));
 // PDF
 for(const [v,exp,notexp] of [['year','année entière',null],['s1','Semestre 1',/Cycle 4/],['2','Cycle 3',null]]){
   await p.evaluate(v=>{const t=document.getElementById('repScope');t.value=v;t.dispatchEvent(new Event('change'));},v);

@@ -54,7 +54,7 @@ await p.evaluate(KEY=>{const d=JSON.parse(localStorage.getItem(KEY));const c=d.c
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="students"]').click());await sleep(300);await p.click('#trombiBtn');await sleep(300);
 const info0=await p.evaluate(()=>document.getElementById('trbInfo').textContent);
-check('classe sans groupes : message « un seul bloc pour toute la classe »',/pas de groupes : un seul bloc/.test(info0),info0);
+check('classe sans groupes : message « un seul bloc pour toute la classe »',/pas de groupes\u00a0: un seul bloc/.test(info0),info0);
 const solo=await pdf('page','solo');
 check('PDF sans groupes : un seul titre de classe, pas de G1…G5',/Trombinoscope – Classe 2BACSP4/.test(solo.txt)&&!/\bG1\b/.test(solo.txt)&&!/Sans groupe/.test(solo.txt),solo.name);
 const keys1=await p.evaluate(KEY=>Object.keys(JSON.parse(localStorage.getItem(KEY))).sort().join(','),KEY);

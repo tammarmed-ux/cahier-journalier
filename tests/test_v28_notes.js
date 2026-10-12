@@ -98,7 +98,7 @@ await sleep(500);
 const headG=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap thead th.t')].map(t=>t.textContent));
 const s0g=await p.evaluate(()=>{const tr=document.querySelector('#gridWrap tr[data-sid="s0"]');return {g1:tr.querySelector('input[data-k="g1"]').value,tot:tr.querySelector('td.tot').textContent,over:tr.querySelector('td.g').classList.contains('over')};});
 const evAps=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)).evals,KEY);
-check('APS « Gymnastique » (2BAC) : Gym. /14 · Concept. /3 · Comport. /3 · Note /20 ; avertissement (note Coll. sans colonne : conservée, non comptée → 6,5 + 2,5 + 3 = 12), enregistré dans DB.evals.aps',JSON.stringify(headG)===JSON.stringify(['Gym./14','Concept./3','Comport./3','Note/20','Année'])&&dialogs.some(m=>/dépassent le barème « Gymnastique »/.test(m))&&s0g.tot==='12'&&evAps&&evAps.aps[CID+'|0']==='gym'&&s0g.g1==='6,5',JSON.stringify({headG,s0g,evAps}));
+check('APS « Gymnastique » (2BAC) : Gym. /14 · Concept. /3 · Comport. /3 · Note /20 ; avertissement (note Coll. sans colonne : conservée, non comptée → 6,5 + 2,5 + 3 = 12), enregistré dans DB.evals.aps',JSON.stringify(headG)===JSON.stringify(['Gym./14','Concept./3','Comport./3','Note/20','Année'])&&dialogs.some(m=>/dépassent le barème «\u00a0Gymnastique\u00a0»/.test(m))&&s0g.tot==='12'&&evAps&&evAps.aps[CID+'|0']==='gym'&&s0g.g1==='6,5',JSON.stringify({headG,s0g,evAps}));
 await p.select('#attAps','coll');await sleep(300);
 const back=await p.evaluate(()=>document.querySelector('#gridWrap tr[data-sid="s0"] td.tot').textContent);
 check('retour « Sport collectif » : notes et total inchangés (17,25)',back==='17,25',back);

@@ -91,14 +91,14 @@ await ess('s1',0,'640');await ess('s1',1,'abc');const f1=await cls('s1','essai',
 check('fille (barème F) : 640 → 5,25 ; essai illisible « abc » signalé et ignoré',(await val('s1','g1'))==='5,25'&&/bad/.test(f1.c)&&/Format non reconnu/.test(f1.ti),JSON.stringify(f1));
 // forçage manuel du Produit
 await type('s2','g1','6');const fo=await cls('s2','g1'),e2=await ev('s2');
-check('forçage manuel du Produit (6 au lieu de 5,6) : prodAuto retiré, case « ✎ » orange avec le barème rappelé',e2.g1===6&&!e2.prodAuto&&/forced/.test(fo.c)&&/Produit saisi à la main \(barème : 5,6\)/.test(fo.ti),JSON.stringify([e2,fo]));
+check('forçage manuel du Produit (6 au lieu de 5,6) : prodAuto retiré, case « ✎ » orange avec le barème rappelé',e2.g1===6&&!e2.prodAuto&&/forced/.test(fo.c)&&/Produit saisi à la main \(barème\u00a0: 5,6\)/.test(fo.ti),JSON.stringify([e2,fo]));
 await ess('s2',1,'1010');check('nouvel essai (1010) : le Produit saisi à la main (6) est conservé',(await ev('s2')).g1===6&&(await val('s2','g1'))==='6');
 await type('s2','g1','');const re=await ev('s2');
 check('Produit effacé → barème réappliqué au meilleur essai (1010 → 5,95)',re.g1===5.95&&re.prodAuto===true&&(await val('s2','g1'))==='5,95',JSON.stringify(re));
 // sexe manquant
 const ns=await cls('s4','essai',0);const s4b=await p.evaluate(()=>JSON.stringify(window.CJR.byId('s4')));
 await ess('s4',0,'900');const s4a=await p.evaluate(()=>window.CJR.byId('s4'));
-check('sexe absent de la fiche : cases signalées (« sexe ? »), essai gardé, aucune note calculée, fiche inchangée',/nosex/.test(ns.c)&&ns.ph==='sexe ?'&&!s4a.sex&&JSON.stringify(s4a.ev[CID+'|0'].essais)==='["900"]'&&s4a.ev[CID+'|0'].g1==null&&(()=>{const x=JSON.parse(s4b),y=JSON.parse(JSON.stringify(s4a));delete x.ev;delete y.ev;return JSON.stringify(x)===JSON.stringify(y);})(),JSON.stringify([ns,s4a.ev]));
+check('sexe absent de la fiche : cases signalées (« sexe ? »), essai gardé, aucune note calculée, fiche inchangée',/nosex/.test(ns.c)&&ns.ph==='sexe\u00a0?'&&!s4a.sex&&JSON.stringify(s4a.ev[CID+'|0'].essais)==='["900"]'&&s4a.ev[CID+'|0'].g1==null&&(()=>{const x=JSON.parse(s4b),y=JSON.parse(JSON.stringify(s4a));delete x.ev;delete y.ev;return JSON.stringify(x)===JSON.stringify(y);})(),JSON.stringify([ns,s4a.ev]));
 // effacement
 await ess('s7',0,'700');const g7=await val('s7','g1');await ess('s7',0,'');
 check('effacement du seul essai : Produit calculé et entrée supprimés',g7==='5,6'&&(await ev('s7'))===null&&(await val('s7','g1'))==='',g7);
