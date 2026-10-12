@@ -127,7 +127,7 @@ check('après rechargement : notes, essais et champ futur inconnu conservés',pe
 await cycle(1);const rawAuto=await p.evaluate(()=>({h:[...document.querySelectorAll('section.view.active thead th.t')].map(t=>t.textContent).join('|'),ev:document.getElementById('procEvt').value}));
 check('après rechargement : épreuve (vitesse) et cases Essai conservées',/Essai 1/.test(rawAuto.h)&&rawAuto.ev==='vitesse',JSON.stringify(rawAuto));
 const pa=await pdf(()=>document.querySelector('section.view.active [id$="GradesPdf"]').click());
-check('PDF relevé (athlétisme) : Note /20 · Meilleur essai · Produit /7 · Perf. /7, sans « Procéd. » (FASSI… — · 13,4 s · 5 * (Produit saisi à la main) · 5)',!!pa&&/Meilleur/.test(pa.t)&&/Produit/.test(pa.t)&&!/Procéd\./.test(pa.t)&&/FASSI Nour\s+\S+\s+13,4 s\s+5\s*\*\s+5\b/.test(pa.t)&&/\* = note Produit saisie à la main/.test(pa.t.replace(/\s+/g,' ')),pa&&(pa.t.split('\n').find(l=>/FASSI/.test(l))||'').trim());
+check('PDF relevé (athlétisme) : Note /20 · Meilleur essai · Produit /7 · Perf. /7, sans « Procéd. » (FASSI… — · 13,4 s · 5 * (Produit saisi à la main) · 5)',!!pa&&/Meilleur/.test(pa.t)&&/Produit/.test(pa.t)&&!/Procéd\./.test(pa.t)&&/FASSI Nour\s+\S+\s+13,4 s\s+5\s*\*\s+5\b/.test(pa.t)&&!/\* = note Produit saisie à la main/.test(pa.t.replace(/\s+/g,' ')),pa&&(pa.t.split('\n').find(l=>/FASSI/.test(l))||'').trim());
 if(pa)fs.copyFileSync(pa.f,'/tmp/v28p-athle.pdf');
 // ---- données
 const after=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);

@@ -958,7 +958,7 @@ table.gbal tfoot td{font-weight:700}
     <div class="evalbar" id="procEval"></div>
   </div>
   <div class="card gridcard" id="procCard"><div class="gridwrap" id="procWrap"></div></div>
-  <p class="small muted" style="margin:0 4px">Mêmes notes que l’affichage « Notes /20 » de l’onglet Absences (un seul enregistrement par élève et par cycle) : toute note saisie ici y apparaît aussitôt, et inversement. Athlétisme : choisissez l’épreuve puis tapez les essais (temps en mn.ss, ex. 5.17 = 5 min 17 s ; sprint en secondes ; poids, triple saut et hauteur en cm, longueur en m). Le meilleur essai donne la note Produit d’après le barème OP 2007 garçons ou filles (selon la fiche de l’élève) : une performance comprise entre deux paliers prend la note du palier supérieur. Le Produit reste modifiable à la main (✎) ; la note Performance se saisit à la main. Touchez un nom pour voir la fiche de l’élève.</p>
+  <p class="small muted" style="margin:0 4px">Mêmes notes que l’affichage « Notes /20 » de l’onglet Absences (un seul enregistrement par élève et par cycle) : toute note saisie ici y apparaît aussitôt, et inversement. Athlétisme : choisissez l’épreuve puis tapez les essais (temps en mn.ss, ex. 5.17 = 5 min 17 s ; sprint en secondes ; poids, triple saut et hauteur en cm, longueur en m). Le meilleur essai donne la note Produit d’après le barème OP 2007 garçons ou filles (selon la fiche de l’élève) : une performance comprise entre deux performances de référence prend la note de la performance supérieure. Le Produit reste modifiable à la main (✎) ; la note Performance se saisit à la main. Touchez un nom pour voir la fiche de l’élève.</p>
 </section>
 
 <!-- REPORTS -->
@@ -1481,7 +1481,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-d';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-e';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2030,7 +2030,7 @@ function procFoot(cid,p,list){var sp=gradeSpec(cid,p),raw=rawOn(cid,p),acc={},pp
   function f(v){return v==null?'':fmtNum(v);}var h='';sp.proc.forEach(function(c){if(raw&&c.k==='g1')h+=new Array(ntrOf(cid,p)+1).join('<td></td>');h+='<td class="gf" title="Moyenne">'+f(avgOf(acc[c.k]))+'</td>';});return h+'<td title="Moyenne de la classe">'+f(avgOf(pp))+'</td>';}
 function ginHtml(c,v,nm){return '<input class="gin" type="text" inputmode="decimal" autocomplete="off" data-k="'+c.k+'" data-max="'+c.max+'" value="'+(v==null?'':fmtNum(v))+'" placeholder="–" aria-label="'+esc(c.t+' /'+fmtNum(c.max)+' – '+nm)+'">';}
 function gCell(c,v,nm,g){var ath=c.k==='g1'&&g&&g.spec.aps==='athle'&&g.essais.length,au=ath&&g.prodAuto,fo=ath&&!g.prodAuto&&v!=null,ti='';
-  if(au||fo){var r=athOf(g.spec.cid,g.sid,g.spec.p);ti=au?'Produit calculé d’après le barème OP 2007'+(r&&r.v!=null?'\u00a0: meilleur essai '+athFmt(g.perfEvent||evtOf(g.spec.cid,g.spec.p),r.val)+' → palier '+r.row+'/20':''):'Produit saisi à la main'+(r&&r.v!=null?' (barème\u00a0: '+fmtNum(r.v)+')':'')+' – effacez la note pour réappliquer le barème';}
+  if(au||fo){var r=athOf(g.spec.cid,g.sid,g.spec.p);ti=au?'Produit calculé d’après le barème OP 2007'+(r&&r.v!=null?'\u00a0: meilleur essai '+athFmt(g.perfEvent||evtOf(g.spec.cid,g.spec.p),r.val)+' → performance '+r.row+'/20':''):'Produit saisi à la main'+(r&&r.v!=null?' (barème\u00a0: '+fmtNum(r.v)+')':'')+' – effacez la note pour réappliquer le barème';}
   return '<td class="t g'+(v!=null&&v>c.max?' over':'')+(au?' auto':'')+(fo?' forced':'')+'"'+(ti?' title="'+esc(ti)+'"':'')+'>'+ginHtml(c,v,nm)+'</td>';}
 /* cases « Essai » : meilleur essai mis en évidence, essai illisible et sexe manquant (fiche de l’élève) signalés — rien d’autre n’est modifié */
 function trialCells(cid,sid,p,g,nm){var st=byId(sid),evt=evtOf(cid,p),sx=st&&(st.sex==='F'||st.sex==='G'),es=g.essais||[],r=athEs(cid,sid,p,es),n=ntrOf(cid,p),bad=r&&r.bad?r.bad:[],h='';
@@ -2038,7 +2038,7 @@ function trialCells(cid,sid,p,g,nm){var st=byId(sid),evt=evtOf(cid,p),sx=st&&(st
     if(!sx){cl=' nosex';ti='Sexe non renseigné dans la fiche de l’élève (F/G)\u00a0: la note Produit ne peut pas être calculée';}
     else if(!evt)ti='Choisissez l’épreuve dans la barre pour calculer la note';
     else if(t&&bad.indexOf(q)>=0){cl=' bad';ti='Format non reconnu (essai ignoré) – '+athHint(evt);}
-    else if(r&&r.v!=null&&r.i===q){cl=' best';ti='Meilleur essai\u00a0: '+athFmt(evt,r.val)+' → palier '+r.row+'/20 → Produit '+fmtNum(r.v)+(g.prodAuto?'':' (Produit saisi à la main conservé)');}
+    else if(r&&r.v!=null&&r.i===q){cl=' best';ti='Meilleur essai\u00a0: '+athFmt(evt,r.val)+' → performance '+r.row+'/20 → Produit '+fmtNum(r.v)+(g.prodAuto?'':' (Produit saisi à la main conservé)');}
     else ti='Essai '+(q+1)+' – '+athEvtL(evt)+'\u00a0: '+athHint(evt);
     h+='<td class="t raw'+cl+'" title="'+esc(ti)+'"><input class="pin" type="text" inputmode="decimal" autocomplete="off" maxlength="24" data-k="essai" data-i="'+q+'" value="'+esc(t)+'" placeholder="'+(sx?'–':(q?'–':'sexe\u00a0?'))+'" aria-label="'+esc('Essai '+(q+1)+' – '+nm)+'"></td>';}
   return h;}
@@ -2071,7 +2071,7 @@ function renderProcBar(cid,p){var el=$('procEval');if(!el)return;if(!cid||!count
         (ev?'<select id="procNtr" aria-label="Nombre d’essais">'+[1,2,3,4,5,6].map(function(n){return '<option value="'+n+'"'+(n===ntrOf(cid,p)?' selected':'')+'>'+n+' essai'+(n>1?'s':'')+'</option>';}).join('')+'</select>':''):'')+
       '<button type="button" class="btn sec" id="procGradesPdf">📄 Relevé de notes</button>'+
       '<span class="scale">'+sp.proc.map(function(c){return esc(c.lf)+' /'+fmtNum(c.max);}).join(' + ')+' = '+fmtNum(sp.procMax)+' · mêmes notes que Notes /20 (onglet Absences) · OP 2007</span>'+
-      (sp.aps==='athle'?'<span class="scale hint">'+(ev?'Produit = barème OP 2007 '+esc(sp.lv)+' (garçons / filles selon la fiche) appliqué au meilleur essai\u00a0; entre deux paliers → note du palier supérieur · '+esc(athHint(ev))+' · Produit modifiable à la main (✎) · Performance saisie à la main':'Choisissez l’épreuve\u00a0: la note Produit sera calculée d’après le meilleur essai (barèmes OP 2007).')+'</span>':'');el.classList.remove('hidden');}
+      (sp.aps==='athle'?'<span class="scale hint">'+(ev?'Produit = barème OP 2007 '+esc(sp.lv)+' (garçons / filles selon la fiche) appliqué au meilleur essai\u00a0; entre deux performances de référence → note de la performance supérieure · '+esc(athHint(ev))+' · Produit modifiable à la main (✎) · Performance saisie à la main':'Choisissez l’épreuve\u00a0: la note Produit sera calculée d’après le meilleur essai (barèmes OP 2007).')+'</span>':'');el.classList.remove('hidden');}
 
 /* onglet « Note procédurale » : sélecteurs classe + cycle (mêmes DB.ui.cls / DB.ui.per que l’onglet Absences), notes lues et écrites dans s.ev comme Notes /20 */
 function renderProc(){
