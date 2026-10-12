@@ -144,7 +144,7 @@ async function pdf(){await p.evaluate(()=>{window.__lastPdf=null;});await p.eval
   const r=await p.evaluate(async()=>{const x=window.__lastPdf,buf=new Uint8Array(await x.blob.arrayBuffer());let s='';for(let i=0;i<buf.length;i+=8192)s+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return btoa(s);});
   const f='/tmp/v28a_'+Date.now()+'.pdf';fs.writeFileSync(f,Buffer.from(r,'base64'));return {f,t:cp.execSync('pdftotext -layout '+f+' -').toString()};}
 const pd=await pdf();const T=pd?pd.t.replace(/[ \t]+/g,' '):'',T1=T.replace(/\s+/g,' ');
-check('PDF relevé : colonne « Meilleur essai » (920 cm), Produit calculé 5,25, Produit forcé marqué « * », règle du palier supérieur expliquée',!!pd&&/Meilleur/.test(T)&&/AIT BENALI Yassine 920 cm 5,25 6 11,25/.test(T)&&/DAOUDI Imane 560 cm 5\s*\* 4,5 9,5/.test(T)&&/barème OP 2007 2BAC/.test(T1)&&/prend la note du palier supérieur/.test(T1),pd&&T.split('\n').filter(l=>/AIT BENALI|DAOUDI/.test(l)).join(' / '));
+check('PDF relevé : colonne « Meilleur essai » (920 cm), Produit calculé 5,25, Produit forcé marqué « * », règle du palier supérieur expliquée',!!pd&&/Meilleur/.test(T)&&/AIT BENALI Yassine 16,25 920 cm 5,25 6 2 3/.test(T)&&/DAOUDI Imane 15 560 cm 5\s*\* 4,5 2,5 3/.test(T)&&/barème OP 2007 2BAC/.test(T1)&&/prend la note du palier supérieur/.test(T1),pd&&T.split('\n').filter(l=>/AIT BENALI|DAOUDI/.test(l)).join(' / '));
 if(pd)fs.copyFileSync(pd.f,'/tmp/v28a-athle.pdf');
 // données
 const after=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);
