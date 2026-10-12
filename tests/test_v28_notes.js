@@ -116,7 +116,7 @@ if(pg){fs.copyFileSync(pg.f,'/tmp/v28-releve.pdf');const t=cp.execSync('pdftotex
   check('PDF : pied de page « Cahier d’EPS v'+SEM+' », école Lycée qualifiant Baja',new RegExp('Cahier d’EPS v'+SEM.replace(/\./g,'\\.')).test(tn)&&/Lycée qualifiant Baja/.test(tn));
   const ord=NAMES.map(n=>n[0]).filter(n=>!/[\u0600-\u06FF]/.test(n));const pos=ord.map(n=>tn.indexOf(n));
   check('PDF : ordre Massar/alphabétique de l’application, notes et totaux (AIT BENALI 17,25, CHAKIR 11,25, KETTANI incomplet)',pos.every((x,i)=>x>=0&&(i===0||x>pos[i-1]))&&/AIT BENALI Yassine.*?17,25/.test(tn)&&/CHAKIR Omar.*?11,25/.test(tn),JSON.stringify(pos));
-  check('PDF : formule de la note comportementale et moyenne de la classe',/Comport\. \(note comportementale \/3\) = 3 – points retirés du cycle \(au plus 3\)/.test(tn)&&/Moyenne de la classe/.test(tn));
+  check('PDF : plus de note explicative Comport. (1.29.0-d) ; ligne « Moyenne de la classe » conservée',!/points retirés du cycle|note comportementale \//.test(tn)&&!/maladie/i.test(tn)&&/Moyenne de la classe/.test(tn));
   const g=cp.execSync('/workspace/fonts/v/bin/python /workspace/cj-emu/ar_chk.py '+pg.f+' "محمد الإدريسي" "فاطمة الزهراء العلوي"',{encoding:'utf8'}).trim();
   check('PDF : noms arabes présents (محمد الإدريسي, فاطمة الزهراء العلوي)',g==='2/2',g.slice(0,120));
 }else check('PDF relevé de notes généré',false);

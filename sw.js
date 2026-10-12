@@ -1,5 +1,5 @@
 /* Cahier journalier digital – service worker (cache-first, hors ligne) */
-const CACHE = 'cahier-v29-c';
+const CACHE = 'cahier-v29-d';
 const ASSETS = [
   './',
   './index.html',

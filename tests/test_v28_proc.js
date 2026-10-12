@@ -84,7 +84,7 @@ async function pdf(fn){await p.evaluate(()=>{window.__lastPdf=null;});await p.ev
   const r=await p.evaluate(async()=>{const x=window.__lastPdf,buf=new Uint8Array(await x.blob.arrayBuffer());let s='';for(let i=0;i<buf.length;i+=8192)s+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return {name:x.name,b64:btoa(s)};});
   const f='/tmp/v28p_'+Date.now()+'.pdf';fs.writeFileSync(f,Buffer.from(r.b64,'base64'));return {f,name:r.name,t:cp.execSync('pdftotext -layout '+f+' -').toString()};}
 const pc=await pdf(()=>document.querySelector('section.view.active [id$="GradesPdf"]').click());
-check('PDF relevé (sport collectif) : Note /20 après le nom, sans colonne « Procéd. » (AIT BENALI 17 · 7 · 5 · 2) et formule de la note procédurale',!!pc&&!/Procéd\./.test(pc.t)&&/AIT BENALI Yassine\s+17\s+7\s+5\s+2\b/.test(pc.t)&&/Note procédurale \/14 = note individuelle \+ note collective/.test(pc.t.replace(/\s+/g,' ')),pc&&(pc.t.split('\n').find(l=>/AIT BENALI/.test(l))||'').trim());
+check('PDF relevé (sport collectif) : Note /20 après le nom, sans colonne « Procéd. » (AIT BENALI 17 · 7 · 5 · 2) et sans note explicative (1.29.0-d)',!!pc&&!/Procéd\./.test(pc.t)&&/AIT BENALI Yassine\s+17\s+7\s+5\s+2\b/.test(pc.t)&&!/Note procédurale \/14 =/.test(pc.t.replace(/\s+/g,' ')),pc&&(pc.t.split('\n').find(l=>/AIT BENALI/.test(l))||'').trim());
 if(pc)fs.copyFileSync(pc.f,'/tmp/v28p-coll.pdf');
 // ---- athlétisme (cycle 2)
 await cycle(1);
