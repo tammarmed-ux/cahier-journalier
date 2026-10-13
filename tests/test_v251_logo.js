@@ -38,7 +38,8 @@ check('diagnostic : avec le sw.js de 1.25.0, le nouveau cache recopie les ancien
 const u2=await upd(p1,D,SEM);
 const ck=await p1.evaluate(()=>caches.keys());
 check('mise à jour vers v'+SEM+' en '+u2.n+' rechargement(s) normal(aux) ; anciens caches cahier-v24/v25 supprimés',u2.s===SEM&&u2.n<=2&&JSON.stringify(ck)===JSON.stringify([CUR]),JSON.stringify(ck));
-const sw=fs.readFileSync(D+'/sw.js','utf8');const assets=[...sw.slice(sw.indexOf('const ASSETS'),sw.indexOf('];')).matchAll(/'\.\/([^']+)'/g)].map(m=>m[1]).filter(x=>x&&!x.endsWith('/'));
+const sw=fs.readFileSync(D+'/sw.js','utf8');const arr=n=>{const i=sw.indexOf('const '+n+' = [');return i<0?'':sw.slice(i,sw.indexOf('];',i));};const assets=[...(arr('ASSETS')+arr('LAZY_ASSETS')).matchAll(/'\.\/([^']+)'/g)].map(m=>m[1]).filter(x=>x&&!x.endsWith('/')); /* 1.29.1 : essentiel + fichiers mis en cache juste après l’activation */
+await new Promise(r=>setTimeout(r,4000));
 const bad=[];for(const a of assets){const c=await cached(p1,CUR,'./'+a);if(c!==file(D,a))bad.push(a);}
 check('toutes les ressources du nouveau cache = fichiers du serveur (aucune copie périmée, y compris favicon.ico au même nom)',bad.length===0&&assets.length>=15,bad.join(',')||assets.length+' fichiers');
 async function logos(p){return p.evaluate(()=>[...document.querySelectorAll('img.sp-logo,.ln-brand img,.ln-art img,img.g-logo,img.h-logo')].map(i=>({src:i.getAttribute('src'),ok:i.complete&&i.naturalWidth>0})));}

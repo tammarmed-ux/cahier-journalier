@@ -2,7 +2,7 @@
 
 Fichier interne : jamais servi par Firebase Hosting (exclu par `firebase.json` > `hosting.ignore` : `**/*.md`, `RELEASE*`, `.firebase/`, `.git`).
 
-Format de version : **1.<version>.<correctif>** (actuelle : 1.29.0 · suivante : 1.30.0). Étiquette Git : `v1.29.0`. Cache du service worker : `cahier-v29` (règle : `cahier-v<version>`, suivi de `-<correctif>` si le correctif n’est pas 0) (= `APP_VER`).
+Format de version : **1.<version>.<correctif>** (actuelle : 1.29.1 · suivante : 1.30.0). Étiquette Git : `v1.29.1`. Cache du service worker : `cahier-v29-1` (règle : `cahier-v<version>`, suivi de `-<correctif>` si le correctif n’est pas 0) (= `APP_VER`).
 
 ## Avant de publier
 1. `index.html` : `APP_SEMVER` (« 1.28.1 »), `APP_VER` (« cahier-v28-1 »), splash `.sp-ver` + `aria-label` du splash, en-tête `.h-ver`, écran de connexion `#gVer`, page d’accueil `#lnVer`, Paramètres `#verLine`, `softwareVersion` du JSON-LD. Le `<title>` SEO ne porte pas de version.
@@ -89,3 +89,4 @@ Format de version : **1.<version>.<correctif>** (actuelle : 1.29.0 · suivante :
 - Barre d’onglets : 6 colonnes de même largeur, icônes à égale distance (±0,02 px à 320/375/390/430 px et sur ordinateur), libellés 10–11 px (préversion `cahier-v29-h`, 13/10/2026). CSS seul.
 - Accueil (préversion `cahier-v29-i`, 13/10/2026) : icône de la tuile « Relevé de notes » en bleu (comme les autres tuiles secondaires) ; motif 3 « marquages de terrain » (SVG en ligne, blanc à faible opacité) derrière la carte de bienvenue. CSS seul.
 - **1.29.0 publiée** (13/10/2026) : cache final `cahier-v29` (les préversions `cahier-v29-b` … `-i` n’ont servi que sur le canal de test test-129).
+- **1.29.1** (mise à jour fiable sur iPhone) : `sw.js` — préchargement réduit à l’essentiel du démarrage (8 fichiers, ~540 Ko ; PDF, polices et grandes images mis en cache après activation ou à la demande), cache incomplet supprimé si l’installation échoue, ouverture réseau d’abord (3 s max, sinon copie locale ; hors ligne OK) ; `index.html` — `reg.update()` à l’ouverture et au retour au premier plan, bandeau « Nouvelle version disponible — Mettre à jour » (jamais pendant une fiche ouverte, une saisie ou l’écran du code). Aucune donnée, clé, synchro, export ni format de chiffrement modifié. Test : `test_v291_update`.

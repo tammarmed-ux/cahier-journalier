@@ -44,7 +44,7 @@
  "inLanguage": "fr",
  "url": "https://cahier-eps-ma.web.app/",
  "image": "https://cahier-eps-ma.web.app/og-image-b.png",
- "softwareVersion": "1.29.0",
+ "softwareVersion": "1.29.1",
  "offers": {
   "@type": "Offer",
   "price": "0",
@@ -550,6 +550,11 @@ nav.tabs button{flex:1 1 0!important;min-width:0!important;width:0;padding-left:
 .qa.acc .qi{background:linear-gradient(135deg,#1F5FA8,#0B3A6E);box-shadow:0 4px 10px -4px rgba(11,58,110,.6)}
 /* 1.29.0 (-i) : motif 3 « marquages de terrain » (choix du propriétaire) derrière la carte de bienvenue — traits blancs à faible opacité ; image en ligne, affichage seul */
 .hhero{background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22340%22 viewBox=%220 0 400 340%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cg fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.12%22 stroke-width=%221.7%22%3E%3Crect x=%228%22 y=%228%22 width=%22384%22 height=%22324%22 rx=%224%22/%3E%3Cpath d=%22M200 8v324%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%2246%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%223%22 fill=%22%23fff%22 fill-opacity=%22.14%22/%3E%3Cpath d=%22M392 108h-58v124h58%22/%3E%3Cpath d=%22M392 140h-24v60h24%22/%3E%3Cpath d=%22M334 140a30 30 0 0 0 0 60%22/%3E%3Ccircle cx=%22378%22 cy=%22170%22 r=%225%22/%3E%3Cpath d=%22M8 50h70a120 120 0 0 1 0 240H8%22/%3E%3Cpath d=%22M8 122h56v96H8%22/%3E%3Ccircle cx=%2264%22 cy=%22170%22 r=%2222%22 stroke-dasharray=%225 6%22/%3E%3C/g%3E%3C/svg%3E") center / cover no-repeat,radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad)}
+/* 1.29.1 : bandeau de mise à jour */
+#updBar{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:80;display:none;align-items:center;justify-content:space-between;gap:10px;background:#0A3768;color:#fff;border-radius:14px;padding:10px 10px 10px 14px;font-size:14px;font-weight:600;box-shadow:0 8px 22px -8px rgba(7,42,80,.6)}
+#updBar.on{display:flex}
+#updBar button{min-height:44px;border:0;border-radius:11px;padding:0 14px;font:inherit;font-weight:700;color:#fff;background:linear-gradient(135deg,#FF8A3D,#E75C04);cursor:pointer;white-space:nowrap}
+@media(min-width:900px){#updBar{left:auto;right:20px;bottom:20px;max-width:420px}}
 @media (prefers-reduced-motion:reduce){.qa,.hh-go,.hh-tile{transition:none}.qa:active,.hh-go:active,.hh-tile:active,.qa:hover{transform:none}}
 table.cmp{width:100%;border-collapse:collapse;font-size:13.5px}
 table.cmp th,table.cmp td{padding:7px 3px}
@@ -855,11 +860,11 @@ table.gbal tfoot td{font-weight:700}
 </head>
 <body>
 <!-- Splash: CSS animation; set SPLASH_VIDEO in the intro script to play a video instead -->
-<div id="splash" role="img" aria-label="Cahier d’EPS v1.29.0">
+<div id="splash" role="img" aria-label="Cahier d’EPS v1.29.1">
   <video id="splashVid" muted playsinline autoplay preload="auto"></video>
   <div class="sp-box"><img class="sp-logo" src="icons/logo-b.svg" alt="Cahier d’EPS" width="190" height="190" decoding="async" fetchpriority="high">
   <div class="sp-name">Cahier d’<b>EPS</b></div>
-  <div class="sp-ver">v1.29.0</div></div>
+  <div class="sp-ver">v1.29.1</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
 </div>
 <!-- Page d’accueil publique : HTML statique (indexable). Visible seulement sans session mémorisée (html.cj-land) ; l’application reste masquée (html.cj-locked) -->
@@ -924,7 +929,7 @@ table.gbal tfoot td{font-weight:700}
   <footer class="ln-foot">
     <div class="ln-in">
       <span class="ln-brand"><img src="icons/logo-b.svg" alt="" width="28" height="28"><span>Cahier d’<b>EPS</b></span></span>
-      <span>Cahier Journalier digital · <span id="lnVer">Version 1.29.0</span></span>
+      <span>Cahier Journalier digital · <span id="lnVer">Version 1.29.1</span></span>
       <a href="https://cahier-eps-ma.web.app/">cahier-eps-ma.web.app</a>
     </div>
   </footer>
@@ -938,13 +943,13 @@ table.gbal tfoot td{font-weight:700}
       <div class="g-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Accès sur invitation</div>
     </div>
     <div class="g-card" id="gBody"><div class="g-load"><span class="spin"></span>Vérification de la connexion…</div></div>
-    <div class="g-ver" id="gVer">Version 1.29.0</div>
+    <div class="g-ver" id="gVer">Version 1.29.1</div>
     <button type="button" class="g-back" id="gBack"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>Retour à l’accueil</button>
   </div>
 </div>
 <header class="top">
   <button type="button" class="syncpill" id="syncPill" aria-label="État de la synchronisation" title="Synchronisation"><span class="dot"></span><span class="lbl">Local</span></button>
-  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.29.0</span></span></div>
+  <div class="h-title"><img class="h-logo" src="icons/logo-b.svg" alt="" width="34" height="34"><span class="h-txt"><span class="h-ttl">Cahier d’<b>EPS</b></span><span class="h-ver">v1.29.1</span></span></div>
   <div class="sub" id="hdrSub">Élèves et absences</div>
 </header>
 
@@ -1123,7 +1128,7 @@ table.gbal tfoot td{font-weight:700}
     <button class="btn danger solid" id="wipeAll">Supprimer toutes les données</button>
   </div>
   <p class="small muted" style="text-align:center">Fonctionne hors ligne · synchronisation automatique avec votre compte</p>
-  <p class="verline" id="verLine">Version 1.29.0</p>
+  <p class="verline" id="verLine">Version 1.29.1</p>
 </section>
 </main>
 
@@ -1525,8 +1530,8 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_SEMVER='1.29.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
+var APP_VER='cahier-v29-1';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -4507,7 +4512,23 @@ setInterval(tick,700);
 })();
 </script><script>CJBoot.go('cjA5')</script>
 <script>
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(function(e){console.warn('SW:',e);});});}
+/* 1.29.1 : mise à jour fiable (iOS) — recherche de nouvelle version à l’ouverture et au retour au premier plan ; quand elle a pris la main,
+   bandeau « Nouvelle version disponible — Mettre à jour » (rechargement), jamais pendant une fiche ouverte, une saisie ou l’écran du code.
+   Aucune donnée touchée : chaque enregistrement est déjà écrit immédiatement dans le stockage local. */
+(function(){if(!('serviceWorker' in navigator))return;var SW=navigator.serviceWorker,had=!!SW.controller,reg=null,pend=false,last=0,bar=null;
+  function shown(e){if(!e)return false;var c=getComputedStyle(e);return c.display!=='none'&&c.visibility!=='hidden'&&e.getClientRects().length>0;}
+  function busy(){var H=document.documentElement,l=document.getElementById('cjLock'),o=document.getElementById('onb'),ae=document.activeElement;
+    return H.classList.contains('cj-locked')||!!document.querySelector('.modal.open')||shown(l)||shown(o)||!!(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)&&ae.type!=='button');}
+  function mk(){if(bar)return bar;bar=document.createElement('div');bar.id='updBar';bar.setAttribute('role','status');bar.innerHTML='<span>Nouvelle version disponible</span><button type="button" id="updGo">Mettre à jour</button>';document.body.appendChild(bar);
+    bar.querySelector('#updGo').addEventListener('click',function(){if(busy())return;bar.classList.remove('on');location.reload();});return bar;}
+  function tick(){if(!pend)return;mk().classList.toggle('on',!busy());}
+  function found(){if(pend)return;pend=true;tick();setInterval(tick,1500);}
+  function check(force){var n=Date.now();if(!reg||(!force&&n-last<30000))return;last=n;reg.update().catch(function(){});}
+  SW.addEventListener('controllerchange',function(){if(had)found();had=true;});
+  window.addEventListener('load',function(){SW.register('./sw.js',{scope:'./'}).then(function(r){reg=r;check(true);}).catch(function(e){console.warn('SW:',e);});});
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check(false);});
+  window.addEventListener('pageshow',function(e){if(e.persisted)check(true);});
+  window.CJUpd={check:function(){check(true);},pending:function(){return pend;},busy:busy};})();
 </script>
 </body>
 </html>
