@@ -540,6 +540,12 @@ nav.tabs button{min-height:56px;padding-top:5px;padding-bottom:5px;gap:3px}
 nav.tabs button .ti{width:32px!important;height:32px!important;border-radius:10px}
 nav.tabs button .ti svg{width:20px!important;height:20px!important}
 }
+/* 1.29.0 (-h) : barre d’onglets — 6 colonnes de même largeur (icônes à égale distance, barre centrée) ; le libellé ne pousse plus la mise en page (10–11 px, 2 lignes au besoin) ; CSS seul */
+nav.tabs{justify-content:center}
+nav.tabs button{flex:1 1 0!important;min-width:0!important;width:0;padding-left:1px!important;padding-right:1px!important;white-space:normal!important;line-height:1.1;text-align:center;overflow:hidden}
+@media (max-width:420px){nav.tabs button{font-size:10px!important;letter-spacing:-.3px!important}}
+@media (max-width:350px){nav.tabs button{padding-left:0!important;padding-right:0!important;letter-spacing:-.4px!important}}
+@media (min-width:421px) and (max-width:559px){nav.tabs button{font-size:11px!important;letter-spacing:-.2px!important}}
 @media (prefers-reduced-motion:reduce){.qa,.hh-go,.hh-tile{transition:none}.qa:active,.hh-go:active,.hh-tile:active,.qa:hover{transform:none}}
 table.cmp{width:100%;border-collapse:collapse;font-size:13.5px}
 table.cmp th,table.cmp td{padding:7px 3px}
@@ -1516,7 +1522,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-g';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-h';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}

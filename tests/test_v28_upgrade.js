@@ -67,7 +67,7 @@ check('v1.27.0 chargée avec 9 classes, 343 élèves, '+fp27.sessions+' séances
 ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.0';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
 await unlock();await sleep(1200);
 const caches=await p.evaluate(()=>caches.keys());
-check('mise à jour réelle par le service worker v1.27.0 → v'+sem+', cache '+caches.join(','),sem==='1.29.0'&&caches.includes('cahier-v29-g')&&!caches.includes('cahier-v27'));
+check('mise à jour réelle par le service worker v1.27.0 → v'+sem+', cache '+caches.join(','),sem==='1.29.0'&&caches.includes('cahier-v29-h')&&!caches.includes('cahier-v27'));
 const raw28=await raw();
 check('classRegister.v2 identique octet pour octet après la mise à jour ('+raw27.length+' car.)',raw27===raw28);
 const fp28=await FP();
