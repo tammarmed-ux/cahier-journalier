@@ -2,7 +2,7 @@
 
 Fichier interne : jamais servi par Firebase Hosting (exclu par `firebase.json` > `hosting.ignore` : `**/*.md`, `RELEASE*`, `.firebase/`, `.git`).
 
-Format de version : **1.<version>.<correctif>** (actuelle : 1.28.1 · suivante : 1.29.0). Étiquette Git : `v1.28.1`. Cache du service worker : `cahier-v28-1` (règle : `cahier-v<version>`, suivi de `-<correctif>` si le correctif n’est pas 0) (= `APP_VER`).
+Format de version : **1.<version>.<correctif>** (actuelle : 1.29.0 · suivante : 1.30.0). Étiquette Git : `v1.29.0`. Cache du service worker : `cahier-v29` (règle : `cahier-v<version>`, suivi de `-<correctif>` si le correctif n’est pas 0) (= `APP_VER`).
 
 ## Avant de publier
 1. `index.html` : `APP_SEMVER` (« 1.28.1 »), `APP_VER` (« cahier-v28-1 »), splash `.sp-ver` + `aria-label` du splash, en-tête `.h-ver`, écran de connexion `#gVer`, page d’accueil `#lnVer`, Paramètres `#verLine`, `softwareVersion` du JSON-LD. Le `<title>` SEO ne porte pas de version.
@@ -88,3 +88,4 @@ Format de version : **1.<version>.<correctif>** (actuelle : 1.28.1 · suivante :
 - Accueil compact sur téléphone (demande du propriétaire, 13/10/2026 ; préversion `cahier-v29-g`) : les 6 boutons d’accès rapide visibles sans défiler (390×844 PWA, 375×667, 393×664 Safari) ; texte ≥ 11 px ; cibles ≥ 44 px ; CSS seul (≤ 559 px).
 - Barre d’onglets : 6 colonnes de même largeur, icônes à égale distance (±0,02 px à 320/375/390/430 px et sur ordinateur), libellés 10–11 px (préversion `cahier-v29-h`, 13/10/2026). CSS seul.
 - Accueil (préversion `cahier-v29-i`, 13/10/2026) : icône de la tuile « Relevé de notes » en bleu (comme les autres tuiles secondaires) ; motif 3 « marquages de terrain » (SVG en ligne, blanc à faible opacité) derrière la carte de bienvenue. CSS seul.
+- **1.29.0 publiée** (13/10/2026) : cache final `cahier-v29` (les préversions `cahier-v29-b` … `-i` n’ont servi que sur le canal de test test-129).
