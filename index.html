@@ -516,6 +516,30 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 .hs.k-A,.hs.k-U{--c:#C2262E;--s:#FDEBEC}.hs.k-S{--c:#0F766E;--s:#E3F4F1}.hs.k-M{--c:#7E22CE;--s:#F3E8FF}.hs.k-L{--c:#B86E00;--s:#FFF3DC}.hs.k-K{--c:#9333EA;--s:#FAF5FF}.hs.k-held{--c:#0B3A6E;--s:#E8EFF8}
 @keyframes hsGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @media (prefers-reduced-motion:reduce){.hs-bars rect{animation:none}}
+/* 1.29.0 (-g) : Accueil compact sur téléphone (demande du propriétaire) — les 6 boutons d’accès rapide visibles sans défiler (iPhone 390×844, SE 375×667, Safari ≈ 664 px utiles, PWA) ; mêmes contenus, texte ≥ 11 px ; CSS seul */
+@media (max-width:559px){
+header.top{padding-top:max(8px,env(safe-area-inset-top));padding-bottom:8px}
+header.top .sub{font-size:12px;line-height:1.25}
+main{padding-top:8px}
+.hhero{padding:12px 13px 12px;border-radius:18px;margin:0 0 8px}
+.hh-hello{font-size:19px}.hh-date{margin-top:1px;font-size:13px}.hh-clock{font-size:14px;padding:3px 10px}
+.hh-cyc{margin-top:6px;font-size:12.5px;padding:3px 9px}
+.hh-next,.hh-none{margin-top:8px;padding:7px 8px;border-radius:13px;gap:10px}
+.hh-time{flex-basis:52px;padding:4px 2px}.hh-time b{font-size:15.5px}.hh-time span{font-size:11.5px}
+.hh-info b{font-size:15px}.hh-info span{font-size:12.5px}.hh-info small{font-size:11px}
+.hh-go{min-height:44px;padding:0 13px;font-size:14.5px}
+.hh-tiles{margin-top:8px;gap:6px}
+.hh-tile{min-height:46px;padding:4px 4px;border-radius:12px;gap:0}
+.hh-tile b{font-size:18px}.hh-tile span{font-size:11px}
+.qa-h{margin:2px 4px 5px;font-size:12px}
+.qa-grid{gap:7px;margin-bottom:8px}
+.qa{min-height:56px;padding:8px 9px;border-radius:14px;display:grid;grid-template-columns:34px minmax(0,1fr);grid-template-rows:auto auto;column-gap:9px;row-gap:1px;align-items:center;align-content:center}
+.qa .qi{grid-row:1 / span 2;width:34px;height:34px;border-radius:10px}.qa .qi svg{width:19px;height:19px}
+.qa b{font-size:14px;line-height:1.15;align-self:end;min-width:0;overflow-wrap:anywhere}.qa span{font-size:11.5px;align-self:start}
+nav.tabs button{min-height:56px;padding-top:5px;padding-bottom:5px;gap:3px}
+nav.tabs button .ti{width:32px!important;height:32px!important;border-radius:10px}
+nav.tabs button .ti svg{width:20px!important;height:20px!important}
+}
 @media (prefers-reduced-motion:reduce){.qa,.hh-go,.hh-tile{transition:none}.qa:active,.hh-go:active,.hh-tile:active,.qa:hover{transform:none}}
 table.cmp{width:100%;border-collapse:collapse;font-size:13.5px}
 table.cmp th,table.cmp td{padding:7px 3px}
@@ -1492,7 +1516,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-f';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-g';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
