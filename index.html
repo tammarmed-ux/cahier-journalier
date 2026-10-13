@@ -323,6 +323,17 @@ nav.tabs button svg{width:23px;height:23px}
 /* 1.28 : 6 onglets (Note procéd. entre Absences et Rapports) — largeur selon le libellé, texte réduit sur téléphone : rien n’est coupé à 375 px (ni à 320 px) */
 nav.tabs button{flex:1 1 auto}
 @media (max-width:420px){nav.tabs button{font-size:10.5px;letter-spacing:-.25px;padding:8px 1px 10px}nav.tabs button svg{width:22px;height:22px}}
+/* 1.29.0 (-f) : barre d’onglets style C (choix du propriétaire) — tuiles arrondies en dégradé bleu (logo B), onglet actif = tuile orange avec ombre douce et libellé orange ; icônes centrées sur les libellés ; affichage seul */
+nav.tabs{background:#fff;padding-top:4px;padding-bottom:max(4px,env(safe-area-inset-bottom))}
+nav.tabs button{justify-content:flex-start;align-items:center;text-align:center;gap:4px;min-height:62px;color:#0A3768;font-weight:500}
+nav.tabs button .ti{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#2F6FBF,#0A3768);color:#fff;flex:none;transition:transform .15s,box-shadow .15s}
+nav.tabs button .ti svg{width:21px!important;height:21px!important;stroke:#fff!important;display:block}
+nav.tabs button .ti .ac{stroke:#FFC59E}
+nav.tabs button.active{color:#E75C04;font-weight:700}
+nav.tabs button.active .ti{background:linear-gradient(135deg,#FF8A3D,#E75C04);box-shadow:0 3px 8px rgba(231,92,4,.38);transform:translateY(-1px)}
+nav.tabs button.active .ti .ac{stroke:#fff}
+nav.tabs button:focus-visible .ti{outline:2px solid #E75C04;outline-offset:2px}
+@media (max-width:420px){nav.tabs button .ti{width:34px;height:34px;border-radius:10px}nav.tabs button .ti svg{width:20px!important;height:20px!important}}
 .cyctitle{font-size:14px;margin:8px 2px 2px;line-height:1.35}
 .warnline{color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:5px 8px;margin-top:6px;font-size:12.5px;font-weight:600}
 table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoration:underline dotted}
@@ -1083,12 +1094,12 @@ table.gbal tfoot td{font-weight:700}
 </main>
 
 <nav class="tabs" id="tabs">
-  <button data-tab="home" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10.5 9-7.5 9 7.5"/><path d="M5 9v12h14V9"/><path d="M10 21v-6h4v6"/></svg>Accueil</button>
-  <button data-tab="students"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Élèves</button>
-  <button data-tab="attendance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>Absences</button>
-  <button data-tab="proc" aria-label="Note procédurale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="8"/><path d="M12 14V10.5"/><path d="M12 14l2.6 1.6"/><path d="M10 2h4"/><path d="M12 2v4"/><path d="m18.5 6.5 1.5-1.5"/></svg>Note procéd.</button>
-  <button data-tab="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>Rapports</button>
-  <button data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68 1.65 1.65 0 0 0 10 3.17V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Paramètres</button>
+  <button data-tab="home" class="active"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><path d="M3.5 10.5 12 3.8l8.5 6.7"/><path d="M5.5 9v10.2h13V9"/></g><g class="ac"><path d="M10 19.2v-5.2h4v5.2"/></g></svg></span>Accueil</button>
+  <button data-tab="students"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><circle cx="9" cy="8" r="3.4"/><path d="M2.8 19.5c.6-3.6 3.1-5.6 6.2-5.6s5.6 2 6.2 5.6"/></g><g class="ac"><circle cx="16.8" cy="8.6" r="2.6"/><path d="M17.2 13.9c2.3.3 3.7 2 4.1 4.6"/></g></svg></span>Élèves</button>
+  <button data-tab="attendance"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 9.6h17M8 3v4M16 3v4"/></g><g class="ac"><path d="m8.6 14.6 2.4 2.4 4.6-4.6"/></g></svg></span>Absences</button>
+  <button data-tab="proc" aria-label="Note procédurale"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><rect x="5" y="4.5" width="14" height="16.5" rx="2.4"/><path d="M9 4.5V3.2h6v1.3"/></g><g class="ac"><path d="m12 9.2 1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z"/></g></svg></span>Note procéd.</button>
+  <button data-tab="reports"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><path d="M4 20.5h16"/><rect x="5.5" y="12" width="3" height="6" rx="1"/><rect x="10.5" y="8" width="3" height="10" rx="1"/></g><g class="ac"><rect x="15.5" y="4.5" width="3" height="13.5" rx="1"/></g></svg></span>Rapports</button>
+  <button data-tab="settings"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><path d="M12 2.8l1.6 1.9 2.5-.4.9 2.3 2.3.9-.4 2.5 1.9 1.6-1.9 1.6.4 2.5-2.3.9-.9 2.3-2.5-.4L12 21.2l-1.6-1.9-2.5.4-.9-2.3-2.3-.9.4-2.5L3.2 12l1.9-1.6-.4-2.5 2.3-.9.9-2.3 2.5.4z"/></g><g class="ac"><circle cx="12" cy="12" r="3.1"/></g></svg></span>Paramètres</button>
 </nav>
 
 <!-- Student form modal -->
@@ -1481,7 +1492,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.0';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-e';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-f';                       /* préversion 1.29.0 (chiffrement local, lien de test) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
