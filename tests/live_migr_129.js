@@ -48,13 +48,15 @@ const lockText=pg=>pg.evaluate(()=>{const o=document.getElementById('cjLock');re
 const goTab=(pg,t)=>pg.evaluate(t=>{document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));document.querySelector('#tabs button[data-tab="'+t+'"]').click();},t);
 const URL='https://cahier-eps-ma.web.app/',PROF='/tmp/live-migr-prof',OUT='/workspace/backups/live-migr-1.29.0.json',PH=process.env.PHASE;
 (async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,userDataDir:PROF,args:['--no-sandbox','--disable-dev-shm-usage']});
-const p=await b.newPage();await p.emulateTimezone('Africa/Casablanca');await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});const ERR=[];p.on('pageerror',e=>ERR.push(e.message));p.on('dialog',d=>d.accept());
+process.on('exit',()=>{});const p=await b.newPage();await p.emulateTimezone('Africa/Casablanca');await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});const ERR=[];p.on('pageerror',e=>ERR.push(e.message));p.on('dialog',d=>d.accept());
 await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');}catch(e){}});
 if(PH==='A'){await p.goto(URL,{waitUntil:'networkidle2'});const v=await p.evaluate(()=>window.CJR&&CJR.semver);
   const base=await p.evaluate(KEY=>JSON.parse(localStorage.getItem(KEY)),KEY);const data=buildData(base);await p.evaluate(s=>window.CJApp.applyJSON(s),JSON.stringify(data));await sleep(1500);
   await p.evaluate(()=>navigator.serviceWorker.ready.then(()=>true));await sleep(800);const L=await logical(p);const c=await p.evaluate(()=>caches.keys());
   fs.writeFileSync(OUT,JSON.stringify({phaseA:{at:new Date().toISOString(),semver:v,caches:c,students:JSON.parse(L.ls[KEY]).students.length,classes:JSON.parse(L.ls[KEY]).classes.length,keys:Object.keys(L.ls)},L}));
   check('PHASE A : en ligne '+v+' ('+c.join(',')+') : cahier non chiffré créé, '+JSON.parse(L.ls[KEY]).students.length+' élèves',/^1\.28/.test(v));}
+else if(PH==='C'){const L0=JSON.parse(fs.readFileSync(OUT,'utf8')).L;await p.goto(URL,{waitUntil:'networkidle2'});await sleep(1500);const t=await lockText(p);const locked=/code/i.test(t);await pad(p,'246813');await sleep(800);if(await p.$('#cjOk'))await p.click('#cjOk');await sleep(3000);await unlockGate(p);await sleep(600);const LR=await logical(p);
+  check('réouverture en ligne : écran du code, bon code → données identiques octet pour octet ('+JSON.parse(LR.ls[KEY]).students.length+' élèves), mode '+await p.evaluate(()=>CJCrypto.mode()),locked&&LR.ls[KEY]===L0.ls[KEY]);check('aucune erreur de page',!ERR.length,ERR.join(' | ').slice(0,300));}
 else{const S=JSON.parse(fs.readFileSync(OUT,'utf8')),L0=S.L;let sem='';for(let i=0;i<10&&sem!=='1.29.0';i++){await p.goto(URL,{waitUntil:'networkidle2'});await sleep(1500);sem=await p.evaluate(()=>window.CJR&&CJR.semver);}
   await unlockGate(p);await sleep(800);const c=await p.evaluate(()=>caches.keys());const L1=await logical(p);
   check('mise à jour en ligne 1.28.1 → '+sem+' par le service worker (caches '+c.join(',')+')',sem==='1.29.0'&&c.includes('cahier-v29')&&!c.includes('cahier-v28-1'));
@@ -65,8 +67,8 @@ else{const S=JSON.parse(fs.readFileSync(OUT,'utf8')),L0=S.L;let sem='';for(let i
   const ok=/Code activé/.test(await lockText(p));await p.click('#cjDone');await sleep(300);const dE=await rawDump(p);const LE=await logical(p);
   check('activation du code en ligne : chiffrement vérifié, classRegister.v2 stocké chiffré, aucun nom en clair',ok&&await p.evaluate(()=>CJCrypto.mode())==='open'&&dE.ls[KEY].startsWith(ENV)&&!JSON.parse(L0.ls[KEY]).students.slice(0,50).some(s=>JSON.stringify(dE).includes(s.sid)));
   check('déchiffrement : classRegister.v2 identique octet pour octet aux données d’origine (100 % des élèves)',LE.ls[KEY]===L0.ls[KEY]);
-  await p.reload({waitUntil:'networkidle2'});await sleep(1200);const locked=/code/i.test(await lockText(p));await pad(p,'246813',true);await sleep(2500);await unlockGate(p);await sleep(600);const LR=await logical(p);
+  await p.reload({waitUntil:'networkidle2'});await sleep(1200);const locked=/code/i.test(await lockText(p));await pad(p,'246813');await sleep(800);if(await p.$('#cjOk'))await p.click('#cjOk');await sleep(2500);await unlockGate(p);await sleep(600);const LR=await logical(p);
   check('réouverture : écran du code, bon code → mêmes données',locked&&LR.ls[KEY]===L0.ls[KEY]);
   check('aucune erreur de page',!ERR.length,ERR.join(' | ').slice(0,300));
   fs.writeFileSync(OUT.replace('.json','-B.json'),JSON.stringify({at:new Date().toISOString(),sem,caches:c,results}));}
-console.log(results.filter(x=>x).length+'/'+results.length+' passed');await b.close();process.exit(0);})();
+console.log(results.filter(x=>x).length+'/'+results.length+' passed');await b.close();process.exit(0);})().catch(async e=>{console.log('ERREUR',e.message);process.exit(1);});
