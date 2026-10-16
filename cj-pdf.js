@@ -570,6 +570,21 @@ if(v!=null&&v<=k.max)acc[k.k].push(v);var star=raw&&k.k==='g1'&&g.essais.length&
   y=fitTable(d,y,head,body,{fs:7.4,tag:'releve',foot:foot,cols:cols,cell:function(h){if(h.section==='body'&&dsp[h.row.index]){h.cell.styles.fillColor=DSP_F;}}},{newPage:false,reserve:measure(function(s,y){NT.forEach(function(t){y=note(s,y,t);});return y;}),before:function(d,y){return section(d,y,'Notes du cycle',sp.apsL+' · '+A.cycleLabel(p)+' · '+c.name);}});
   NT.forEach(function(t){y=note(d,y,t);});
   return {doc:d,meta:m,name:'Releve-notes_'+A.slug(A.cycleName(p))+'_'+A.slug(c.name)+'_'+A.todayStr()+'.pdf'};}
+/* ================= 1.29.1 (-b) : tous les essais d’athlétisme (demande du propriétaire) — lecture seule ; classe et cycle courants, triés par code Massar ================= */
+function essaiTxt(t){return String(t==null?'':t).replace(/[\u2032\u2019]/g,"'").replace(/\u2033/g,'"');}   /* ′ ″ absents de la police PDF (WinAnsi) */
+function essaisData(cid,p){var c=A.cls(cid);if(!c)throw U('Choisissez une classe.');var list=A.studentsIn(cid).slice().sort(function(a,b){return String(a.sid||'\uffff').localeCompare(String(b.sid||'\uffff'),'fr',{numeric:true})||String(a.name).localeCompare(String(b.name),'fr');});
+  if(!list.length)throw U('Aucun élève dans cette classe.');var evt=A.evtOf(cid,p),n=A.ntrOf(cid,p),G=list.map(function(s){return A.gradeOf(cid,s.id,p);});G.forEach(function(g){if(g.essais&&g.essais.length>n)n=g.essais.length;});
+  var rows=list.map(function(s,i){var g=G[i],es=(g.essais||[]).slice(),ar=es.length?A.athOf(cid,s.id,p):null,ok=ar&&ar.val!=null;var e=[];for(var q=0;q<n;q++)e.push(es[q]||'');return {s:s,es:e,bi:ok?ar.i:-1,best:ok?A.athFmt(evt,ar.val):'',dsp:A.dspInCycle(s,p)};});
+  return {c:c,list:list,evt:evt,n:n,rows:rows};}
+function repEssais(o){var cid=o.cid,p=+o.p||0,E=essaisData(cid,p),c=E.c,act=A.db().periods[p]||'';
+  var m=meta('Essais · '+A.cycleLabel(p)+' – '+c.name,'Classe '+c.name+' · '+pl(E.list.length,'élève')+' · épreuve\u00a0: '+(E.evt?A.athEvtL(E.evt):'non choisie')+' · '+pl(E.n,'essai')+' par élève · classés par code Massar','Essais · '+A.cycleName(p)+' · Classe '+c.name);
+  var d=newDoc(m),y=titleBlock(d,m),head=['N°','Code Massar','Nom et prénom'],dsp={},nb=0;for(var q=0;q<E.n;q++)head.push('Essai '+(q+1));head.push('Meilleur essai');
+  var body=E.rows.map(function(r,i){if(r.dsp)dsp[i]=1;if(r.best)nb++;var row=[i+1,r.s.sid||'',C(r.s.name,{halign:'center',fontStyle:'bold'})];
+    r.es.forEach(function(t,q){row.push(t?C(essaiTxt(t),q===r.bi?{fontStyle:'bold',textColor:PRI}:{}):C('—',{textColor:[190,196,206]}));});
+    row.push(r.best?C(essaiTxt(r.best),{fontStyle:'bold',textColor:PRI}):C('—',{textColor:MUTED}));return row;});
+  y=fitTable(d,y,head,body,{fs:7.6,tag:'essais',cell:function(h){if(h.section==='body'&&dsp[h.row.index]){h.cell.styles.fillColor=DSP_F;}}},{newPage:false,reserve:8,before:function(d,y){return section(d,y,'Essais du cycle',A.cycleName(p)+' · '+c.name);}});
+  y=note(d,y,'Meilleur essai en gras (le plus long pour les distances et hauteurs, le plus rapide pour les temps) · « — » = pas d’essai · '+nb+' / '+E.list.length+' élèves avec un meilleur essai'+(Object.keys(dsp).length?' · lignes grisées\u00a0: élèves dispensés':'')+'.');
+  return {doc:d,meta:m,name:'Essais_'+A.slug(A.cycleName(p))+'_'+A.slug(c.name)+'_'+A.todayStr()+'.pdf'};}
 /* ================= 1.28.0 (-l) : trombinoscope (modèle D choisi par le propriétaire) — lecture seule ================= */
 var PHOTOS={};
 function loadPhotos(){return (A.photoAll?A.photoAll():Promise.resolve({})).then(function(o){PHOTOS=o||{};return PHOTOS;}).catch(function(){PHOTOS={};return PHOTOS;});}
@@ -628,7 +643,7 @@ function trombi(o){var cid=o.cid;if(!cid||!A.cls(cid))throw U('Choisissez une cl
   if(mode==='group')trombiGroupPages(d,y,sets,A.clsName(cid));else trombiPage(d,y,sets);
   return {doc:d,meta:m,name:'Trombinoscope_'+(mode==='group'?'groupes':'classe')+'_'+A.slug(A.clsName(cid))+'_'+A.todayStr()+'.pdf'};}
 
-var REP={cycle:repCycle,year:repYear,all:repAll,students:repStudents,records:repRecords,student:repStudent,groups:repGroups,tests:repTests,grades:repGrades,trombi:trombi};
+var REP={cycle:repCycle,year:repYear,all:repAll,students:repStudents,records:repRecords,student:repStudent,groups:repGroups,tests:repTests,grades:repGrades,essais:repEssais,trombi:trombi};
 window.CJPDF={
   make:function(kind,o){var f=REP[kind];if(!f)return Promise.reject(new Error('type inconnu'));
     HAS_AR=AR.test(JSON.stringify(A.db().students))||AR.test(JSON.stringify(A.db().classes))||AR.test(String(A.db().settings.teacher||''))||AR.test(JSON.stringify(A.db().periods));

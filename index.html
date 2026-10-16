@@ -555,6 +555,11 @@ nav.tabs button{flex:1 1 0!important;min-width:0!important;width:0;padding-left:
 #updBar.on{display:flex}
 #updBar button{min-height:44px;border:0;border-radius:11px;padding:0 14px;font:inherit;font-weight:700;color:#fff;background:linear-gradient(135deg,#FF8A3D,#E75C04);cursor:pointer;white-space:nowrap}
 @media(min-width:900px){#updBar{left:auto;right:20px;bottom:20px;max-width:420px}}
+/* 1.29.1 (-b) : bouton « Télécharger tous les essais » (style C : tuile bleue, zone de toucher 44 px) */
+table.grid th .essdl{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:2px auto -6px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+table.grid th .essdl .ti{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#2F6FBF,#0A3768);color:#fff;box-shadow:0 2px 6px -2px rgba(11,58,110,.55)}
+table.grid th .essdl svg{width:17px;height:17px}
+table.grid th .essdl:focus-visible .ti{outline:2px solid #E75C04;outline-offset:2px}table.grid th .essdl:active .ti{transform:scale(.94)}
 @media (prefers-reduced-motion:reduce){.qa,.hh-go,.hh-tile{transition:none}.qa:active,.hh-go:active,.hh-tile:active,.qa:hover{transform:none}}
 table.cmp{width:100%;border-collapse:collapse;font-size:13.5px}
 table.cmp th,table.cmp td{padding:7px 3px}
@@ -1531,7 +1536,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1b';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2065,7 +2070,7 @@ function footVal(r){if(!r)return '';var n=0;for(var k in r.marks)if(r.marks[k].s
 function procCount(cid,p){var sp=gradeSpec(cid,p);return sp.proc.length+(rawOn(cid,p)?ntrOf(cid,p):0)+1;}
 function sumCount(cid,p){return ATT_VIEW==='notes'?gradeSpec(cid,p).cols.length+2:4;}
 function procHead(cid,p){var sp=gradeSpec(cid,p),raw=rawOn(cid,p),h='';sp.proc.forEach(function(c){if(raw&&c.k==='g1'){var ev0=evtOf(cid,p),E0=OPA&&OPA.events[ev0],n=ntrOf(cid,p);
-    for(var q=0;q<n;q++)h+='<th class="t raw" title="'+esc('Essai '+(q+1)+(E0?' – '+athEvtL(ev0)+'\u00a0: '+athHint(ev0):'')+' · le meilleur essai donne la note Produit')+'">Essai '+(q+1)+'<small>'+esc(E0?(E0.u==='mn'?'mn.ss':E0.u):'')+'</small></th>';}
+    for(var q=0;q<n;q++)h+='<th class="t raw" title="'+esc('Essai '+(q+1)+(E0?' – '+athEvtL(ev0)+'\u00a0: '+athHint(ev0):'')+' · le meilleur essai donne la note Produit')+'">Essai '+(q+1)+'<small>'+esc(E0?(E0.u==='mn'?'mn.ss':E0.u):'')+'</small>'+(q===0?'<button type="button" class="essdl" data-essdl aria-label="Télécharger tous les essais" title="Télécharger tous les essais (PDF ou CSV)"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19.5h14"/></svg></span></button>':'')+'</th>';}
     h+='<th class="t g" title="'+esc(c.t)+' (sur '+fmtNum(c.max)+')'+(raw&&c.k==='g1'?' – calculé d’après le meilleur essai (barème OP 2007), modifiable à la main':'')+'">'+esc(raw?c.l:c.lf)+'<small>/'+fmtNum(c.max)+'</small></th>';});   /* avec les essais : libellés courts (Perf.) pour tenir sur iPhone */
   return h+'<th class="t sub" title="Note procédurale = '+esc(sp.proc.map(function(c){return c.lf;}).join(' + '))+' (sur '+fmtNum(sp.procMax)+')">Procéd.<small>/'+fmtNum(sp.procMax)+'</small></th>';}
 function sumHead(cid,p){if(ATT_VIEW!=='notes')return '<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th>';
@@ -2602,6 +2607,17 @@ $('repExportCsv').addEventListener('click',function(){var s=$('repScope').value;
 
 /* ================= CSV ================= */
 function keepText(v){v=String(v||'');return /^0[\d\s]+$/.test(v)?{raw:'="'+v+'"'}:v;} // keep leading zeros in Excel
+/* 1.29.1 (-b) : « Télécharger tous les essais » (Note procédurale, athlétisme) — lecture seule : PDF (même présentation que les autres PDF) ou CSV ; classe et cycle courants, triés par code Massar */
+function essaisCsv(cid,p){var c=cls(cid);if(!c)return;var list=studentsIn(cid).slice().sort(function(a,b){return String(a.sid||'\uffff').localeCompare(String(b.sid||'\uffff'),'fr',{numeric:true})||String(a.name).localeCompare(String(b.name),'fr');});
+  var evt=evtOf(cid,p),n=ntrOf(cid,p),G=list.map(function(s){return gradeOf(cid,s.id,p);});G.forEach(function(g){if(g.essais&&g.essais.length>n)n=g.essais.length;});
+  var hd=['N°','Code Massar','Nom et prénom','Classe','Cycle','Épreuve'];for(var q=0;q<n;q++)hd.push('Essai '+(q+1));hd.push('Meilleur essai');
+  var rows=[hd].concat(list.map(function(s,i){var g=G[i],es=g.essais||[],ar=es.length?athOf(cid,s.id,p):null,r=[i+1,s.sid||'',s.name,c.name,cycleName(p),evt?athEvtL(evt):''];for(var q=0;q<n;q++)r.push(es[q]||'');r.push(ar&&ar.val!=null?athFmt(evt,ar.val):'');return r;}));
+  download('Essais_'+slug(cycleName(p))+'_'+slug(c.name)+'_'+todayStr()+'.csv',toCsv(rows),'text/csv;charset=utf-8');toast('Essais exportés (CSV)');}
+function essaisMenu(){var m=$('essMenu');if(!m){m=document.createElement('div');m.id='essMenu';m.className='modal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-labelledby','essMenuT');
+    m.innerHTML='<div class="sheet"><h3 id="essMenuT" style="margin:0 0 6px">Télécharger tous les essais</h3><p class="small muted" style="margin:0 0 12px" id="essMenuS"></p><div style="display:flex;flex-direction:column;gap:8px"><button type="button" class="btn" data-ess="pdf">PDF (relevé des essais)</button><button type="button" class="btn sec" data-ess="csv" style="--b-bg:#fff;--b-fg:var(--pri);--b-bd:var(--pri-line)">CSV (Excel)</button><button type="button" class="btn ghost" data-ess="x">Annuler</button></div></div>';
+    document.body.appendChild(m);m.addEventListener('click',function(e){var b=e.target.closest('[data-ess]');if(e.target===m||b)closeModal('essMenu');if(!b)return;var k=b.dataset.ess;if(k==='pdf')runPdf('essais',{cid:DB.ui.cls,p:DB.ui.per});else if(k==='csv')essaisCsv(DB.ui.cls,DB.ui.per);});}
+  $('essMenuS').textContent=(cls(DB.ui.cls)?clsName(DB.ui.cls)+' · ':'')+cycleName(DB.ui.per)+' · essais 1 à '+ntrOf(DB.ui.cls,DB.ui.per)+' et meilleur essai, triés par code Massar';m.classList.add('open');document.body.style.overflow='hidden';var f=m.querySelector('[data-ess="pdf"]');if(f)f.focus();}
+document.addEventListener('click',function(e){if(e.target.closest('[data-essdl]')){e.preventDefault();e.stopPropagation();essaisMenu();}},true);
 function csvCell(v){if(v&&v.raw)return '"'+v.raw.replace(/"/g,'""')+'"';v=v==null?'':String(v);if(/^[=+\-@]/.test(v)&&!/^[-+]?\d[\d\s.,]*$/.test(v))v="'"+v;return (v.indexOf(CSV_SEP)>=0||/["\r\n]/.test(v))?'"'+v.replace(/"/g,'""')+'"':v;}
 function toCsv(rows){return '\uFEFF'+rows.map(function(r){return r.map(csvCell).join(CSV_SEP);}).join('\r\n')+'\r\n';}
 function download(name,content,type){

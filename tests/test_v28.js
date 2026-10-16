@@ -9,7 +9,7 @@ const sem=(idx.match(/APP_SEMVER='([^']+)'/)||[])[1],appv=(idx.match(/APP_VER='(
 check('version format 1.<n>.<p>',/^1\.\d+\.\d+$/.test(sem),sem);
 check('APP_SEMVER = 1.29.1',sem==='1.29.1');
 /* aperçu test-128 : suffixe de reconstruction « -b, -c… » accepté (remis à cahier-v28 pour la publication) */
-const cacheBase=cache.replace(/-[a-z]$/,'');
+const cacheBase=cache.replace(/-[a-z]$/,'').replace(/(\d)[a-z]$/,'$1');
 check('APP_VER = cache sw.js = cahier-v<version>[-<correctif>] (cahier-v28'+(cache!==cacheBase?', aperçu '+cache:'')+')',appv===cache&&cacheBase===('cahier-v'+sem.split('.')[1]+(sem.split('.')[2]!=='0'?'-'+sem.split('.')[2]:''))&&cacheBase==='cahier-v29-1',cache);
 check('titre SEO + versions v'+sem+' (splash, en-tête, connexion, page d’accueil, Paramètres, manifeste)',idx.includes('<title>Cahier Journalier EPS — registre d’absences et bilans pour professeurs d’EPS au Maroc</title>')&&idx.includes('<div class="sp-ver">v'+sem+'</div>')&&idx.includes('<span class="h-ver">v'+sem+'</span>')&&idx.includes('id="gVer">Version '+sem+'<')&&idx.includes('id="lnVer">Version '+sem+'<')&&idx.includes('id="verLine">Version '+sem+'<')&&man.includes(' v'+sem+'"'));
 check('pied de page PDF lié à APP_SEMVER',fs.readFileSync(D+'cj-pdf.js','utf8').includes("EPS v'+A.semver"));
