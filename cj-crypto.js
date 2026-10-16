@@ -108,6 +108,8 @@ var CSS='#cjLock{position:fixed;inset:0;z-index:1100;overflow-y:auto;background:
 '#cjLock .msg{min-height:22px;margin:10px 0 0;font-size:14px;color:#FFD2B0;font-weight:600}#cjLock .lk{background:none;border:0;color:#fff;text-decoration:underline;font-size:14.5px;margin-top:16px;opacity:.9}'+
 '#cjLock .b{display:block;width:100%;margin-top:12px;padding:13px;border-radius:14px;border:0;font-size:16px;font-weight:700;background:#FFB37A;color:#0B3A6E}#cjLock .b.s2{background:rgba(255,255,255,.16);color:#fff}'+
 '#cjLock .txt{text-align:left;font-size:14.5px;background:rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;margin:0 0 14px}#cjLock .txt p{margin:0 0 8px}#cjLock .txt p:last-child{margin:0}'+
+/* 1.29.1 (-c) : écran plus compact sur téléphone — clavier et « Valider » visibles sans défiler (affichage seul) */
+'@media (max-height:900px){#cjLock{padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(14px,env(safe-area-inset-bottom))}#cjLock img{width:56px;height:56px;border-radius:15px;margin-bottom:6px}#cjLock h1{font-size:21px}#cjLock .s{font-size:14px;margin-bottom:10px}#cjLock .txt{font-size:13.5px;line-height:1.35;padding:9px 12px;margin-bottom:8px}#cjLock .txt p{margin-bottom:4px}#cjLock .dots{margin:2px 0 8px}#cjLock input{padding:7px}#cjLock .pad{gap:9px;margin-top:8px}#cjLock .pad button{height:52px;font-size:23px}#cjLock .msg{min-height:16px;margin-top:6px}#cjLock .lk{margin-top:8px}}'+
 '#cjLock .busy{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:cjsp 1s linear infinite;vertical-align:middle;margin-right:8px}@keyframes cjsp{to{transform:rotate(360deg)}}'+
 '#secCard .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}#secCard select{font-size:15px;padding:6px 8px;border-radius:10px}#secCard .ok{color:var(--ok,#1a7f37);font-weight:700}';
 function css(){if(document.getElementById('cjCss'))return;var s=document.createElement('style');s.id='cjCss';s.textContent=CSS;document.head.appendChild(s);}
@@ -254,9 +256,10 @@ window.addEventListener('pagehide',function(){if(MODE==='open'){hiddenAt=hiddenA
 /* ---------- première ouverture : proposer le code ---------- */
 var LATER='cahier.cryptoLater';
 function setupFlow(fromSettings){
-  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b> Choisissez un code de 6 chiffres (ou plus)\u00a0: les données enregistrées sur ce téléphone (élèves, codes Massar, notes, absences, photos, sauvegardes de sécurité) seront <b>chiffrées en AES-256</b>. Sans le code, elles sont illisibles.</p>'+
-    '<p>Le code vous sera demandé à chaque ouverture et après 5 minutes en arrière-plan (réglable dans Paramètres). Il n’est jamais envoyé sur Internet.</p>'+
-    '<p>En cas d’oubli\u00a0: «\u00a0Code oublié\u00a0?\u00a0» efface la copie de ce téléphone\u00a0; vous la récupérez depuis votre compte synchronisé.</p></div>';
+  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b></p>'+   /* 1.29.1 (-c) : texte fourni par le propriétaire (affichage seul) */
+    '<p>Choisissez un code de 6 chiffres ou plus.</p>'+
+    '<p>Ce code sera demandé à chaque ouverture de l’application.</p>'+
+    '<p>En cas d’oubli, sélectionnez «\u00a0Code oublié\u00a0?\u00a0». Cela efface la copie locale de cet appareil\u00a0; vous pourrez la récupérer depuis votre compte synchronisé.</p></div>';
   function step1(msg){pinForm({free:true,title:'Choisissez votre code',intro:intro,msg:msg,cancel:true,extra:'<button type="button" class="lk" id="cjDl">Télécharger d’abord une sauvegarde (JSON)</button>',
       wire:function(r){r.querySelector('#cjDl').addEventListener('click',dlBackup);}}).then(function(a){
     if(a==null){if(!fromSettings)try{oSet.call(LS,LATER,String(now()));}catch(e){}closeOverlay();return;}

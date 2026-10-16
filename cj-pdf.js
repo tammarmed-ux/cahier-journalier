@@ -299,34 +299,40 @@ function chartsBlock(d,y,t,cats,lineTitle,barTitle){
   var segs=statusSegs(t);donut(d,M+17,y+20,16,segs,pct(t.rate,0),'présence',PG);donutLegend(d,M+37,y+6,segs,43);
   lineChart(d,M+84,y+1,W-M-(M+84),52,cats,lineTitle);y+=58;
   y=section(d,y,barTitle,'',52);stackBars(d,M,y+1,W-2*M,56,cats,'Nombre d’élèves concernés');return y+62;}
+/* 1.29.1 (-d) : notes du cycle dans le bilan (demande du propriétaire) — mêmes valeurs que le relevé (A.gradeOf), affichage seul */
+function gHead(cid,p){var sp=A.gradeSpec(cid,p);return {sp:sp,n:'Note /'+num(sp.total),c:sp.cols.map(function(k){return k.l+' /'+num(k.max);})};}
+function gCells(cid,p,s,sp){var g=A.gradeOf(cid,s.id,p),half=sp.total/2;return {n:g.total==null?C('—',{textColor:MUTED}):C(num(g.total),{fontStyle:'bold',textColor:g.total<half?ST.A.c:PRI}),
+  c:sp.cols.map(function(k){var v=g.vals[k.k];return v==null?C('—',{textColor:[190,196,206]}):C(num(v),{fontStyle:'bold',textColor:v>k.max?ST.A.c:INK});})};}
 function studentTable(d,y,list,cid,p,f){
   var DB=A.db(),th=DB.settings.threshold,year=multi(p),g=A.grpOf(cid),cap=A.capOf(cid);
-  var head=['N°','Code Massar','Nom et prénom'];if(g)head.push('Grp');head.push('Sexe','Présence','A','AJ','M','MJ','R','ST','Pts retirés');if(!year)head.push('Note comp.');head.push('Observation');
+  var GH=year?null:gHead(cid,p);   /* cycle : « Note /20 » après le nom, colonnes A et R retirées, notes Produit/Performance… + Conceptuelle */
+  var head=['N°','Code Massar','Nom et prénom'];if(GH)head.push(GH.n);if(g)head.push('Grp');head.push('Sexe','Présence');if(!GH)head.push('A');head.push('AJ','M','MJ');if(!GH)head.push('R');head.push('ST','Pts retirés');if(!year)head.push('Note comp.');if(GH)head.push.apply(head,GH.c);head.push('Observation');
   var tot={U:0,J:0,M:0,K:0,L:0,S:0,ded:0,held:0,abs:0},dspRows={};
   var body=list.map(function(s,i){var st=year?A.scopeStat(cid,s.id,p):A.yearStat(cid,s.id).per[p],dsp=year?A.dspInScope(s,p):A.dspInCycle(s,p),al=st.U>=th,r=stRate(st);
     ['U','J','M','K','L','S'].forEach(function(k){tot[k]+=st[k];});tot.ded+=st.ded;tot.held+=st.held;tot.abs+=st.A+st.M+st.K;if(dsp)dspRows[i]=1;
     var obs=[];if(dsp)obs.push('Dispensé(e) – '+A.dspShort(A.dspOf(s)));if(al)obs.push('Alerte\u00a0: '+st.U+' abs. non just.');if(!year&&st.capped)obs.push('Note comp. épuisée');
-    var row=[i+1,s.sid||'',C(s.name,{halign:'center',fontStyle:'bold'})];if(g)row.push(grpCellOf(cid,s));
-    row.push(sexTxt(s),C(pct(r,0),{textColor:r==null?MUTED:PG,fontStyle:'bold'}),zero(st.U,ST.A.c),zero(st.J,ST.J.c),zero(st.M,ST.M.c),zero(st.K,ST.K.c),zero(st.L,ST.L.c),zero(st.S,ST.S.c),C(A.fmtPts(st.ded),{textColor:st.ded?[184,110,0]:[190,196,206],fontStyle:'bold'}));
-    if(!year)row.push(C(num(r2(st.cap-st.ded))+' / '+num(st.cap),{fontStyle:'bold',textColor:st.capped?ST.A.c:INK}));
+    var row=[i+1,s.sid||'',C(s.name,{halign:'center',fontStyle:'bold'})],gc=GH?gCells(cid,p,s,GH.sp):null;if(gc)row.push(gc.n);if(g)row.push(grpCellOf(cid,s));
+    row.push(sexTxt(s),C(pct(r,0),{textColor:r==null?MUTED:PG,fontStyle:'bold'}));if(!GH)row.push(zero(st.U,ST.A.c));row.push(zero(st.J,ST.J.c),zero(st.M,ST.M.c),zero(st.K,ST.K.c));if(!GH)row.push(zero(st.L,ST.L.c));row.push(zero(st.S,ST.S.c),C(A.fmtPts(st.ded),{textColor:st.ded?[184,110,0]:[190,196,206],fontStyle:'bold'}));
+    if(!year)row.push(C(num(r2(st.cap-st.ded))+' / '+num(st.cap),{fontStyle:'bold',textColor:st.capped?ST.A.c:INK}));if(gc)row.push.apply(row,gc.c);
     row.push(C(obs.join(' · '),{halign:'left',fontSize:6.3,textColor:al?ST.A.c:dsp?DSP_T:MUTED}));return row;});
-  var foot=['','',C('Total classe ('+list.length+')',{halign:'left'})];if(g)foot.push('');foot.push('',C(pct(tot.held?(tot.held-tot.abs)/tot.held:null,0),{fontStyle:'bold',textColor:PG}),tot.U,tot.J,tot.M,tot.K,tot.L,tot.S,A.fmtPts(r2(tot.ded)));if(!year)foot.push('');foot.push('');
-  var cols={0:{cellWidth:7},1:{cellWidth:21,fontSize:6.6},2:{cellWidth:g?36:40}};
+  var foot=['','',C('Total classe ('+list.length+')',{halign:'left'})];if(GH)foot.push('');if(g)foot.push('');foot.push('',C(pct(tot.held?(tot.held-tot.abs)/tot.held:null,0),{fontStyle:'bold',textColor:PG}));if(!GH)foot.push(tot.U);foot.push(tot.J,tot.M,tot.K);if(!GH)foot.push(tot.L);foot.push(tot.S,A.fmtPts(r2(tot.ded)));if(!year)foot.push('');if(GH)GH.c.forEach(function(){foot.push('');});foot.push('');
+  var cols={0:{cellWidth:7},1:{cellWidth:21,fontSize:6.6},2:{cellWidth:g?34:38}};
+  if(GH){cols[2]={cellWidth:g?32:36};head.forEach(function(h,i){if(i<3||i===head.length-1)return;cols[i]={cellWidth:h==='Sexe'?6:h==='Grp'?7:/^(AJ|M|MJ|ST)$/.test(h)?6:h==='Présence'?13:h==='Note comp.'?10.5:10.5,fontSize:6.8};});}   /* 1.29.1 (-d) : colonnes étroites fixes → lignes sur une hauteur, 44 élèves sur une page */
   var obsIdx=head.length-1;cols[obsIdx]={cellWidth:'auto'};
   return fitTable(d,y,head,body,{fs:7.1,foot:foot,cols:cols,tag:'detail',cell:function(h){if(h.section==='body'&&dspRows[h.row.index]){h.cell.styles.fillColor=DSP_F;if(h.column.index===2)h.cell.styles.textColor=DSP_T;}}},f);}
 function r2(x){return Math.round(x*100)/100;}
 function registerTable(d,y,list,cid,p,f){
-  var cols=A.colsOf(cid,p),head=['N°','Nom et prénom'],nC=cols.length;
-  var holIdx={},NO=A.colNos(cid,p);cols.forEach(function(c,i){if(c.hol){holIdx[2+i]=c.hol;head.push((NO[i]?'S'+NO[i]:'')+'\n'+c.date.slice(8,10)+'/'+c.date.slice(5,7));return;}var sd=A.sessDate(cid,p,c.s);head.push('S'+NO[i]+(sd?'\n'+sd.slice(8,10)+'/'+sd.slice(5,7):''));});
-  head.push('A','R','Pts');
-  var dsp={};var body=list.map(function(s,i){if(A.dspInCycle(s,p))dsp[i]=1;var row=[i+1,C(s.name,{halign:'center',fontStyle:'bold'})];
+  var cols=A.colsOf(cid,p),GH=gHead(cid,p),head=['N°','Nom et prénom',GH.n],nC=cols.length,nG=GH.c.length;   /* 1.29.1 (-d) : Note /20 après le nom ; A et R retirés ; notes du cycle ; Pts conservé */
+  var holIdx={},NO=A.colNos(cid,p);cols.forEach(function(c,i){if(c.hol){holIdx[3+i]=c.hol;head.push((NO[i]?'S'+NO[i]:'')+'\n'+c.date.slice(8,10)+'/'+c.date.slice(5,7));return;}var sd=A.sessDate(cid,p,c.s);head.push('S'+NO[i]+(sd?'\n'+sd.slice(8,10)+'/'+sd.slice(5,7):''));});
+  head.push.apply(head,GH.c);head.push('Pts');
+  var dsp={};var body=list.map(function(s,i){if(A.dspInCycle(s,p))dsp[i]=1;var gc=gCells(cid,p,s,GH.sp),row=[i+1,C(s.name,{halign:'center',fontStyle:'bold'}),gc.n];
     cols.forEach(function(c){if(c.hol){row.push(C('',{fillColor:HOL_F}));return;}var r=A.rec(cid,p,c.s);if(!r){row.push(C('',{fillColor:[252,252,253]}));return;}var code=A.codeOf(r.marks[s.id]),cell=stCell(code);if(A.dspAt(s,cid,p,c.s)&&code==='P')cell.styles.fillColor=DSP_F;row.push(cell);});
-    var st=A.perStat(cid,s.id,p);row.push(zero(st.A,ST.A.c),zero(st.L,ST.L.c),C(A.fmtPts(st.ded),{fontStyle:'bold'}));return row;});
-  var nameW=nC>18?30:nC>12?36:44,rest=W-2*M-7-nameW-3*8,cw=nC?Math.min(10,rest/nC):8,fs=nC>20?5.6:nC>14?6.2:6.8;
-  var cs={0:{cellWidth:6},1:{cellWidth:nameW,halign:'center'}};for(var i=0;i<nC;i++)cs[2+i]={cellWidth:cw};cs[2+nC]={cellWidth:7};cs[3+nC]={cellWidth:7};cs[4+nC]={cellWidth:9};
+    var st=A.perStat(cid,s.id,p);row.push.apply(row,gc.c);row.push(C(A.fmtPts(st.ded),{fontStyle:'bold'}));return row;});
+  var nameW=nC>18?30:nC>12?36:44,rest=W-2*M-7-nameW-9-nG*10-9,cw=nC?Math.min(10,rest/nC):8,fs=nC>20?5.6:nC>14?6.2:6.8;
+  var cs={0:{cellWidth:6},1:{cellWidth:nameW,halign:'center'}};cs[2]={cellWidth:9};for(var i=0;i<nC;i++)cs[3+i]={cellWidth:cw};for(var j=0;j<nG;j++)cs[3+nC+j]={cellWidth:10};cs[3+nC+nG]={cellWidth:9};
   var spans={};
   function flush(){Object.keys(spans).forEach(function(k){var sp=spans[k];d.setFillColor.apply(d,HOL_F);var tw2=sp.w-0.8,msg=A.holShort(sp.h);vtext(d,msg,sp.x+sp.w/2,(sp.y0+sp.y1)/2,sp.y1-sp.y0-3,sp.w>=6?7:5.8);});spans={};}
-  var tw=6+nameW+nC*cw+23;fs=Math.max(7,fs);return fitTable(d,y,head,body,{fs:fs,tag:'registre',cols:cs,width:tw,left:Math.max(M,(W-tw)/2),right:Math.max(M,(W-tw)/2),
+  var tw=6+nameW+9+nC*cw+nG*10+9;fs=Math.max(7,fs);return fitTable(d,y,head,body,{fs:fs,tag:'registre',cols:cs,width:tw,left:Math.max(M,(W-tw)/2),right:Math.max(M,(W-tw)/2),
     draw:function(h){var hh=holIdx[h.column.index];if(!hh||h.section!=='body')return;var c=h.cell;hatch(d,c.x,c.y,c.width,c.height,1.5);d.setDrawColor.apply(d,HOL_L);d.setLineWidth(0.2);d.line(c.x,c.y,c.x,c.y+c.height);d.line(c.x+c.width,c.y,c.x+c.width,c.y+c.height);
       var sp=spans[h.column.index];if(!sp)sp=spans[h.column.index]={x:c.x,w:c.width,y0:c.y,y1:c.y+c.height,h:hh};else{sp.y0=Math.min(sp.y0,c.y);sp.y1=Math.max(sp.y1,c.y+c.height);}},
     page:function(){flush();},

@@ -84,7 +84,7 @@ await p.evaluate(()=>{const m=document.querySelector('#detModal [data-close]');m
 // ---- fiche élève : détail du calcul
 await p.evaluate(()=>document.querySelector('#gridWrap tr[data-sid="s2"] td.comp').click());await sleep(400);
 const det=await p.evaluate(()=>(document.getElementById('detComp')||{}).textContent||'');
-check('toucher Comport. ouvre la fiche : formule « Comport. (Cycle 1) = 3 − (0,5 × 2 A + 0,25 × 1 R + 0,5 × 1 ST) = 1,25 » + coefficients',/Comport\. \(Cycle 1\) = 3 − \(0,5 × 2 A \+ 0,25 × 1 R \+ 0,5 × 1 ST\) = 1,25/.test(det)&&/A 0,5 · AJ 0 · M 0,25 · MJ 0 · R 0,25 · ST 0,5/.test(det),det.slice(0,200));
+check('toucher Comport. ouvre la fiche : texte explicatif gris retiré (1.29.1-d)',!(await p.evaluate(()=>!!document.getElementById('detComp')))&&!!(await p.evaluate(()=>{const m=document.getElementById('detModal');return m&&/Notes \/20/.test(m.textContent)&&!/Calcul\u00a0: note comportementale|Comport\. \(Cycle/.test(m.textContent);})));
 await p.evaluate(()=>{const m=document.querySelector('#detModal [data-close]');m&&m.click();});await sleep(200);
 // ---- données : seules les nouvelles clés additives changent
 const after=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);

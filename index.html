@@ -1536,7 +1536,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1b';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1d';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -1936,7 +1936,7 @@ function gradeDetailHtml(s){var cid=s.classId,cur=Math.min(DB.ui.per,DB.periods.
     rows+='<tr><td>'+esc(cycleName(i))+'<br><small class="muted">'+esc(g.spec.apsL)+'</small></td><td>'+g.spec.cols.map(function(c){var v=g.vals[c.k];return esc(c.l)+' '+(v==null?'–':fmtNum(v))+'/'+fmtNum(c.max);}).join('<br>')+'</td><td>'+(g.proc==null?'—':fmtNum(g.proc))+'/'+fmtNum(g.spec.procMax)+((function(){var r=g.essais.length?athOf(g.spec.cid,s.id,i):null;return r&&r.v!=null?'<br><small class="muted">meilleur essai '+esc(athFmt(g.perfEvent||evtOf(g.spec.cid,i),r.val))+(g.prodAuto?'':' (Produit à la main)')+'</small>':'';})())+'</td><td>'+fmtNum(g.comp.v)+'/'+fmtNum(g.comp.max)+'</td><td><b>'+(g.total==null?'—':fmtNum(g.total))+'</b>/'+fmtNum(g.spec.total)+'</td></tr>';});
   var gc=gradeOf(cid,s.id,cur);
   return '<h3>Notes /20 – Évaluation OP 2007</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Notes saisies</th><th>Procéd.</th><th>Comport.</th><th>Note</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
-    '<p class="small muted" id="detComp">Comport. ('+esc(cycleName(cur))+') = '+esc(compFormula(gc.comp))+'<br>Calcul\u00a0: note comportementale de la classe ('+fmtNum(gc.comp.max)+') moins les points retirés du cycle\u00a0: '+['A','AJ','M','MJ','R','ST'].map(function(l,ix){var k=['A','J','M','K','L','S'][ix];return l+' '+fmtNum(DB.settings.points[k]);}).join(' · ')+' (Paramètres › Points retirés).</p>';}
+    '';}   /* 1.29.1 (-d) : texte explicatif gris (formule Comport. + « Calcul : … ») retiré de la fiche (demande du propriétaire) — calcul inchangé */
 function openDetail(id){
   var s=byId(id);if(!s)return;var y=yearStat(s.classId,id),th=DB.settings.threshold;
   var tel=s.phone.replace(/[^\d+]/g,'');

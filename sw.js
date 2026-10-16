@@ -1,5 +1,5 @@
 /* Cahier journalier digital – service worker (hors ligne ; 1.29.1 : ouverture réseau d’abord, 3 s max, sinon copie locale) */
-const CACHE = 'cahier-v29-1b';
+const CACHE = 'cahier-v29-1d';
 /* 1.29.1 : préchargement réduit à l’essentiel du démarrage (installation rapide, même si iOS coupe l’app tôt) ;
    le reste (PDF, polices, grandes images) est mis en cache juste après l’activation, sans bloquer la mise à jour, et à la demande */
 const ASSETS = [
