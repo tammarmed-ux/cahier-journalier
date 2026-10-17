@@ -1,9 +1,7 @@
-/* 1.29.1 (-f) : sélecteur de thème — préférence d’affichage locale (clé « cj.theme »), n’altère aucune donnée (classRegister.v2, synchro, exports, chiffrement, PDF inchangés) */
+/* 1.29.1 (-f/-g) : sélecteur de thème (Actuel, Vert terrain, Néon sport ; une valeur retirée — clair, verre — ou inconnue revient à Actuel) — préférence d’affichage locale (clé « cj.theme »), n’altère aucune donnée (classRegister.v2, synchro, exports, chiffrement, PDF inchangés) */
 (function(){var K='cj.theme',M=__META__,L=[
  {id:'',n:'Actuel',d:'Bleu & orange (par défaut)',sw:'linear-gradient(135deg,#0B3A6E 0 50%,#E85D04 50% 100%)'},
- {id:'clair',n:'Clair minimal',d:'Épuré, façon iOS',sw:'linear-gradient(135deg,#F2F2F7 0 50%,#0A5BC4 50% 100%)'},
  {id:'terrain',n:'Vert terrain',d:'Vert pelouse, accent jaune',sw:'linear-gradient(135deg,#1C6B3A 0 50%,#FACC15 50% 100%)'},
- {id:'verre',n:'Verre',d:'Glassmorphism, fond dégradé',sw:'linear-gradient(135deg,#3B6FD8,#7C3AED 55%,#F97316)'},
  {id:'neon',n:'Néon sport',d:'Sombre, vert citron et cyan',sw:'linear-gradient(135deg,#0A0A12 0 50%,#C6FF00 50% 100%)'}];
  function ok(t){for(var i=0;i<L.length;i++)if(L[i].id===t)return true;return false;}
  function cur(){var t='';try{t=localStorage.getItem(K)||'';}catch(e){}return ok(t)?t:'';}

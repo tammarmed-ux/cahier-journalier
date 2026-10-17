@@ -1,4 +1,4 @@
-/* 1.29.1 (-f) : sélecteur de thème — test (données intactes, persistance, contraste, PDF inchangés). Base de données d’essai reprise de measure_home_compact */
+/* 1.29.1 (-f/-g) : sélecteur de thème (Actuel, Vert terrain, Néon sport) — test (données intactes, persistance, contraste, PDF inchangés). Base de données d’essai reprise de measure_home_compact */
 /* (origine) 1.29.0 (-c) : « une classe = une page » — chaque PDF généré avec des classes de 30, 40, 44 et 45 élèves (noms latins, arabes, très longs).
    44 élèves → tableau d’élèves sur UNE page ; 45 → deux pages, ligne d’en-tête répétée, aucune ligne coupée ; police du corps ≥ 7 pt.
    DIR=… PORT=… REPORT=1 : mesure seule (comparaison avant / après). */
@@ -50,7 +50,7 @@ const scan=()=>p.evaluate(()=>{const P=s=>{const m=s.match(/rgba?\(([^)]+)\)/);i
       const c=P(cs.backgroundColor);if(c&&c[3]>0){st.push(c);if(c[3]>=.98)break;}}
     let base=[255,255,255,1];const res=[];const fin=g=>{let b=base;for(let i=st.length-1;i>=0;i--){const x=st[i];if(x.grad)b=g;else b=over(x,b);}return b;};
     const g=st.find(x=>x.grad);if(g)return g.grad.map(c=>fin(c));return [fin(base)];};
-  const out=[];const vis=e=>{const r=e.getBoundingClientRect();if(r.width<2||r.height<2||r.bottom<0||r.top>innerHeight)return false;const cs=getComputedStyle(e);return cs.visibility!=='hidden'&&+cs.opacity>.3;};
+  const out=[];const vis=e=>{const r=e.getBoundingClientRect();if(r.width<2||r.height<2||(!window.__FULL&&(r.bottom<0||r.top>innerHeight)))return false;const cs=getComputedStyle(e);return cs.visibility!=='hidden'&&+cs.opacity>.3;};
   document.querySelectorAll('body *').forEach(e=>{if(!vis(e))return;if(![...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim().length>1))return;if(e.closest('[aria-hidden=true],svg,.thsw'))return;
     const cs=getComputedStyle(e);let op=1;for(let x=e;x;x=x.parentElement)op*=+getComputedStyle(x).opacity;if(op<.5)return;const fg=P(cs.color);if(!fg)return;
     const fs=parseFloat(cs.fontSize),bold=+cs.fontWeight>=700,large=fs>=24||(bold&&fs>=18.66);const bgs=bgOf(e);
@@ -67,15 +67,16 @@ check('par défaut : thème actuel (aucun data-theme, --pri #0B3A6E, aucune clé
 check('icône palette dans l’en-tête : 44×44, libellé, ne chevauche pas la pastille de synchro',st.b.w>=44&&st.b.h>=44&&!st.b.ov&&st.b.al==='Changer de thème',JSON.stringify(st.b));
 await p.click('#themeBtn');await sleep(250);
 let pk=await p.evaluate(()=>{const P=document.getElementById('thPop');return {open:P.classList.contains('open'),opts:[...P.querySelectorAll('.thopt')].map(b=>b.querySelector('.thn').firstChild.textContent+'='+b.dataset.th+':'+b.getAttribute('aria-checked')),h:Math.min(...[...P.querySelectorAll('.thopt')].map(b=>b.getBoundingClientRect().height))};});
-check('sélecteur : 5 pastilles + noms, « Actuel » coché, cibles ≥ 44 px',pk.open&&pk.opts.join('|')==='Actuel=:true|Clair minimal=clair:false|Vert terrain=terrain:false|Verre=verre:false|Néon sport=neon:false'&&pk.h>=44,JSON.stringify(pk));
+check('sélecteur : 3 pastilles + noms (Actuel, Vert terrain, Néon sport — « Clair minimal » et « Verre » retirés), « Actuel » coché, cibles ≥ 44 px',pk.open&&pk.opts.join('|')==='Actuel=:true|Vert terrain=terrain:false|Néon sport=neon:false'&&pk.h>=44,JSON.stringify(pk));
 await p.keyboard.press('Escape');await sleep(150);check('Échap ferme le sélecteur',!(await p.evaluate(()=>document.getElementById('thPop').classList.contains('open'))));
-const META={clair:'#F9F9FB',terrain:'#1C6B3A',verre:'#1E2A5E',neon:'#0A0A12'};const bad={};
-for(const t of ['clair','terrain','verre','neon']){
+const META={terrain:'#1C6B3A',neon:'#0A0A12'};const bad={};
+for(const t of ['','terrain','neon']){if(t){
   await go('home');await p.click('#themeBtn');await sleep(200);await p.click('#thPop [data-th="'+t+'"]');await sleep(250);
   let r=await p.evaluate(()=>({dt:document.documentElement.getAttribute('data-theme'),k:localStorage.getItem('cj.theme'),m:document.querySelector('meta[name="theme-color"]').content,open:document.getElementById('thPop').classList.contains('open')}));
   check('choix « '+t+' » : data-theme, clé cj.theme, couleur de barre d’état, sélecteur refermé',r.dt===t&&r.k===t&&r.m===META[t]&&!r.open,JSON.stringify(r));
   await open();r=await p.evaluate(()=>({dt:document.documentElement.getAttribute('data-theme'),c:{th:(document.querySelector('#themeSw [aria-checked="true"]')||{getAttribute:()=>null}).getAttribute('data-th')}}));
-  check('« '+t+' » conservé après rechargement + coché dans Paramètres',r.dt===t&&r.c&&r.c.th===t,JSON.stringify(r));
+  check('« '+t+' » conservé après rechargement + coché dans Paramètres',r.dt===t&&r.c&&r.c.th===t,JSON.stringify(r));}else{await p.evaluate(()=>localStorage.removeItem('cj.theme'));await open();}
+  await p.evaluate(()=>{window.__FULL=true;});
   for(const s of ['home','students','attendance','proc','reports','settings']){await go(s);const f=await scan();if(f.length)bad[t+'/'+s]=f.slice(0,4);}
   await go('attendance');await p.evaluate(()=>{const c=document.querySelector('#gridWrap td.comp');c&&c.click();});await sleep(450);let f=await scan();if(f.length)bad[t+'/fiche']=f.slice(0,4);
   await p.evaluate(()=>{const m=document.querySelector('.modal.open [data-close]');m&&m.click();});await sleep(150);
@@ -83,7 +84,7 @@ for(const t of ['clair','terrain','verre','neon']){
   await go('settings');await p.evaluate(()=>{const b=document.getElementById('secOn');b&&b.click();});await sleep(600);
   f=await p.evaluate(()=>!!document.getElementById('cjLock'));if(f){const g=await scan();const L=g.filter(x=>true);if(L.length)bad[t+'/code']=L.slice(0,4);await p.evaluate(()=>{const c=[...document.querySelectorAll('#cjLock button')].find(b=>/Annuler/.test(b.textContent));c&&c.click();});await sleep(300);}
   check('« '+t+' » : écran du code (verrouillage) affiché et lisible',f&&!bad[t+'/code'],JSON.stringify(bad[t+'/code']||''));}
-check('contraste WCAG AA (≥ 4,5 ; ≥ 3 grands textes) : tous les textes visibles de Accueil, Élèves, Absences, Note procéd., Rapports, Paramètres, fiche élève, sélecteur et écran du code, dans les 4 thèmes',!Object.keys(bad).length,JSON.stringify(bad).slice(0,900));
+check('contraste WCAG AA (≥ 4,5 ; ≥ 3 grands textes) : tous les textes visibles de Accueil, Élèves, Absences, Note procéd., Rapports, Paramètres, fiche élève, sélecteur et écran du code, pages entières (y compris sous la ligne de flottaison), dans Actuel, Vert terrain et Néon sport',!Object.keys(bad).length,JSON.stringify(bad).slice(0,900));
 /* PDF : même rendu quel que soit le thème */
 const make=async(kind,o)=>p.evaluate(async(kind,o)=>{const L=['vendor/jspdf.umd.min.js','vendor/jspdf.plugin.autotable.min.js','vendor/bidi-js.min.js','cj-pdf.js'];
   if(!window.CJPDF)for(const s of L)await new Promise((res,rej)=>{const e=document.createElement('script');e.src=s;e.onload=res;e.onerror=rej;document.head.appendChild(e);});
@@ -98,6 +99,11 @@ st=await p.evaluate(()=>({dt:document.documentElement.getAttribute('data-theme')
 check('Paramètres › « Actuel » : retour au thème par défaut, clé cj.theme supprimée',st.dt===null&&st.k===null&&st.m==='#0B3A6E',JSON.stringify(st));
 await p.evaluate(()=>localStorage.setItem('cj.theme','<img src=x onerror=alert(1)>'));await open();st=await p.evaluate(()=>document.documentElement.getAttribute('data-theme'));
 check('valeur inconnue dans cj.theme ignorée (thème actuel)',st===null,String(st));
+/* 1.29.1 (-g) : thèmes retirés « clair » et « verre » mémorisés -> retour à Actuel */
+for(const t of ['clair','verre']){await p.evaluate(t=>localStorage.setItem('cj.theme',t),t);await open();await go('settings');
+  st=await p.evaluate(()=>({dt:document.documentElement.getAttribute('data-theme'),m:document.querySelector('meta[name="theme-color"]').content,ck:(document.querySelector('#themeSw [aria-checked="true"]')||{dataset:{}}).dataset.th,n:document.querySelectorAll('#themeSw .thopt').length,css:[...document.styleSheets].some(x=>{try{return [...x.cssRules].some(r=>/data-theme="(clair|verre)"/.test(r.cssText));}catch(e){return false;}})}));
+  check('cj.theme = « '+t+' » (thème retiré) : retour à Actuel (pas de data-theme, barre #0B3A6E, Actuel coché, 3 choix, aucune règle CSS '+t+')',st.dt===null&&st.m==='#0B3A6E'&&st.ck===''&&st.n===3&&!st.css,JSON.stringify(st));}
+await p.evaluate(()=>localStorage.removeItem('cj.theme'));
 const S1=await snap();const own=k=>/^cahier\.snapDay$|\.snapm?\.\d+$/.test(k);   /* instantanés quotidiens créés par l’application elle-même à l’ouverture */
 const keys0=Object.keys(S0).filter(k=>!own(k)).sort().join(','),keys1=Object.keys(S1).filter(k=>!own(k)).sort().join(',');
 check('classRegister.v2 strictement identique après tous les changements de thème et rechargements',S1[KEY]===RAW0,(S1[KEY]||'').length+' / '+RAW0.length);

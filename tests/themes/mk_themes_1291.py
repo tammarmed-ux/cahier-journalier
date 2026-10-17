@@ -1,21 +1,18 @@
-# 1.29.1 (-f) : génère le bloc <style id="cjThemes"> (thèmes clair / terrain / verre / néon) à partir de /workspace/theme-proposals
+# 1.29.1 (-f) : génère le bloc <style id="cjThemes"> (thèmes terrain / néon ; 1.29.1 -g : « Clair minimal » et « Verre » retirés) à partir de /workspace/theme-proposals
 import re,colorsys,os,runpy
 PROP='/workspace/theme-proposals'
 cwd=os.getcwd();os.chdir('/tmp')   # gen.py écrit ses fichiers dans le dossier courant -> /tmp (copie jetable)
 for f in ['_pattern.txt']:open('/tmp/'+f,'w').write(open(PROP+'/'+f).read())
 G=runpy.run_path(PROP+'/gen.py');os.chdir(cwd)
 T={t['n']:t for t in G['T']};BRIDGE=open('/tmp/theme-bridge.css').read()
-IDS={2:'clair',4:'terrain',6:'verre',10:'neon'};DARK=['verre','neon']
+IDS={4:'terrain',10:'neon'};DARK=['neon']
 APP={
-'clair':{'--warn':'#8A5300','--bad':'#B42330','--ok':'#16703D','--bg':'#F2F2F7','--card':'#fff','--ink':'#1C1C1E','--muted':'#5E5E63','--line':'#E0E0E6','--pri':'#0A5BC4','--pri-2':'#2F7BE0','--pri-soft':'#E4EEFC','--pri-d':'#08479A','--pri-line':'#BBD3F5','--acc':'#C2410C','--acc-d':'#9A3412','--acc-soft':'#FDEBDD','--grad':'linear-gradient(135deg,#2F7BE0 0%,#0A5BC4 100%)','--focus':'0 0 0 3px rgba(10,91,196,.35)','--shadow':'0 1px 2px rgba(0,0,0,.05)'},
 'terrain':{'--t-hero-bg':'repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 34px,rgba(0,0,0,.04) 34px 68px),linear-gradient(150deg,#1B6B3D,#0F4223)','--t-stat-bg':'rgba(255,255,255,.08)','--t-stat-sub':'#fff','--t-hero-sub':'#fff','--t-hero-chip':'rgba(0,0,0,.18)','--warn':'#8A5300','--bad':'#B42330','--ok':'#16703D','--bg':'#F0F5F0','--card':'#fff','--ink':'#12301E','--muted':'#4B5E52','--line':'#DCE8DF','--pri':'#1C6B3A','--pri-2':'#2A9457','--pri-soft':'#E3F1E7','--pri-d':'#14532D','--pri-line':'#B9DCC4','--acc':'#B45309','--acc-d':'#92400E','--acc-soft':'#FEF3C7','--grad':'linear-gradient(135deg,#23824A 0%,#14532D 100%)','--focus':'0 0 0 3px rgba(28,107,58,.35)'},
-'verre':{'--t-page':'radial-gradient(60% 40% at 90% 12%,rgba(249,115,22,.32),transparent 70%),radial-gradient(70% 50% at 0% 60%,rgba(124,58,237,.45),transparent 70%),linear-gradient(160deg,#173A7A,#1E2A5E 50%,#2A1B4F)','--t-hdr-bg':'rgba(10,16,48,.55)','--t-next-bg':'rgba(10,16,48,.55)','--t-next-ink':'#fff','--t-next-sub':'#C9D0E6','--t-time-bg':'rgba(255,255,255,.12)','--t-time-ink':'#fff','--t-go-bg':'linear-gradient(135deg,#C2410C,#9A3412)','--t-pri-bg':'linear-gradient(135deg,#C2410C,#9A3412)','--t-warn-bg':'rgba(251,191,36,.14)','--t-warn-line':'rgba(251,191,36,.35)','--t-warn-ink':'#F2F4FA','--t-warn-head':'#FCD34D','--t-nav-bg':'rgba(12,18,52,.78)','--t-nav-line':'rgba(255,255,255,.18)','--t-nav-ink':'#D5DBEE','--t-ti-ink':'#E3E8F7','--t-ti-ac':'#FDBA74','--t-nav-act':'#FDBA74','--t-hero-bg':'linear-gradient(140deg,rgba(18,26,78,.62),rgba(18,26,78,.40))','--bg':'#1E2A5E','--card':'#222B63','--t-s2':'rgba(255,255,255,.07)','--t-input':'rgba(255,255,255,.09)','--ink':'#F2F4FA','--muted':'#BAC2DC','--line':'rgba(255,255,255,.18)','--pri':'#A9C2FF','--pri-2':'#7FA2FF','--pri-soft':'rgba(127,162,255,.18)','--pri-d':'#C7D6FF','--pri-line':'rgba(169,194,255,.45)','--acc':'#FDA460','--acc-d':'#FB923C','--acc-soft':'rgba(249,115,22,.18)','--grad':'linear-gradient(135deg,#3B6FD8 0%,#5B3FC4 100%)','--focus':'0 0 0 3px rgba(169,194,255,.5)','--t-fill':'#9DB9FF','--t-fill-ink':'#0A0F2A','--t-acc-fill':'#FDA460','--t-acc-ink':'#1A0A00',
-  '--ok':'#5EE38F','--ok-soft':'rgba(74,222,128,.16)','--bad':'#FF9AA2','--bad-soft':'rgba(255,138,147,.16)','--warn':'#FCD34D','--warn-soft':'rgba(251,191,36,.16)','--dsp':'#5b6474','--dsp-d':'#D1D5DB','--dsp-soft':'rgba(255,255,255,.10)','--dsp-ink':'#E5E7EB','--shadow':'0 8px 24px -12px rgba(5,8,30,.6)'},
 'neon':{'--bg':'#0A0A12','--card':'#14141F','--t-s2':'#1B1B29','--t-input':'#1B1B29','--ink':'#F5F7FA','--muted':'#AEB3C4','--line':'#2C2C40','--pri':'#4FEAFF','--pri-2':'#00C8E0','--pri-soft':'rgba(0,229,255,.13)','--pri-d':'#9AF4FF','--pri-line':'rgba(0,229,255,.45)','--acc':'#C6FF00','--acc-d':'#A8DB00','--acc-soft':'rgba(198,255,0,.13)','--grad':'linear-gradient(135deg,#00B8D4 0%,#7C4DFF 100%)','--focus':'0 0 0 3px rgba(0,229,255,.45)','--t-fill':'#C6FF00','--t-fill-ink':'#0A0A12','--t-acc-fill':'#C6FF00','--t-acc-ink':'#0A0A12',
   '--ok':'#5EE38F','--ok-soft':'rgba(74,222,128,.14)','--bad':'#FF8FA3','--bad-soft':'rgba(255,95,162,.15)','--warn':'#FCD34D','--warn-soft':'rgba(251,191,36,.14)','--dsp':'#4b5563','--dsp-d':'#D1D5DB','--dsp-soft':'rgba(255,255,255,.08)','--dsp-ink':'#E5E7EB','--shadow':'none'}}
-META={'clair':'#F9F9FB','terrain':'#1C6B3A','verre':'#1E2A5E','neon':'#0A0A12'}
+META={'terrain':'#1C6B3A','neon':'#0A0A12'}
 def sc(t):return 'html[data-theme="%s"]'%t
-DK=':is(html[data-theme="verre"],html[data-theme="neon"])'
+DK='html[data-theme="neon"]'
 out=['/* ===== 1.29.1 (-f) : thèmes d’affichage (préférence locale « cj.theme », aucune donnée) — généré par cj-emu/themes/mk_themes_1291.py ; sans data-theme = thème actuel inchangé ===== */']
 # pont : html body -> html[data-theme] body
 out.append(re.sub(r'/\*.*?\*/','',BRIDGE,flags=re.S).replace('html body','html[data-theme] body').strip())
@@ -85,7 +82,7 @@ def conv(pre,body):
             rest=s[4:];sels+=['html[data-theme="%s"]'%t+rest for t in DARK]
         else:sels.append(DK+' '+s)
     return ','.join(sels)+'{'+';'.join(ds)+'}'
-LIGHTT=['clair','terrain','verre','neon'];LK=':is('+','.join('html[data-theme="%s"]'%t for t in LIGHTT)+')'
+LIGHTT=['terrain','neon'];LK=':is('+','.join('html[data-theme="%s"]'%t for t in LIGHTT)+')'
 def convL(pre,body):
     if skip.search(pre):return None
     ds=[]
@@ -121,7 +118,7 @@ for pre,body in rules:
         c=convL(pre,body)
         if c:autoL.append(c)
 out+=autoL
-out.append('/* sombres (verre, néon) : fonds clairs codés en dur -> surfaces sombres ('+str(len(auto))+' règles générées) */')
+out.append('/* sombre (néon) : fonds clairs codés en dur -> surfaces sombres ('+str(len(auto))+' règles générées) */')
 out+=auto
 HAND=open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'dark-hand.css'),encoding='utf-8').read().replace('DK',DK)
 out.append(re.sub(r'/\*.*?\*/','',HAND,flags=re.S).strip())

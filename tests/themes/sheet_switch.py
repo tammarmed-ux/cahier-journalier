@@ -1,5 +1,5 @@
 from PIL import Image,ImageDraw,ImageFont
-D='/workspace/backups/v1.29.1-preview/';TH=[('actuel','Actuel'),('clair','Clair minimal'),('terrain','Vert terrain'),('verre','Verre'),('neon','Néon sport')];SC=[('picker','Sélecteur ouvert'),('home','Accueil'),('attendance','Absences'),('modal','Fiche élève')]
+D='/workspace/backups/v1.29.1-preview/';TH=[('actuel','Actuel'),('terrain','Vert terrain'),('neon','Néon sport')];SC=[('picker','Sélecteur ouvert'),('home','Accueil'),('attendance','Absences'),('modal','Fiche élève')]
 W,H=390*2,844*2;pad=36;lab=100;top=90
 F=lambda n:ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',n)
 sh=Image.new('RGB',(len(SC)*(W+pad)+pad+260,top+len(TH)*(H+lab+pad)+pad),'#E9EDF3');d=ImageDraw.Draw(sh)
