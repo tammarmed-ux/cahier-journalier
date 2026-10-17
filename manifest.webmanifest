@@ -1,7 +1,7 @@
 {
-  "name": "Cahier d’EPS v1.29.1",
-  "short_name": "Cahier d’EPS",
-  "description": "Cahier journalier du professeur d’EPS : élèves, appel et absences, bilans de classe, PDF et exports Excel, même hors ligne.",
+  "name": "TATABO3 v1.29.1",
+  "short_name": "TATABO3",
+  "description": "TATABO3 — cahier journalier du professeur d’EPS : élèves, appel et absences, bilans de classe, PDF et exports Excel, même hors ligne.",
   "lang": "fr",
   "dir": "ltr",
   "id": "./",
@@ -17,31 +17,31 @@
   ],
   "icons": [
     {
-      "src": "icons/icon-b-192.png",
+      "src": "icons/t3-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-b-512.png",
+      "src": "icons/t3-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/logo-b.svg",
+      "src": "icons/t3-mark.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "icons/maskable-b-192.png",
+      "src": "icons/t3-maskable-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icons/maskable-b-512.png",
+      "src": "icons/t3-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

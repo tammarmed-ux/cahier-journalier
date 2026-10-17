@@ -1,5 +1,5 @@
-/* Cahier journalier digital – service worker (hors ligne ; 1.29.1 : ouverture réseau d’abord, 3 s max, sinon copie locale) */
-const CACHE = 'cahier-v29-1g';
+/* TATABO3 (cahier journalier digital) – service worker (hors ligne ; 1.29.1 : ouverture réseau d’abord, 3 s max, sinon copie locale) */
+const CACHE = 'cahier-v29-1h';
 /* 1.29.1 : préchargement réduit à l’essentiel du démarrage (installation rapide, même si iOS coupe l’app tôt) ;
    le reste (PDF, polices, grandes images) est mis en cache juste après l’activation, sans bloquer la mise à jour, et à la demande */
 const ASSETS = [
@@ -7,22 +7,24 @@ const ASSETS = [
   './manifest.webmanifest',
   './cj-crypto.js',   /* 1.29.0 : chiffrement local */
   './op2007-athle.js',   /* barèmes d’athlétisme OP 2007 */
-  /* logo B « Cahier d’EPS » : noms de fichiers versionnés (-b) pour contourner les caches HTTP/iOS des anciennes icônes */
-  './icons/logo-b.svg',
-  './icons/favicon-b.svg',
-  './icons/icon-b-192.png',
-  './icons/apple-touch-icon-b.png'
+  /* 1.29.1 (-h) : identité TATABO3 — nouveaux noms de fichiers (t3-…, tatabo3-…) pour contourner les caches HTTP/iOS des anciennes icônes */
+  './icons/t3-mark.svg',
+  './icons/tatabo3-wm-dark.svg',
+  './icons/t3-favicon.svg',
+  './icons/t3-icon-192.png',
+  './icons/t3-apple-touch-180.png'
 ];
 const LAZY_ASSETS = [
   './logo.jpg',
-  './icons/logo-b-pdf.png',
-  './icons/favicon-b-32.png',
-  './icons/favicon-b.ico',
-  './icons/icon-b-512.png',
-  './icons/maskable-b-192.png',
-  './icons/maskable-b-512.png',
+  './icons/t3-pdf.png',
+  './icons/tatabo3-wm-light.svg',
+  './icons/t3-favicon-32.png',
+  './icons/t3-favicon.ico',
+  './icons/t3-icon-512.png',
+  './icons/t3-maskable-192.png',
+  './icons/t3-maskable-512.png',
   './favicon.ico',
-  './og-image-b.png',
+  './og-image-t3.png',
   /* exports PDF : bibliothèques et polices locales (aucun CDN) */
   './cj-pdf.js',
   './vendor/jspdf.umd.min.js',

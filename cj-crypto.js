@@ -101,7 +101,7 @@ window.CJBoot={go:function(id){if(RELEASED)exec(id);else Q.push(id);}};
 var CSS='#cjLock{position:fixed;inset:0;z-index:1100;overflow-y:auto;background:#0B3A6E;color:#fff;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom))}'+
 '#cjLock .w{max-width:380px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;align-items:stretch;text-align:center}'+
 '#cjLock img{width:80px;height:80px;border-radius:20px;margin:0 auto 12px;box-shadow:0 12px 30px rgba(0,0,20,.4)}'+
-'#cjLock h1{font-size:25px;margin:0 0 4px;font-weight:800}#cjLock h1 b{color:#FFB37A}#cjLock .s{opacity:.85;font-size:14.5px;margin:0 0 18px}'+
+'#cjLock h1{font-size:25px;margin:0 0 4px;font-weight:800}#cjLock h1 .wm{display:block;width:auto;height:34px;margin:0 auto 4px;border-radius:0;box-shadow:none}#cjLock h1 b{color:#FFB37A}#cjLock .s{opacity:.85;font-size:14.5px;margin:0 0 18px}'+
 '#cjLock .dots{display:flex;justify-content:center;gap:12px;margin:6px 0 14px}#cjLock .dots i{width:14px;height:14px;border-radius:50%;border:2px solid #fff;display:block}#cjLock .dots i.on{background:#fff}'+
 '#cjLock input{width:100%;box-sizing:border-box;font-size:20px;letter-spacing:8px;text-align:center;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.1);outline:none}#cjLock input::placeholder{color:rgba(255,255,255,.6);letter-spacing:1px;font-size:15px}'+
 '#cjLock .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px auto 0;max-width:300px}#cjLock .pad button{height:62px;border-radius:31px;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:26px;font-weight:600}#cjLock .pad button:active{background:rgba(255,255,255,.3)}#cjLock .pad button.t{font-size:15px;background:none}'+
@@ -117,7 +117,7 @@ function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return 
 function overlay(html){css();var o=document.getElementById('cjLock');if(!o){o=document.createElement('div');o.id='cjLock';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');document.body.appendChild(o);}
   o.innerHTML='<div class="w">'+html+'</div>';return o;}
 function closeOverlay(){var o=document.getElementById('cjLock');if(o)o.parentNode.removeChild(o);}
-var HEAD='<img src="icons/logo-b.svg" alt=""><h1>Cahier d’<b>EPS</b></h1>';
+var HEAD='<img src="icons/t3-mark.svg" alt=""><h1><img class="wm" src="icons/tatabo3-wm-dark.svg" alt="TATABO3" width="186" height="34"></h1>';
 function fmtWait(ms){var s=Math.ceil(ms/1000);return s>=60?Math.ceil(s/60)+' min':s+' s';}
 /* saisie d’un code : clavier à l’écran + clavier du téléphone ; résout la valeur (ou null si annulé) */
 function pinForm(o){o=o||{};return new Promise(function(res){

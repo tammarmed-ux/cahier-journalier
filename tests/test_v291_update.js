@@ -10,7 +10,7 @@ const R281='/tmp/v281root',R290='/tmp/v290root',RNX='/tmp/v29next';
 if(!fs.existsSync(R281+'/index.html')){fs.mkdirSync(R281,{recursive:true});cp.execSync('git -C '+D+' archive v1.28.1 | tar -x -C '+R281);}
 fs.rmSync(R290,{recursive:true,force:true});fs.mkdirSync(R290,{recursive:true});cp.execSync('git -C '+D+' archive v1.29.0 | tar -x -C '+R290);
 fs.rmSync(RNX,{recursive:true,force:true});cp.execSync('mkdir -p '+RNX+' && cd '+D+' && git ls-files | tar -cf - -T - | tar -xf - -C '+RNX+' && cp index.html sw.js manifest.webmanifest '+RNX+'/');
-for(const f of ['index.html','sw.js']){const p=RNX+'/'+f;fs.writeFileSync(p,fs.readFileSync(p,'utf8').replace("var APP_SEMVER='1.29.1'","var APP_SEMVER='1.29.9'").replace("var APP_VER='cahier-v29-1g'","var APP_VER='cahier-v29-9'").replace("const CACHE = 'cahier-v29-1g'","const CACHE = 'cahier-v29-9'"));}
+for(const f of ['index.html','sw.js']){const p=RNX+'/'+f;fs.writeFileSync(p,fs.readFileSync(p,'utf8').replace("var APP_SEMVER='1.29.1'","var APP_SEMVER='1.29.9'").replace("var APP_VER='cahier-v29-1h'","var APP_VER='cahier-v29-9'").replace("const CACHE = 'cahier-v29-1h'","const CACHE = 'cahier-v29-9'"));}
 let ROOT=R281;const FAIL=new Set(),SLOW={},ERR500=new Set();const HITS=[];
 const MT={'.html':'text/html; charset=utf-8','.js':'text/javascript','.webmanifest':'application/manifest+json','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.ico':'image/x-icon','.jpg':'image/jpeg','.ttf':'font/ttf'};
 const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]);HITS.push(u);if(FAIL.has(u)){FAIL.delete(u);let v=u.endsWith('/')?u+'index.html':u;const buf=fs.readFileSync(path.join(ROOT,v));r.writeHead(200,{'Content-Type':MT[path.extname(v)]||'application/octet-stream','Content-Length':buf.length,'Cache-Control':'no-cache'});r.write(buf.slice(0,buf.length>>1));return setTimeout(()=>q.socket.destroy(),50);} /* téléchargement coupé à mi-fichier */
@@ -76,21 +76,21 @@ const ERR=[];let b;
 const sw=fs.readFileSync(D+'/sw.js','utf8'),idx=fs.readFileSync(D+'/index.html','utf8');
 const core=[...sw.match(/const ASSETS = \[([\s\S]*?)\];/)[1].matchAll(/'([^']+)'/g)].map(x=>x[1]);
 const coreBytes=core.reduce((a,f)=>a+fs.statSync(path.join(D,f==='./'?'index.html':f)).size,0);
-check('préchargement réduit à l’essentiel ('+core.length+' fichiers, '+Math.round(coreBytes/1024)+' Ko) : pas de PDF, polices ni grandes images ; le reste en cache après activation',coreBytes<700*1024&&!core.some(f=>/jspdf|\.ttf|og-image|cj-pdf/.test(f))&&/LAZY_ASSETS\.concat\(FONT_ASSETS\)/.test(sw)&&['./cj-pdf.js','./vendor/jspdf.umd.min.js','./og-image-b.png'].every(f=>sw.includes("'"+f+"'")));
-check('version 1.29.1 partout (APP_SEMVER, cache cahier-v29-1g, en-tête, splash, connexion, accueil, Paramètres, JSON-LD, manifeste)',/var APP_SEMVER='1\.29\.1'/.test(idx)&&/var APP_VER='cahier-v29-1g'/.test(idx)&&/const CACHE = 'cahier-v29-1g'/.test(sw)&&['class="h-ver">v1.29.1','<div class="sp-ver">v1.29.1','id="gVer">Version 1.29.1','id="lnVer">Version 1.29.1','id="verLine">Version 1.29.1','"softwareVersion": "1.29.1"'].every(x=>idx.includes(x))&&/v1\.29\.1/.test(fs.readFileSync(D+'/manifest.webmanifest','utf8')));
+check('préchargement réduit à l’essentiel ('+core.length+' fichiers, '+Math.round(coreBytes/1024)+' Ko) : pas de PDF, polices ni grandes images ; le reste en cache après activation',coreBytes<700*1024&&!core.some(f=>/jspdf|\.ttf|og-image|cj-pdf/.test(f))&&/LAZY_ASSETS\.concat\(FONT_ASSETS\)/.test(sw)&&['./cj-pdf.js','./vendor/jspdf.umd.min.js','./og-image-t3.png'].every(f=>sw.includes("'"+f+"'")));
+check('version 1.29.1 partout (APP_SEMVER, cache cahier-v29-1h, en-tête, splash, connexion, accueil, Paramètres, JSON-LD, manifeste)',/var APP_SEMVER='1\.29\.1'/.test(idx)&&/var APP_VER='cahier-v29-1h'/.test(idx)&&/const CACHE = 'cahier-v29-1h'/.test(sw)&&['class="h-ver">v1.29.1','<div class="sp-ver">v1.29.1','id="gVer">Version 1.29.1','id="lnVer">Version 1.29.1','id="verLine">Version 1.29.1','"softwareVersion": "1.29.1"'].every(x=>idx.includes(x))&&/v1\.29\.1/.test(fs.readFileSync(D+'/manifest.webmanifest','utf8')));
 // ===== 1. 1.28.1 → 1.29.1, téléchargement interrompu =====
 let p=await newCtx();ROOT=R281;await p.goto(URL,{waitUntil:'networkidle2'});await seed(p);await unlockGate(p);
 const L0=await logical(p);check('1.28.1 : cahier non chiffré de '+JSON.parse(L0.ls[KEY]).students.length+' élèves',(await sem(p))==='1.28.1'&&JSON.parse(L0.ls[KEY]).students.length===343);
 ROOT=D;FAIL.add('/cj-crypto.js');await p.reload({waitUntil:'networkidle2'});await sleep(2500);
-let c=await cks(p);check('téléchargement interrompu (connexion coupée) : l’ancienne version reste utilisable, rien d’effacé, pas de cache partiel',(await sem(p))==='1.28.1'&&!c.includes('cahier-v29-1g')&&c.includes('cahier-v28-1')&&(await logical(p)).ls[KEY]===L0.ls[KEY],c.join(','));
-ERR500.add('/vendor/jspdf.umd.min.js');SLOW['/og-image-b.png']=20000;SLOW['/vendor/NotoSansArabic-Regular.ttf']=20000;
-const t0=Date.now();await p.reload({waitUntil:'domcontentloaded'});let ok=false;for(let i=0;i<40&&!ok;i++){await sleep(250);c=await cks(p);ok=c.includes('cahier-v29-1g');}
+let c=await cks(p);check('téléchargement interrompu (connexion coupée) : l’ancienne version reste utilisable, rien d’effacé, pas de cache partiel',(await sem(p))==='1.28.1'&&!c.includes('cahier-v29-1h')&&c.includes('cahier-v28-1')&&(await logical(p)).ls[KEY]===L0.ls[KEY],c.join(','));
+ERR500.add('/vendor/jspdf.umd.min.js');SLOW['/og-image-t3.png']=20000;SLOW['/vendor/NotoSansArabic-Regular.ttf']=20000;
+const t0=Date.now();await p.reload({waitUntil:'domcontentloaded'});let ok=false;for(let i=0;i<40&&!ok;i++){await sleep(250);c=await cks(p);ok=c.includes('cahier-v29-1h');}
 const tI=Date.now()-t0;check('nouvel essai : installation terminée en '+(tI/1000).toFixed(1)+' s malgré PDF en erreur et polices/image lentes (20 s)',ok&&tI<8000,c.join(','));
 await p.reload({waitUntil:'domcontentloaded'});await sleep(2500);await unlockGate(p);
 const L1=await logical(p);check('ouverture suivante : 1.29.1 (réseau d’abord), classRegister.v2 identique octet pour octet, mode clair',(await sem(p))==='1.29.1'&&L1.ls[KEY]===L0.ls[KEY]&&Object.keys(L0.ls).every(k=>L0.ls[k]===L1.ls[k])&&await p.evaluate(()=>CJCrypto.mode())==='plain',await sem(p));
 c=await cks(p);check('ancien cache cahier-v28-1 supprimé',!c.includes('cahier-v28-1'),c.join(','));
-ERR500.clear();delete SLOW['/og-image-b.png'];delete SLOW['/vendor/NotoSansArabic-Regular.ttf'];
-await sleep(3000);const lazyOk=await p.evaluate(()=>caches.open('cahier-v29-1g').then(c=>Promise.all(['./cj-pdf.js','./vendor/jspdf.umd.min.js','./og-image-b.png'].map(u=>c.match(u).then(h=>!!h)))));
+ERR500.clear();delete SLOW['/og-image-t3.png'];delete SLOW['/vendor/NotoSansArabic-Regular.ttf'];
+await sleep(3000);const lazyOk=await p.evaluate(()=>caches.open('cahier-v29-1h').then(c=>Promise.all(['./cj-pdf.js','./vendor/jspdf.umd.min.js','./og-image-t3.png'].map(u=>c.match(u).then(h=>!!h)))));
 const pdfOk=await p.evaluate(()=>fetch('vendor/jspdf.umd.min.js').then(r=>r.ok));
 check('fichiers secondaires : mis en cache après activation (cj-pdf.js), ou à la demande dès que le serveur répond (jsPDF '+pdfOk+')',lazyOk[0]&&pdfOk,JSON.stringify(lazyOk));
 await p.browserContext().close();
@@ -101,8 +101,8 @@ await pad(p,'135792',true);await sleep(300);await pad(p,'135792',true);
 await p.waitForFunction(()=>/Code activé|non effectué/.test((document.getElementById('cjLock')||{}).innerText||''),{timeout:90000});await p.click('#cjDone');await sleep(300);
 const E0=await logical(p),R0=await rawDump(p);check('1.29.0 : code activé, cahier chiffré',R0.ls[KEY].startsWith('{"v":1')&&await p.evaluate(()=>CJCrypto.mode())==='open');
 ROOT=D;FAIL.add('/index.html');await p.reload({waitUntil:'networkidle2'});await sleep(2000);c=await cks(p);
-check('1.29.0 chiffré, téléchargement interrompu : écran du code de 1.29.0, pas de cache partiel',/code/i.test(await lockText(p))&&!c.includes('cahier-v29-1g'),c.join(','));
-await p.reload({waitUntil:'domcontentloaded'});ok=false;for(let i=0;i<40&&!ok;i++){await sleep(250);ok=(await cks(p)).includes('cahier-v29-1g');}
+check('1.29.0 chiffré, téléchargement interrompu : écran du code de 1.29.0, pas de cache partiel',/code/i.test(await lockText(p))&&!c.includes('cahier-v29-1h'),c.join(','));
+await p.reload({waitUntil:'domcontentloaded'});ok=false;for(let i=0;i<40&&!ok;i++){await sleep(250);ok=(await cks(p)).includes('cahier-v29-1h');}
 check('nouvel essai : 1.29.1 installée',ok);
 await p.reload({waitUntil:'domcontentloaded'});await sleep(1500);const lockOn=/code/i.test(await lockText(p));await enter(p,'135792');
 const E1=await logical(p),R1=await rawDump(p);

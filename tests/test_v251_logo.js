@@ -44,11 +44,11 @@ const bad=[];for(const a of assets){const c=await cached(p1,CUR,'./'+a);if(c!==f
 check('toutes les ressources du nouveau cache = fichiers du serveur (aucune copie périmée, y compris favicon.ico au même nom)',bad.length===0&&assets.length>=15,bad.join(',')||assets.length+' fichiers');
 async function logos(p){return p.evaluate(()=>[...document.querySelectorAll('img.sp-logo,.ln-brand img,.ln-art img,img.g-logo,img.h-logo')].map(i=>({src:i.getAttribute('src'),ok:i.complete&&i.naturalWidth>0})));}
 const L=await logos(p1);
-const served=await p1.evaluate(async()=>{const r=await fetch('icons/logo-b.svg');return await r.text();});
-check('accueil, connexion, en-tête : logo B (icons/logo-b.svg) chargé, contenu = logo B (piste, sans livre)',L.length>=5&&L.every(x=>x.src==='icons/logo-b.svg'&&x.ok)&&/url\(#tr\)/.test(served)&&!/url\(#pg\)/.test(served),JSON.stringify(L.map(x=>x.src+':'+x.ok)));
+const served=await p1.evaluate(async()=>{const r=await fetch('icons/t3-mark.svg');return await r.text();}); /* 1.29.1 (-h) : TATABO3, icône 07·2 */
+check('accueil, connexion, en-tête : icône TATABO3 (icons/t3-mark.svg) chargée, contenu = T3 sur fond orange',L.filter(x=>x.src==='icons/t3-mark.svg').length>=5&&L.every(x=>/^icons\/(t3-mark|tatabo3-wm-dark)\.svg$/.test(x.src)&&x.ok)&&/#E75C04/i.test(served)&&/#0A3768/i.test(served),JSON.stringify(L.map(x=>x.src+':'+x.ok)));
 const head=await p1.evaluate(()=>[...document.querySelectorAll('link[rel~="icon"],link[rel="apple-touch-icon"],link[rel="manifest"]')].map(l=>l.getAttribute('href')));
 const man=await p1.evaluate(async()=>(await (await fetch('manifest.webmanifest')).json()).icons.map(i=>i.src));
-check('favicons, apple-touch-icon et icônes du manifeste : nouvelles adresses (-b)',head.filter(x=>/icons\//.test(x)).every(x=>/-b[.-]/.test(x))&&man.every(x=>/-b[.-]/.test(x)),JSON.stringify(head)+' '+JSON.stringify(man));
+check('favicons, apple-touch-icon et icônes du manifeste : nouvelles adresses (t3-)',head.filter(x=>/icons\//.test(x)).every(x=>/icons\/t3-/.test(x))&&man.every(x=>/icons\/t3-/.test(x)),JSON.stringify(head)+' '+JSON.stringify(man));
 const after=await p1.evaluate(K=>localStorage.getItem(K),KEY);
 check('classRegister.v2 identique après v1.24.0 → v1.25.0 → v'+SEM+' (chaîne brute)',!!before&&before===after,before&&before.length+' car.');
 // captures (même appareil mis à jour) : accueil, connexion, en-tête
@@ -58,8 +58,8 @@ await p1.evaluate(()=>window.CJLanding.toLogin());await sleep(500);await p1.scre
 await p1.evaluate(()=>{document.documentElement.classList.remove('cj-locked');window.scrollTo(0,0);});await sleep(500);await p1.screenshot({path:'/tmp/m3.png'});
 // ---------- second client : v1.24.0 → version courante directement
 const p2=await client();const b2=await p2.evaluate(K=>localStorage.getItem(K),KEY);const u3=await upd(p2,D,SEM);const L2=await logos(p2);
-check('client v1.24.0 → v'+SEM+' directement : logo B en '+u3.n+' rechargement(s), cache unique '+CUR+', données identiques',u3.s===SEM&&u3.n<=2&&L2.every(x=>x.src==='icons/logo-b.svg'&&x.ok)&&JSON.stringify(await p2.evaluate(()=>caches.keys()))===JSON.stringify([CUR])&&b2===(await p2.evaluate(K=>localStorage.getItem(K),KEY)));
-check('en-têtes : icônes et favicon.ico servis en no-cache par firebase.json',cc(D,'/icons/logo-b.svg')==='no-cache'&&cc(D,'/favicon.ico')==='no-cache'&&cc(D,'/og-image-b.png')==='no-cache');
+check('client v1.24.0 → v'+SEM+' directement : icône TATABO3 en '+u3.n+' rechargement(s), cache unique '+CUR+', données identiques',u3.s===SEM&&u3.n<=2&&L2.every(x=>/^icons\/(t3-mark|tatabo3-wm-dark)\.svg$/.test(x.src)&&x.ok)&&JSON.stringify(await p2.evaluate(()=>caches.keys()))===JSON.stringify([CUR])&&b2===(await p2.evaluate(K=>localStorage.getItem(K),KEY)));
+check('en-têtes : icônes et favicon.ico servis en no-cache par firebase.json',cc(D,'/icons/t3-mark.svg')==='no-cache'&&cc(D,'/favicon.ico')==='no-cache'&&cc(D,'/og-image-t3.png')==='no-cache');
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,200));
 srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);
 })().catch(e=>{console.log('FATAL',e);process.exit(1);});
