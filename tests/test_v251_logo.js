@@ -42,7 +42,8 @@ const sw=fs.readFileSync(D+'/sw.js','utf8');const arr=n=>{const i=sw.indexOf('co
 await new Promise(r=>setTimeout(r,4000));
 const bad=[];for(const a of assets){const c=await cached(p1,CUR,'./'+a);if(c!==file(D,a))bad.push(a);}
 check('toutes les ressources du nouveau cache = fichiers du serveur (aucune copie périmée, y compris favicon.ico au même nom)',bad.length===0&&assets.length>=15,bad.join(',')||assets.length+' fichiers');
-async function logos(p){return p.evaluate(()=>[...document.querySelectorAll('img.sp-logo,.ln-brand img,.ln-art img,img.g-logo,img.h-logo')].map(i=>({src:i.getAttribute('src'),ok:i.complete&&i.naturalWidth>0})));}
+/* 1.29.1 (-i) : logo en ligne (<svg><use href="#t3mk">), couleurs selon le thème */
+async function logos(p){return p.evaluate(()=>[...document.querySelectorAll('svg.t3m')].map(i=>{const u=i.querySelector('use');const h=u&&u.getAttribute('href');return {src:h==='#t3mk'&&document.getElementById('t3mk')?'icons/t3-mark.svg':h,ok:!!document.getElementById('t3mk')};}));}
 const L=await logos(p1);
 const served=await p1.evaluate(async()=>{const r=await fetch('icons/t3-mark.svg');return await r.text();}); /* 1.29.1 (-h) : TATABO3, icône 07·2 */
 check('accueil, connexion, en-tête : icône TATABO3 (icons/t3-mark.svg) chargée, contenu = T3 sur fond orange',L.filter(x=>x.src==='icons/t3-mark.svg').length>=5&&L.every(x=>/^icons\/(t3-mark|tatabo3-wm-dark)\.svg$/.test(x.src)&&x.ok)&&/#E75C04/i.test(served)&&/#0A3768/i.test(served),JSON.stringify(L.map(x=>x.src+':'+x.ok)));

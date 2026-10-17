@@ -92,14 +92,14 @@ function header(d,m){
   d.setFillColor(232,93,4);d.rect(0,21,W,0.9,'F');
   var x=M;
   if(LOGO){d.addImage(LOGO,'PNG',M,3,15,15,'cjlogoB','FAST');x=M+19;}
-  T(d,'TATABO3',x,10,{bold:1,size:13.5,color:WHITE});
+  T(d,'TATABO3 | Cahier d’EPS digital',x,10,{bold:1,size:13.5,color:WHITE,maxW:W-2*M-95}); /* 1.29.1 (-i) : mention à côté du logo dans tous les documents */
   T(d,m.head2,x,16,{size:8.3,color:[214,222,255],maxW:W-2*M-95});
   if(m.teacher)T(d,m.teacher,W-M,9.6,{size:9,bold:1,align:'right',color:WHITE,maxW:88});
   T(d,m.year,W-M,15.6,{size:8,align:'right',color:[214,222,255]});
 }
 function footer(d,m,i,n){
   d.setDrawColor.apply(d,LINE);d.setLineWidth(0.3);d.line(M,H-11.5,W-M,H-11.5);
-  T(d,'Document généré le '+m.gen+' · TATABO3 v'+A.semver+' – cahier-eps-ma.web.app',M,H-7,{size:7,color:MUTED,maxW:150});
+  T(d,'Document généré le '+m.gen+' · TATABO3 | Cahier d’EPS digital v'+A.semver+' – cahier-eps-ma.web.app',M,H-7,{size:7,color:MUTED,maxW:150});
   T(d,'Page '+i+' / '+n,W-M,H-7,{size:7.5,bold:1,align:'right',color:MUTED});
 }
 function finish(d,m){var n=d.getNumberOfPages();for(var i=1;i<=n;i++){d.setPage(i);header(d,m);footer(d,m,i,n);}

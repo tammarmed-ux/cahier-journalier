@@ -43,7 +43,7 @@ async function pdf(mode,tag){await p.evaluate(()=>{window.__lastPdf=null;});awai
   await p.waitForFunction(()=>window.__lastPdf,{timeout:60000});const r=await p.evaluate(async()=>{const x=window.__lastPdf,buf=new Uint8Array(await x.blob.arrayBuffer());let s='';for(let i=0;i<buf.length;i+=8192)s+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return {name:x.name,b64:btoa(s)};});
   const f=OUT+'/'+(tag||mode)+'.pdf';fs.writeFileSync(f,Buffer.from(r.b64,'base64'));return {f,name:r.name,info:cp.execSync('pdfinfo "'+f+'"').toString(),txt:cp.execSync('pdftotext -layout "'+f+'" -').toString()};}
 const page=await pdf('page');
-check('PDF « Tous les groupes sur une page » : en-tête TATABO3 + Lycée qualifiant Baja + année + G1…G5 + Sans groupe',/TATABO3/.test(page.txt)&&/Lycée qualifiant Baja/.test(page.txt)&&/Année scolaire/.test(page.txt)&&/Trombinoscope/.test(page.txt)&&/G1/.test(page.txt)&&/G5/.test(page.txt)&&/Sans groupe/.test(page.txt)&&/âge —/.test(page.txt),page.name+' '+page.info.match(/Pages:\s*\d+/)[0]);
+check('PDF « Tous les groupes sur une page » : en-tête TATABO3 | Cahier d’EPS digital + Lycée qualifiant Baja + année + G1…G5 + Sans groupe',/TATABO3 \| Cahier d’EPS digital/.test(page.txt)&&/Lycée qualifiant Baja/.test(page.txt)&&/Année scolaire/.test(page.txt)&&/Trombinoscope/.test(page.txt)&&/G1/.test(page.txt)&&/G5/.test(page.txt)&&/Sans groupe/.test(page.txt)&&/âge —/.test(page.txt),page.name+' '+page.info.match(/Pages:\s*\d+/)[0]);
 const pages=+(page.info.match(/Pages:\s*(\d+)/)||[])[1];check('45 élèves : le PDF tient sans erreur (1 ou 2 pages)',pages>=1&&pages<=3&&!/Error/i.test(page.info),String(pages));
 await p.click('#trombiBtn');await sleep(300);
 const grp=await pdf('group');
