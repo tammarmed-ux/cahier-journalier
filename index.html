@@ -728,6 +728,33 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 @keyframes spFade{to{opacity:1}}
 /* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */
 #landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}
+/* 1.29.1 (-r) : tableau de service — variante B (onglets de jours + frise verticale), purement visuel */
+.tw-chip{position:relative;padding-bottom:8px}.tw-chip.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.sel span{color:rgba(255,255,255,.9)}
+.tw-chip.today:not(.sel){background:#fff;color:var(--ink);border:2px solid var(--acc-d);box-shadow:none}.tw-chip.today:not(.sel) span{color:var(--muted)}
+.tw-dots{display:flex;gap:3px;justify-content:center;min-height:6px;margin-top:3px}.tw-dots i{width:6px;height:6px;border-radius:50%;background:var(--c)}.tw-chip.sel .tw-dots i{box-shadow:0 0 0 1.5px #fff}
+#ttCard .tw-day{border:0;box-shadow:none;padding:4px 0 0;background:transparent}#ttCard .tw-day.today{border:0;box-shadow:none}
+.tw-tl{position:relative;padding:2px 0 2px}.tw-tl:before{content:"";position:absolute;left:55px;top:10px;bottom:10px;width:2px;border-radius:2px;background:var(--line)}
+#ttCard .tw-slot{display:grid;grid-template-columns:48px 14px 1fr;align-items:start;gap:0 6px;background:transparent;border:0;box-shadow:none;padding:0;margin:0 0 10px;min-height:0;border-radius:14px}
+#ttCard .tw-slot:before{display:none}
+#ttCard .tw-time{flex:none;background:none!important;color:var(--ink);text-align:right;padding:9px 0 0;border-radius:0}#ttCard .tw-time b{font-size:14px}#ttCard .tw-time i{font-size:12px;color:var(--muted);opacity:1}
+.tw-dot{width:12px;height:12px;margin:13px 0 0 1px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px var(--card,#fff);position:relative;z-index:1}
+.tw-card{display:block;min-width:0;border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;background:var(--card,#fff);padding:10px 10px 10px 12px;text-align:left;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.tw-r1{display:flex;align-items:center;gap:6px}#ttCard .tw-main{flex:1;min-width:0}#ttCard .tw-main b{font-size:16px}
+#ttCard .tw-lv{background:var(--c);color:var(--on,#fff);font-size:11.5px;padding:2px 8px}#ttCard .tw-slot.now .tw-lv{display:inline-block}
+#ttCard .tw-now{position:static;flex:none;font-size:11px;letter-spacing:0;text-transform:none;background:var(--acc-d);color:#fff;border-radius:999px;padding:2px 8px}
+.tw-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-top:5px;font-size:12.5px;font-weight:600;color:var(--muted)}.tw-meta span{display:inline-flex;align-items:center;gap:4px;min-width:0}.tw-meta svg{width:13px;height:13px;flex:none}
+.tw-prog{display:block;height:5px;border-radius:5px;background:var(--line);margin-top:8px;overflow:hidden}.tw-prog i{display:block;height:100%;background:var(--c);border-radius:5px}
+#ttCard .tw-slot.cur .tw-card{border-color:var(--acc-d);border-left-color:var(--c);box-shadow:0 0 0 2px var(--acc-d)}
+#ttCard .tw-slot.on .tw-card{border-color:var(--pri-2);box-shadow:0 0 0 3px rgba(31,95,168,.3)}#ttCard .tw-slot.on{box-shadow:none}
+#ttCard .tw-slot:focus-visible{box-shadow:none}#ttCard .tw-slot:focus-visible .tw-card{box-shadow:var(--focus)}
+#ttCard .tw-ed{width:18px;height:18px}
+.tw-pause{font-size:12.5px;font-weight:600;color:var(--muted);margin:-2px 0 10px 68px}
+.tw-nowln{position:relative;height:0;border-top:2px dashed var(--acc-d);margin:0 0 12px 50px}.tw-nowln span{position:absolute;left:-50px;top:-10px;font-size:11px;font-weight:800;background:var(--acc-d);color:#fff;border-radius:6px;padding:1px 4px;line-height:1.4}
+html[data-theme="neon"] #ttCard .lv-TC{--c:#2DD4BF;--s:#0F2E2B}html[data-theme="neon"] #ttCard .lv-1BAC{--c:#B69CFF;--s:#241B3D}html[data-theme="neon"] #ttCard .lv-2BAC{--c:#FF9F5A;--s:#3A2414}html[data-theme="neon"] #ttCard .lv-as{--c:#FBCB4B;--s:#3A2E10}html[data-theme="neon"] #ttCard .lv-x{--c:#7CC4FF;--s:#16263A}
+html[data-theme="neon"] #ttCard{--on:#0A0A12}html[data-theme="neon"] .tw-chip.sel{background:#C6FF00;color:#0A0A12}html[data-theme="neon"] .tw-chip.sel span{color:#0A0A12}html[data-theme="neon"] .tw-chip.sel .tw-dots i{box-shadow:0 0 0 1.5px #0A0A12}
+html[data-theme="neon"] .tw-chip.today:not(.sel){background:var(--card);border-color:#C6FF00}html[data-theme="neon"] .tw-card{background:var(--card);border-color:#2A2F3C}
+html[data-theme="neon"] #ttCard .tw-now,html[data-theme="neon"] .tw-nowln span{background:#C6FF00;color:#0A0A12}html[data-theme="neon"] .tw-nowln{border-top-color:#C6FF00}html[data-theme="neon"] #ttCard .tw-slot.cur .tw-card{border-color:#C6FF00;box-shadow:0 0 0 2px #C6FF00}
+html[data-theme="neon"] .tw-dot{box-shadow:0 0 0 3px var(--card)}
 /* 1.29.1 (-q) : carte « Élèves à surveiller » repliable */
 #homeWatch .wt-h{margin:0}#homeWatch .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:10px}
 #homeWatch .wt-h button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}#homeWatch .wt-t{display:flex;align-items:center;gap:8px}
@@ -1858,7 +1885,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1q';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1r';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3275,18 +3302,35 @@ function ttLv(x){return isAS(x)?'as':(levelOf(clsName(x.classId))||'x');}
 function ttWeekTop(){var td=wday(todayStr()),tt=DB.cal.tt;
   if(!tt.length)return '<div class="tw-empty" id="ttEmpty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18M12 14v4M10 16h4"/></svg><b>'+esc(TX.ttEmpty)+'</b><span>Ajoutez vos cours de la semaine\u00a0: les dates des séances de chaque cycle seront calculées automatiquement.</span><button type="button" class="tw-add" data-ttadd="1">+ Ajouter un créneau</button></div>';
   var h='<div class="tw-chips" role="group" aria-label="Jours de la semaine">';
-  for(var d=1;d<=6;d++){var n=tt.filter(function(x){return x.day===d;}).length;h+='<button type="button" class="tw-chip'+(d===td?' today':'')+(n?'':' off')+'" data-ttjump="'+d+'" aria-label="'+esc(TX.days[d])+'\u00a0: '+n+' créneau'+(n>1?'x':'')+(d===td?' (aujourd’hui)':'')+'"><b>'+esc(TX.daysShort[d].replace('.',''))+'</b><span>'+(n||'–')+'</span></button>';}
+  var sel=ttSelDay();   /* 1.29.1 (-r) : onglets de jours (jour affiché = aujourd’hui par défaut) + pastilles de niveau */
+  for(var d=1;d<=6;d++){var dl=tt.filter(function(x){return x.day===d;}).sort(byStart),n=dl.length;h+='<button type="button" class="tw-chip'+(d===td?' today':'')+(d===sel?' sel':'')+(n?'':' off')+'" data-ttjump="'+d+'" aria-pressed="'+(d===sel)+'" aria-label="'+esc(TX.days[d])+'\u00a0: '+n+' créneau'+(n>1?'x':'')+(d===td?' (aujourd’hui)':'')+'"><b>'+esc(TX.daysShort[d].replace('.',''))+'</b><span>'+(n||'–')+'</span><i class="tw-dots" aria-hidden="true">'+dl.slice(0,5).map(function(x){return '<i class="lv-'+ttLv(x)+'"></i>';}).join('')+'</i></button>';}
   h+='</div>';var lv={};tt.forEach(function(x){lv[ttLv(x)]=1;});
   return h+'<div class="tw-legend">'+['TC','1BAC','2BAC','x','as'].filter(function(k){return lv[k];}).map(function(k){return '<span class="lv-'+k+'" style="color:var(--c);background:var(--s)">'+esc(k==='x'?'Autres':TT_LV[k])+'</span>';}).join('')+'</div>';}
-function ttDayHtml(d,sl){var td=wday(todayStr())===d,min=0,now=new Date(),nm=now.getHours()*60+now.getMinutes(),nextDone=false;sl.forEach(function(x){min+=tmin(x.end)-tmin(x.start);});
+var ttSel=0;   /* 1.29.1 (-r) : jour affiché (mémoire d’affichage seulement, aucune donnée) */
+function ttSelDay(){var t=wday(todayStr());return ttSel>=1&&ttSel<=6?ttSel:(t>=1&&t<=6?t:1);}
+var TT_PIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.3-6-10a6 6 0 0 1 12 0c0 4.7-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></svg>';
+function hhmm(m){return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2);}
+/* 1.29.1 (-r) : tableau de service — variante B (jour choisi en frise verticale : bordure couleur du niveau, classe, horaires, lieu, durée, « En cours » + progression, ligne de l’heure actuelle, pauses). Purement visuel. */
+function ttDayHtml(d,sl){if(d!==ttSelDay())return '';var td=wday(todayStr())===d,min=0,now=new Date(),nm=now.getHours()*60+now.getMinutes(),nextDone=false,nowDone=!td;sl.forEach(function(x){min+=tmin(x.end)-tmin(x.start);});
   var h='<div class="tw-day'+(td?' today':'')+'" id="ttd'+d+'"><div class="tw-dh"><b>'+esc(TX.days[d])+'</b>'+(td?'<span class="tw-today">Aujourd’hui</span>':'')+'<span class="tw-dt">'+(sl.length?sl.length+' créneau'+(sl.length>1?'x':'')+' · '+fmtH(min):'')+'</span></div>';
   if(!sl.length)return h+'<div class="tw-free">Pas de cours</div></div>';
-  return h+'<div class="tw-slots">'+sl.map(function(x){var lv=ttLv(x),st='';if(td&&!nextDone&&tmin(x.end)>nm){st=tmin(x.start)<=nm?'En cours':'À suivre';nextDone=true;}
-    return '<button type="button" class="tw-slot lv-'+lv+(ttEdit===x.id?' on':'')+(st?' now':'')+'" data-edit="'+esc(x.id)+'" aria-label="Modifier le créneau\u00a0: '+esc(TX.days[d]+' '+x.start+'–'+x.end+' · '+slotName(x))+'">'+(st?'<span class="tw-now">'+st+'</span>':'')+
-      '<span class="tw-time"><b>'+esc(x.start)+'</b><i>'+esc(x.end)+'</i></span><span class="tw-main"><b dir="auto">'+esc(slotName(x))+'</b><small dir="auto">'+(x.room?esc(x.room):(isAS(x)?esc(TX.asNoSess):'&nbsp;'))+'</small></span>'+
-      (lv!=='x'?'<span class="tw-lv">'+esc(TT_LV[lv])+'</span>':'')+'<svg class="tw-ed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>';}).join('')+'</div></div>';}
+  function nowLn(){nowDone=true;return '<div class="tw-nowln" role="note" aria-label="Heure actuelle '+hhmm(nm)+'"><span>'+hhmm(nm)+'</span></div>';}
+  h+='<div class="tw-tl">';
+  sl.forEach(function(x,i){var lv=ttLv(x),st='',s0=tmin(x.start),e0=tmin(x.end),cur=false;
+    if(i){var pe=tmin(sl[i-1].end);if(s0>pe){if(!nowDone&&nm>=pe&&nm<s0)h+=nowLn();h+='<div class="tw-pause">Pause '+esc(sl[i-1].end)+' – '+esc(x.start)+'</div>';}}
+    if(!nowDone&&nm<s0)h+=nowLn();
+    if(td&&!nextDone&&e0>nm){cur=s0<=nm;st=cur?'En cours':'À suivre';nextDone=true;}
+    var room=x.room?esc(x.room):(isAS(x)?esc(TX.asNoSess):'Lieu non précisé');
+    h+='<button type="button" class="tw-slot lv-'+lv+(ttEdit===x.id?' on':'')+(st?' now':'')+(cur?' cur':'')+'" data-edit="'+esc(x.id)+'" aria-label="Modifier le créneau\u00a0: '+esc(TX.days[d]+' '+x.start+'–'+x.end+' · '+slotName(x))+(st?' ('+st+')':'')+'">'+
+      '<span class="tw-time"><b>'+esc(x.start)+'</b><i>'+esc(x.end)+'</i></span><span class="tw-dot" aria-hidden="true"></span>'+
+      '<span class="tw-card"><span class="tw-r1"><span class="tw-main"><b dir="auto">'+esc(slotName(x))+'</b></span>'+(st?'<span class="tw-now">'+st+'</span>':'')+(lv!=='x'?'<span class="tw-lv">'+esc(TT_LV[lv])+'</span>':'')+'<svg class="tw-ed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>'+
+      '<span class="tw-meta"><span dir="auto">'+TT_PIN+room+'</span><span>'+fmtH(e0-s0)+'</span></span>'+
+      (cur?'<span class="tw-prog" aria-hidden="true"><i style="width:'+Math.max(2,Math.min(100,Math.round((nm-s0)/(e0-s0)*100)))+'%"></i></span>':'')+'</span></button>';
+    if(cur&&!nowDone)h+=nowLn();});
+  if(!nowDone&&nm>=tmin(sl[sl.length-1].end))h+=nowLn();
+  return h+'</div></div>';}
 $('homeBody').addEventListener('click',function(e){var b;
-  if((b=e.target.closest('[data-ttjump]'))){var t=$('ttd'+b.dataset.ttjump);if(t&&t.scrollIntoView)t.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return;}
+  if((b=e.target.closest('[data-ttjump]'))){ttSel=+b.dataset.ttjump;renderHome();var t=$('ttd'+ttSel),c=document.querySelector('#ttCard [data-ttjump="'+ttSel+'"]');if(c)c.focus({preventScroll:true});if(t&&t.scrollIntoView&&t.getBoundingClientRect().top>innerHeight-120)t.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return;}   /* 1.29.1 (-r) : onglet de jour → affiche ce jour */
   if(e.target.closest('[data-ttadd]')){if(ttEdit){ttEdit=null;renderHome();}var f=$('ttForm');if(f){f.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});f.classList.remove('flash');void f.offsetWidth;f.classList.add('flash');}}
 });
 /* 1.28.0 : en-tête moderne de l’Accueil (salutation, date/heure, prochaine séance, mini-indicateurs) + boutons d’accès rapide.
@@ -3358,7 +3402,7 @@ $('homeBody').addEventListener('click',function(e){
     if(ov&&!confirm(TX.ttOverlap(slotName(ov)+' ('+ov.start+'–'+ov.end+')')))return;
     if(ttEdit){var x=DB.cal.tt.filter(function(x){return x.id===ttEdit;})[0];Object.keys(o).forEach(function(k){x[k]=o[k];});toast(TX.ttSaved);}
     else{o.id='t'+uid();DB.cal.tt.push(o);toast(TX.ttAdded);}
-    ttLast={day:o.day,classId:o.classId,end:o.end};ttEdit=null;persistNow();calReset();renderHome();
+    ttLast={day:o.day,classId:o.classId,end:o.end};ttEdit=null;ttSel=o.day;persistNow();calReset();renderHome();   /* 1.29.1 (-r) : le jour du créneau enregistré est affiché */
   }
 });
 
