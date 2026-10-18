@@ -728,6 +728,9 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 @keyframes spFade{to{opacity:1}}
 /* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */
 #landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}
+/* 1.29.1 (-n) : icônes de la page d’accueil toutes de la même couleur par thème (Actuel : bleu-gris #0B3A6E sur tuile #E8EFF8 ; Vert terrain : vert sur tuile vert pâle ; Néon : cyan sur tuile cyan translucide) */
+:root{--ln-ic-bg:#E8EFF8;--ln-ic-fg:#0B3A6E}html[data-theme="terrain"]{--ln-ic-bg:#E3F1E7;--ln-ic-fg:#1C6B3A}html[data-theme="neon"]{--ln-ic-bg:rgba(0,229,255,.13);--ln-ic-fg:#00E5FF}
+#landing .ln-ic,#landing .ln-card:nth-child(3n+2) .ln-ic,#landing .ln-t .ln-ic{background:var(--ln-ic-bg);color:var(--ln-ic-fg)}
 html[data-theme="neon"] .ln-hero,html[data-theme="neon"] #gate{background-color:#0A0A12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),radial-gradient(90% 60% at 100% 0%,rgba(0,229,255,.22),transparent 60%),radial-gradient(80% 55% at 0% 100%,rgba(198,255,0,.14),transparent 60%),linear-gradient(#0A0A12,#0A0A12);background-size:44px 44px,cover,cover,cover}
 html[data-theme="neon"] .ln-hero::after{background:#C6FF00}
 html[data-theme="neon"] .ln-kicker{color:#00E5FF}html[data-theme="neon"] .ln-brand b,html[data-theme="neon"] .ln-h1 b,html[data-theme="neon"] .ln-foot b{color:#FFA45C}html[data-theme="neon"] .ln-lead{color:#E6E8EE}
@@ -1820,7 +1823,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1m';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1n';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
