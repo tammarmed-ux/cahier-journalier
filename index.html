@@ -726,6 +726,28 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
   #splash{transition:opacity .25s}
 }
 @keyframes spFade{to{opacity:1}}
+/* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */
+#landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}
+html[data-theme="neon"] .ln-hero,html[data-theme="neon"] #gate{background-color:#0A0A12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),radial-gradient(90% 60% at 100% 0%,rgba(0,229,255,.22),transparent 60%),radial-gradient(80% 55% at 0% 100%,rgba(198,255,0,.14),transparent 60%),linear-gradient(#0A0A12,#0A0A12);background-size:44px 44px,cover,cover,cover}
+html[data-theme="neon"] .ln-hero::after{background:#C6FF00}
+html[data-theme="neon"] .ln-kicker{color:#00E5FF}html[data-theme="neon"] .ln-brand b,html[data-theme="neon"] .ln-h1 b,html[data-theme="neon"] .ln-foot b{color:#FFA45C}html[data-theme="neon"] .ln-lead{color:#E6E8EE}
+html[data-theme="neon"] #landing .btn.acc{--b-bg:#C6FF00;--b-fg:#0A0A12;--b-bd:#C6FF00;--b-bg-h:#B4E600;box-shadow:0 0 18px rgba(198,255,0,.25)}
+html[data-theme="neon"] #landing .btn.on-dark,html[data-theme="neon"] #gate .btn.on-dark{--b-bg:rgba(10,10,18,.55);--b-fg:#C6FF00;--b-bd:#C6FF00;--b-bg-h:rgba(198,255,0,.12);box-shadow:none}
+html[data-theme="neon"] .ln-chips li{background:rgba(255,255,255,.06);border-color:rgba(0,229,255,.35);color:#F5F7FA}
+html[data-theme="neon"] #landing .ln-card,html[data-theme="neon"] #landing .ln-steps li{background:#14161C;border-color:#2C2F3A;color:#F5F7FA;box-shadow:none}
+html[data-theme="neon"] #landing .ln-trust{background:#0E0F14;border-color:#2C2F3A}
+html[data-theme="neon"] #landing .ln-card h3{color:#C6FF00}html[data-theme="neon"] #landing .ln-card p{color:#C9CDD8}
+html[data-theme="neon"] #landing .ln-steps li>span{background:#C6FF00;color:#0A0A12}
+html[data-theme="neon"] #landing .ln-sec h2{color:#00E5FF}html[data-theme="neon"] #landing .ln-sec .ln-sub{color:#B9BECC}
+html[data-theme="neon"] #gate .g-card{background:#14161C;color:#F5F7FA;border:1px solid rgba(0,229,255,.28);box-shadow:0 0 0 1px rgba(198,255,0,.08),0 18px 50px rgba(0,0,0,.6)}
+html[data-theme="neon"] #gate .g-card h2{color:#F5F7FA}html[data-theme="neon"] #gate .g-lead,html[data-theme="neon"] #gate .g-card label,html[data-theme="neon"] #gate .g-card .small{color:#C9CDD8}
+html[data-theme="neon"] #gate input[type=email],html[data-theme="neon"] #gate input[type=password]{background:#0E0E18;color:#F5F7FA;border-color:#3A3A55}html[data-theme="neon"] #gate input::placeholder{color:#8E93A6}
+html[data-theme="neon"] #gate input[type=email]:focus,html[data-theme="neon"] #gate input[type=password]:focus{background:#0E0E18;border-color:#00E5FF}
+html[data-theme="neon"] #gate .lnk{color:#00E5FF}html[data-theme="neon"] #landing .ln-t p{color:#C9CDD8}html[data-theme="neon"] #landing .ln-t h3{color:#C6FF00}html[data-theme="neon"] #gate .g-note{background:#0E0E18;color:#C9CDD8;border:1px solid #2C2F3A}
+html[data-theme="terrain"] .ln-hero,html[data-theme="terrain"] #gate{background-color:#14532D;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),linear-gradient(160deg,#1C6B3A 0%,#0F4A27 100%);background-size:44px 44px,cover}
+html[data-theme="terrain"] .ln-kicker{color:#FDE68A}html[data-theme="terrain"] .ln-brand b,html[data-theme="terrain"] .ln-h1 b,html[data-theme="terrain"] .ln-foot b{color:#FCD34D}html[data-theme="terrain"] .ln-lead{color:#fff}
+html[data-theme="terrain"] #gate .lnk{color:#166534}
+html[data-theme="neon"] .ln-foot{background:#06060C;border-top:1px solid #2C2F3A}html[data-theme="neon"] .ln-foot a{color:#00E5FF}html[data-theme="terrain"] .ln-foot{background:#0F3A22}
 /* 1.29.1 (-i) : intro (splash) selon le thème — fond, motif, icône, mot-symbole et version lisibles (AA) ; thème lu avant le premier affichage (script de tête) */
 html #splash .sp-name{animation-name:spFade}html #splash .sp-ver{animation-name:spFade;color:var(--sp-ver,#fff);opacity:0}
 html[data-theme="terrain"]{--sp-ver:#FFFFFF}html[data-theme="neon"]{--sp-ver:#C6FF00}
@@ -1798,7 +1820,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1k';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1l';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
