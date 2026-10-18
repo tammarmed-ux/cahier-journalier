@@ -262,9 +262,12 @@ function holBands(d,px,py,pw,ph,cats){var n=cats.length;cats.forEach(function(c,
 function vtext(d,s,xc,yc,maxLen,size){s=prep(s);if(!s)return;font(d,s,true);d.setFontSize(size);d.setTextColor.apply(d,HOL_T);s=fit(d,s,maxLen);s=vis(s);var tw=d.getTextWidth(s);d.text(s,xc+size*0.3528*0.35,yc+tw/2,{angle:90});}
 
 /* ---------- statistiques ---------- */
+/* 1.29.1 (-q) : alerte « absences non justifiées » comptée par cycle — sur une période de plusieurs cycles, l’élève est en alerte si un cycle atteint le seuil */
+function njCyc(cid,sid,sc,th){var y=A.yearStat(cid,sid),ps=multi(sc)?A.scopeCycles(sc):[+sc];return ps.filter(function(q){return y.per[q]&&y.per[q].U>=th;});}
+function njAlert(cid,sid,sc,th){return njCyc(cid,sid,sc,th).length>0;}
 function agg(list,cid,p){var DB=A.db(),th=DB.settings.threshold,t={n:list.length,U:0,J:0,M:0,K:0,L:0,S:0,A:0,slots:0,dsp:0,alert:0,ded:0,f:0,g:0};
   list.forEach(function(s){var st=multi(p)?A.scopeStat(cid,s.id,p):A.yearStat(cid,s.id).per[p];['U','J','M','K','L','S','A'].forEach(function(k){t[k]+=st[k];});t.slots+=st.held;t.ded+=st.ded;
-    if(multi(p)?A.dspInScope(s,p):A.dspInCycle(s,p))t.dsp++;if(st.U>=th)t.alert++;var x=A.sexOf(s);if(x==='F')t.f++;else if(x==='G')t.g++;});
+    if(multi(p)?A.dspInScope(s,p):A.dspInCycle(s,p))t.dsp++;if(njAlert(cid,s.id,p,th))t.alert++;var x=A.sexOf(s);if(x==='F')t.f++;else if(x==='G')t.g++;});
   t.abs=t.U+t.J+t.M+t.K;t.rate=t.slots?(t.slots-t.abs)/t.slots:null;t.inc=t.abs+t.L+t.S;
   t.held=0;if(multi(p)){A.scopeCycles(p).forEach(function(i){t.held+=A.heldCount(cid,i);});}else t.held=A.heldCount(cid,p);return t;}
 function stRate(st){return st.held?(st.held-st.A-st.M-st.K)/st.held:null;}
@@ -286,7 +289,7 @@ function cardsFor(t,cid,p,extra){var DB=A.db(),th=DB.settings.threshold,cap=cid?
    {v:t.L,l:'Retards',s:'R',c:ST.L.c},
    {v:t.S,l:'Sans tenue',s:'ST',c:ST.S.c},
    {v:t.dsp,l:'Élèves dispensés',s:'dispense de sport',c:[107,114,128]},
-   {v:t.alert,l:'Élèves en alerte',s:th+' abs. non justifiées ou plus',c:t.alert?ST.A.c:ST.P.ch}];
+   {v:t.alert,l:'Élèves en alerte',s:th+' abs. non just. ou plus dans un cycle',c:t.alert?ST.A.c:ST.P.ch}];
   if(cap!=null){it.push({v:'-'+num(r1(avgDed)),l:'Points retirés (moy.)',s:p==='year'?'par élève sur l’année':multi(p)?'par élève sur le semestre':'sur '+num(cap)+' pts par élève',c:[184,110,0]});
     it.push({v:multi(p)?num(r1(avgDed)):num(r1(cap-avgDed))+' / '+num(cap),l:multi(p)?'Total moyen retiré':'Note comportementale moy.',s:multi(p)?'somme des cycles':'note restante moyenne',c:PRI});}
   return it;}
@@ -403,7 +406,7 @@ function repAll(o){o=o||{};var sc=o.scope==null||o.scope==='year'?'year':(o.scop
   var T0={n:0,U:0,J:0,M:0,K:0,L:0,S:0,A:0,slots:0,dsp:0,alert:0,ded:0,f:0,g:0,held:0,abs:0},rows=[];
   cls.forEach(function(c){var list=A.studentsIn(c.id),t=agg(list,c.id,sc);rows.push({c:c,t:t});['n','U','J','M','K','L','S','slots','dsp','alert','ded','f','g','held','abs'].forEach(function(k){T0[k]+=t[k];});});
   T0.rate=T0.slots?(T0.slots-T0.abs)/T0.slots:null;
-  var m=meta(gen?'Bilan de toutes les classes · '+SL:'Synthèse de toutes les classes',pl(cls.length,'classe')+' · '+pl(T0.n,'élève')+' · '+SL+(sem?' (cycles '+(PS[0]+1)+' à '+(PS[PS.length-1]+1)+')':'')+' · '+pl(T0.held,'séance')+' effectuée'+(T0.held>1?'s':'')+' (cumul) · seuil d’alerte\u00a0: '+th+' absences non justifiées',gen?'Bilan · toutes les classes · '+SL:'Synthèse annuelle · toutes les classes');
+  var m=meta(gen?'Bilan de toutes les classes · '+SL:'Synthèse de toutes les classes',pl(cls.length,'classe')+' · '+pl(T0.n,'élève')+' · '+SL+(sem?' (cycles '+(PS[0]+1)+' à '+(PS[PS.length-1]+1)+')':'')+' · '+pl(T0.held,'séance')+' effectuée'+(T0.held>1?'s':'')+' (cumul) · seuil d’alerte\u00a0: '+th+' absences non justifiées dans un cycle',gen?'Bilan · toutes les classes · '+SL:'Synthèse annuelle · toutes les classes');
   var d=newDoc(m),y=titleBlock(d,m);
   var it=cardsFor(T0,null,sc,{heldSub:'toutes classes'});it[0].s=pl(cls.length,'classe')+((T0.f||T0.g)?' · '+T0.f+' F / '+T0.g+' G':'');y=cards(d,y,it);
   y=section(d,y,'Comparaison des classes','',60);
@@ -413,10 +416,10 @@ function repAll(o){o=o||{};var sc=o.scope==null||o.scope==='year'?'year':(o.scop
   y=section(d,y,'Tableau récapitulatif par classe','',40);
   y=table(d,y,['Classe','Note comp.','Effectif','F / G','Séances','Présence','Absence','A','AJ','M','MJ','R','ST','Disp.','Alertes','Pts moy.'],rows.map(function(r){var t=r.t;var ci=A.capInfo(r.c.id);return [C(r.c.name,{halign:'left',fontStyle:'bold'}),C(num(ci.v)+(ci.man?' *':ci.lv?' ('+ci.lv+')':''),{textColor:ci.man?[184,110,0]:INK}),t.n,(t.f||t.g)?t.f+' / '+t.g:'—',t.held,C(pct(t.rate,1),{fontStyle:'bold',textColor:t.rate==null?MUTED:PG}),C(restPct(t.rate),{fontStyle:'bold',textColor:t.rate==null?MUTED:PR}),zero(t.U,ST.A.c),zero(t.J,ST.J.c),zero(t.M,ST.M.c),zero(t.K,ST.K.c),zero(t.L,ST.L.c),zero(t.S,ST.S.c),t.dsp||'',t.alert?C(String(t.alert),{textColor:ST.A.c,fontStyle:'bold'}):'',A.fmtPts(t.n?r1(t.ded/t.n):0)];}),{fs:7.2,foot:['Total','',T0.n,(T0.f||T0.g)?T0.f+' / '+T0.g:'—',T0.held,C(pct(T0.rate,1),{fontStyle:'bold',textColor:T0.rate==null?MUTED:PG}),C(restPct(T0.rate),{fontStyle:'bold',textColor:T0.rate==null?MUTED:PR}),T0.U,T0.J,T0.M,T0.K,T0.L,T0.S,T0.dsp,T0.alert,A.fmtPts(T0.n?r1(T0.ded/T0.n):0)],cols:{0:{cellWidth:26},1:{cellWidth:16}}});
   y=note(d,y,'Note comp. = note comportementale par cycle (pts)\u00a0: par défaut selon le niveau — Connaissances comportementales (OP 2007)\u00a0: TC 5 · 1BAC 4 · 2BAC 3'+(rows.some(function(r){return A.capInfo(r.c.id).man;})?'\u00a0; * = valeur personnalisée pour la classe':'')+'.');
-  var al=[];DB.students.forEach(function(s){if(!A.cls(s.classId))return;var yy=multi(sc)?A.scopeStat(s.classId,s.id,sc):A.yearStat(s.classId,s.id).per[sc];if(yy.U>=th)al.push({s:s,y:yy});});
+  var al=[];DB.students.forEach(function(s){if(!A.cls(s.classId))return;var yy=multi(sc)?A.scopeStat(s.classId,s.id,sc):A.yearStat(s.classId,s.id).per[sc];var nc=njCyc(s.classId,s.id,sc,th);if(nc.length)al.push({s:s,y:yy,nc:nc});});
   al.sort(function(a,b){return b.y.U-a.y.U||A.cmpStu(a.s,b.s);});
-  y=section(d,y,'Élèves en alerte',al.length?pl(al.length,'élève')+' · '+th+' abs. non justifiées ou plus':'aucun élève',20);
-  if(!al.length)y=note(d,y,'Aucun élève n’atteint '+th+' absences non justifiées. Bravo\u00a0!',ST.P.ch);
+  y=section(d,y,'Élèves en alerte',al.length?pl(al.length,'élève')+' · '+th+' abs. non justifiées ou plus dans un cycle':'aucun élève',20);
+  if(!al.length)y=note(d,y,'Aucun élève n’atteint '+th+' absences non justifiées dans un cycle. Bravo\u00a0!',ST.P.ch);
   else y=table(d,y,['N°','Classe','Code Massar','Nom et prénom','A','AJ','M','MJ','R','ST','Pts retirés'],al.map(function(a,i){var q=a.y;return [i+1,C(A.clsName(a.s.classId),{fontStyle:'bold'}),a.s.sid||'',C(a.s.name,{halign:'center',fontStyle:'bold'}),C(String(q.U),{textColor:ST.A.c,fontStyle:'bold'}),zero(q.J,ST.J.c),zero(q.M,ST.M.c),zero(q.K,ST.K.c),zero(q.L,ST.L.c),zero(q.S,ST.S.c),A.fmtPts(q.ded)];}),{fs:7.1,cols:{0:{cellWidth:7},3:{cellWidth:52}}});
   /* 1.29.0 (-c) : une page par classe (tableau d’élèves de la classe, ≤ 44 élèves sur une seule page) */
   var cH=codesH();

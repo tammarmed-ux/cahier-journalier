@@ -728,6 +728,10 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 @keyframes spFade{to{opacity:1}}
 /* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */
 #landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}
+/* 1.29.1 (-q) : carte « Élèves à surveiller » repliable */
+#homeWatch .wt-h{margin:0}#homeWatch .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:10px}
+#homeWatch .wt-h button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}#homeWatch .wt-t{display:flex;align-items:center;gap:8px}
+#homeWatch .wt-c{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#homeWatch.open .wt-c{transform:rotate(180deg)}#homeWatch.open #watchBody{margin-top:8px}
 /* 1.29.1 (-o) : sports collectifs — cases à toucher et pavé N1…N4 */
 #procWrap td.g.scg{padding:2px}#procWrap .scb{font:inherit;width:100%;min-width:52px;min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;padding:3px 4px}
 #procWrap .scb small{font-size:11px;font-weight:700;color:var(--muted);margin-top:1px;white-space:nowrap}#procWrap .scb.e{color:var(--muted);font-weight:600}
@@ -1628,9 +1632,9 @@ var TX={
  cmpTitle:'Comparaison des classes',cmpHead:['Classe','Élèves','Séances','Abs.','Taux'],
  cmpNote:'Taux d’absence = (A + AJ + M + MJ) ÷ (élèves × séances effectuées), sur toute l’année.',
  watchTitle:'Élèves à surveiller',
- watchNote:function(th){return 'Note comportementale atteinte dans un cycle, ou au moins '+th+' absences non justifiées sur l’année.';},
+ watchNote:function(th){return 'Note comportementale atteinte dans un cycle, ou au moins '+th+' absences non justifiées dans un cycle.';},   /* 1.29.1 (-q) : seuil compté par cycle */
  watchNone:'Aucun élève à signaler pour le moment.',
- capBadge:function(c){return 'note comp. C'+c;},njBadge:function(n){return n+' non just.';},
+ capBadge:function(c){return 'note comp. C'+c;},njBadge:function(n,c){return n+' non just.'+(c?' C'+c:'');},
  asName:'ASS – Association sportive scolaire',asShort:'ASS',asNoSess:'pas de séance à noter',
  svcLabel:'Service hebdomadaire :',svcBreak:function(c,a){return 'Classes : '+c+' · ASS : '+a;},
  svcDiff:function(x,y){return 'Le total ('+x+') ne correspond pas au service obligatoire ('+y+').';},
@@ -1854,7 +1858,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1p';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1q';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3191,17 +3195,21 @@ function homeStatsHtml(S,T){var W=weekCmp(),dm=function(x){return (TX.daysShort[
   return '<div class="card" id="homeStats"><h2>'+esc(TX.statsTitle)+'</h2><p class="small muted hs-cap" id="hsCap">'+esc(cap)+(W.ok?' Vert = baisse des absences (bon signe), rouge = hausse.':' Pas de comparaison\u00a0: aucune séance enregistrée sur l’une des deux périodes (début d’année, vacances…).')+'</p><div class="hs-grid">'+
     st('stu',S.students,TX.tStudents)+st('cls',S.classes,TX.tClasses)+tl('held',S.held,TX.tHeld,true,true)+
     tl('A',T.A,TX.tAbs)+tl('U',T.U,TX.tU)+tl('S',T.S,TX.tS)+tl('M',T.M,TX.tM)+tl('L',T.L,TX.tL)+tl('K',T.K,TX.tK)+'</div></div>';}
+/* 1.29.1 (-q) : « Élèves à surveiller » repliable — clé d’affichage cj.ui.watchOpen (aucune donnée) */
+function watchOpen(){try{return localStorage.getItem('cj.ui.watchOpen')==='1';}catch(e){return false;}}
+function watchSet(o){try{localStorage.setItem('cj.ui.watchOpen',o?'1':'0');}catch(e){}var c=$('homeWatch'),b=$('watchTog'),w=$('watchBody');if(!c||!b||!w)return;c.classList.toggle('open',o);b.setAttribute('aria-expanded',String(o));w.hidden=!o;}
 function homeStats(){
   var th=DB.settings.threshold,tot=emptyStat(),held=0,per=[],watch=[],K=['A','J','U','L','M','K','S'];
   DB.classes.forEach(function(c){
     var list=studentsIn(c.id),ch=0,cst=emptyStat();for(var p=0;p<DB.periods.length;p++)ch+=heldCount(c.id,p);held+=ch;
     list.forEach(function(s){var y=yearStat(c.id,s.id);K.forEach(function(k){cst[k]+=y[k];});
       var capped=[];y.per.forEach(function(st,i){if(st.capped)capped.push(i);});
-      if(capped.length||y.U>=th)watch.push({s:s,c:c,y:y,capped:capped});});
+      var nj=[];y.per.forEach(function(st,i){if(st.U>=th)nj.push(i);});   /* 1.29.1 (-q) : absences non justifiées comptées par cycle (un cycle ≥ seuil) */
+      if(capped.length||nj.length)watch.push({s:s,c:c,y:y,capped:capped,nj:nj,njMax:nj.reduce(function(m,i){return Math.max(m,y.per[i].U);},0)});});
     K.forEach(function(k){tot[k]+=cst[k];});
     var ab=cst.A+cst.M+cst.K,den=list.length*ch;per.push({c:c,n:list.length,held:ch,abs:ab,rate:den?ab/den:null});
   });
-  watch.sort(function(a,b){return b.capped.length-a.capped.length||b.y.U-a.y.U||cmpStu(a.s,b.s);});
+  watch.sort(function(a,b){return b.capped.length-a.capped.length||b.njMax-a.njMax||b.y.U-a.y.U||cmpStu(a.s,b.s);});
   return {tot:tot,held:held,per:per,watch:watch,students:DB.students.filter(function(s){return cls(s.classId);}).length,classes:DB.classes.length};
 }
 function pct(x){return x==null?'—':fmtNum(Math.round(x*1000)/10)+'\u00a0%';}
@@ -3229,8 +3237,9 @@ function renderHome(){
     S.per.map(function(r){return '<tr data-cmpcls="'+esc(r.c.id)+'"><td class="cn">'+esc(r.c.name)+'</td><td>'+r.n+'</td><td>'+r.held+'</td><td>'+r.abs+'</td><td class="rate"><span class="bar"><i style="width:'+(r.rate&&mx?Math.max(4,Math.round(r.rate/mx*100)):0)+'%"></i></span>'+pct(r.rate)+'</td></tr>';}).join('')+
     '</tbody></table><p class="small muted">'+esc(TX.cmpNote)+'</p></div>';
   /* watch */
-  h+='<div class="card" id="homeWatch"><h2>'+esc(TX.watchTitle)+(S.watch.length?' <span class="chip bad">'+S.watch.length+'</span>':'')+'</h2><p class="small muted" style="margin-top:0">'+esc(TX.watchNote(DB.settings.threshold))+'</p>'+
-    (S.watch.length?'<ul class="list watch">'+S.watch.map(function(w){return '<li data-wsid="'+esc(w.s.id)+'"><div class="wn"><b dir="auto">'+esc(w.s.name)+'</b><span class="small muted">'+esc(w.c.name)+'</span></div><div class="wb">'+w.capped.map(function(i){return '<span class="chip bad">'+esc(TX.capBadge(i+1))+'</span>';}).join('')+(w.y.U>=DB.settings.threshold?'<span class="chip warn">'+esc(TX.njBadge(w.y.U))+'</span>':'')+'</div></li>';}).join('')+'</ul>':'<p class="muted small">'+esc(TX.watchNone)+'</p>')+'</div>';
+  var wOpen=watchOpen();   /* 1.29.1 (-q) : carte repliable, fermée par défaut (état d’affichage seulement : cj.ui.watchOpen) */
+  h+='<div class="card wcard'+(wOpen?' open':'')+'" id="homeWatch"><h2 class="wt-h"><button type="button" id="watchTog" aria-expanded="'+wOpen+'" aria-controls="watchBody"><span class="wt-t">'+esc(TX.watchTitle)+(S.watch.length?' <span class="chip bad">'+S.watch.length+'</span>':'')+'</span><svg class="wt-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h2><div id="watchBody"'+(wOpen?'':' hidden')+'><p class="small muted" style="margin-top:0">'+esc(TX.watchNote(DB.settings.threshold))+'</p>'+
+    (S.watch.length?'<ul class="list watch">'+S.watch.map(function(w){return '<li data-wsid="'+esc(w.s.id)+'"><div class="wn"><b dir="auto">'+esc(w.s.name)+'</b><span class="small muted">'+esc(w.c.name)+'</span></div><div class="wb">'+w.capped.map(function(i){return '<span class="chip bad">'+esc(TX.capBadge(i+1))+'</span>';}).join('')+w.nj.map(function(i){return '<span class="chip warn">'+esc(TX.njBadge(w.y.per[i].U,i+1))+'</span>';}).join('')+'</div></li>';}).join('')+'</ul>':'<p class="muted small">'+esc(TX.watchNone)+'</p>')+'</div></div>';
   /* timetable */
   var SV=service(),svok=SV.tot===SV.ob&&!SV.warn.length&&!SV.dw.length;
   h+='<div class="card" id="ttCard"><div class="tw-h"><h2>'+esc(TX.ttTitle)+'</h2><button type="button" class="tw-add" data-ttadd="1" aria-label="'+esc(TX.ttAdd)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button></div><div class="svc'+(svok?' ok':' bad')+'" id="svcBox"><div class="svc-main">'+esc(TX.svcLabel)+' <b id="svcTot">'+fmtH(SV.tot)+' / '+fmtH(SV.ob)+'</b>'+(svok?' <span class="chip ok">✓</span>':'')+'</div><div class="svc-bar" aria-hidden="true"><i style="width:'+(SV.ob?Math.min(100,Math.round(SV.tot/SV.ob*100)):0)+'%"></i></div><div class="small" id="svcBreak">'+esc(TX.svcBreak(fmtH(SV.cm),fmtH(SV.am)))+'</div>'+
@@ -3322,7 +3331,7 @@ $('homeBody').addEventListener('click',function(e){var b=e.target.closest('[data
   else if(q==='reports')showTab('reports');
   else if(q==='students')showTab('students');
   else if(q==='backup'){$('bkExport').click();renderHome();}
-  else if(q==='today')go('homeToday');else if(q==='rate')go('homeCmp');else if(q==='watch')go('homeWatch');
+  else if(q==='today')go('homeToday');else if(q==='rate')go('homeCmp');else if(q==='watch'){if(!watchOpen())watchSet(true);go('homeWatch');}
 });
 setInterval(function(){var c=$('homeClock');if(c&&current==='home')c.textContent=hClock();},15000);
 $('homeBody').addEventListener('change',function(e){
@@ -3335,6 +3344,7 @@ $('homeBody').addEventListener('click',function(e){
   if(e.target.closest('#bkRemindBtn')){$('bkExport').click();renderHome();return;}
   if((b=e.target.closest('[data-open]'))){openGridFor(b.dataset.open,+b.dataset.p);return;}
   if((b=e.target.closest('[data-goset]'))){showTab('settings');var c=$('calSettings');if(c&&c.scrollIntoView)c.scrollIntoView({block:'start'});return;}
+  if((b=e.target.closest('#watchTog'))){watchSet(!watchOpen());return;}
   if((b=e.target.closest('[data-wsid]'))){openDetail(b.dataset.wsid);return;}
   if((b=e.target.closest('[data-cmpcls]'))){var cp=cycleAt(todayStr());openGridFor(b.dataset.cmpcls,cp?cp.i:DB.ui.per);return;}
   if((b=e.target.closest('[data-edit]'))){ttEdit=ttEdit===b.dataset.edit?null:b.dataset.edit;renderHome();var f=$('ttForm');if(ttEdit&&f&&f.scrollIntoView)f.scrollIntoView({block:'nearest'});return;}
