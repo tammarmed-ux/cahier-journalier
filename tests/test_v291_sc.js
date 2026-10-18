@@ -52,21 +52,26 @@ await close();await sleep(150);
 check('case Individuel : valeur + code',await cellTxt('s0','g1')==='5N3+',await cellTxt('s0','g1'));
 await tapCell('s0','g2');P=await pad();
 check('2BAC Collectif : N+ 1 · 2 · 3,5 · 5 / N 0,5 · 1,5 · 3 · 4,5 / N− 0 · 1 · 2,5 · 4',P.btn.join('|')==='N1+1|N2+2|N3+3,5|N4+5|N10,5|N21,5|N33|N44,5|N1−0|N2−1|N3−2,5|N4−4',P.btn.join('|'));
-check('équipe indiquée (groupe Rouge)',/équipe Rouge/.test(P.sub),P.sub);
+check('équipe indiquée (groupe Rouge)',/groupe Rouge/.test(P.sub),P.sub);
 await tapC('N3');P=await pad();
 check('Collectif : après le niveau → choix Victoire / Égalité / Défaite',P.match&&P.padHidden&&P.open&&P.t==='AIT BENALI Yassine',JSON.stringify(P));
-const mT=await p.evaluate(()=>document.getElementById('scMatchT').textContent);check('titre du choix : équipe + attaque + défense N3 = 3',/équipe Rouge/.test(mT)&&/N3 = 3$/.test(mT),mT);
-await tapM('E');e0=await ev('s0');P=await pad();
-check('Égalité : Collectif = 3 + 1,5 = 4,5 (g2) ; scc 3, sc2 N3, scm E ; élève suivant',e0.g2===4.5&&e0.scc===3&&e0.sc2==='N3'&&e0.scm==='E'&&e0.g1===5&&P.t==='BENNANI Salma'&&!P.match,JSON.stringify(e0));
-await tapC('N2');P=await pad();
-check('coéquipier : résultat du match de l’équipe présélectionné (Égalité)',P.match&&P.mOn==='E',P.mOn);
-await tapM('V');e0=await ev('s0');const e1=await ev('s1'),e2=await ev('s2');
-check('Victoire pour s1 : 1,5 + 2 = 3,5',e1&&e1.g2===3.5&&e1.scm==='V',JSON.stringify(e1));
-check('même gain pour toute l’équipe : s0 recalculé 3 + 2 = 5',e0.g2===5&&e0.scm==='V',JSON.stringify(e0));
-check('autre équipe non modifiée',e2===null,JSON.stringify(e2));
-P=await pad();check('détail du calcul affiché dans le pavé',P.t==='CHAKIR Omar'&&/= … \/ 14/.test(P.calc),P.calc);
+const mT=await p.evaluate(()=>document.getElementById('scMatchT').textContent);check('titre du choix : groupe + attaque + défense N3 = 3',/groupe Rouge/.test(mT)&&/N3 = 3$/.test(mT),mT);
+await tapM('E');e0=await ev('s0');let e1=await ev('s1');P=await pad();let TO=await p.evaluate(()=>document.getElementById('toast').textContent);
+check('Égalité : Collectif = 3 + 1,5 = 4,5 (g2) ; scc 3, sc2 N3, scm E',e0.g2===4.5&&e0.scc===3&&e0.sc2==='N3'&&e0.scm==='E'&&e0.g1===5,JSON.stringify(e0));
+check('note collective appliquée à tout le groupe Rouge (s1 : mêmes g2/sc2/scc/scm, sans Individuel)',e1&&e1.g2===4.5&&e1.scc===3&&e1.sc2==='N3'&&e1.scm==='E'&&e1.g1==null,JSON.stringify(e1));
+check('toast « Note collective appliquée aux 2 membres du groupe Rouge »',TO==='Note collective appliquée aux 2 membres du groupe Rouge',TO);
+check('après le Collectif : 1er élève du groupe suivant (CHAKIR Omar, groupe Bleu)',P.open&&P.t==='CHAKIR Omar'&&!P.match&&/groupe Bleu/.test(P.sub),P.t+' '+P.sub);
+check('détail du calcul affiché dans le pavé',/= … \/ 14/.test(P.calc),P.calc);
+let e2=await ev('s2');check('autre groupe non modifié',e2===null,JSON.stringify(e2));
 await close();await sleep(150);
-check('grille : Procéd. s0 = 5 + 5 = 10 ; case Collectif « 5 N3 · V »',await cellTxt('s0','sub')==='10'&&await cellTxt('s0','g2')==='5N3 · V',await cellTxt('s0','sub')+' / '+await cellTxt('s0','g2'));
+await tapCell('s1','g2');await tapC('N2');P=await pad();
+check('coéquipier : résultat du match du groupe présélectionné (Égalité)',P.match&&P.mOn==='E',P.mOn);
+await tapM('V');e0=await ev('s0');e1=await ev('s1');
+check('nouvelle note donnée à s1 (N2 1,5 + Victoire 2 = 3,5)',e1.g2===3.5&&e1.sc2==='N2'&&e1.scm==='V',JSON.stringify(e1));
+check('… remplace le Collectif du coéquipier s0 (3,5, N2, V) ; Individuel de s0 inchangé (5)',e0.g2===3.5&&e0.sc2==='N2'&&e0.scc===1.5&&e0.scm==='V'&&e0.g1===5&&e0.sc1==='N3+',JSON.stringify(e0));
+P=await pad();check('passage au groupe suivant depuis un autre membre du groupe',P.t==='CHAKIR Omar',P.t);
+await close();await sleep(150);
+check('grille : Procéd. s0 = 5 + 3,5 = 8,5 ; case Collectif « 3,5 N2 · V »',await cellTxt('s0','sub')==='8,5'&&await cellTxt('s0','g2')==='3,5N2 · V',await cellTxt('s0','sub')+' / '+await cellTxt('s0','g2'));
 const e3=await ev('s3');check('ancienne note de l’autre équipe intacte',e3&&e3.g1===4.25&&e3.g2===3&&!e3.scm,JSON.stringify(e3));
 // Effacer
 await tapCell('s2','g1');await tapC('N1-');await close();await sleep(120);await tapCell('s2','g1');await p.evaluate(()=>document.getElementById('scClear').click());await sleep(150);await close();
@@ -85,7 +90,7 @@ check('TC Individuel : N+ 1 · 2 · 4 · 6 / N 0,5 · 1,5 · 3,5 · 5,5 / N− 0
 await tapC('N3');P=await pad();check('dernier élève : le pavé se ferme',!P.open);
 await tapCell('t0','g2');P=await pad();
 check('TC Collectif : N+ 1 · 2 · 3 · 4 / N 0,5 · 1,5 · 2,5 · 3,5',P.btn.slice(0,8).join('|')==='N1+1|N2+2|N3+3|N4+4|N10,5|N21,5|N32,5|N43,5',P.btn.join('|'));
-check('élève sans groupe : gain pour lui seul (pas d’équipe affichée)',!/équipe/.test(P.sub),P.sub);
+check('élève sans groupe : pas de groupe affiché',!/groupe/.test(P.sub),P.sub);
 await tapC('N3');await tapM('E');
 check('exemple du barème TC : 3,5 + 2,5 + 1,5 = 7,5 / 12',await cellTxt('t0','sub')==='7,5',await cellTxt('t0','sub'));
 await tapCell('t0','g2');P=await pad();check('détail : « Individuel N3 3,5 + Collectif N3 2,5 + gain Égalité 1,5 = 7,5 / 12 »',P.calc==='Individuel N3 3,5 + Collectif N3 2,5 + gain Égalité 1,5 = 7,5 / 12',P.calc);
@@ -101,10 +106,10 @@ await tapC('N4+');await tapM('V');check('1BAC : 5 + 2 = 7 = maximum Collectif',(
 await p.evaluate(()=>{window.CJR.db().ui.cls=window.CJR.db().classes.find(x=>x.name==='2BACSP4').id;});await p.evaluate(()=>{document.querySelector('#tabs button[data-tab="home"]').click();});await sleep(300);
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);
 const st=await p.evaluate(K=>{const d=JSON.parse(localStorage.getItem(K));return d.students.find(s=>s.id==='s0').ev;},KEY);
-check('après rechargement : g1, g2 et champs additifs conservés (normEv)',JSON.stringify(st[CID+'|0'],['g1','g2','sc1','sc2','scc','scm'])==='{"g1":5,"g2":5,"sc1":"N3+","sc2":"N3","scc":3,"scm":"V"}',JSON.stringify(st));
+check('après rechargement : g1, g2 et champs additifs conservés (normEv)',JSON.stringify(st[CID+'|0'],['g1','g2','sc1','sc2','scc','scm'])==='{"g1":5,"g2":3.5,"sc1":"N3+","sc2":"N2","scc":1.5,"scm":"V"}',JSON.stringify(st));
 const KEYS1=await p.evaluate(()=>Object.keys(localStorage).sort());
 check('aucune nouvelle clé de stockage',KEYS1.every(k=>KEYS0.includes(k)||/^classRegister\.v2\.snapm?\.\d+$|^cahier\.snapDay$/.test(k))   /* seules les sauvegardes automatiques existantes */,JSON.stringify(KEYS1.filter(k=>!KEYS0.includes(k))));
-await proc();check('après rechargement : grille affichée avec codes',await cellTxt('s0','g1')==='5N3+'&&await cellTxt('s0','g2')==='5N3 · V');
+await proc();check('après rechargement : grille affichée avec codes',await cellTxt('s0','g1')==='5N3+'&&await cellTxt('s0','g2')==='3,5N2 · V');
 if(process.env.SHOTS){const O='/workspace/backups/v1.29.1-preview/';await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(200);await p.screenshot({path:O+'sc-grille.png'});
   await tapCell('s1','g1');await p.screenshot({path:O+'sc-pave-indiv.png'});await close();await sleep(100);
   await tapCell('s2','g2');await p.screenshot({path:O+'sc-pave-coll.png'});await tapC('N3+');await p.screenshot({path:O+'sc-pave-match.png'});await close();
@@ -114,9 +119,33 @@ if(process.env.SHOTS){const O='/workspace/backups/v1.29.1-preview/';await p.eval
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="attendance"]').click());await sleep(400);
 const tot=await p.evaluate(()=>{const t=document.querySelector('#gridWrap tr[data-sid="s0"] td.tot');return t&&t.textContent;});
 const ins=await p.evaluate(()=>[...document.querySelectorAll('#gridWrap tr[data-sid="s0"] input.gin')].map(i=>i.value));
-check('Notes /20 : mêmes valeurs Individuel 5 / Collectif 5',ins[0]==='5'&&ins[1]==='5',JSON.stringify(ins)+' tot '+tot);
+check('Notes /20 : mêmes valeurs Individuel 5 / Collectif 3,5',ins[0]==='5'&&ins[1]==='3,5',JSON.stringify(ins)+' tot '+tot);
 await p.evaluate(()=>{const i=document.querySelector('#gridWrap tr[data-sid="s0"] input.gin[data-k="g1"]');i.value='4,5';i.dispatchEvent(new Event('change',{bubbles:true}));});await sleep(100);
-const e9=await ev('s0');check('saisie à la main : g1 4,5, code N3+ retiré, collectif inchangé',e9.g1===4.5&&!e9.sc1&&e9.sc2==='N3'&&e9.g2===5,JSON.stringify(e9));
+const e9=await ev('s0');check('saisie à la main : g1 4,5, code N3+ retiré, collectif inchangé',e9.g1===4.5&&!e9.sc1&&e9.sc2==='N2'&&e9.g2===3.5,JSON.stringify(e9));
+await p.evaluate(()=>document.querySelector('#tabs button[data-tab="proc"]').click());await sleep(400);
+await tapCell('s2','g2');await tapC('N4');await tapM('D');e2=await ev('s2');const e5=await ev('s3');P=await pad();TO=await p.evaluate(()=>document.getElementById('toast').textContent);
+check('groupe Bleu : N4 4,5 + Défaite 1 = 5,5 pour s2 et s3 (ancien Collectif 3 remplacé)',e2.g2===5.5&&e5.g2===5.5&&e5.sc2==='N4'&&e5.scm==='D',JSON.stringify(e5));
+check('Individuel de s3 conservé (4,25) — l’Individuel reste propre à chaque élève',e5.g1===4.25,JSON.stringify(e5));
+check('dernier groupe : pavé fermé, toast groupe + « Dernier groupe »',!P.open&&/^Note collective appliquée aux 2 membres du groupe Bleu · Dernier groupe/.test(TO),TO);
+const rouge=[await ev('s0'),await ev('s1')];check('groupe Rouge inchangé par la note du groupe Bleu',rouge.every(x=>x.g2===3.5&&x.scm==='V'));
+if(process.env.SHOTS){await tapCell('s0','g2');await tapC('N3');await tapM('E');await close();await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(150);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/sc-coll-groupe.png'});}
+// 1.29.1 (-p) : couleurs des niveaux (variante B), contraste AA dans les 3 thèmes
+await p.evaluate(()=>document.querySelector('#tabs button[data-tab="proc"]').click());await sleep(400);
+const AA=()=>p.evaluate(()=>{function L(c){const m=c.match(/[\d.]+/g).map(Number);const a=m.slice(0,3).map(x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4});return .2126*a[0]+.7152*a[1]+.0722*a[2];}
+  function bg(e){while(e){const c=getComputedStyle(e).backgroundColor,m=c.match(/[\d.]+/g);if(m&&(m.length<4||+m[3]>.9))return c;e=e.parentElement;}return 'rgb(255,255,255)';}
+  const r=(a,b)=>(Math.max(a,b)+.05)/(Math.min(a,b)+.05),out=[];let n=0;
+  document.querySelectorAll('#scPad .h,#scPad button,#scPad button b,#procWrap .scb,#procWrap .scb small').forEach(e=>{n++;const k=r(L(getComputedStyle(e).color),L(bg(e)));if(k<4.5)out.push(e.textContent.slice(0,8)+' '+k.toFixed(2));});
+  const cls=[...document.querySelectorAll('#scPad .h')].map(h=>h.className).join(),lv=[...document.querySelectorAll('#procWrap .scb')].map(b=>(b.className.match(/l\d/)||['-'])[0]).join('');return {n,out,cls,lv};});
+for(const T of ['','terrain','neon']){await p.evaluate(T=>{if(T)document.documentElement.setAttribute('data-theme',T);else document.documentElement.removeAttribute('data-theme');},T);await sleep(150);
+  await tapCell('s1','g1');const a1=await AA();
+  check('couleurs B ('+(T||'actuel')+') : en-têtes l1…l4, cases colorées par niveau, anciennes sans couleur, contraste ≥ 4,5',a1.cls==='h l1,h l2,h l3,h l4'&&a1.out.length===0&&a1.n>20,JSON.stringify(a1));
+  if(process.env.SHOTS&&!T){await sleep(2800);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/couleurs-B-pave.png'});}
+  await close();await sleep(120);
+  if(process.env.SHOTS&&T){await tapCell('s1','g1');await p.screenshot({path:'/workspace/backups/v1.29.1-preview/couleurs-B-pave-'+(T==='neon'?'neon':'vert')+'.png'});await close();await sleep(100);}}
+await p.evaluate(()=>document.documentElement.removeAttribute('data-theme'));
+const lvs=await p.evaluate(()=>[...document.querySelectorAll('#procWrap tr[data-sid] .scb')].map(b=>(b.className.match(/l\d/)||['-'])[0]).join(','));
+check('grille : niveaux des cases (s0 Indiv. sans code après saisie libre, Collectif N3 ; s3 Indiv. ancienne note)',lvs==='-,l3,-,l3,-,l4,-,l4',lvs);
+if(process.env.SHOTS){await tapCell('s0','g1');await tapC('N4-');await tapC('N2');await tapC('N1+');await close();await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(2800);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/couleurs-B-grille.png'});}
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,300));
 srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);
 })().catch(e=>{console.log('FATAL',e);process.exit(1);});

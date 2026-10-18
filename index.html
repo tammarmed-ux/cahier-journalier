@@ -738,6 +738,14 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 .scmatch{margin-top:12px}.scmt{font-weight:700;margin-bottom:8px}.scm{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 html[data-theme="neon"] .scsheet{background:#14161C}html[data-theme="neon"] .scpad button,html[data-theme="neon"] .scm button,html[data-theme="neon"] #procWrap .scb{background:#1B1E27}
 .scfree{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;color:var(--muted)}.scfree input{width:84px;min-height:40px;font:inherit;font-weight:700;text-align:center;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink)}
+/* 1.29.1 (-p) : couleurs des niveaux (variante B) — N1 rouge, N2 orange, N3 vert-citron, N4 vert : en-tête plein (texte blanc), bordure et valeur colorées ; grille : barre colorée à gauche ; note sans code : neutre */
+:root{--lv1:#B91C1C;--lv2:#C2410C;--lv3:#4D7C0F;--lv4:#15803D;--lv1h:#B91C1C;--lv2h:#C2410C;--lv3h:#4D7C0F;--lv4h:#15803D;--lv1b:#DC2626;--lv2b:#EA580C;--lv3b:#84CC16;--lv4b:#22C55E}
+html[data-theme="neon"]{--lv1:#FF8A8A;--lv2:#FFB15C;--lv3:#D4FF3A;--lv4:#4BE38F;--lv1h:#C62828;--lv2h:#C2410C;--lv3h:#4D7C0F;--lv4h:#15803D;--lv1b:#FF5C5C;--lv2b:#FF9F3A;--lv3b:#C6FF00;--lv4b:#2ED47A}
+.scpad .h{border-radius:8px;padding:4px 0;color:#fff}.scpad .h.l1{background:var(--lv1h)}.scpad .h.l2{background:var(--lv2h)}.scpad .h.l3{background:var(--lv3h)}.scpad .h.l4{background:var(--lv4h)}
+.scpad button.l1{border-color:var(--lv1b)}.scpad button.l2{border-color:var(--lv2b)}.scpad button.l3{border-color:var(--lv3b)}.scpad button.l4{border-color:var(--lv4b)}
+.scpad button.l1 b,#procWrap .scb.l1 small{color:var(--lv1)}.scpad button.l2 b,#procWrap .scb.l2 small{color:var(--lv2)}.scpad button.l3 b,#procWrap .scb.l3 small{color:var(--lv3)}.scpad button.l4 b,#procWrap .scb.l4 small{color:var(--lv4)}
+.scpad button.on{box-shadow:none;outline:3px solid var(--ink);outline-offset:2px}
+#procWrap .scb.l1{border-left:5px solid var(--lv1b)}#procWrap .scb.l2{border-left:5px solid var(--lv2b)}#procWrap .scb.l3{border-left:5px solid var(--lv3b)}#procWrap .scb.l4{border-left:5px solid var(--lv4b)}
 .sccalc{margin-top:12px;font-size:14px;line-height:1.45;color:var(--ink)}.sccalc b{color:var(--pri)}
 /* 1.29.1 (-n) : icônes de la page d’accueil toutes de la même couleur par thème (Actuel : bleu-gris #0B3A6E sur tuile #E8EFF8 ; Vert terrain : vert sur tuile vert pâle ; Néon : cyan sur tuile cyan translucide) */
 :root{--ln-ic-bg:#E8EFF8;--ln-ic-fg:#0B3A6E}html[data-theme="terrain"]{--ln-ic-bg:#E3F1E7;--ln-ic-fg:#1C6B3A}html[data-theme="neon"]{--ln-ic-bg:rgba(0,229,255,.13);--ln-ic-fg:#00E5FF}
@@ -1846,7 +1854,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1o';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1p';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2437,7 +2445,7 @@ function renderProcBar(cid,p){var el=$('procEval');if(!el)return;if(!cid||!count
         (ev?'<select id="procNtr" aria-label="Nombre d’essais">'+[1,2,3,4,5,6].map(function(n){return '<option value="'+n+'"'+(n===ntrOf(cid,p)?' selected':'')+'>'+n+' essai'+(n>1?'s':'')+'</option>';}).join('')+'</select>':''):'')+
       '<button type="button" class="btn sec" id="procGradesPdf">📄 Relevé de notes</button>'+
       '<span class="scale">'+sp.proc.map(function(c){return esc(c.lf)+' /'+fmtNum(c.max);}).join(' + ')+' = '+fmtNum(sp.procMax)+' · mêmes notes que Notes /20 (onglet Absences) · OP 2007</span>'+
-      (sp.aps==='coll'?'<span class="scale hint">Touchez une case : niveau N1…N4 (N− bas, N milieu, N+ haut de la fourchette '+esc(sp.lv)+') ; Collectif = attaque + défense + gain du match (Victoire 2 · Égalité 1,5 · Défaite 1, même gain pour toute l’équipe = groupe de travail)</span>':'')+
+      (sp.aps==='coll'?'<span class="scale hint">Touchez une case : niveau N1…N4 (N− bas, N milieu, N+ haut de la fourchette '+esc(sp.lv)+') ; Collectif = attaque + défense + gain du match (Victoire 2 · Égalité 1,5 · Défaite 1, même note collective pour tout le groupe de travail)</span>':'')+
       (sp.aps==='athle'?'<span class="scale hint">'+(ev?'Produit = barème OP 2007 '+esc(sp.lv)+' (garçons / filles selon la fiche) appliqué au meilleur essai\u00a0; entre deux performances de référence → note de la performance supérieure · '+esc(athHint(ev))+' · Produit modifiable à la main (✎) · Performance saisie à la main':'Choisissez l’épreuve\u00a0: la note Produit sera calculée d’après le meilleur essai (barèmes OP 2007).')+'</span>':'');el.classList.remove('hidden');}
 
 /* onglet « Note procédurale » : sélecteurs classe + cycle (mêmes DB.ui.cls / DB.ui.per que l’onglet Absences), notes lues et écrites dans s.ev comme Notes /20 */
@@ -2551,7 +2559,7 @@ function scTeamM(cid,sid,p){var m='';scMates(cid,sid).forEach(function(x){var e=
 function scTeamName(cid,sid){var g=grpOf(cid),t=g&&g.of?g.of[sid]:null;return t==null?'':(g.names[t]||('G'+(t+1)));}
 function scCell(c,cid,sid,p,nm){var o=scInfo(cid,sid,p),v=o[c.k],code=c.k==='g1'?o.c1:o.c2,sub=c.k==='g1'?scFmt(code):(code?scFmt(code)+' · '+o.m:''),
     ti=c.k==='g1'?(code?'Individuel '+scFmt(code)+' = '+fmtNum(v):v!=null?'Individuel '+fmtNum(v)+' (saisi sans niveau)':'Individuel : touchez pour choisir le niveau'):(code?'Collectif '+scFmt(code)+' '+fmtNum(o.cc)+' + gain '+SC_GL[o.m]+' '+fmtNum(SC_GAIN[o.m])+' = '+fmtNum(v):v!=null?'Collectif '+fmtNum(v)+' (saisi sans niveau)':'Collectif : touchez pour choisir le niveau puis le résultat du match');
-  return '<td class="t g scg'+(v!=null&&v>c.max?' over':'')+'" title="'+esc(ti)+'"><button type="button" class="scb'+(v==null?' e':'')+'" data-k="'+c.k+'" aria-label="'+esc(c.t+' /'+fmtNum(c.max)+' – '+nm+(v!=null?' : '+fmtNum(v):''))+'">'+(v==null?'–':fmtNum(v))+(sub?'<small>'+esc(sub)+'</small>':'')+'</button></td>';}
+  return '<td class="t g scg'+(v!=null&&v>c.max?' over':'')+'" title="'+esc(ti)+'"><button type="button" class="scb'+(v==null?' e':'')+(scParse(code)?' l'+scParse(code).n:'')+'" data-k="'+c.k+'" aria-label="'+esc(c.t+' /'+fmtNum(c.max)+' – '+nm+(v!=null?' : '+fmtNum(v):''))+'">'+(v==null?'–':fmtNum(v))+(sub?'<small>'+esc(sub)+'</small>':'')+'</button></td>';}
 function scCalcTxt(cid,sid,p){var o=scInfo(cid,sid,p),sp=gradeSpec(cid,p),a=[],t=0,ok=true;
   if(o.g1!=null){a.push('Individuel '+(o.c1?scFmt(o.c1)+' ':'')+'<b>'+fmtNum(o.g1)+'</b>');t+=o.g1;}else{a.push('Individuel –');ok=false;}
   if(o.c2){a.push('Collectif '+scFmt(o.c2)+' <b>'+fmtNum(o.cc)+'</b>');a.push('gain '+SC_GL[o.m]+' <b>'+fmtNum(SC_GAIN[o.m])+'</b>');t+=o.g2;}else if(o.g2!=null){a.push('Collectif <b>'+fmtNum(o.g2)+'</b>');t+=o.g2;}else{a.push('Collectif –');ok=false;}
@@ -2559,13 +2567,13 @@ function scCalcTxt(cid,sid,p){var o=scInfo(cid,sid,p),sp=gradeSpec(cid,p),a=[],t
 function scOpen(sid,k,stage,code0){var cid=DB.ui.cls,p=DB.ui.per,st=byId(sid);if(!st)return;var lv=scLv(cid),o=scInfo(cid,sid,p),sp=gradeSpec(cid,p),c=sp.proc[k==='g1'?0:1];
   SC={sid:sid,k:k,cid:cid,p:p,lv:lv,stage:stage||'lvl',code:code0||(k==='g1'?o.c1:o.c2)};
   $('scTitle').textContent=st.name;var tn=scTeamName(cid,sid);
-  $('scSub').textContent=(k==='g1'?'Note individuelle /'+fmtNum(c.max):'Collectif : attaque + défense, puis gain du match (Collectif /'+fmtNum(c.max)+')')+' · barème '+lv+(tn?' · équipe '+tn:'');
-  var R=k==='g1'?SC_IND[lv]:SC_COL[lv],h='';for(var n=1;n<=4;n++)h+='<div class="h">N'+n+'</div>';
-  ['+','','-'].forEach(function(sg){for(var n=1;n<=4;n++){var code='N'+n+sg,v=scVal(k,lv,code);h+='<button type="button" data-c="'+code+'"'+(code===SC.code?' class="on" aria-pressed="true"':'')+' aria-label="'+esc(scFmt(code)+' = '+fmtNum(v))+'">'+esc(scFmt(code))+'<b>'+fmtNum(v)+'</b></button>';}});
+  $('scSub').textContent=(k==='g1'?'Note individuelle /'+fmtNum(c.max):'Collectif : attaque + défense, puis gain du match (Collectif /'+fmtNum(c.max)+')')+' · barème '+lv+(tn?' · groupe '+tn:'');
+  var R=k==='g1'?SC_IND[lv]:SC_COL[lv],h='';for(var n=1;n<=4;n++)h+='<div class="h l'+n+'">N'+n+'</div>';
+  ['+','','-'].forEach(function(sg){for(var n=1;n<=4;n++){var code='N'+n+sg,v=scVal(k,lv,code);h+='<button type="button" data-c="'+code+'" class="l'+n+(code===SC.code?' on" aria-pressed="true"':'"')+' aria-label="'+esc(scFmt(code)+' = '+fmtNum(v))+'">'+esc(scFmt(code))+'<b>'+fmtNum(v)+'</b></button>';}});
   $('scPad').innerHTML=h;$('scPad').classList.toggle('hidden',SC.stage==='match');$('scFreeW').classList.toggle('hidden',SC.stage==='match');
   $('scFreeL').textContent='Autre valeur (saisie libre, 0 à '+fmtNum(c.max)+(k==='g2'?', gain compris':'')+')';$('scFree').value=o[k]!=null&&!(k==='g1'?o.c1:o.c2)?fmtNum(o[k]):'';
   var mt=$('scMatch');mt.classList.toggle('hidden',SC.stage!=='match');
-  if(SC.stage==='match'){var tm=scTeamM(cid,sid,p)||o.m;$('scMatchT').textContent='Résultat du match'+(tn?' – même note pour toute l’équipe '+tn:'')+' · attaque + défense '+scFmt(SC.code)+' = '+fmtNum(scVal('g2',lv,SC.code));mt.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.m===tm);b.setAttribute('aria-pressed',b.dataset.m===tm?'true':'false');});}
+  if(SC.stage==='match'){var tm=scTeamM(cid,sid,p)||o.m;$('scMatchT').textContent='Résultat du match'+(tn?' – note collective appliquée à tout le groupe '+tn:'')+' · attaque + défense '+scFmt(SC.code)+' = '+fmtNum(scVal('g2',lv,SC.code));mt.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.m===tm);b.setAttribute('aria-pressed',b.dataset.m===tm?'true':'false');});}
   $('scCalc').innerHTML=scCalcTxt(cid,sid,p);openModal('scModal');}
 function scRefresh(){var w=$('procWrap'),t=w.scrollTop,l=w.scrollLeft;renderProcGrid();w.scrollTop=t;w.scrollLeft=l;}
 function scNext(){var list=studentsIn(SC.cid),i=list.findIndex(function(s){return s.id===SC.sid;}),nx=list[i+1];scRefresh();
@@ -2573,13 +2581,23 @@ function scNext(){var list=studentsIn(SC.cid),i=list.findIndex(function(s){retur
 $('scPad').addEventListener('click',function(e){var b=e.target.closest('button[data-c]');if(!b||!SC)return;var code=b.dataset.c,v=scVal(SC.k,SC.lv,code);
   if(SC.k==='g1'){evSet(SC.sid,SC.cid,SC.p,{g1:v,sc1:code});persist();toast(scFmt(code)+' = '+fmtNum(v));scNext();return;}
   scOpen(SC.sid,'g2','match',code);});
+/* 1.29.1 (-p) : la note collective (niveau + gain du match + codes) d’un élève est appliquée à TOUS les membres de son groupe de travail
+   (Collectif des coéquipiers remplacé) ; élève sans groupe : lui seul. L’Individuel reste propre à chaque élève. Puis : 1er élève du groupe suivant. */
+function scApplyColl(o){var ms=scMates(SC.cid,SC.sid),tn=scTeamName(SC.cid,SC.sid);ms.forEach(function(x){evSet(x,SC.cid,SC.p,o);});persist();
+  return tn&&ms.length>1?'Note collective appliquée aux '+ms.length+' membres du groupe '+tn:'';}
+function scNextUnit(msg){var cid=SC.cid,list=studentsIn(cid),g=grpOf(cid),of=(g&&g.of)||{},units=[],gi=function(id){var t=g?of[id]:null;return t!=null&&t<g.names.length?t:null;};
+  if(g)g.names.forEach(function(_,t){var f1=list.find(function(s){return gi(s.id)===t;});if(f1)units.push(f1.id);});
+  list.forEach(function(s){if(gi(s.id)==null)units.push(s.id);});
+  var t0=gi(SC.sid),cur=t0==null?SC.sid:units.find(function(id){return gi(id)===t0;}),nx=units[units.indexOf(cur)+1];scRefresh();
+  if(nx){scOpen(nx,'g2');if(msg)toast(msg);}else{closeModal('scModal');toast((msg?msg+' · ':'')+'Dernier groupe de la classe');}}
 $('scMatch').addEventListener('click',function(e){var b=e.target.closest('button[data-m]');if(!b||!SC||!SC.code)return;var m=b.dataset.m,g=SC_GAIN[m],cc=scVal('g2',SC.lv,SC.code);
-  evSet(SC.sid,SC.cid,SC.p,{scc:cc,sc2:SC.code,scm:m,g2:r2(cc+g)});
-  var n=0;scMates(SC.cid,SC.sid).forEach(function(x){if(x===SC.sid)return;var e2=evGet(x,SC.cid,SC.p);if(!e2)return;var o2={scm:m};if(typeof e2.scc==='number'&&e2.sc2&&scVal('g2',SC.lv,e2.sc2)===e2.scc){o2.g2=r2(e2.scc+g);n++;}evSet(x,SC.cid,SC.p,o2);});
-  persist();toast(scFmt(SC.code)+' '+fmtNum(cc)+' + '+SC_GL[m]+' '+fmtNum(g)+' = '+fmtNum(r2(cc+g))+(n?' · équipe mise à jour ('+n+')':''));scNext();});
+  var msg=scApplyColl({scc:cc,sc2:SC.code,scm:m,g2:r2(cc+g)});
+  scNextUnit(msg||(scFmt(SC.code)+' '+fmtNum(cc)+' + '+SC_GL[m]+' '+fmtNum(g)+' = '+fmtNum(r2(cc+g))));});
 $('scFree').addEventListener('change',function(){if(!SC)return;var i=this,mx=gradeSpec(SC.cid,SC.p).proc[SC.k==='g1'?0:1].max,raw=String(i.value).trim().replace(',','.'),v=null;   /* note hors pavé (ex. ancienne note) : mêmes règles que la saisie Notes /20 */
   if(raw!==''){v=parseFloat(raw);if(isNaN(v)||!/^\d*\.?\d*$/.test(raw)||v<0||v>mx){toast('Note entre 0 et '+fmtNum(mx));i.value='';return;}v=Math.round(v*4)/4;}
-  var o={};o[SC.k]=v;if(SC.k==='g1')o.sc1=null;else{o.sc2=null;o.scc=null;}evSet(SC.sid,SC.cid,SC.p,o);persist();i.value='';if(v==null){scRefresh();scOpen(SC.sid,SC.k);}else scNext();});
+  var o={};o[SC.k]=v;if(SC.k==='g1')o.sc1=null;else{o.sc2=null;o.scc=null;}i.value='';
+  if(SC.k==='g2'&&v!=null){var msg=scApplyColl(o);scNextUnit(msg||('Collectif '+fmtNum(v)));return;}   /* 1.29.1 (-p) : Collectif saisi à la main → tout le groupe */
+  evSet(SC.sid,SC.cid,SC.p,o);persist();if(v==null){scRefresh();scOpen(SC.sid,SC.k);}else scNext();});
 $('scFree').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();this.blur();}});
 $('scClear').addEventListener('click',function(){if(!SC)return;var o=SC.k==='g1'?{g1:null,sc1:null}:{g2:null,sc2:null,scc:null};evSet(SC.sid,SC.cid,SC.p,o);persist();scRefresh();scOpen(SC.sid,SC.k);toast('Note effacée');});
 $('procWrap').addEventListener('click',function(e){var b=e.target.closest('button.scb');if(!b)return;var tr=b.closest('tr[data-sid]');if(tr)scOpen(tr.dataset.sid,b.dataset.k);});
