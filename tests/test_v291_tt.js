@@ -59,6 +59,27 @@ for(const T of ['','terrain','neon']){await p.evaluate(T=>{if(T)document.documen
     const c=getComputedStyle(e).backgroundColor,m=c.match(/[\d.]+/g);if(m&&(m.length<4||+m[3]>.9))return c;e=e.parentElement;}return 'rgb(255,255,255)';}
     const r=(a,b)=>(Math.max(a,b)+.05)/(Math.min(a,b)+.05),bad=[];let n=0;document.querySelectorAll('#ttCard .tw-chips *,#ttCard .tw-day *').forEach(e=>{if(![...e.childNodes].some(t=>t.nodeType===3&&t.textContent.trim()))return;n++;const k=r(L(getComputedStyle(e).color),L(bg(e)));if(k<4.5)bad.push(e.textContent.trim().slice(0,12)+' '+k.toFixed(2));});return {n,bad};});
   check('contraste AA de la frise et des onglets – thème '+(T||'actuel'),a.n>15&&a.bad.length===0,JSON.stringify(a));}
+// 1.29.1 (-s) : formulaire replié / compact
+await p.evaluate(()=>document.documentElement.removeAttribute('data-theme'));
+const FS=()=>p.evaluate(()=>{const f=document.getElementById('ttForm'),fr=f.getBoundingClientRect(),b=document.getElementById('ttBody');return {exp:document.getElementById('ttTog').getAttribute('aria-expanded'),hid:b.hidden,h:Math.round(fr.height),edit:f.classList.contains('edit'),title:document.getElementById('ttTog').textContent,
+  inp:[...f.querySelectorAll('select,input')].map(i=>{const r=i.getBoundingClientRect();return {id:i.id,l:r.left,r:r.right,t:Math.round(r.top),h:Math.round(r.height)};}),fl:fr.left,frr:fr.right};});
+let G=await FS();check('formulaire replié par défaut : une ligne « Ajouter un créneau » + chevron (≤ 64 px)',G.exp==='false'&&G.hid&&G.h<=64&&G.title==='Ajouter un créneau',JSON.stringify([G.exp,G.hid,G.h,G.title]));
+await p.evaluate(()=>document.getElementById('ttTog').click());await sleep(200);G=await FS();
+const I=Object.fromEntries(G.inp.map(x=>[x.id,x]));
+check('ouvert : Jour + Classe sur une ligne, Début + Fin sur une ligne, champs de 44 px',!G.hid&&G.exp==='true'&&I.ttDay.t===I.ttClass.t&&I.ttStart.t===I.ttEnd.t&&G.inp.every(x=>x.h===44),JSON.stringify(G.inp));
+check('aucun champ ne dépasse du formulaire (Fin compris)',G.inp.every(x=>x.l>=G.fl-0.5&&x.r<=G.frr+0.5),JSON.stringify(G.inp.map(x=>x.id+':'+Math.round(x.r)))+' / '+Math.round(G.frr));
+check('formulaire ouvert compact (≤ 400 px)',G.h<=400,String(G.h));
+await p.evaluate(()=>document.getElementById('ttTog').click());await sleep(200);G=await FS();check('re-toucher : replié',G.hid&&G.exp==='false');
+await p.evaluate(()=>document.querySelector('#ttCard .tw-slot[data-edit]').click());await sleep(300);G=await FS();
+check('toucher une carte : formulaire ouvert automatiquement en mode « modifier »',!G.hid&&G.edit&&G.exp==='true',JSON.stringify([G.hid,G.edit,G.title]));
+await p.evaluate(()=>document.getElementById('ttCancel').click());await sleep(300);G=await FS();check('Annuler : formulaire replié',G.hid&&!G.edit);
+await p.evaluate(()=>document.querySelector('#ttCard .tw-h [data-ttadd]').click());await sleep(500);G=await FS();check('bouton « Ajouter » en haut : ouvre le formulaire',!G.hid&&!G.edit);
+for(const T of ['terrain','neon']){await p.evaluate(T=>document.documentElement.setAttribute('data-theme',T),T);await sleep(120);
+  const c=await p.evaluate(()=>{function L(c){const m=c.match(/[\d.]+/g).map(Number);const a=m.slice(0,3).map(x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4});return .2126*a[0]+.7152*a[1]+.0722*a[2];}
+    function bg(e){while(e){const c=getComputedStyle(e).backgroundColor,m=c.match(/[\d.]+/g);if(m&&(m.length<4||+m[3]>.9))return c;e=e.parentElement;}return 'rgb(255,255,255)';}
+    const r=(a,b)=>(Math.max(a,b)+.05)/(Math.min(a,b)+.05);return [...document.querySelectorAll('#ttTog span,#ttForm label.f')].map(e=>r(L(getComputedStyle(e).color),L(bg(e))));});
+  check('formulaire lisible (AA) – thème '+T,c.every(x=>x>=4.5),c.map(x=>x.toFixed(1)).join(' '));}
+await p.evaluate(()=>document.documentElement.removeAttribute('data-theme'));
 const keys=await p.evaluate(()=>Object.keys(localStorage).filter(k=>/tt|ttSel|creneau/i.test(k)));check('aucune clé de stockage ajoutée',keys.length===0,keys.join());
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,300));
 srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);

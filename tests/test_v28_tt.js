@@ -35,6 +35,9 @@ if(SHOT){await p.addStyleTag({content:'header,#tabs,.fab,#fab,nav.tabs,.topbar,#
 const selDay=async d=>{await p.evaluate(d=>document.querySelector('#ttCard [data-ttjump="'+d+'"]').click(),d);await sleep(250);};   /* 1.29.1 (-r) : onglets de jours (un jour affiché à la fois) */
 const tt0=await p.evaluate(()=>JSON.stringify(window.CJR.db().cal.tt));
 const cols0=await p.evaluate(()=>{const A=window.CJR,d=A.db();return JSON.stringify(d.classes.map(c=>A.colsOf(c.id,0)));});
+const FC=await p.evaluate(()=>({tog:(document.getElementById('ttTog')||{}).getAttribute&&document.getElementById('ttTog').getAttribute('aria-expanded'),hid:document.getElementById('ttBody').hidden}));
+check('1.29.1 (-s) : formulaire « Ajouter un créneau » replié par défaut',FC.tog==='false'&&FC.hid,JSON.stringify(FC));
+await p.evaluate(()=>document.getElementById('ttTog').click());await sleep(250);   /* ouvert pour mesurer les cibles du formulaire */
 const R=await p.evaluate(()=>{const q=s=>[...document.querySelectorAll(s)],g=id=>document.getElementById(id),wd=new Date().getDay();
   return {wd,chips:q('#ttCard .tw-chip').map(x=>x.querySelector('b').textContent+'='+x.querySelector('span').textContent),today:q('#ttCard .tw-chip.today').map(x=>x.dataset.ttjump),
     dayToday:q('#ttCard .tw-day.today').map(x=>x.id),badge:q('#ttCard .tw-day.today .tw-today').map(x=>x.textContent),days:q('#ttCard .tw-day').length,free:q('#ttCard .tw-free').length,

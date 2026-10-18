@@ -728,6 +728,16 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 @keyframes spFade{to{opacity:1}}
 /* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */
 #landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}
+/* 1.29.1 (-s) : formulaire « Ajouter un créneau » replié par défaut et compact ; champ Fin (iOS) ne déborde plus */
+#ttForm{padding:6px 10px;margin-top:10px}#ttForm h3{margin:0}#ttForm h3:before{width:28px;height:28px;flex-basis:28px}
+#ttTog{all:unset;box-sizing:border-box;flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;cursor:pointer;font:inherit;font-weight:700;font-size:15.5px;color:var(--ink);border-radius:10px}
+#ttTog:focus-visible{outline:3px solid var(--acc);outline-offset:2px}.tt-chev{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#ttTog[aria-expanded="true"] .tt-chev{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.tt-chev{transition:none}}
+#ttBody{padding:0 0 4px}#ttForm .ttgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 8px}
+#ttForm label.f{font-size:12.5px;margin:6px 0 3px}
+#ttForm select,#ttForm input{width:100%;min-width:0;max-width:100%;box-sizing:border-box;min-height:44px;height:44px;padding:8px 10px;font-size:16px;border-radius:10px}
+#ttForm input[type=time]{-webkit-appearance:none;appearance:none;display:block;text-align:left;line-height:26px}#ttForm input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
+#ttForm .actions{margin-top:8px;gap:8px}#ttForm .actions .btn{min-height:44px;padding-top:8px;padding-bottom:8px}
 /* 1.29.1 (-r) : tableau de service — variante B (onglets de jours + frise verticale), purement visuel */
 .tw-chip{position:relative;padding-bottom:8px}.tw-chip.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.sel span{color:rgba(255,255,255,.9)}
 .tw-chip.today:not(.sel){background:#fff;color:var(--ink);border:2px solid var(--acc-d);box-shadow:none}.tw-chip.today:not(.sel) span{color:var(--muted)}
@@ -1885,7 +1895,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1r';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1s';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3278,13 +3288,14 @@ function renderHome(){
   if(DB.cal.tt.length)for(var d=1;d<=6;d++)h+=ttDayHtml(d,DB.cal.tt.filter(function(x){return x.day===d;}).sort(byStart));   /* 1.28.0 : jours en cartes (vue semaine lisible à 375 px) */
   h+='</div>';
   var e=ttEdit&&DB.cal.tt.filter(function(x){return x.id===ttEdit;})[0];if(!e)ttEdit=null;
-  h+='<div class="ttform'+(e?' edit':'')+'" id="ttForm"><h3>'+esc(e?TX.ttEditT:TX.ttAdd)+'</h3><div class="ttgrid">'+
+  var tOpen=!!e||ttOpen;   /* 1.29.1 (-s) : formulaire replié par défaut (ouvert pour modifier une carte ou après « Ajouter ») — état d’affichage seulement */
+  h+='<div class="ttform'+(e?' edit':'')+'" id="ttForm"><h3>'+'<button type="button" id="ttTog" aria-expanded="'+tOpen+'" aria-controls="ttBody"><span>'+esc(e?TX.ttEditT:TX.ttAdd)+'</span><svg class="tt-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3><div id="ttBody"'+(tOpen?'':' hidden')+'><div class="ttgrid">'+
     '<div><label class="f" for="ttDay">'+esc(TX.ttDay)+'</label><select id="ttDay">'+[1,2,3,4,5,6].map(function(x){return '<option value="'+x+'">'+esc(TX.days[x])+'</option>';}).join('')+'</select></div>'+
     '<div><label class="f" for="ttClass">'+esc(TX.ttClass)+'</label><select id="ttClass">'+DB.classes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>';}).join('')+'<option value="__as">'+esc(TX.asName)+'</option></select></div>'+
     '<div><label class="f" for="ttStart">'+esc(TX.ttStart)+'</label><input type="time" id="ttStart" step="300"></div>'+
     '<div><label class="f" for="ttEnd">'+esc(TX.ttEnd)+'</label><input type="time" id="ttEnd" step="300"></div></div>'+
     '<label class="f" for="ttRoom">'+esc(TX.ttRoom)+'</label><input type="text" id="ttRoom" dir="auto" maxlength="40" placeholder="'+esc(TX.ttRoomPh)+'">'+
-    '<div class="actions">'+(e?'<button type="button" class="btn danger" id="ttDel">'+esc(TX.del)+'</button><button type="button" class="btn sec" id="ttCancel">'+esc(TX.cancel)+'</button>':'')+'<button type="button" class="btn" id="ttSave">'+esc(e?TX.ttSaveEdit:TX.ttSaveNew)+'</button></div></div></div>';
+    '<div class="actions">'+(e?'<button type="button" class="btn danger" id="ttDel">'+esc(TX.del)+'</button><button type="button" class="btn sec" id="ttCancel">'+esc(TX.cancel)+'</button>':'')+'<button type="button" class="btn" id="ttSave">'+esc(e?TX.ttSaveEdit:TX.ttSaveNew)+'</button></div></div></div></div>';
   /* cycle calendar */
   h+='<div class="card" id="homeCal"><h2>'+esc(TX.calTitle)+'</h2>';
   if(cs.length){h+='<p class="small muted" style="margin-top:0">'+esc(TX.calFixed)+'</p><ul class="list cyclist">'+cs.map(function(c){if(c.bad)return '<li><b>'+esc(cycleLabel(c.i))+'</b><span class="small warnline">'+esc(TX.cycBad(c.i+1))+'</span></li>';var inside=c.skipped.length;return '<li class="'+(cur&&cur.i===c.i?'on':'')+'"><b>'+esc(cycleLabel(c.i))+'</b><span class="small muted">'+TX.cycRange(dmy(c.start),dmy(c.end))+' · '+esc(TX.cycWk(c.weeks.length))+(inside?' · '+esc(TX.cycHol(inside)):'')+'</span></li>';}).join('')+'</ul>';}
@@ -3296,6 +3307,13 @@ function renderHome(){
   $('ttDay').value=dflt.day;$('ttStart').value=dflt.start;$('ttEnd').value=dflt.end;if(e&&isAS(e))$('ttClass').value='__as';else if(dflt.classId)$('ttClass').value=dflt.classId;$('ttRoom').value=dflt.room||'';
 }
 var ttLast=null;
+var ttOpen=false;
+function ttFormSet(o){var b=$('ttTog'),w=$('ttBody');if(!b||!w)return;ttOpen=o;b.setAttribute('aria-expanded',String(o));w.hidden=!o;}
+/* 1.29.1 (-s) : ouverture / fermeture du formulaire « Ajouter un créneau » (avant les actions existantes : Ajouter, Annuler, Supprimer, Enregistrer) */
+$('homeBody').addEventListener('click',function(e){var t=e.target;
+  if(t.closest('#ttTog')){if(ttEdit){ttEdit=null;ttOpen=false;renderHome();}else ttFormSet(!ttOpen);return;}
+  if(t.closest('[data-ttadd]')){ttOpen=true;if(!ttEdit)ttFormSet(true);return;}
+  if(t.id==='ttCancel'||t.id==='ttDel'||(t.id==='ttSave'&&ttEdit))ttOpen=false;},true);
 /* 1.28.0 : tableau de service modernisé — purement visuel (mêmes créneaux DB.cal.tt, même formulaire #ttForm, mêmes calculs de dates) */
 var TT_LV={TC:'TC','1BAC':'1BAC','2BAC':'2BAC',as:'ASS'};
 function ttLv(x){return isAS(x)?'as':(levelOf(clsName(x.classId))||'x');}
