@@ -46,7 +46,8 @@ const np=await p.evaluate(()=>document.getElementById('procEval').textContent);
 check('onglet Note procéd. (cycle 4) : Gymnastique /14, barre « type du cycle · Paramètres »',hp==='Gymnastique/14|Procéd./14'&&/type du cycle · Paramètres/.test(np),hp+' / '+np.slice(0,120));
 // notes sport collectif au cycle 1, puis changement de type
 await p.evaluate(()=>{const DB=window.CJR.db();DB.ui.per=0;});await goTab('proc');
-const type=async(sid,k,v)=>{await p.evaluate((sid,k,v)=>{const i=document.querySelector('section.view.active tr[data-sid="'+sid+'"] input[data-k="'+k+'"]');i.focus();i.value=v;i.dispatchEvent(new Event('change',{bubbles:true}));i.blur();},sid,k,v);await sleep(60);};
+const type=async(sid,k,v)=>{await p.evaluate((sid,k,v)=>{let i=document.querySelector('section.view.active tr[data-sid="'+sid+'"] input[data-k="'+k+'"]');const sb=!i&&document.querySelector('section.view.active tr[data-sid="'+sid+'"] button.scb[data-k="'+k+'"]');   /* 1.29.1 (-o) : sport collectif → pavé, saisie libre */
+  if(sb){sb.click();i=document.getElementById('scFree');i.focus();i.value=v;i.dispatchEvent(new Event('change',{bubbles:true}));i.blur();document.querySelector('#scModal [data-close]').click();return;}i.focus();i.value=v;i.dispatchEvent(new Event('change',{bubbles:true}));i.blur();},sid,k,v);await sleep(60);};
 await type('s0','g1','6');await type('s0','g2','6,5');await type('s1','g1','5');await type('s1','g2','4');
 await goTab('settings');dlgAns=false;dialogs.length=0;await setCy(0,'gym');
 const r1={dlg:dialogs.slice(),v:(await sel())[0].v,aps:await aps(CID,0),cyc:((await db()).evals.cyc||{})['0']};

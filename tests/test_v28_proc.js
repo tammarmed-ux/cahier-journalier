@@ -34,8 +34,9 @@ const view=async v=>{if(v==='proc'){await p.evaluate(()=>document.querySelector(
   if(v!=='notes')throw new Error('affichage unique Notes /20');await sleep(250);};
 const cycle=async n=>{await p.evaluate(n=>document.querySelector('section.view.active .pchips [data-p="'+n+'"]').click(),n);await sleep(300);};
 const head=()=>p.evaluate(()=>[...document.querySelectorAll('section.view.active thead th.t')].map(t=>t.textContent));
-async function type(sid,k,val){await p.evaluate((sid,k,val)=>{const i=document.querySelector('section.view.active tr[data-sid="'+sid+'"] input[data-k="'+k+'"]');i.focus();i.value=val;i.dispatchEvent(new Event('change',{bubbles:true}));i.blur();},sid,k,val);await sleep(50);}
-const val=(sid,k)=>p.evaluate((sid,k)=>{const i=document.querySelector('section.view.active tr[data-sid="'+sid+'"] input[data-k="'+k+'"]');return i?i.value:null;},sid,k);
+/* 1.29.1 (-o) : sport collectif dans Note procéd. → case à toucher (pavé) ; la saisie libre du pavé remplace le champ */
+async function type(sid,k,val){await p.evaluate((sid,k,val)=>{let i=document.querySelector('section.view.active tr[data-sid="'+sid+'"] input[data-k="'+k+'"]');const sb=!i&&document.querySelector('section.view.active tr[data-sid="'+sid+'"] button.scb[data-k="'+k+'"]');if(sb){sb.click();i=document.getElementById('scFree');i.focus();i.value=val;i.dispatchEvent(new Event('change',{bubbles:true}));i.blur();document.querySelector('#scModal [data-close]').click();return;}i.focus();i.value=val;i.dispatchEvent(new Event('change',{bubbles:true}));i.blur();},sid,k,val);await sleep(50);}
+const val=(sid,k)=>p.evaluate((sid,k)=>{const i=document.querySelector('section.view.active tr[data-sid="'+sid+'"] input[data-k="'+k+'"]');if(!i){const sb=document.querySelector('section.view.active tr[data-sid="'+sid+'"] button.scb[data-k="'+k+'"]');if(sb){const t=sb.firstChild&&sb.firstChild.nodeType===3?sb.firstChild.textContent:'';return t==='–'?'':t;}}return i?i.value:null;},sid,k);
 const cell=(sid,c)=>p.evaluate((sid,c)=>{const t=document.querySelector('section.view.active tr[data-sid="'+sid+'"] td.'+c);return t?t.textContent:null;},sid,c);
 await tab();await sleep(500);
 // ---- placement : onglet dédié dans la barre du bas, bascule Absences | Notes /20
