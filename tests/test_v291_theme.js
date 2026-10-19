@@ -94,7 +94,7 @@ const pdfs={};for(const t of ['neon','']){await p.evaluate(t=>t?localStorage.set
     pdfs[(t||'actuel')+k]={txt:cp.execSync('pdftotext -layout "'+f+'" -').toString().replace(/\d\dh\d\d|\d{2}\/\d{2}\/\d{4} à \d\dh\d\d/g,''),img:(cp.execSync('pdftoppm -r 40 -png -f 1 -l 1 -singlefile "'+f+'" '+f+'_p'),fs.statSync(f+'_p.png').size),pg:cp.execSync('pdfinfo "'+f+'"').toString().match(/Pages:\s+(\d+)/)[1]};}}
 check('PDF (relevé, bilan de cycle) identiques en thème Néon et en thème actuel (texte, pages, rendu)',['grades','cycle'].every(k=>pdfs['neon'+k].txt===pdfs['actuel'+k].txt&&pdfs['neon'+k].pg===pdfs['actuel'+k].pg&&Math.abs(pdfs['neon'+k].img-pdfs['actuel'+k].img)<200),JSON.stringify(Object.fromEntries(Object.entries(pdfs).map(([k,v])=>[k,[v.pg,v.img,v.txt.length]]))));
 /* « Actuel » : retour au thème par défaut, clé supprimée */
-await p.evaluate(()=>localStorage.setItem('cj.theme','neon'));await open();await go('settings');await p.click('#themeSw [data-th=""]');await sleep(200);
+await p.evaluate(()=>localStorage.setItem('cj.theme','neon'));await open();await go('settings');await p.click('.pf-tog[data-pf="theme"]');await sleep(150);await p.click('#themeSw [data-th=""]');await sleep(200);
 st=await p.evaluate(()=>({dt:document.documentElement.getAttribute('data-theme'),k:localStorage.getItem('cj.theme'),m:document.querySelector('meta[name="theme-color"]').content}));
 check('Paramètres › « Actuel » : retour au thème par défaut, clé cj.theme supprimée',st.dt===null&&st.k===null&&st.m==='#0B3A6E',JSON.stringify(st));
 await p.evaluate(()=>localStorage.setItem('cj.theme','<img src=x onerror=alert(1)>'));await open();st=await p.evaluate(()=>document.documentElement.getAttribute('data-theme'));

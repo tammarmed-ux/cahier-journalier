@@ -738,6 +738,21 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 #ttForm select,#ttForm input{width:100%;min-width:0;max-width:100%;box-sizing:border-box;min-height:44px;height:44px;padding:8px 10px;font-size:16px;border-radius:10px}
 #ttForm input[type=time]{-webkit-appearance:none;appearance:none;display:block;text-align:left;line-height:26px}#ttForm input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
 #ttForm .actions{margin-top:8px;gap:8px}#ttForm .actions .btn{min-height:44px;padding-top:8px;padding-bottom:8px}
+/* 1.29.1 (-t) : Paramètres — sections repliables (Créer un accès, Utilisateurs, Thème) */
+.pfold{margin-top:8px;border-top:1px solid var(--line)}
+.pf-card .pfold{margin-top:0;border-top:0}
+#modCard h3.pf-hd,.pf-card h2.pf-hd{margin:0;padding:0;font-size:inherit;border:0}
+.pf-tog{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:10px;min-height:48px;cursor:pointer;font:inherit;font-weight:700;font-size:16px;color:var(--ink);border-radius:10px}
+.pf-tog:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.pf-ico{font-size:18px;width:24px;text-align:center;flex:none}
+.pf-ti{flex:1;min-width:0}
+.pf-n{flex:none;min-width:24px;padding:2px 8px;border-radius:999px;background:var(--pri-soft);color:var(--ink);font-size:13px;font-weight:700;text-align:center;box-sizing:border-box}
+.pf-chev{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}
+.pf-tog[aria-expanded="true"] .pf-chev{transform:rotate(180deg)}
+.pf-body{padding-bottom:6px}
+html[data-theme="neon"] .pf-n{background:#C6FF00;color:#0A0A12}
+.pf-row{justify-content:flex-end!important;margin-top:0!important}
+@media (prefers-reduced-motion:reduce){.pf-chev{transition:none}}
 /* 1.29.1 (-r) : tableau de service — variante B (onglets de jours + frise verticale), purement visuel */
 .tw-chip{position:relative;padding-bottom:8px}.tw-chip.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.sel span{color:rgba(255,255,255,.9)}
 .tw-chip.today:not(.sel){background:#fff;color:var(--ink);border:2px solid var(--acc-d);box-shadow:none}.tw-chip.today:not(.sel) span{color:var(--muted)}
@@ -1637,6 +1652,33 @@ header.top .h-title{margin-right:136px}
 <div class="modal" id="pdfModal" role="dialog" aria-modal="true" aria-label="PDF prêt"><div class="sheet" id="pdfBody"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<!--cj-pfold-js--><script>
+/* 1.29.1 (-t) : Paramètres — sections « Créer un accès », « Utilisateurs », « Thème », « Classes » et « Sauvegarde et restauration » repliables, repliées par défaut (état en mémoire seulement, rien n’est enregistré).
+   Simple habillage de l’affichage : le contenu, les identifiants (mdName, mdCreate, themeSw…), la logique modérateur et le changement de thème sont inchangés. */
+(function(){var O={},CH='<svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+ function e(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+ function head(tag,k,ico,ti,n){var x=document.createElement(tag);x.className='pf-hd';x.innerHTML='<button type="button" class="pf-tog" data-pf="'+k+'" aria-expanded="'+!!O[k]+'" aria-controls="pf-'+k+'"><span class="pf-ico" aria-hidden="true">'+ico+'</span><span class="pf-ti">'+e(ti)+'</span>'+(n!=null?'<span class="pf-n" aria-label="'+n+' utilisateur'+(n>1?'s':'')+'">'+n+'</span>':'')+CH+'</button>';return x;}
+ function wrap(host,before,k,nodes,hd){var w=document.createElement('div');w.className='pfold';w.setAttribute('data-pfw',k);var b=document.createElement('div');b.id='pf-'+k;b.className='pf-body';b.hidden=!O[k];nodes.forEach(function(n){b.appendChild(n);});w.appendChild(hd);w.appendChild(b);host.insertBefore(w,before);return w;}
+ function set(k,o){O[k]=o;var b=document.querySelector('.pf-tog[data-pf="'+k+'"]'),w=document.getElementById('pf-'+k);if(b)b.setAttribute('aria-expanded',String(o));if(w)w.hidden=!o;}
+ function card(c,k,ico,ti,cnt){if(!c||c.querySelector('.pf-tog'))return;var h=c.querySelector(':scope>h2');if(!h)return;
+   var nodes=[].slice.call(c.childNodes).filter(function(n){return n!==h;});c.removeChild(h);c.classList.add('pf-card');wrap(c,null,k,nodes,head('h2',k,ico,ti,cnt?cnt():null));
+   if(cnt){var up=function(){var x=c.querySelector('.pf-tog .pf-n'),v=cnt();if(x&&x.textContent!==String(v))x.textContent=v;};new MutationObserver(up).observe(c.querySelector('.pf-body'),{childList:true,subtree:true});}}
+ function byH2(re){return [].slice.call(document.querySelectorAll('#view-settings>.card')).filter(function(c){var h=c.querySelector(':scope>h2');return h&&re.test(h.textContent.trim());})[0];}
+ function theme(){card(document.getElementById('themeCard'),'theme','🎨','Thème',null);}
+ function init(){theme();
+   card(byH2(/^Classes$/),'cls','🏫','Classes',function(){return document.querySelectorAll('#clsManage .clsrow[data-cid]').length;});
+   card(byH2(/^Sauvegarde et restauration$/),'bk','💾','Sauvegarde et restauration',null);
+   var m=document.getElementById('modCard');if(m)new MutationObserver(function(){mod(m);}).observe(m,{childList:true});}
+ function mod(c){if(!c||c.querySelector('.pf-tog'))return;var D=(window.CJSync&&CJSync.state&&CJSync.state.mod)||{};
+   var h1=[].slice.call(c.children).filter(function(h){return h.tagName==='H3'&&/Créer un accès/.test(h.textContent);})[0],rb=c.querySelector('#mdRefresh'),row=rb&&rb.closest('.row');
+   if(h1){var a=[],n=h1.nextSibling;while(n&&n!==row){var nx=n.nextSibling;a.push(n);n=nx;}
+     if(D.cred||D.err||D.msg||D.exist)O.acc=true;   /* résultat d’une création (mot de passe provisoire affiché une seule fois, erreur…) : section ouverte */
+     wrap(c,h1,'acc',a,head('h3','acc','🔑','Créer un accès',null));c.removeChild(h1);}
+   if(row){var h3=row.querySelector('h3'),L=D.list;if(h3)row.removeChild(h3);row.classList.add('pf-row');var b=[],m=row;while(m){var nx2=m.nextSibling;b.push(m);m=nx2;}
+     wrap(c,null,'users',b,head('h3','users','👥','Utilisateurs',L?L.length:null));}}
+ document.addEventListener('click',function(ev){var t=ev.target.closest&&ev.target.closest('.pf-tog');if(!t)return;var k=t.getAttribute('data-pf');set(k,!O[k]);});
+ init();window.CJFold={mod:mod,theme:theme,set:set,open:function(k){return !!O[k];}};})();
+</script><!--/cj-pfold-js-->
 <script src="cj-crypto.js"></script>
 <script src="op2007-athle.js"></script>
 <script type="text/x-cj-app" id="cjA1">
@@ -1895,7 +1937,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1s';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1t';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}

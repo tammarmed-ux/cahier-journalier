@@ -88,6 +88,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   check('cahier.authOk stored',JSON.parse(await ls(mod,'cahier.authOk')).uid===modUid);
   await gotoSettings(mod);
   await waitFor(mod,()=>!document.getElementById('modCard').classList.contains('hidden')&&document.getElementById('mdCreate'));
+  await mod.evaluate(()=>{CJFold.set('acc',true);CJFold.set('users',true);});   /* 1.29.1 (-t) : sections repliées par défaut */
   check('moderator panel visible',true);
   check('settings: old sign-in form removed, status + Déconnexion kept',!(await mod.$('#syEmailOpen'))&&!(await mod.$('#syGoogle'))&&!!(await mod.$('#syOut'))&&(await mod.$eval('#syncCard',e=>e.innerText)).includes('Connecté en tant que'));
   async function createAccess(name,email){
