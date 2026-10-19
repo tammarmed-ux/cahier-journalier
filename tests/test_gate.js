@@ -88,12 +88,12 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   check('cahier.authOk stored',JSON.parse(await ls(mod,'cahier.authOk')).uid===modUid);
   await gotoSettings(mod);
   await waitFor(mod,()=>!document.getElementById('modCard').classList.contains('hidden')&&document.getElementById('mdCreate'));
-  await mod.evaluate(()=>{CJFold.set('acc',true);CJFold.set('users',true);});   /* 1.29.1 (-t) : sections repliées par défaut */
+  await mod.evaluate(()=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open('mod');});   /* 1.29.1 (-u) : Paramètres en sous-pages — ouvrir « Espace modérateur » */
   check('moderator panel visible',true);
   check('settings: old sign-in form removed, status + Déconnexion kept',!(await mod.$('#syEmailOpen'))&&!(await mod.$('#syGoogle'))&&!!(await mod.$('#syOut'))&&(await mod.$eval('#syncCard',e=>e.innerText)).includes('Connecté en tant que'));
   async function createAccess(name,email){
     await mod.evaluate(()=>{document.getElementById('mdName').value='';document.getElementById('mdEmail').value='';});
-    await mod.type('#mdName',name);await mod.type('#mdEmail',email);await mod.$eval('#mdCreate',b=>b.click());
+    await mod.evaluate(()=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open('mod');});await mod.type('#mdName',name);await mod.type('#mdEmail',email);await mod.$eval('#mdCreate',b=>b.click());
     await waitFor(mod,()=>document.getElementById('mdPw')&&!window.CJSync.state.mod.busy,null,20000);return mod.$eval('#mdPw',e=>e.textContent);}
   const pw1=await createAccess('Amina Benali','amina.test@example.com');
   check('moderator creates access (temp password)',pw1&&pw1.length===12);
@@ -149,7 +149,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   check('viewer exit: own data back, localStorage identical',(await hdr(mod)).includes('MOD – Lycée')&&(await ls(mod))===modLocal);
 
   // ---------- 6. password change ----------
-  await gotoSettings(mem);await mem.waitForSelector('#pwOpen');await mem.click('#pwOpen');
+  await gotoSettings(mem);await mem.evaluate(()=>window.CJPS&&CJPS.open('sync'));await mem.waitForSelector('#pwOpen');await mem.click('#pwOpen');
   await mem.waitForSelector('#pwCur');await mem.type('#pwCur',pw1);await mem.type('#pwNew','NouveauMdp-2026');await mem.type('#pwNew2','NouveauMdp-2026');await mem.click('#pwGo');
   await waitFor(mem,()=>window.CJSync.state.pwMsg||window.CJSync.state.pwErr);
   check('member password change',(await mem.evaluate(()=>window.CJSync.state.pwMsg))==='Mot de passe modifié.');
@@ -186,7 +186,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
 
   // ---------- 9. sign-out -> login ----------
   await gotoSettings(mem);await synced(mem);
-  await mem.click('#syOut');
+  await mem.evaluate(k=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open(k);},'sync');await mem.click('#syOut');
   await waitFor(mem,()=>document.documentElement.classList.contains('cj-locked')&&document.getElementById('gEmail'));
   check('Déconnexion returns to login',true);
   check('after sign-out: local data kept',(await ls(mem)).includes('AMINA Élève 6'));
@@ -226,7 +226,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   await sleep(500);await synced(mem);
   check('new user edits synced to own account',(await adminGet(`users/${youUid}/cahier/meta`)).fields.data.stringValue.includes('YOUSSEF – Lycée'));
   check('first user cloud data untouched',(await adminGet(`users/${aminaUid}/cahier/meta`)).fields.data.stringValue.includes('AMINA Élève 6')&&!(await adminGet(`users/${aminaUid}/cahier/meta`)).fields.data.stringValue.includes('YOUSSEF'));
-  await mem.click('#syOut');await waitFor(mem,()=>document.getElementById('gEmail'));
+  await mem.evaluate(k=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open(k);},'sync');await mem.click('#syOut');await waitFor(mem,()=>document.getElementById('gEmail'));
   await gateSignIn(mem,'amina.test@example.com','NouveauMdp-2026');
   await waitFor(mem,()=>window.CJSync.state.role==='member'&&!document.documentElement.classList.contains('cj-locked'));
   await waitFor(mem,()=>document.getElementById('hdrSub').textContent.includes('AMINA – Lycée · 7 élèves'),null,15000).catch(()=>{});
@@ -252,7 +252,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   await waitFor(mem,()=>window.CJSync.state.role==='member'&&!document.documentElement.classList.contains('cj-locked'));
   check('reactivated member can enter again',true);
   // moderator sign-out
-  await gotoSettings(mod);await mod.click('#syOut');await waitFor(mod,()=>document.documentElement.classList.contains('cj-locked')&&document.getElementById('gEmail'));
+  await gotoSettings(mod);await mod.evaluate(k=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open(k);},'sync');await mod.click('#syOut');await waitFor(mod,()=>document.documentElement.classList.contains('cj-locked')&&document.getElementById('gEmail'));
   check('moderator Déconnexion returns to login',true);
   }catch(e){console.log('EXCEPTION',e.stack);results.push({name:'exception',ok:false});}
   finally{await browser.close();}

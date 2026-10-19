@@ -70,7 +70,7 @@ const ERR=[];
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:240000,args:['--no-sandbox','--disable-dev-shm-usage']});
 // ================= 0. statique =================
 const idx=fs.readFileSync(D+'/index.html','utf8'),sw=fs.readFileSync(D+'/sw.js','utf8'),cj=fs.readFileSync(D+'/cj-crypto.js','utf8');
-check('version 1.29.0 / version publiée cahier-v29 (APP_VER = cache sw.js) ; cj-crypto.js en cache hors ligne',/var APP_SEMVER='1\.29\.1'/.test(idx)&&/var APP_VER='cahier-v29-1t'/.test(idx)&&/const CACHE = 'cahier-v29-1t'/.test(sw)&&/'\.\/cj-crypto\.js'/.test(sw));
+check('version 1.29.0 / version publiée cahier-v29 (APP_VER = cache sw.js) ; cj-crypto.js en cache hors ligne',/var APP_SEMVER='1\.29\.1'/.test(idx)&&/var APP_VER='cahier-v29-1u'/.test(idx)&&/const CACHE = 'cahier-v29-1u'/.test(sw)&&/'\.\/cj-crypto\.js'/.test(sw));
 check('firestore.rules et firebase.json identiques à 1.28.1',cp.execSync('git -C '+D+' diff v1.28.1 -- firestore.rules firebase.json').toString()==='');
 /* 1.29.0 (-b) : relecture du français (« Maladie » → « Malade », espaces insécables, cohérence) — comparaisons faites à la relecture près : REV annule les corrections de contenu (cj-emu/i18n/content_fixes.py), NB ramène toute espace insécable à une espace simple */
 const REV=[ /* 1.29.1 (-h) : nouveau nom TATABO3 (textes affichés seulement) */ ["'</form>'; /* 1.29.1 (-m) : note « Accès sur invitation… iPhone… » retirée de l’écran de connexion (connexion e-mail + Google inchangées) */", "'<p class=\"g-note\">Accès sur invitation : vos identifiants vous sont remis par l’administrateur. Sur iPhone (application sur l’écran d’accueil), si la connexion Google ne s’ouvre pas, utilisez l’e-mail et le mot de passe.</p></form>';"], /* 1.29.1 (-m) : note de connexion retirée */ ["Voici votre accès à « TATABO3 » (cahier journalier digital) :","Voici votre accès au « Cahier Journalier digital » :"],["title:'Accès – TATABO3'","title:'Accès – Cahier Journalier digital'"],["sauvegarde TATABO3 (cahier journalier digital).","sauvegarde du Cahier journalier digital."],["'TATABO3 : votre cahier d’EPS dans la poche.'","'Cahier Journalier digital : votre cahier d’EPS dans la poche.'"],["'</small>'+(q===0?'<button type=\"button\" class=\"essdl\" data-essdl aria-label=\"Télécharger tous les essais\" title=\"Télécharger tous les essais (PDF ou CSV)\"><span class=\"ti\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4v11\"/><path d=\"m7.5 11 4.5 4.5 4.5-4.5\"/><path d=\"M5 19.5h14\"/></svg></span></button>':'')+'</th>';}", "'</small></th>';}"], /* 1.29.1 (-b) : bouton « Télécharger tous les essais » */ ["une performance comprise entre deux performances de référence prend la note de la performance supérieure.","une performance comprise entre deux paliers prend la note du palier supérieur."],["entre deux performances de référence → note de la performance supérieure","entre deux paliers → note du palier supérieur"],["' → performance '+r.row+'/20","' → palier '+r.row+'/20"], /* 1.29.0 (-e) : « palier » → « performance » (affichage) */ ["it.unshift({l:'P = Présent',c:", "it.unshift({l:'P = présent',c:"], ["' (absent, malade, retard, sans tenue) · classés", "' (absences, maladies, retards, sans tenue) · classés"], ["M = malade non justifié, R = retard", "M = maladie non justifiée, R = retard"], ["M = malade non justifié · MJ = malade justifié", "M = maladie non justifiée · MJ = maladie justifiée"], ["l:'Malade M / MJ'", "l:'Maladie M / MJ'"], ["l:'Malade M / MJ',s:'non justifié / justifié'", "l:'Maladie M / MJ',s:'non justifiée / justifiée'"], ["Malade non just.", "Maladie non just."], ["Malade justifié", "Maladie justifiée"], ["Malade non justifié", "Maladie non justifiée"], ["sauvegarde du Cahier Journalier digital.", "sauvegarde du Cahier journalier digital."], [">Nom Z→A</option>", ">Nom Z–A</option>"], [">Nom A→Z</option>", ">Nom A–Z</option>"], ["'1er semestre':'2e semestre')+' (cycles '", "'1er semestre':'2ème semestre')+' (Cycles '"], ["{k:'soup',l:'Souplesse (flexion avant assis)'", "{k:'soup',l:'Souplesse (sit and reach)'"], ["M=malade non justifié R=retard MJ=malade justifié", "M=maladie non justifiée R=retard MJ=maladie justifiée"], ["['M','M','Malade']", "['M','M','Maladie']"], ["tM:'Malade (M)'", "tM:'Maladie (M)'"], ["data-v=\"M\">Malade</button>", "data-v=\"M\">Maladie</button>"], ["Malade just.", "Maladie just."], ["Malade non just.", "Maladie non just."], ["Malade justifié", "Maladie justifiée"], ["Malade non justifié", "Maladie non justifiée"], ["puis 🩺 Dispensé ; ses cases deviennent grises, les autres marques restent possibles", "puis 🩺 Dispensé ; ses cases deviennent violettes et barrées, les autres marques restent possibles"], ["Sans tenue → Malade → Retard → Malade justifié → Absence justifiée", "Sans tenue → Maladie → Retard → Maladie justifiée → Absence justifiée"], ["absent, sans tenue, malade, retard, absence justifiée", "absent, sans tenue, maladie, retard, absences justifiées"]];
@@ -111,7 +111,7 @@ check('1.28.1 : le vidage brut contient bien les noms en clair (contrôle du tes
 ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.1';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
 await unlockGate(p);await sleep(600);
 const cachesNow=await p.evaluate(()=>caches.keys());
-check('mise à jour réelle 1.28.1 → '+sem+' par le service worker (cache '+cachesNow.join(',')+')',sem==='1.29.1'&&cachesNow.includes('cahier-v29-1t')&&!cachesNow.includes('cahier-v28-1'));
+check('mise à jour réelle 1.28.1 → '+sem+' par le service worker (cache '+cachesNow.join(',')+')',sem==='1.29.1'&&cachesNow.includes('cahier-v29-1u')&&!cachesNow.includes('cahier-v28-1'));
 const L290=await logical(p);const dump290=await rawDump(p);
 const kd=(a,b)=>{if(a===b)return 'égal';let i=0;while(a[i]===b[i])i++;return a.length+'/'+b.length+' @'+i+' '+a.slice(i-40,i+40)+' ≠ '+b.slice(i-40,i+40);};
 const c281=Object.keys(L281.ls).filter(k=>k in L290.ls);
@@ -125,7 +125,7 @@ const strip=t=>{const o=JSON.parse(t);delete o.lastBackup;return JSON.stringify(
 await p.evaluate(()=>document.getElementById('secCard').scrollIntoView());await sleep(200);
 const L290b=await logical(p);
 check('carte « Sécurité de cet appareil » : code désactivé, bouton Activer',await p.evaluate(()=>/désactivé/.test(document.getElementById('secCard').innerText)&&!!document.getElementById('secOn')));
-await p.click('#secOn');await sleep(400);
+await p.evaluate(k=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open(k);},'sec');await p.click('#secOn');await sleep(400);
 check('écran de mise en place : explication en français + 6 chiffres ou plus',/Protégez les données de vos élèves/.test(await lockText(p))&&/6 chiffres/.test(await lockText(p)));
 await pad(p,'1357');await p.screenshot({path:SHOT+'/v29-1-code-mise-en-place.png'});
 await pad(p,'92',true);await sleep(300);
@@ -223,13 +223,13 @@ await p.evaluate(()=>{window.__mark=1;});await vis(true);await sleep(100);await 
 await p.waitForFunction(()=>!window.__mark&&document.getElementById('cjLock'),{timeout:15000}).catch(()=>{});
 check('réglage immédiat : verrouillé dès le retour au premier plan',await p.evaluate(()=>!window.__mark&&CJCrypto.mode()==='locked'));
 await pad(p,'135792');await opened(p);
-await goTab(p,'settings');await sleep(300);await p.select('#secAl','5');
+await goTab(p,'settings');await sleep(300);await p.evaluate(()=>window.CJPS&&CJPS.open('sec'));await p.select('#secAl','5');
 await p.evaluate(()=>{window.__mark=1;});await p.click('#secLock');await p.waitForFunction(()=>!window.__mark&&document.getElementById('cjLock'),{timeout:15000}).catch(()=>{});
 check('« Verrouiller maintenant »',await p.evaluate(()=>CJCrypto.mode()==='locked'));
 await pad(p,'135792');await opened(p);
 // ================= 6. changer le code =================
 const envBefore=(await rawDump(p)).ls[KEY];
-await goTab(p,'settings');await sleep(300);await p.click('#secPin');await sleep(300);await pad(p,'135792');
+await goTab(p,'settings');await sleep(300);await p.evaluate(()=>window.CJPS&&CJPS.open('sec'));await p.click('#secPin');await sleep(300);await pad(p,'135792');
 await p.waitForFunction(()=>/Nouveau code/.test((document.getElementById('cjLock')||{}).innerText||''),{timeout:20000});
 await pad(p,'24681357',true);await sleep(300);await pad(p,'24681357',true);
 await p.waitForFunction(()=>!document.getElementById('cjLock'),{timeout:30000});
@@ -273,7 +273,7 @@ check('le format en clair est relisible par 1.28.1 (même forme : JSON classRegi
 // échec injecté : écriture IndexedDB des photos impossible après l’écriture des clés localStorage
 const Lpre=await logical(p);const Dpre=await rawDump(p);
 await p.evaluate(()=>{const o=IDBObjectStore.prototype.put;window.__op=o;IDBObjectStore.prototype.put=function(v){if(this.name==='p'&&v&&v.e)throw new DOMException('simulé','QuotaExceededError');return o.apply(this,arguments);};});
-await goTab(p,'settings');await sleep(300);await p.click('#secOn');await sleep(300);await pad(p,'112233',true);await sleep(300);await pad(p,'112233',true);
+await goTab(p,'settings');await sleep(300);await p.evaluate(k=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open(k);},'sec');await p.click('#secOn');await sleep(300);await pad(p,'112233',true);await sleep(300);await pad(p,'112233',true);
 await p.waitForFunction(()=>/Code activé|non effectué/.test((document.getElementById('cjLock')||{}).innerText||''),{timeout:60000});
 const failTxt=await lockText(p);
 await p.evaluate(()=>{IDBObjectStore.prototype.put=window.__op;});

@@ -738,21 +738,37 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 #ttForm select,#ttForm input{width:100%;min-width:0;max-width:100%;box-sizing:border-box;min-height:44px;height:44px;padding:8px 10px;font-size:16px;border-radius:10px}
 #ttForm input[type=time]{-webkit-appearance:none;appearance:none;display:block;text-align:left;line-height:26px}#ttForm input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
 #ttForm .actions{margin-top:8px;gap:8px}#ttForm .actions .btn{min-height:44px;padding-top:8px;padding-bottom:8px}
-/* 1.29.1 (-t) : Paramètres — sections repliables (Créer un accès, Utilisateurs, Thème) */
-.pfold{margin-top:8px;border-top:1px solid var(--line)}
-.pf-card .pfold{margin-top:0;border-top:0}
-#modCard h3.pf-hd,.pf-card h2.pf-hd{margin:0;padding:0;font-size:inherit;border:0}
-.pf-tog{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:10px;min-height:48px;cursor:pointer;font:inherit;font-weight:700;font-size:16px;color:var(--ink);border-radius:10px}
-.pf-tog:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-.pf-ico{font-size:18px;width:24px;text-align:center;flex:none}
-.pf-ti{flex:1;min-width:0}
-.pf-n{flex:none;min-width:24px;padding:2px 8px;border-radius:999px;background:var(--pri-soft);color:var(--ink);font-size:13px;font-weight:700;text-align:center;box-sizing:border-box}
-.pf-chev{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}
-.pf-tog[aria-expanded="true"] .pf-chev{transform:rotate(180deg)}
-.pf-body{padding-bottom:6px}
-html[data-theme="neon"] .pf-n{background:#C6FF00;color:#0A0A12}
-.pf-row{justify-content:flex-end!important;margin-top:0!important}
-@media (prefers-reduced-motion:reduce){.pf-chev{transition:none}}
+/* 1.29.1 (-u) : Paramètres façon réglages iOS (liste groupée + sous-pages) — affichage seulement */
+#view-settings>.card[data-ps]{display:none}
+#view-settings.ps-sub>.card[data-ps].ps-on{display:block}
+#view-settings.ps-sub>.card[data-ps].ps-on.hidden{display:none}
+#view-settings.ps-sub>.card.ps-on>h2:first-child{display:none}
+#view-settings.ps-sub>p{display:none}
+.ps-h1{font-size:28px;font-weight:800;margin:6px 4px 10px;color:var(--ink);line-height:1.15}
+#psTitle{font-size:24px;margin-top:0;outline:none}
+.ps-cap{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:16px 8px 6px}
+.ps-grp:last-child{margin-top:18px}
+.ps-card{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.ps-row{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:12px;padding:9px 12px 9px 14px;min-height:56px;cursor:pointer;font:inherit;color:var(--ink)}
+.ps-row+.ps-row{border-top:1px solid var(--line)}
+.ps-row:focus-visible{outline:3px solid var(--acc);outline-offset:-3px;border-radius:12px}
+.ps-row:active{background:var(--pri-soft)}
+.ps-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none;background:#E2E8F0}
+.ps-i-sync,.ps-i-onb{background:#DBEAFE}.ps-i-sec{background:#E2E8F0}.ps-i-cls{background:#DCFCE7}.ps-i-pts,.ps-i-annee{background:#FEF3C7}.ps-i-hol{background:#FFEDD5}
+.ps-i-pdf,.ps-i-bk{background:#E0E7FF}.ps-i-snap{background:#E0F2FE}.ps-i-theme{background:#FCE7F3}.ps-i-mod{background:#FFE4E6}.ps-i-dz{background:#FEE2E2}
+html[data-theme="neon"] .ps-ico{background:#1F2430}
+.ps-tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.ps-tx b{font-size:15.5px;font-weight:700;line-height:1.25}
+.ps-tx small{font-size:12.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps-tx small:empty{display:none}
+.ps-val{font-size:14px;color:var(--muted);white-space:nowrap;max-width:34%;overflow:hidden;text-overflow:ellipsis}
+.ps-chev{color:var(--muted);font-size:22px;font-weight:600;line-height:1}
+.ps-dz b{color:var(--bad)}
+html[data-theme="neon"] .ps-dz b{color:#FF8A8A}
+#psHead{margin:0 0 6px}
+.ps-back{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;min-height:44px;padding:0 8px 0 4px;font:inherit;font-size:16px;font-weight:700;color:var(--pri);cursor:pointer;border-radius:10px}
+.ps-back:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+html[data-theme="neon"] .ps-back{color:#C6FF00}
 /* 1.29.1 (-r) : tableau de service — variante B (onglets de jours + frise verticale), purement visuel */
 .tw-chip{position:relative;padding-bottom:8px}.tw-chip.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.sel span{color:rgba(255,255,255,.9)}
 .tw-chip.today:not(.sel){background:#fff;color:var(--ink);border:2px solid var(--acc-d);box-shadow:none}.tw-chip.today:not(.sel) span{color:var(--muted)}
@@ -1652,33 +1668,66 @@ header.top .h-title{margin-right:136px}
 <div class="modal" id="pdfModal" role="dialog" aria-modal="true" aria-label="PDF prêt"><div class="sheet" id="pdfBody"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!--cj-pfold-js--><script>
-/* 1.29.1 (-t) : Paramètres — sections « Créer un accès », « Utilisateurs », « Thème », « Classes » et « Sauvegarde et restauration » repliables, repliées par défaut (état en mémoire seulement, rien n’est enregistré).
-   Simple habillage de l’affichage : le contenu, les identifiants (mdName, mdCreate, themeSw…), la logique modérateur et le changement de thème sont inchangés. */
-(function(){var O={},CH='<svg class="pf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
- function e(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
- function head(tag,k,ico,ti,n){var x=document.createElement(tag);x.className='pf-hd';x.innerHTML='<button type="button" class="pf-tog" data-pf="'+k+'" aria-expanded="'+!!O[k]+'" aria-controls="pf-'+k+'"><span class="pf-ico" aria-hidden="true">'+ico+'</span><span class="pf-ti">'+e(ti)+'</span>'+(n!=null?'<span class="pf-n" aria-label="'+n+' utilisateur'+(n>1?'s':'')+'">'+n+'</span>':'')+CH+'</button>';return x;}
- function wrap(host,before,k,nodes,hd){var w=document.createElement('div');w.className='pfold';w.setAttribute('data-pfw',k);var b=document.createElement('div');b.id='pf-'+k;b.className='pf-body';b.hidden=!O[k];nodes.forEach(function(n){b.appendChild(n);});w.appendChild(hd);w.appendChild(b);host.insertBefore(w,before);return w;}
- function set(k,o){O[k]=o;var b=document.querySelector('.pf-tog[data-pf="'+k+'"]'),w=document.getElementById('pf-'+k);if(b)b.setAttribute('aria-expanded',String(o));if(w)w.hidden=!o;}
- function card(c,k,ico,ti,cnt){if(!c||c.querySelector('.pf-tog'))return;var h=c.querySelector(':scope>h2');if(!h)return;
-   var nodes=[].slice.call(c.childNodes).filter(function(n){return n!==h;});c.removeChild(h);c.classList.add('pf-card');wrap(c,null,k,nodes,head('h2',k,ico,ti,cnt?cnt():null));
-   if(cnt){var up=function(){var x=c.querySelector('.pf-tog .pf-n'),v=cnt();if(x&&x.textContent!==String(v))x.textContent=v;};new MutationObserver(up).observe(c.querySelector('.pf-body'),{childList:true,subtree:true});}}
- function byH2(re){return [].slice.call(document.querySelectorAll('#view-settings>.card')).filter(function(c){var h=c.querySelector(':scope>h2');return h&&re.test(h.textContent.trim());})[0];}
- function theme(){card(document.getElementById('themeCard'),'theme','🎨','Thème',null);}
- function init(){theme();
-   card(byH2(/^Classes$/),'cls','🏫','Classes',function(){return document.querySelectorAll('#clsManage .clsrow[data-cid]').length;});
-   card(byH2(/^Sauvegarde et restauration$/),'bk','💾','Sauvegarde et restauration',null);
-   var m=document.getElementById('modCard');if(m)new MutationObserver(function(){mod(m);}).observe(m,{childList:true});}
- function mod(c){if(!c||c.querySelector('.pf-tog'))return;var D=(window.CJSync&&CJSync.state&&CJSync.state.mod)||{};
-   var h1=[].slice.call(c.children).filter(function(h){return h.tagName==='H3'&&/Créer un accès/.test(h.textContent);})[0],rb=c.querySelector('#mdRefresh'),row=rb&&rb.closest('.row');
-   if(h1){var a=[],n=h1.nextSibling;while(n&&n!==row){var nx=n.nextSibling;a.push(n);n=nx;}
-     if(D.cred||D.err||D.msg||D.exist)O.acc=true;   /* résultat d’une création (mot de passe provisoire affiché une seule fois, erreur…) : section ouverte */
-     wrap(c,h1,'acc',a,head('h3','acc','🔑','Créer un accès',null));c.removeChild(h1);}
-   if(row){var h3=row.querySelector('h3'),L=D.list;if(h3)row.removeChild(h3);row.classList.add('pf-row');var b=[],m=row;while(m){var nx2=m.nextSibling;b.push(m);m=nx2;}
-     wrap(c,null,'users',b,head('h3','users','👥','Utilisateurs',L?L.length:null));}}
- document.addEventListener('click',function(ev){var t=ev.target.closest&&ev.target.closest('.pf-tog');if(!t)return;var k=t.getAttribute('data-pf');set(k,!O[k]);});
- init();window.CJFold={mod:mod,theme:theme,set:set,open:function(k){return !!O[k];}};})();
-</script><!--/cj-pfold-js-->
+<!--cj-psub-js--><script>
+/* 1.29.1 (-u) : Paramètres façon réglages iOS — liste groupée (icône, titre, résumé, valeur, chevron) puis sous-page « ‹ Paramètres ».
+   Habillage de l’affichage seulement : les cartes existantes (mêmes éléments, mêmes identifiants, mêmes gestionnaires) sont simplement affichées une par une ;
+   aucune donnée, clé, synchronisation, exportation ni importation n’est modifiée. Sous-page ouverte : état en mémoire + historique du navigateur (retour iOS/Android). */
+(function(){
+ var V=document.getElementById('view-settings');if(!V)return;
+ var G=[['Compte & sécurité',['sync','sec']],['Classes & année scolaire',['cls','pts','annee','hol']],['Données',['pdf','bk','snap']],['Apparence',['theme']],['Modérateur',['mod']],['Présentation',['onb']],['',['dz']]];
+ var I={sync:['🔄','Compte et synchronisation'],sec:['🔒','Sécurité de cet appareil'],cls:['🏫','Classes'],pts:['➖','Points retirés (déduction)'],annee:['📅','Année scolaire'],hol:['🏖','Vacances et jours fériés'],
+  pdf:['📄','Exporter les documents'],bk:['💾','Sauvegarde et restauration'],snap:['🕒','Sauvegardes de sécurité'],theme:['🎨','Thème'],mod:['🛡','Espace modérateur'],onb:['👋','Présentation'],dz:['⚠️','Zone dangereuse']};
+ var H2={pdf:/^Exporter les documents/,bk:/^Sauvegarde et restauration$/,cls:/^Classes$/,pts:/^Points retirés/,annee:/^Année scolaire$/};
+ var ID={sync:'syncCard',sec:'secCard',snap:'snapCard',theme:'themeCard',mod:'modCard',hol:'holCard',onb:'onbCard',dz:'dangerZone'};
+ var C={};[].slice.call(V.children).forEach(function(c){if(!c.classList.contains('card'))return;var k=null;
+   Object.keys(ID).forEach(function(x){if(c.id===ID[x])k=x;});
+   if(!k){var h=c.querySelector(':scope>h2'),t=h?h.textContent.trim():'';Object.keys(H2).forEach(function(x){if(H2[x].test(t))k=x;});}
+   if(k){C[k]=c;c.setAttribute('data-ps',k);}});
+ function e(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+ var L=document.createElement('div');L.id='psList';L.setAttribute('role','navigation');L.setAttribute('aria-label','Paramètres');
+ L.innerHTML='<h2 class="ps-h1">Paramètres</h2>'+G.map(function(g){return '<div class="ps-grp" data-psg="'+g[1].join(' ')+'">'+(g[0]?'<h2 class="ps-cap">'+e(g[0])+'</h2>':'')+'<div class="ps-card">'+
+   g[1].filter(function(k){return C[k];}).map(function(k){return '<button type="button" class="ps-row'+(k==='dz'?' ps-dz':'')+'" data-ps-open="'+k+'"><span class="ps-ico ps-i-'+k+'" aria-hidden="true">'+I[k][0]+'</span><span class="ps-tx"><b>'+e(I[k][1])+'</b><small data-ps-sum="'+k+'"></small></span><span class="ps-val" data-ps-val="'+k+'"></span><span class="ps-chev" aria-hidden="true">›</span></button>';}).join('')+'</div></div>';}).join('');
+ var B=document.createElement('div');B.id='psHead';B.hidden=true;B.innerHTML='<button type="button" class="ps-back" id="psBack">‹ Paramètres</button><h2 class="ps-h1" id="psTitle" tabindex="-1"></h2>';
+ V.insertBefore(B,V.firstChild);V.insertBefore(L,V.firstChild);
+ var cur='',y0=0,justOpened=0;
+ function txt(id){var x=document.getElementById(id);return x?x.textContent.replace(/\s+/g,' ').trim():'';}
+ function val(id){var x=document.getElementById(id);return x?x.value:'';}
+ function num(v){return String(v).replace('.',',');}
+ function sums(){var S=(window.CJSync&&CJSync.state)||{},bi=txt('bkInfo'),m,r={};
+   r.sync=[S.user&&S.user.email?S.user.email:'Non connecté · données sur cet appareil',txt('syncPill')];
+   m=txt('secCard').match(/Code d’accès\s*:\s*([^.]+)/i);r.sec=['Code d’accès, chiffrement des données locales',m?m[1].trim().replace(/^./,function(c){return c.toUpperCase();}):''];
+   var nc=document.querySelectorAll('#clsManage .clsrow[data-cid]').length,ne=(bi.match(/(\d+)\s+élève/)||[])[1];r.cls=[nc+' classe'+(nc>1?'s':'')+(ne!=null?' · '+ne+' élève'+(ne>1?'s':''):'')+' · note comportementale',String(nc)];
+   r.pts=['A '+num(val('ptA'))+' · ST '+num(val('ptS'))+' · R '+num(val('ptL'))+' · M '+num(val('ptM')),''];
+   var ncy=document.querySelectorAll('#calSettings input[type=date]').length/2|0;r.annee=[(ncy?ncy+' cycles · ':'')+val('setSpp')+' séances/cycle · alerte à '+val('setThreshold')+' abs.',''];
+   var nh=document.querySelectorAll('#holCard .hols li').length;r.hol=[nh?nh+' période'+(nh>1?'s':'')+' sans cours':'Aucune période enregistrée',nh?String(nh):''];
+   r.pdf=['Bilans, listes, relevés, tests · PDF et CSV',''];
+   m=bi.match(/(Dernière sauvegarde : .*|Aucune sauvegarde[^.]*)/);r.bk=[m?m[1].replace(/\.$/,''):'Télécharger, restaurer, photos',''];
+   var ns=document.querySelectorAll('#snapList .snaprow').length;r.snap=[ns?ns+' copie'+(ns>1?'s':'')+' automatique'+(ns>1?'s':'')+' sur cet appareil':'Copies automatiques sur cet appareil',ns?String(ns):''];
+   var th=window.CJTheme?CJTheme.get():'';r.theme=['Apparence de l’application sur cet appareil',{'':'Actuel',terrain:'Vert terrain',neon:'Néon sport'}[th]||'Actuel'];
+   var ml=S.mod&&S.mod.list;r.mod=['Utilisateurs · créer un accès',ml?String(ml.length):''];
+   r.onb=['Revoir la présentation de l’application',''];r.dz=['Supprimer toutes les données de cet appareil',''];
+   Object.keys(r).forEach(function(k){var a=L.querySelector('[data-ps-sum="'+k+'"]'),b=L.querySelector('[data-ps-val="'+k+'"]');if(a&&a.textContent!==r[k][0])a.textContent=r[k][0];if(b&&b.textContent!==r[k][1])b.textContent=r[k][1];});
+   var mr=L.querySelector('[data-psg="mod"]'),on=C.mod&&!C.mod.classList.contains('hidden');if(mr&&mr.hidden===!!on)mr.hidden=!on;}
+ var tm=0;function later(){if(tm)return;tm=setTimeout(function(){tm=0;sums();},120);}
+ new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){if(!L.contains(ms[i].target)&&!B.contains(ms[i].target)){later();return;}}}).observe(V,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
+ V.addEventListener('input',later);V.addEventListener('change',later);
+ function show(k){cur=k;V.classList.toggle('ps-sub',!!k);V.setAttribute('data-psv',k||'');L.hidden=!!k;B.hidden=!k;
+   Object.keys(C).forEach(function(x){C[x].classList.toggle('ps-on',x===k);});
+   if(k){document.getElementById('psTitle').textContent=I[k][1];}else sums();}
+ function open(k,noHist){if(!C[k]||cur===k)return;if(!cur)y0=window.scrollY||0;show(k);justOpened=Date.now();
+   if(!noHist)try{history.pushState({cjps:k},'');}catch(x){}
+   window.scrollTo(0,0);try{document.getElementById('psTitle').focus({preventScroll:true});}catch(x){}}
+ function close(){if(!cur)return;var k=cur;show('');var y=y0;requestAnimationFrame(function(){window.scrollTo(0,y);var r=L.querySelector('[data-ps-open="'+k+'"]');if(r)try{r.focus({preventScroll:true});}catch(x){}});}
+ L.addEventListener('click',function(ev){var r=ev.target.closest('[data-ps-open]');if(r)open(r.getAttribute('data-ps-open'));});
+ document.getElementById('psBack').addEventListener('click',function(){if(history.state&&history.state.cjps)history.back();else close();});
+ window.addEventListener('popstate',function(ev){var k=ev.state&&ev.state.cjps;if(k&&C[k]&&V.classList.contains('active'))show(k);else close();});
+ /* raccourcis existants vers une section (pastille de synchro, « Modifier le calendrier ») : ouvrir la sous-page concernée */
+ document.addEventListener('click',function(ev){var t=ev.target;if(!t.closest)return;
+   if(t.closest('#syncPill'))open('sync');else if(t.closest('[data-goset]'))open('annee');
+   else if(t.closest('#tabs button')&&Date.now()-justOpened>400&&cur){try{if(history.state&&history.state.cjps)history.replaceState(null,'');}catch(x){}show('');y0=0;}},true);
+ sums();window.CJPS={open:open,close:close,cur:function(){return cur;},keys:function(){return Object.keys(C);},refresh:sums};
+})();
+</script><!--/cj-psub-js-->
 <script src="cj-crypto.js"></script>
 <script src="op2007-athle.js"></script>
 <script type="text/x-cj-app" id="cjA1">
@@ -1937,7 +1986,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.1';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-1t';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-1u';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
