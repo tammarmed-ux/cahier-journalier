@@ -21,7 +21,7 @@ const tok=(uid,email,ver)=>{const t=Math.floor(Date.now()/1000);return b64({alg:
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:120000,args:['--no-sandbox','--disable-dev-shm-usage']});
 // ================= 0. statique =================
 const idx=fs.readFileSync(D+'/index.html','utf8'),sw=fs.readFileSync(D+'/sw.js','utf8'),fj=JSON.parse(fs.readFileSync(D+'/firebase.json','utf8'));
-check('version 1.29.0 / cache cahier-v29 (APP_VER = sw.js) — test 1.28.1 rejoué sur 1.29.0',/var APP_SEMVER='1\.29\.0'/.test(idx)&&/var APP_VER='cahier-v29'/.test(idx)&&/const CACHE = 'cahier-v29'/.test(sw));
+check('version 1.29.0 / cache cahier-v29 (APP_VER = sw.js) — test 1.28.1 rejoué sur 1.29.0',/var APP_SEMVER='1\.29\.1'/.test(idx)&&/var APP_VER='cahier-v29-1'/.test(idx)&&/const CACHE = 'cahier-v29-1'/.test(sw));
 const rulesDiff=cp.execSync('git -C '+D+' diff v1.28.0 -- firestore.rules').toString();
 check('firestore.rules identique à v1.28.0',rulesDiff==='');
 const keys=h=>[...new Set((h.match(/['"](classRegister\.v2[\w.]*|cahier\.[A-Za-z][\w.]*)['"]/g)||[]).map(x=>x.slice(1,-1)))].sort().join();
@@ -67,9 +67,9 @@ for(let di=0;di<DAYS.length;di++){const day=DAYS[di];
     d.sessions={[d.classes[0].id+'|0|0']:{date:'2026-09-15',marks:{u0:{s:'A',j:true,r:''},u9:{s:'L',j:false,r:''},u18:{s:'M',j:false,r:'x'},u27:{s:'ST',j:false,r:''}}}};d.evals={aps:{[d.classes[3].id+'|0']:'coll'}};return window.CJApp.applyJSON(JSON.stringify(d));},KEY);
   await p.reload({waitUntil:'networkidle2'});await p.evaluate(()=>navigator.serviceWorker.ready.then(()=>true));await sleep(1500);
   const v0=await p.evaluate(()=>window.CJR.semver),raw0=await p.evaluate(K=>localStorage.getItem(K),KEY);
-  ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.0';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
+  ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.1';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
   await sleep(1200);const raw1=await p.evaluate(K=>localStorage.getItem(K),KEY),cs=await p.evaluate(()=>caches.keys());
-  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.29.0'&&raw0===raw1&&cs.includes('cahier-v29')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
+  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.29.1'&&raw0===raw1&&cs.includes('cahier-v29-1')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
   await p.browserContext().close();}
 // ================= 2. lien invitation ↔ compte (émulateurs) =================
 await fetch(`${FSU}/emulator/v1/projects/${P}/databases/(default)/documents`,{method:'DELETE'});
@@ -105,13 +105,13 @@ const metaBefore=JSON.stringify((await fget(`users/${A1.localId}/cahier/meta`)).
 check('avant le lien : un autre compte portant la même adresse est accepté (faille de l’audit)',(await fput('users/INTRUS/cahier/meta',F({v:1}),tok('INTRUS','ancien@test.ma',false)))===200);
 // le modérateur ouvre son espace
 const mod=await newPage('mod',E);await signIn(mod,MOD,modPw);await mod.waitForFunction(()=>window.CJSync.state.role==='mod',{timeout:20000});
-await mod.click('#tabs button[data-tab="settings"]');await mod.waitForFunction(()=>document.querySelectorAll('#modCard .mrow').length===4,{timeout:20000});await sleep(500);
+await mod.click('#tabs button[data-tab="settings"]');await mod.waitForFunction(()=>document.querySelectorAll('#modCard .mrow').length===4,{timeout:20000});await sleep(500);await mod.evaluate(()=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open('mod');});   /* 1.29.1 (-u) : Paramètres en sous-pages — ouvrir « Espace modérateur » */
 const rows=await mod.evaluate(()=>Object.fromEntries([...document.querySelectorAll('#modCard .mrow')].map(r=>[r.dataset.mid,{st:(r.querySelector('.mlink')||{}).textContent,link:r.querySelectorAll('[data-mact="link"]').length,unlink:!!r.querySelector('[data-mact="unlink"]')}])));
 const all=await mod.evaluate(()=>{const x=document.getElementById('mdLinkAll');return x&&x.textContent;});
 check('espace modérateur : statut de lien par invitation + bouton « Lier l’invitation » (1 non ambiguë)',/liée à son compte/.test(rows['lie@test.ma'].st)&&rows['lie@test.ma'].unlink&&/non liée/.test(rows['ancien@test.ma'].st)&&rows['ancien@test.ma'].link===1&&/après sa première synchro/.test(rows['jamais@test.ma'].st)&&rows['jamais@test.ma'].link===0&&/2 comptes/.test(rows['double@test.ma'].st)&&rows['double@test.ma'].link===2&&/Lier l’invitation/.test(all||''),JSON.stringify(rows)+' | '+all);
 if(process.env.SHOT){await mod.evaluate(()=>{const c=document.getElementById('modCard');window.scrollTo(0,c.getBoundingClientRect().top+window.scrollY-70);});await sleep(400);await mod.screenshot({path:'/workspace/screens/cj1281-invitations.png'});}
 const memBefore=(await fget('members/ancien@test.ma')).j.fields;
-await mod.click('#mdLinkAll');await mod.waitForFunction(()=>{const r=document.querySelector('#modCard .mrow[data-mid="ancien@test.ma"] .mlink');return r&&/liée à son compte/.test(r.textContent);},{timeout:20000});
+await mod.evaluate(k=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open(k);},'mod');await mod.click('#mdLinkAll');await mod.waitForFunction(()=>{const r=document.querySelector('#modCard .mrow[data-mid="ancien@test.ma"] .mlink');return r&&/liée à son compte/.test(r.textContent);},{timeout:20000});
 const memAfter=(await fget('members/ancien@test.ma')).j.fields;
 const same=k=>JSON.stringify(memBefore[k])===JSON.stringify(memAfter[k]);
 check('« Lier » : members/ancien@test.ma reçoit uid = compte utilisé ; nom, e-mail, actif, créateur inchangés',memAfter.uid&&memAfter.uid.stringValue===A1.localId&&['name','email','active','createdBy'].every(same),JSON.stringify(Object.keys(memAfter)));

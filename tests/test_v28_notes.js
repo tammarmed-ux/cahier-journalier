@@ -84,7 +84,7 @@ await p.evaluate(()=>{const m=document.querySelector('#detModal [data-close]');m
 // ---- fiche élève : détail du calcul
 await p.evaluate(()=>document.querySelector('#gridWrap tr[data-sid="s2"] td.comp').click());await sleep(400);
 const det=await p.evaluate(()=>(document.getElementById('detComp')||{}).textContent||'');
-check('toucher Comport. ouvre la fiche : formule « Comport. (Cycle 1) = 3 − (0,5 × 2 A + 0,25 × 1 R + 0,5 × 1 ST) = 1,25 » + coefficients',/Comport\. \(Cycle 1\) = 3 − \(0,5 × 2 A \+ 0,25 × 1 R \+ 0,5 × 1 ST\) = 1,25/.test(det)&&/A 0,5 · AJ 0 · M 0,25 · MJ 0 · R 0,25 · ST 0,5/.test(det),det.slice(0,200));
+check('toucher Comport. ouvre la fiche : texte explicatif gris retiré (1.29.1-d)',!(await p.evaluate(()=>!!document.getElementById('detComp')))&&!!(await p.evaluate(()=>{const m=document.getElementById('detModal');return m&&/Notes \/20/.test(m.textContent)&&!/Calcul\u00a0: note comportementale|Comport\. \(Cycle/.test(m.textContent);})));
 await p.evaluate(()=>{const m=document.querySelector('#detModal [data-close]');m&&m.click();});await sleep(200);
 // ---- données : seules les nouvelles clés additives changent
 const after=await p.evaluate(K=>JSON.parse(localStorage.getItem(K)),KEY);
@@ -112,8 +112,8 @@ async function pdf(fn){await p.evaluate(()=>{window.__lastPdf=null;});await p.ev
   const f='/tmp/v28_'+Date.now()+'.pdf';fs.writeFileSync(f,Buffer.from(r.b64,'base64'));return {f,name:r.name};}
 const pg=await pdf(()=>document.getElementById('attGradesPdf').click());
 if(pg){fs.copyFileSync(pg.f,'/tmp/v28-releve.pdf');const t=cp.execSync('pdftotext -layout '+pg.f+' -').toString(),tn=t.replace(/\s+/g,' ');
-  check('PDF relevé : nom Releve-notes_Cycle-1_2BACSP4, en-tête « Cahier d’EPS », titre « Relevé de notes · Cycle 1 », barème 2BAC OP 2007, colonnes',/^Releve-notes_Cycle_1_2BACSP4_/.test(pg.name)&&/Cahier d’EPS/.test(t)&&/Relevé de notes · Cycle 1/.test(tn)&&/barème 2BAC – Évaluation OP 2007 : Indiv\. \/7 \+ Coll\. \/7 \+ Concept\. \/3 \+ Comport\. \/3 = 20/.test(tn)&&/Indiv\. \/7/.test(tn)&&/Note \/20/.test(tn),pg.name);
-  check('PDF : pied de page « Cahier d’EPS v'+SEM+' », école Lycée qualifiant Baja',new RegExp('Cahier d’EPS v'+SEM.replace(/\./g,'\\.')).test(tn)&&/Lycée qualifiant Baja/.test(tn));
+  check('PDF relevé : nom Releve-notes_Cycle-1_2BACSP4, en-tête « TATABO3 | Cahier d’EPS digital », titre « Relevé de notes · Cycle 1 », barème 2BAC OP 2007, colonnes',/^Releve-notes_Cycle_1_2BACSP4_/.test(pg.name)&&/TATABO3 \| Cahier d’EPS digital/.test(t)&&/Relevé de notes · Cycle 1/.test(tn)&&/barème 2BAC – Évaluation OP 2007 : Indiv\. \/7 \+ Coll\. \/7 \+ Concept\. \/3 \+ Comport\. \/3 = 20/.test(tn)&&/Indiv\. \/7/.test(tn)&&/Note \/20/.test(tn),pg.name);
+  check('PDF : pied de page « TATABO3 | Cahier d’EPS digital v'+SEM+' », école Lycée qualifiant Baja',new RegExp('TATABO3 \\| Cahier d’EPS digital v'+SEM.replace(/\./g,'\\.')).test(tn)&&/Lycée qualifiant Baja/.test(tn));
   const ord=NAMES.map(n=>n[0]).filter(n=>!/[\u0600-\u06FF]/.test(n));const pos=ord.map(n=>tn.indexOf(n));
   check('PDF : ordre Massar/alphabétique de l’application, notes et totaux (AIT BENALI 17,25, CHAKIR 11,25, KETTANI incomplet)',pos.every((x,i)=>x>=0&&(i===0||x>pos[i-1]))&&/AIT BENALI Yassine.*?17,25/.test(tn)&&/CHAKIR Omar.*?11,25/.test(tn),JSON.stringify(pos));
   check('PDF : plus de note explicative Comport. (1.29.0-d) ; ligne « Moyenne de la classe » conservée',!/points retirés du cycle|note comportementale \//.test(tn)&&!/maladie/i.test(tn)&&/Moyenne de la classe/.test(tn));

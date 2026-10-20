@@ -1,0 +1,24 @@
+/* règles manuelles des thèmes sombres (DK = néon) */
+DK body{background:var(--t-page,var(--bg))}
+DK input,DK select,DK textarea{background-color:var(--t-input);color:var(--ink);border-color:var(--line)}
+DK input::placeholder,DK textarea::placeholder{color:var(--muted);opacity:.85}
+DK select option{background:var(--card);color:var(--ink)}
+DK .btn{--b-bg:var(--t-fill);--b-fg:var(--t-fill-ink);--b-bd:transparent;--b-bg-h:var(--t-fill)}
+DK .btn.sec{--b-bg:transparent;--b-fg:var(--pri);--b-bd:var(--pri-line);--b-bg-h:var(--pri-soft)}
+DK .btn.ghost{--b-bg:transparent;--b-fg:var(--muted);--b-bd:transparent;--b-bg-h:rgba(255,255,255,.07)}
+DK .btn.danger{--b-bg:transparent;--b-fg:var(--bad);--b-bd:rgba(255,138,147,.45);--b-bg-h:var(--bad-soft)}
+DK .btn.danger.solid{--b-bg:#E5484D;--b-fg:#fff;--b-bd:#E5484D;--b-bg-h:#C9363B}
+DK .btn.acc{--b-bg:var(--t-acc-fill);--b-fg:var(--t-acc-ink);--b-bd:var(--t-acc-fill);--b-bg-h:var(--t-acc-fill);box-shadow:none}
+DK .fab,DK .pchip.on,DK .seg button.on{background:var(--t-fill);color:var(--t-fill-ink);border-color:var(--t-fill)}
+DK .modal-bg,DK .modal{background-color:rgba(0,0,0,.6)}
+DK a{color:var(--pri)}
+DK .muted,DK .small.muted{color:var(--muted)}
+DK .chip{background:var(--pri-soft);color:var(--pri)}
+DK table,DK th,DK td{border-color:var(--line)}
+DK hr{border-color:var(--line)}
+DK .card{box-shadow:var(--shadow)}
+DK .card.remind .btn.sec{--b-fg:var(--ink);--b-bd:rgba(255,255,255,.35)}
+/* 1.29.1 (-g) : contrastes AA relevés sous la ligne de flottaison (Accueil : compteurs, « Aujourd’hui » ; Paramètres : bouton de suppression) */
+DK .hs.k-A .hs-v,DK .hs.k-U .hs-v{color:#FF8FA3}DK .hs.k-S .hs-v{color:#5EEAD4}DK .hs.k-M .hs-v{color:#C9A2FF}DK .hs.k-L .hs-v{color:#FFC266}DK .hs.k-K .hs-v{color:#D2B0FF}DK .hs.k-held .hs-v{color:#8CC4FF}
+DK .tw-today{color:#0A0A12}
+DK .btn.danger.solid{--b-bg:#CC3339;--b-bd:#CC3339;--b-bg-h:#A8252F}

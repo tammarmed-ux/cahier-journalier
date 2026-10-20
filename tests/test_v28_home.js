@@ -11,6 +11,8 @@ const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:60000,args:['--no-sandbox','--disable-dev-shm-usage']});
 const p=await (await b.createBrowserContext()).newPage();await p.emulateTimezone('Etc/GMT-1');await p.setViewport({width:375,height:812,deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('dialog',d=>d.accept());
+/* date fixe (mardi de cycle, hors vacances) : le test ne dépend plus du jour où il est lancé */
+await p.evaluateOnNewDocument(()=>{const T0=new Date(2026,10,10,10,50).getTime(),OD=Date,off=T0-OD.now();class FD extends OD{constructor(...a){if(!a.length)super(OD.now()+off);else super(...a);}static now(){return OD.now()+off;}}window.Date=FD;});
 await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
 const unlock=()=>p.evaluate(()=>{window.CJIntro&&window.CJIntro.skipSplash&&window.CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked','cj-land');const g=document.getElementById('gate');if(g)g.style.display='none';});
 await p.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});

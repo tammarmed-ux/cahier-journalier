@@ -100,14 +100,16 @@ window.CJBoot={go:function(id){if(RELEASED)exec(id);else Q.push(id);}};
 /* ---------- interface ---------- */
 var CSS='#cjLock{position:fixed;inset:0;z-index:1100;overflow-y:auto;background:#0B3A6E;color:#fff;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom))}'+
 '#cjLock .w{max-width:380px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;align-items:stretch;text-align:center}'+
-'#cjLock img{width:80px;height:80px;border-radius:20px;margin:0 auto 12px;box-shadow:0 12px 30px rgba(0,0,20,.4)}'+
-'#cjLock h1{font-size:25px;margin:0 0 4px;font-weight:800}#cjLock h1 b{color:#FFB37A}#cjLock .s{opacity:.85;font-size:14.5px;margin:0 0 18px}'+
+'#cjLock img,#cjLock svg.t3m{width:80px;height:80px;display:block;border-radius:20px;margin:0 auto 12px;box-shadow:0 12px 30px rgba(0,0,20,.4)}'+
+'#cjLock h1{font-size:25px;margin:0 0 4px;font-weight:800}#cjLock h1 .wm{display:block;width:186px;height:34px;margin:0 auto 4px;border-radius:0;box-shadow:none}#cjLock h1 b{color:#FFB37A}#cjLock .s{opacity:.85;font-size:14.5px;margin:0 0 18px}'+
 '#cjLock .dots{display:flex;justify-content:center;gap:12px;margin:6px 0 14px}#cjLock .dots i{width:14px;height:14px;border-radius:50%;border:2px solid #fff;display:block}#cjLock .dots i.on{background:#fff}'+
 '#cjLock input{width:100%;box-sizing:border-box;font-size:20px;letter-spacing:8px;text-align:center;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.1);outline:none}#cjLock input::placeholder{color:rgba(255,255,255,.6);letter-spacing:1px;font-size:15px}'+
 '#cjLock .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px auto 0;max-width:300px}#cjLock .pad button{height:62px;border-radius:31px;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:26px;font-weight:600}#cjLock .pad button:active{background:rgba(255,255,255,.3)}#cjLock .pad button.t{font-size:15px;background:none}'+
 '#cjLock .msg{min-height:22px;margin:10px 0 0;font-size:14px;color:#FFD2B0;font-weight:600}#cjLock .lk{background:none;border:0;color:#fff;text-decoration:underline;font-size:14.5px;margin-top:16px;opacity:.9}'+
 '#cjLock .b{display:block;width:100%;margin-top:12px;padding:13px;border-radius:14px;border:0;font-size:16px;font-weight:700;background:#FFB37A;color:#0B3A6E}#cjLock .b.s2{background:rgba(255,255,255,.16);color:#fff}'+
 '#cjLock .txt{text-align:left;font-size:14.5px;background:rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;margin:0 0 14px}#cjLock .txt p{margin:0 0 8px}#cjLock .txt p:last-child{margin:0}'+
+/* 1.29.1 (-c) : écran plus compact sur téléphone — clavier et « Valider » visibles sans défiler (affichage seul) */
+'@media (max-height:900px){#cjLock{padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(14px,env(safe-area-inset-bottom))}#cjLock img,#cjLock svg.t3m{width:56px;height:56px;border-radius:15px;margin-bottom:6px}#cjLock h1{font-size:21px}#cjLock .s{font-size:14px;margin-bottom:10px}#cjLock .txt{font-size:13.5px;line-height:1.35;padding:9px 12px;margin-bottom:8px}#cjLock .txt p{margin-bottom:4px}#cjLock .dots{margin:2px 0 8px}#cjLock input{padding:7px}#cjLock .pad{gap:9px;margin-top:8px}#cjLock .pad button{height:52px;font-size:23px}#cjLock .msg{min-height:16px;margin-top:6px}#cjLock .lk{margin-top:8px}}'+
 '#cjLock .busy{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:cjsp 1s linear infinite;vertical-align:middle;margin-right:8px}@keyframes cjsp{to{transform:rotate(360deg)}}'+
 '#secCard .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}#secCard select{font-size:15px;padding:6px 8px;border-radius:10px}#secCard .ok{color:var(--ok,#1a7f37);font-weight:700}';
 function css(){if(document.getElementById('cjCss'))return;var s=document.createElement('style');s.id='cjCss';s.textContent=CSS;document.head.appendChild(s);}
@@ -115,7 +117,7 @@ function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return 
 function overlay(html){css();var o=document.getElementById('cjLock');if(!o){o=document.createElement('div');o.id='cjLock';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');document.body.appendChild(o);}
   o.innerHTML='<div class="w">'+html+'</div>';return o;}
 function closeOverlay(){var o=document.getElementById('cjLock');if(o)o.parentNode.removeChild(o);}
-var HEAD='<img src="icons/logo-b.svg" alt=""><h1>Cahier d’<b>EPS</b></h1>';
+var HEAD='<svg class="t3m" aria-hidden="true" viewBox="0 0 100 100" width="80" height="80"><use href="#t3mk"/></svg><h1><svg class="wm" role="img" aria-label="TATABO3" width="186" height="34"><use href="#t3wm" width="100%" height="100%"/></svg></h1>';
 function fmtWait(ms){var s=Math.ceil(ms/1000);return s>=60?Math.ceil(s/60)+' min':s+' s';}
 /* saisie d’un code : clavier à l’écran + clavier du téléphone ; résout la valeur (ou null si annulé) */
 function pinForm(o){o=o||{};return new Promise(function(res){
@@ -254,9 +256,10 @@ window.addEventListener('pagehide',function(){if(MODE==='open'){hiddenAt=hiddenA
 /* ---------- première ouverture : proposer le code ---------- */
 var LATER='cahier.cryptoLater';
 function setupFlow(fromSettings){
-  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b> Choisissez un code de 6 chiffres (ou plus)\u00a0: les données enregistrées sur ce téléphone (élèves, codes Massar, notes, absences, photos, sauvegardes de sécurité) seront <b>chiffrées en AES-256</b>. Sans le code, elles sont illisibles.</p>'+
-    '<p>Le code vous sera demandé à chaque ouverture et après 5 minutes en arrière-plan (réglable dans Paramètres). Il n’est jamais envoyé sur Internet.</p>'+
-    '<p>En cas d’oubli\u00a0: «\u00a0Code oublié\u00a0?\u00a0» efface la copie de ce téléphone\u00a0; vous la récupérez depuis votre compte synchronisé.</p></div>';
+  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b></p>'+   /* 1.29.1 (-c) : texte fourni par le propriétaire (affichage seul) */
+    '<p>Choisissez un code de 6 chiffres ou plus.</p>'+
+    '<p>Ce code sera demandé à chaque ouverture de l’application.</p>'+
+    '<p>En cas d’oubli, sélectionnez «\u00a0Code oublié\u00a0?\u00a0». Cela efface la copie locale de cet appareil\u00a0; vous pourrez la récupérer depuis votre compte synchronisé.</p></div>';
   function step1(msg){pinForm({free:true,title:'Choisissez votre code',intro:intro,msg:msg,cancel:true,extra:'<button type="button" class="lk" id="cjDl">Télécharger d’abord une sauvegarde (JSON)</button>',
       wire:function(r){r.querySelector('#cjDl').addEventListener('click',dlBackup);}}).then(function(a){
     if(a==null){if(!fromSettings)try{oSet.call(LS,LATER,String(now()));}catch(e){}closeOverlay();return;}

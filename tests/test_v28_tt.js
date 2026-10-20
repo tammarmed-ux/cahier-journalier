@@ -32,8 +32,12 @@ if(SHOT){await p.addStyleTag({content:'header,#tabs,.fab,#fab,nav.tabs,.topbar,#
   await p.evaluate(()=>{const f=document.getElementById('ttForm');window.scrollTo(0,f.getBoundingClientRect().top+window.scrollY-80);});await sleep(1200);
   const f=await p.$('#ttForm');await f.screenshot({path:'/tmp/v28t-'+SHOT+'-form.png'});
   console.log('shot',SHOT,errs.length?'errors '+errs.join('|'):'ok');srv.close();await b.close();process.exit(0);}
+const selDay=async d=>{await p.evaluate(d=>document.querySelector('#ttCard [data-ttjump="'+d+'"]').click(),d);await sleep(250);};   /* 1.29.1 (-r) : onglets de jours (un jour affiché à la fois) */
 const tt0=await p.evaluate(()=>JSON.stringify(window.CJR.db().cal.tt));
 const cols0=await p.evaluate(()=>{const A=window.CJR,d=A.db();return JSON.stringify(d.classes.map(c=>A.colsOf(c.id,0)));});
+const FC=await p.evaluate(()=>({tog:(document.getElementById('ttTog')||{}).getAttribute&&document.getElementById('ttTog').getAttribute('aria-expanded'),hid:document.getElementById('ttBody').hidden}));
+check('1.29.1 (-s) : formulaire « Ajouter un créneau » replié par défaut',FC.tog==='false'&&FC.hid,JSON.stringify(FC));
+await p.evaluate(()=>document.getElementById('ttTog').click());await sleep(250);   /* ouvert pour mesurer les cibles du formulaire */
 const R=await p.evaluate(()=>{const q=s=>[...document.querySelectorAll(s)],g=id=>document.getElementById(id),wd=new Date().getDay();
   return {wd,chips:q('#ttCard .tw-chip').map(x=>x.querySelector('b').textContent+'='+x.querySelector('span').textContent),today:q('#ttCard .tw-chip.today').map(x=>x.dataset.ttjump),
     dayToday:q('#ttCard .tw-day.today').map(x=>x.id),badge:q('#ttCard .tw-day.today .tw-today').map(x=>x.textContent),days:q('#ttCard .tw-day').length,free:q('#ttCard .tw-free').length,
@@ -45,18 +49,23 @@ const R=await p.evaluate(()=>{const q=s=>[...document.querySelectorAll(s)],g=id=
 check('puces Lun→Sam avec nombre de créneaux',R.chips.join(' ')==='Lun=2 Mar=1 Mer=2 Jeu=3 Ven=1 Sam=–',R.chips.join(' '));
 if(R.wd>=1&&R.wd<=6)check('indicateur « aujourd’hui » : puce + carte du jour + badge (jour '+R.wd+')',R.today.join()===String(R.wd)&&R.dayToday.join()==='ttd'+R.wd&&R.badge.join()==='Aujourd’hui',JSON.stringify([R.today,R.dayToday,R.badge]));
 else check('dimanche : aucun jour marqué « aujourd’hui »',R.today.length===0&&R.dayToday.length===0);
-check('6 cartes de jour, « Pas de cours » pour le samedi',R.days===6&&R.free===1,R.days+'/'+R.free);
+const SEL=await p.evaluate(()=>[...document.querySelectorAll('#ttCard .tw-chip.sel')].map(x=>x.dataset.ttjump));
+check('jour affiché par défaut = aujourd’hui (lundi le dimanche), un seul jour à la fois',R.days===1&&SEL.join()===String(R.wd>=1&&R.wd<=6?R.wd:1),R.days+' '+SEL.join());
+const AL=[];let fr=0;for(let d=1;d<=6;d++){await selDay(d);const q=await p.evaluate(d=>({id:(document.querySelector('#ttCard .tw-day')||{}).id,sel:[...document.querySelectorAll('#ttCard .tw-chip.sel')].map(x=>x.dataset.ttjump).join(),free:document.querySelectorAll('#ttCard .tw-free').length,
+  s:[...document.querySelectorAll('#ttCard .tw-slot[data-edit]')].map(x=>x.dataset.edit+':'+[...x.classList].filter(c=>/^lv-/.test(c))[0]+':'+x.querySelector('.tw-time b').textContent+'-'+x.querySelector('.tw-time i').textContent)}),d);if(q.id!=='ttd'+d||q.sel!==String(d))AL.push('?'+d);fr+=q.free;AL.push(...q.s);}
+R.slots=AL;
+check('toucher un jour → ce jour affiché ; « Pas de cours » pour le samedi',!AL.some(x=>x[0]==='?')&&fr===1,AL.filter(x=>x[0]==='?').join()+' free '+fr);
 check('9 cartes de créneaux (data-edit), triées, couleur par niveau TC/1BAC/2BAC + ASS',R.slots.join(' ')==='t1:lv-2BAC:08:00-10:00 t2:lv-1BAC:10:00-12:00 t3:lv-TC:08:00-10:00 t4:lv-2BAC:14:00-16:00 t8:lv-as:16:00-19:00 t5:lv-1BAC:08:00-10:00 t6:lv-TC:10:00-12:00 t7:lv-2BAC:14:00-16:00 t9:lv-TC:08:00-10:00',R.slots.join(' '));
 check('légende des niveaux + barre de service + identifiants conservés',R.legend.join()==='TC,1BAC,2BAC,ASS'&&/^\d+%$/.test(R.bar)&&R.keep.length===0&&R.old===0,JSON.stringify([R.legend,R.bar,R.keep,R.old]));
 check('375 px : rien ne déborde, cibles ≥ 44 px (Ajouter, puces, créneaux, formulaire)',R.sw<=375&&R.small.length===0,R.sw+' '+JSON.stringify(R.small));
 // puces → défilement vers le jour
 await p.evaluate(()=>window.scrollTo(0,0));await p.evaluate(()=>document.querySelector('#ttCard [data-ttjump="5"]').click());await sleep(900);
-let y=await p.evaluate(()=>Math.round(document.getElementById('ttd5').getBoundingClientRect().top));check('puce « Ven » → fait défiler jusqu’au vendredi',y>-5&&y<200,String(y));
+let y=await p.evaluate(()=>{const t=document.getElementById('ttd5');return t?Math.round(t.getBoundingClientRect().top):null;});check('puce « Ven » → affiche le vendredi',y!=null&&await p.evaluate(()=>document.querySelector('#ttCard [data-ttjump="5"]').classList.contains('sel')),String(y));
 await p.evaluate(()=>window.scrollTo(0,0));await p.evaluate(()=>document.querySelector('#ttCard .tw-h [data-ttadd]').click());await sleep(900);
 let F=await p.evaluate(()=>{const f=document.getElementById('ttForm');return {top:Math.round(f.getBoundingClientRect().top),edit:f.classList.contains('edit'),del:!!document.getElementById('ttDel')};});
 check('bouton « + Ajouter » → formulaire de nouveau créneau à l’écran',F.top>-5&&F.top<300&&!F.edit&&!F.del,JSON.stringify(F));
 // modifier
-await p.evaluate(()=>document.querySelector('#ttCard [data-edit="t6"]').click());await sleep(500);
+await selDay(4);await p.evaluate(()=>document.querySelector('#ttCard [data-edit="t6"]').click());await sleep(500);
 F=await p.evaluate(()=>{const f=document.getElementById('ttForm'),g=id=>document.getElementById(id);return {edit:f.classList.contains('edit'),on:!!document.querySelector('.tw-slot.on[data-edit="t6"]'),day:g('ttDay').value,s:g('ttStart').value,e:g('ttEnd').value,room:g('ttRoom').value,del:!!g('ttDel')};});
 check('appui sur un créneau → formulaire « modifier » pré-rempli (+ bouton Supprimer)',F.edit&&F.on&&F.day==='4'&&F.s==='10:00'&&F.e==='12:00'&&F.room==='Gymnase'&&F.del,JSON.stringify(F));
 await p.evaluate(()=>{const r=document.getElementById('ttRoom');r.value='Salle couverte';r.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('ttSave').click();});await sleep(500);
@@ -72,7 +81,7 @@ await p.evaluate(id=>document.querySelector('#ttCard [data-edit="'+id+'"]').clic
 let n=await p.evaluate(()=>window.CJR.db().cal.tt.length);check('Supprimer demande confirmation ; « Annuler » ne supprime rien',dlg.length===1&&n===10,JSON.stringify(dlg)+' '+n);
 ACCEPT=true;await p.evaluate(()=>document.getElementById('ttDel').click());await sleep(400);n=await p.evaluate(()=>window.CJR.db().cal.tt.length);
 check('confirmation acceptée → créneau supprimé',n===9);
-await p.evaluate(()=>{const g=id=>document.getElementById(id);document.querySelector('#ttCard [data-edit="t6"]').click();});await sleep(300);
+await selDay(4);await p.evaluate(()=>{const g=id=>document.getElementById(id);document.querySelector('#ttCard [data-edit="t6"]').click();});await sleep(300);
 await p.evaluate(()=>{const g=id=>document.getElementById(id);g('ttRoom').value='Gymnase';g('ttSave').click();});await sleep(400);
 const tt1=await p.evaluate(()=>JSON.stringify(window.CJR.db().cal.tt));check('après aller-retour, emploi du temps identique à l’original (données intactes)',tt1===tt0,tt1.length+' vs '+tt0.length);
 const cols1=await p.evaluate(()=>{const A=window.CJR,d=A.db();return JSON.stringify(d.classes.map(c=>A.colsOf(c.id,0)));});check('dates des séances inchangées (colsOf)',cols1===cols0);
