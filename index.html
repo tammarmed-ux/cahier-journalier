@@ -1287,6 +1287,23 @@ html[data-theme="neon"]{--cy0:#00E5FF;--cy1:#C6FF00;--cy2:#FF3DCB;--cy3:#00E5FF;
 .cy-mini{display:flex;gap:2px;height:6px}.cy-mini i{flex:1;border-radius:3px;background:var(--c)}
 .cy-card small{display:block;margin-top:6px;font-size:12px}
 .cy-card + .cy-card{}
+/* 1.29.2 (c) : Vacances et jours fériés en cartes */
+:root{--hy-fer:#E85D04;--hy-tm:#7C3AED}html[data-theme="terrain"]{--hy-fer:#D97706;--hy-tm:#0E7490}html[data-theme="neon"]{--hy-fer:#FF3DCB;--hy-tm:#00E5FF}
+.hy-tl{position:relative;height:14px;border-radius:7px;background:var(--cy0);opacity:1;margin:4px 0 6px;overflow:hidden}.hy-tl:before{content:"";position:absolute;inset:0;background:var(--card);opacity:.78}
+.hy-tl i{position:absolute;top:0;bottom:0;display:block;border-radius:2px}.hy-vac,.hy-lg i.hy-vac{background:repeating-linear-gradient(135deg,var(--cyh1) 0 4px,var(--cyh2) 4px 8px)}.hy-tl .hy-vac{background:repeating-linear-gradient(135deg,var(--cy0) 0 3px,transparent 3px 6px)}
+.hy-fer{background:var(--hy-fer)}.hy-tm{background:var(--hy-tm)}
+.hy-lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-bottom:10px}.hy-lg i{display:inline-block;width:14px;height:8px;border-radius:3px;margin-right:4px;vertical-align:0}
+.hy-add{width:100%;margin-bottom:10px}
+.hy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;grid-auto-flow:row dense}
+.hy-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--hc);border-radius:12px;padding:8px 8px 6px 10px;min-width:0}.hy-card.ed{grid-column:1/-1}
+.hy-k-vac{--hc:var(--cy0)}.hy-k-fer{--hc:var(--hy-fer)}.hy-k-tm{--hc:var(--hy-tm)}
+.hy-k-vac{grid-column:1/-1;background-image:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--cy0) 6%,transparent) 10px 20px)}
+.hy-top{display:flex;align-items:flex-start;gap:4px;flex-wrap:wrap}.hy-l{font-weight:700;font-size:13px;line-height:1.25;flex:1 1 100%;min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hy-top .chip{font-size:10.5px;padding:1px 6px}
+.hy-row{display:flex;align-items:center;gap:2px;margin-top:2px}.hy-d{all:unset;box-sizing:border-box;flex:1;min-height:36px;font-size:12.5px;font-weight:650;color:var(--ink);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:4px}.hy-d span{color:var(--muted);margin-left:auto}
+.hy-d:focus-visible{outline:3px solid var(--acc)}.hy-row .btn.ic{min-width:36px;min-height:36px;padding:0}
+.hy-form{margin:8px 0 4px}
+#holHours[hidden]{display:none}
 /* 1.29.2 (a) : bloc Absences compact */
 #attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}
 .abs-r2{display:flex;align-items:center;gap:6px;margin-top:6px;min-width:0;font-size:12.5px;color:var(--muted)}#attInfo{flex:1 1 auto;min-width:0}
@@ -1778,7 +1795,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});}
    var nc=document.querySelectorAll('#clsManage .clsrow[data-cid]').length,ne=(bi.match(/(\d+)\s+élève/)||[])[1];r.cls=[nc+' classe'+(nc>1?'s':'')+(ne!=null?' · '+ne+' élève'+(ne>1?'s':''):'')+' · note comportementale',String(nc)];
    r.pts=['A '+num(val('ptA'))+' · ST '+num(val('ptS'))+' · R '+num(val('ptL'))+' · M '+num(val('ptM')),''];
    var ncy=document.querySelectorAll('#calSettings input[type=date]').length/2|0;r.annee=[(ncy?ncy+' cycles · ':'')+val('setSpp')+' séances/cycle · alerte à '+val('setThreshold')+' abs.',''];
-   var nh=document.querySelectorAll('#holCard .hols li').length;r.hol=[nh?nh+' période'+(nh>1?'s':'')+' sans cours':'Aucune période enregistrée',nh?String(nh):''];
+   var nh=document.querySelectorAll('#holCard .hy-card').length;r.hol=[nh?nh+' période'+(nh>1?'s':'')+' sans cours':'Aucune période enregistrée',nh?String(nh):''];
    r.pdf=['Bilans, listes, relevés, tests · PDF et CSV',''];
    m=bi.match(/(Dernière sauvegarde : .*|Aucune sauvegarde[^.]*)/);r.bk=[m?m[1].replace(/\.$/,''):'Télécharger, restaurer, photos',''];
    var ns=document.querySelectorAll('#snapList .snaprow').length;r.snap=[ns?ns+' copie'+(ns>1?'s':'')+' automatique'+(ns>1?'s':'')+' sur cet appareil':'Copies automatiques sur cet appareil',ns?String(ns):''];
@@ -2019,7 +2036,7 @@ function normalize(d){
   if(d.cal&&typeof d.cal==='object'){var dc=d.cal;var wk=parseInt(dc.weeks,10);if(wk>=1&&wk<=20)b.cal.weeks=wk;
     if(Array.isArray(dc.cycles))b.cal.cycles=dc.cycles.slice(0,12).map(function(c){c=c||{};var f=isoOk(c.from)?c.from:'',t=isoOk(c.to)?c.to:'';if(f&&t&&t<f)t='';return {from:f,to:t};});
     b.cal.start=(b.cal.cycles[0]&&b.cal.cycles[0].from)||'';
-    if(Array.isArray(dc.holidays))b.cal.holidays=dc.holidays.filter(function(h){return h&&isoOk(h.from);}).map(function(h,i){return {id:String(h.id||('h'+i+uid())),from:h.from,to:isoOk(h.to)&&h.to>h.from?h.to:'',label:String(h.label||'').slice(0,80),approx:!!h.approx,off:!!h.off&&!h.approx};});
+    if(Array.isArray(dc.holidays))b.cal.holidays=dc.holidays.filter(function(h){return h&&isoOk(h.from);}).map(function(h,i){var o={id:String(h.id||('h'+i+uid())),from:h.from,to:isoOk(h.to)&&h.to>h.from?h.to:'',label:String(h.label||'').slice(0,80),approx:!!h.approx,off:!!h.off&&!h.approx},tm=/^([01]\d|2[0-3]):[0-5]\d$/;/* 1.29.2 (c) : heures facultatives (champs ajoutés, absents = toute la journée) */if(tm.test(h.startTime||'')&&tm.test(h.endTime||'')&&h.startTime<h.endTime){o.startTime=h.startTime;o.endTime=h.endTime;}return o;});
     var ob=parseFloat(dc.oblig);if(ob>0&&ob<=60)b.cal.oblig=ob;var pw=parseInt(dc.perWeek,10);if(pw>=1&&pw<=10)b.cal.perWeek=pw;['dayMin','dayMax','friMax'].forEach(function(k){var v=parseFloat(dc[k]);if(v>=0&&v<=12)b.cal[k]=v;});
     if(Array.isArray(dc.tt))b.cal.tt=dc.tt.filter(function(t){return t&&(t.type==='as'||ids[t.classId])&&+t.day>=1&&+t.day<=6&&/^\d\d:\d\d$/.test(t.start)&&/^\d\d:\d\d$/.test(t.end);}).map(function(t,i){var as=t.type==='as';return {id:String(t.id||('t'+i+uid())),type:as?'as':'class',day:+t.day,start:t.start,end:t.end,classId:as?'':String(t.classId),room:String(t.room||'').slice(0,40)};});
     if(!dc.asInit&&!b.cal.tt.some(function(t){return t.type==='as';}))b.cal.tt.push(defAS());}
@@ -2065,7 +2082,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2b';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2c';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3311,15 +3328,18 @@ function calReset(){CAL=null;}
 function cal(){
   if(CAL)return CAL;
   var H={};
-  DB.cal.holidays.forEach(function(h){var b=h.to&&h.to>=h.from?h.to:h.from;for(var x=h.from,n=0;x<=b&&n<370;x=addDays(x,1),n++)if(!H[x])H[x]=h;});
+  var HT={};/* 1.29.2 (c) : indisponibilité sur une plage horaire → seuls les créneaux qui la chevauchent sont neutralisés */
+  DB.cal.holidays.forEach(function(h){var b=h.to&&h.to>=h.from?h.to:h.from,tm=holTimed(h);for(var x=h.from,n=0;x<=b&&n<370;x=addDays(x,1),n++){if(tm)(HT[x]=HT[x]||[]).push(h);else if(!H[x])H[x]=h;}});
   var cyc=[];
   for(var i=0;i<DB.periods.length;i++){var r=DB.cal.cycles[i]||{};
     if(!isoOk(r.from)||!isoOk(r.to)||r.to<r.from){cyc.push({i:i,start:'',end:'',weeks:[],skipped:[],bad:true});continue;}
     var c={i:i,start:r.from,end:r.to,weeks:[],skipped:[]},mon=addDays(r.from,1-wday(r.from)),g=0;
     while(mon<=r.to&&g++<60){var free=false;for(var k=0;k<6;k++){var dd=addDays(mon,k);if(dd>=r.from&&dd<=r.to&&!H[dd]){free=true;break;}}(free?c.weeks:c.skipped).push(mon);mon=addDays(mon,7);}
     cyc.push(c);}
-  CAL={H:H,cycles:cyc,auto:{}};return CAL;
+  CAL={H:H,HT:HT,cycles:cyc,auto:{}};return CAL;
 }
+function holTimed(h){return !!(h&&h.startTime&&h.endTime&&h.startTime<h.endTime);}
+function holAt(dd,t){var C=cal();if(C.H[dd])return C.H[dd];var a=C.HT[dd];if(a&&t)for(var i=0;i<a.length;i++)if(t.start<a[i].endTime&&a[i].startTime<t.end)return a[i];return null;}
 function defAS(){return {id:'tAS',type:'as',day:5,start:'15:00',end:'18:00',classId:'',room:''};}
 function isAS(t){return t.type==='as';}
 function slotName(t){return isAS(t)?TX.asShort:clsName(t.classId);}
@@ -3341,7 +3361,7 @@ function maxRecIdx(){var C=cal();if(C.mx)return C.mx;var mx={};Object.keys(DB.se
 function colsOf(cid,p){
   var C=cal();C.cols=C.cols||{};var key=cid+'|'+p;if(C.cols[key])return C.cols[key];
   var c=C.cycles[p],out=[],sl=slotsOf(cid),k=0;
-  if(c&&!c.bad&&sl.length){for(var dd=c.start,g=0;dd<=c.end&&g<400;dd=addDays(dd,1),g++){var w=wday(dd),h=C.H[dd];sl.forEach(function(t){if(t.day!==w)return;if(h)out.push({hol:h,date:dd,slot:t});else out.push({s:k++,date:dd,slot:t});});}}
+  if(c&&!c.bad&&sl.length){for(var dd=c.start,g=0;dd<=c.end&&g<400;dd=addDays(dd,1),g++){var w=wday(dd);sl.forEach(function(t){if(t.day!==w)return;var h=holAt(dd,t);if(h)out.push({hol:h,date:dd,slot:t});else out.push({s:k++,date:dd,slot:t});});}}
   else for(;k<DB.spp;k++)out.push({s:k,date:''});
   var mx=maxRecIdx()[key];if(mx!=null)while(k<=mx)out.push({s:k++,date:''});
   out.n=k;return (C.cols[key]=out);
@@ -3383,7 +3403,7 @@ function cycleInfoHtml(cid,p){
   else{var hc=colsOf(cid,p).filter(function(x){return x.hol;}).length;if(hc)h+=' <span class="muted">· '+esc(TX.holCols(hc))+'</span>';}
   return h;
 }
-function fmtRange(h){return h.to&&h.to!==h.from?dmy(h.from)+' → '+dmy(h.to):dmy(h.from);}
+function fmtRange(h){return (h.to&&h.to!==h.from?dmy(h.from)+' → '+dmy(h.to):dmy(h.from))+(holTimed(h)?' · '+h.startTime+'–'+h.endTime:'');}
 
 /* ================= Home (Accueil) ================= */
 var ttEdit=null;
@@ -3391,7 +3411,7 @@ function occurrences(from,to){
   var C=cal(),out=[];
   for(var d=from,n=0;d<=to&&n<120;d=addDays(d,1),n++){
     if(C.H[d]||!isoOk(DB.cal.start)||d<DB.cal.start)continue;var w=wday(d);
-    DB.cal.tt.filter(function(t){return t.day===w&&(isAS(t)||cls(t.classId));}).sort(byStart).forEach(function(t){
+    DB.cal.tt.filter(function(t){return t.day===w&&(isAS(t)||cls(t.classId))&&!holAt(d,t);}).sort(byStart).forEach(function(t){
       if(isAS(t)){out.push({date:d,slot:t,cyc:-2,s:-1});return;}
       var c=cycleAt(d),si=-1;if(c){var ad=autoDates(t.classId,c.i);for(var k=0;k<ad.length;k++)if(ad[k].date===d&&ad[k].slot.id===t.id){si=k;break;}}
       out.push({date:d,slot:t,cyc:c?c.i:-1,s:si});
@@ -3457,7 +3477,7 @@ function renderHome(){
   if(cur){var wk=0;cur.weeks.forEach(function(m,j){if(m<=t)wk=j+1;});h+='<div class="curcyc"><b>'+esc(cycleLabel(cur.i))+'</b><span class="small muted">'+TX.cycRange(dmy(cur.start),dmy(cur.end))+(wk?' · '+esc(TX.weekOf(wk,cur.weeks.length)):'')+'</span></div>';}
   else if(nextC)h+='<div class="curcyc">'+TX.nextCycle(esc(cycleLabel(nextC.i)),dmy(nextC.start))+'</div>';
   else if(cs.length)h+='<div class="curcyc muted">'+esc(TX.yearOver)+'</div>';
-  var hol=C.H[t];if(hol)h+='<div class="holnote">'+esc(hol.label)+(hol.approx?' <span class="chip warn">'+esc(TX.holApprox)+'</span>':'')+'</div>';
+  var hol=C.H[t];(C.HT[t]||[]).forEach(function(x){h+='<div class="holnote">'+esc(x.startTime+'–'+x.endTime+' · '+x.label)+'</div>';});if(hol)h+='<div class="holnote">'+esc(hol.label)+(hol.approx?' <span class="chip warn">'+esc(TX.holApprox)+'</span>':'')+'</div>';
   var occ=occurrences(t,t);
   h+='<h3>'+esc(TX.todaySess)+'</h3>'+(occ.length?occList(occ,true):'<p class="muted small">'+esc(hol?TX.noSessHol:(DB.cal.tt.some(function(t){return !isAS(t);})?TX.noSessToday:TX.noTT))+'</p>');
   var nx=occurrences(addDays(t,1),addDays(t,60)).slice(0,3);
@@ -3644,22 +3664,31 @@ function renderCalSettings(){
     '<div class="pq-sheet" id="cycSheet" role="dialog" aria-modal="true" aria-labelledby="cycSheetT" hidden><div class="pq-bd" data-pq-close="1"></div><div class="pq-pan"><div class="pq-grab" aria-hidden="true"></div><div class="pq-hd"><b id="cycSheetT">Comment sont utilisées ces dates\u00a0?</b><button type="button" class="pq-x" data-pq-close="1" aria-label="Fermer">✕</button></div><p class="small">'+esc(TX.cycNote2)+'</p><p class="small muted">Touchez les dates d’un cycle pour les modifier.</p></div></div>'+
     '<div class="row2"><button type="button" class="btn sec" id="cycOfficial">'+esc(TX.cycOfficial)+'</button></div>'+
     '<details class="cycauto"><summary>'+esc(TX.cycAutoLbl)+'</summary><div class="ttgrid"><div><label class="f" for="cycAutoStart">'+esc(TX.setStart)+'</label><input type="date" id="cycAutoStart" value="'+esc((DB.cal.cycles[0]||{}).from||'')+'"></div><div><label class="f" for="cycAutoW">'+esc(TX.setWeeks)+'</label><input type="number" id="cycAutoW" min="1" max="20" inputmode="numeric" value="'+DB.cal.weeks+'"></div></div><p class="small muted">'+esc(TX.setCalNote)+'</p><button type="button" class="btn sec" id="cycAutoGo">'+esc(TX.cycAutoGo)+'</button></details>'+
-    '<div class="ttgrid"><div><label class="f" for="setOblig">'+esc(TX.setOblig)+'</label><input type="number" id="setOblig" min="1" max="60" step="0.5" inputmode="decimal" value="'+DB.cal.oblig+'"></div><div><label class="f" for="setPerWeek">'+esc(TX.setPerWeek)+'</label><input type="number" id="setPerWeek" min="1" max="10" inputmode="numeric" value="'+DB.cal.perWeek+'"></div></div>'+
-    '<p class="small muted">'+esc(TX.setSvcNote)+'</p>'+
-    '<div class="ttgrid three"><div><label class="f" for="setDayMin">'+esc(TX.setDayMin)+'</label><input type="number" id="setDayMin" min="0" max="12" step="0.5" inputmode="decimal" value="'+DB.cal.dayMin+'"></div><div><label class="f" for="setDayMax">'+esc(TX.setDayMax)+'</label><input type="number" id="setDayMax" min="0" max="12" step="0.5" inputmode="decimal" value="'+DB.cal.dayMax+'"></div><div><label class="f" for="setFriMax">'+esc(TX.setFriMax)+'</label><input type="number" id="setFriMax" min="0" max="12" step="0.5" inputmode="decimal" value="'+DB.cal.friMax+'"></div></div>'+
+    /* 1.29.2 (c) : champs de service (21 h, 2 séances, min/max par jour, vendredi) retirés de l’écran ; valeurs DB.cal.oblig/perWeek/dayMin/dayMax/friMax conservées et toujours utilisées (Accueil, emploi du temps), défauts 21/2/2/6/4 si absentes */
     '<label class="f">'+esc(TX.cyclesLbl)+'</label>';
   var hs=DB.cal.holidays.slice().sort(function(a,b){return a.from<b.from?-1:a.from>b.from?1:0;});
-  var e=holEdit&&DB.cal.holidays.filter(function(x){return x.id===holEdit;})[0];if(!e)holEdit=null;
-  $('holCard').innerHTML='<h2>'+esc(TX.holTitle)+'</h2><p class="small muted" style="margin-top:0">'+esc(TX.holNote)+'</p>'+
-    (hs.length?'<ul class="list hols">'+hs.map(function(x){return '<li class="'+(holEdit===x.id?'on':'')+'"><div class="hm"><span class="hd">'+fmtRange(x)+(x.approx?' <span class="chip warn">'+esc(TX.holApprox)+'</span>':(x.off?' <span class="chip ok">'+esc(TX.holOff)+'</span>':''))+'</span><span class="hl" dir="auto">'+esc(x.label)+'</span></div><button type="button" class="btn ghost ic" data-hedit="'+esc(x.id)+'" aria-label="'+esc(TX.edit)+'" title="'+esc(TX.edit)+'">✎</button><button type="button" class="btn ghost ic" data-hdel="'+esc(x.id)+'" aria-label="'+esc(TX.del)+'" title="'+esc(TX.del)+'">✕</button></li>';}).join('')+'</ul>':'<p class="muted small">'+esc(TX.holEmpty)+'</p>')+
-    '<div class="ttform" id="holForm"><h3>'+esc(e?TX.holFormEdit:TX.holFormAdd)+'</h3><div class="ttgrid">'+
+  var e=holEdit&&DB.cal.holidays.filter(function(x){return x.id===holEdit;})[0];if(!e&&holEdit!=='__new')holEdit=null;
+  /* 1.29.2 (c) : Vacances et jours fériés en cartes (comme Année scolaire B) ; formulaire avec heures facultatives ; texte dans ⓘ — affichage + champs facultatifs startTime/endTime */
+  var Y0=(DB.cal.cycles[0]||{}).from||'',Y1=(DB.cal.cycles[DB.cal.cycles.length-1]||{}).to||'';
+  function pos(x){if(!Y0||!Y1||Y1<=Y0)return -1;var a=pdate(Y0),z=pdate(Y1),d=pdate(x);return Math.max(0,Math.min(100,(d-a)/(z-a)*100));}
+  function kind(x){return holTimed(x)?'tm':isVacH(x)?'vac':'fer';}
+  var tl=Y0&&Y1?'<div class="hy-tl" aria-hidden="true">'+hs.map(function(x){var a=pos(x.from),z=pos(x.to||x.from);if(a<0)return '';return '<i class="hy-'+kind(x)+'" style="left:'+a.toFixed(1)+'%;width:'+Math.max(z-a,0.9).toFixed(1)+'%"></i>';}).join('')+'</div><div class="hy-lg"><span><i class="hy-vac"></i>Vacances</span><span><i class="hy-fer"></i>Férié</span><span><i class="hy-tm"></i>Indisponibilité (heures)</span></div>':'';
+  var add=!e&&holEdit==='__new';
+  function form(ed){var td=!(ed&&holTimed(ed));return '<div class="ttform hy-form" id="holForm"><h3>'+esc(ed?TX.holFormEdit:TX.holFormAdd)+'</h3><div class="ttgrid">'+
     '<div><label class="f" for="holFrom">'+esc(TX.holFrom)+'</label><input type="date" id="holFrom"></div>'+
     '<div><label class="f" for="holTo">'+esc(TX.holTo)+'</label><input type="date" id="holTo"></div></div>'+
-    '<label class="f" for="holLabel">'+esc(TX.holLabel)+'</label><input type="text" id="holLabel" dir="auto" maxlength="80" placeholder="'+esc(TX.holLabelPh)+'">'+
+    '<label class="chk" style="margin-top:10px"><input type="checkbox" id="holAllDay"'+(td?' checked':'')+'> Toute la journée</label>'+
+    '<div class="ttgrid" id="holHours"'+(td?' hidden':'')+'><div><label class="f" for="holStart">Début</label><input type="time" id="holStart" step="300"></div><div><label class="f" for="holEnd">Fin</label><input type="time" id="holEnd" step="300"></div></div>'+
+    '<label class="f" for="holLabel">'+esc(TX.holLabel)+'</label><input type="text" id="holLabel" dir="auto" maxlength="80" list="holKinds" placeholder="'+esc(TX.holLabelPh)+'"><datalist id="holKinds"><option value="Réunion administration"><option value="Inspection"><option value="Conseil de classe"><option value="Formation"><option value="Examen"><option value="Jour férié"><option value="Vacances"></datalist>'+
     '<label class="chk" style="margin-top:10px"><input type="checkbox" id="holApprox"> '+esc(TX.holApproxLbl)+'</label>'+
-    '<div class="actions">'+(e?'<button type="button" class="btn sec" id="holCancel">'+esc(TX.cancel)+'</button>':'')+'<button type="button" class="btn" id="holSave">'+esc(e?TX.holSave:TX.holAdd)+'</button></div></div>'+
-    '<div class="actions"><button type="button" class="btn sec" id="holReset">'+esc(TX.holReset)+'</button></div>';
-  if(e){$('holFrom').value=e.from;$('holTo').value=e.to||'';$('holLabel').value=e.label;$('holApprox').checked=!!e.approx;}
+    '<div class="actions"><button type="button" class="btn sec" id="holCancel">'+esc(TX.cancel)+'</button><button type="button" class="btn" id="holSave">'+esc(ed?TX.holSave:TX.holAdd)+'</button></div></div>';}
+  $('holCard').innerHTML='<div class="cy-head"><h2 style="margin:0;flex:1">'+esc(TX.holTitle)+'</h2><button type="button" class="pq-ib pq-i cy-i" data-pq-open="holSheet" aria-label="À propos de cette liste" aria-haspopup="dialog" aria-expanded="false">ⓘ</button></div>'+tl+
+    (add?form(null):'<button type="button" class="btn hy-add" id="holNew">＋ Ajouter une date ou une indisponibilité</button>')+
+    (hs.length?'<div class="hy-grid">'+hs.map(function(x){var k=kind(x),ed=holEdit===x.id;return '<div class="hy-card hy-k-'+k+(ed?' ed':'')+'"><div class="hy-top"><span class="hy-l" dir="auto">'+esc(x.label)+'</span>'+(x.approx?'<span class="chip warn">'+esc(TX.holApprox)+'</span>':(x.off?'<span class="chip ok">'+esc(TX.holOff)+'</span>':''))+'</div>'+
+      '<div class="hy-row"><button type="button" class="hy-d" data-hedit="'+esc(x.id)+'" aria-label="'+esc(TX.edit)+' : '+esc(x.label)+'">'+fmtRange(x)+' <span aria-hidden="true">✎</span></button><button type="button" class="btn ghost ic" data-hdel="'+esc(x.id)+'" aria-label="'+esc(TX.del)+'" title="'+esc(TX.del)+'">✕</button></div>'+(ed?form(x):'')+'</div>';}).join('')+'</div>':'<p class="muted small">'+esc(TX.holEmpty)+'</p>')+
+    '<div class="actions"><button type="button" class="btn sec" id="holReset">'+esc(TX.holReset)+'</button></div>'+
+    '<div class="pq-sheet" id="holSheet" role="dialog" aria-modal="true" aria-labelledby="holSheetT" hidden><div class="pq-bd" data-pq-close="1"></div><div class="pq-pan"><div class="pq-grab" aria-hidden="true"></div><div class="pq-hd"><b id="holSheetT">'+esc(TX.holTitle)+'</b><button type="button" class="pq-x" data-pq-close="1" aria-label="Fermer">✕</button></div><p class="small">'+esc(TX.holNote)+'</p><p class="small muted">Indisponibilité avec des heures (réunion, inspection…)\u00a0: seuls les créneaux de l’emploi du temps qui chevauchent ces heures sont neutralisés (grisés avec le motif, hors absences, points et statistiques).</p></div></div>';
+  if(e){$('holFrom').value=e.from;$('holTo').value=e.to||'';$('holLabel').value=e.label;$('holApprox').checked=!!e.approx;if(holTimed(e)){$('holStart').value=e.startTime;$('holEnd').value=e.endTime;}}
 }
 $('calSettings').addEventListener('change',function(e){
   var cr=e.target.closest&&e.target.closest('.cycrow');
@@ -3682,14 +3711,17 @@ $('holCard').addEventListener('click',function(e){
   var b;
   if((b=e.target.closest('[data-hedit]'))){holEdit=b.dataset.hedit;renderCalSettings();var f=$('holForm');if(f&&f.scrollIntoView)f.scrollIntoView({block:'nearest'});return;}
   if((b=e.target.closest('[data-hdel]'))){var h=DB.cal.holidays.filter(function(x){return x.id===b.dataset.hdel;})[0];if(!h||!confirm(TX.holDelQ(h.label)))return;DB.cal.holidays=DB.cal.holidays.filter(function(x){return x!==h;});if(holEdit===h.id)holEdit=null;persistNow();calReset();renderCalSettings();toast(TX.holDeleted);return;}
+  if(e.target.id==='holNew'){holEdit='__new';renderCalSettings();var f0=$('holFrom');if(f0)f0.focus();return;}
+  if(e.target.id==='holAllDay'){var hh=$('holHours');if(hh)hh.hidden=e.target.checked;return;}
   if(e.target.id==='holCancel'){holEdit=null;renderCalSettings();return;}
   if(e.target.id==='holReset'){if(!confirm(TX.holResetQ))return;DB.cal.holidays=defHolidays();holEdit=null;persistNow();calReset();renderCalSettings();toast(TX.holResetDone);return;}
   if(e.target.id==='holSave'){
     var f=$('holFrom').value,t=$('holTo').value,l=$('holLabel').value.trim().replace(/\s+/g,' ');
     if(!isoOk(f)||!l){toast(TX.holNeed);return;}
     if(!isoOk(t)||t===f)t='';else if(t<f){var z=f;f=t;t=z;}
-    var o={from:f,to:t,label:l,approx:$('holApprox').checked};if(holEdit){var old=DB.cal.holidays.filter(function(x){return x.id===holEdit;})[0];o.off=!!(old&&old.off&&old.from===f&&(old.to||'')===t&&!o.approx);}else o.off=false;
-    if(holEdit){var x=DB.cal.holidays.filter(function(x){return x.id===holEdit;})[0];Object.keys(o).forEach(function(k){x[k]=o[k];});toast(TX.holSaved);}
+    var o={from:f,to:t,label:l,approx:$('holApprox').checked},ad=$('holAllDay'),hs0=$('holStart')&&$('holStart').value,he0=$('holEnd')&&$('holEnd').value;
+    if(ad&&!ad.checked){if(!/^\d\d:\d\d$/.test(hs0||'')||!/^\d\d:\d\d$/.test(he0||'')||hs0>=he0){toast('Indiquez une heure de début et une heure de fin valides.');return;}o.startTime=hs0;o.endTime=he0;}if(holEdit&&holEdit!=='__new'){var old=DB.cal.holidays.filter(function(x){return x.id===holEdit;})[0];o.off=!!(old&&old.off&&old.from===f&&(old.to||'')===t&&!o.approx);}else o.off=false;
+    if(holEdit&&holEdit!=='__new'){var x=DB.cal.holidays.filter(function(x){return x.id===holEdit;})[0];Object.keys(o).forEach(function(k){x[k]=o[k];});if(!o.startTime){delete x.startTime;delete x.endTime;}toast(TX.holSaved);}
     else{o.id='h'+uid();DB.cal.holidays.push(o);toast(TX.holAdded);}
     holEdit=null;persistNow();calReset();renderCalSettings();
   }
