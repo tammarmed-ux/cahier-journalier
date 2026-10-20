@@ -110,7 +110,7 @@ check('après rechargement : g1, g2 et champs additifs conservés (normEv)',JSON
 const KEYS1=await p.evaluate(()=>Object.keys(localStorage).sort());
 check('aucune nouvelle clé de stockage',KEYS1.every(k=>KEYS0.includes(k)||/^classRegister\.v2\.snapm?\.\d+$|^cahier\.snapDay$/.test(k))   /* seules les sauvegardes automatiques existantes */,JSON.stringify(KEYS1.filter(k=>!KEYS0.includes(k))));
 await proc();check('après rechargement : grille affichée avec codes',await cellTxt('s0','g1')==='5N3+'&&await cellTxt('s0','g2')==='3,5N2 · V');
-if(process.env.SHOTS){const O='/workspace/backups/v1.29.1-preview/';await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(200);await p.screenshot({path:O+'sc-grille.png'});
+if(process.env.SHOTS){const O='/workspace/backups/v1.29.2-preview/';await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(200);await p.screenshot({path:O+'sc-grille.png'});
   await tapCell('s1','g1');await p.screenshot({path:O+'sc-pave-indiv.png'});await close();await sleep(100);
   await tapCell('s2','g2');await p.screenshot({path:O+'sc-pave-coll.png'});await tapC('N3+');await p.screenshot({path:O+'sc-pave-match.png'});await close();
   for(const T of ['neon','terrain']){await p.evaluate(T=>document.documentElement.setAttribute('data-theme',T),T);await sleep(150);await tapCell('s1','g2');await p.screenshot({path:O+'sc-pave-coll-'+(T==='neon'?'neon':'vert')+'.png'});await close();}
@@ -128,7 +128,7 @@ check('groupe Bleu : N4 4,5 + Défaite 1 = 5,5 pour s2 et s3 (ancien Collectif 3
 check('Individuel de s3 conservé (4,25) — l’Individuel reste propre à chaque élève',e5.g1===4.25,JSON.stringify(e5));
 check('dernier groupe : pavé fermé, toast groupe + « Dernier groupe »',!P.open&&/^Note collective appliquée aux 2 membres du groupe Bleu · Dernier groupe/.test(TO),TO);
 const rouge=[await ev('s0'),await ev('s1')];check('groupe Rouge inchangé par la note du groupe Bleu',rouge.every(x=>x.g2===3.5&&x.scm==='V'));
-if(process.env.SHOTS){await tapCell('s0','g2');await tapC('N3');await tapM('E');await close();await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(150);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/sc-coll-groupe.png'});}
+if(process.env.SHOTS){await tapCell('s0','g2');await tapC('N3');await tapM('E');await close();await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(150);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/sc-coll-groupe.png'});}
 // 1.29.1 (-p) : couleurs des niveaux (variante B), contraste AA dans les 3 thèmes
 await p.evaluate(()=>document.querySelector('#tabs button[data-tab="proc"]').click());await sleep(400);
 const AA=()=>p.evaluate(()=>{function L(c){const m=c.match(/[\d.]+/g).map(Number);const a=m.slice(0,3).map(x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4});return .2126*a[0]+.7152*a[1]+.0722*a[2];}
@@ -139,13 +139,13 @@ const AA=()=>p.evaluate(()=>{function L(c){const m=c.match(/[\d.]+/g).map(Number
 for(const T of ['','terrain','neon']){await p.evaluate(T=>{if(T)document.documentElement.setAttribute('data-theme',T);else document.documentElement.removeAttribute('data-theme');},T);await sleep(150);
   await tapCell('s1','g1');const a1=await AA();
   check('couleurs B ('+(T||'actuel')+') : en-têtes l1…l4, cases colorées par niveau, anciennes sans couleur, contraste ≥ 4,5',a1.cls==='h l1,h l2,h l3,h l4'&&a1.out.length===0&&a1.n>20,JSON.stringify(a1));
-  if(process.env.SHOTS&&!T){await sleep(2800);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/couleurs-B-pave.png'});}
+  if(process.env.SHOTS&&!T){await sleep(2800);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/couleurs-B-pave.png'});}
   await close();await sleep(120);
-  if(process.env.SHOTS&&T){await tapCell('s1','g1');await p.screenshot({path:'/workspace/backups/v1.29.1-preview/couleurs-B-pave-'+(T==='neon'?'neon':'vert')+'.png'});await close();await sleep(100);}}
+  if(process.env.SHOTS&&T){await tapCell('s1','g1');await p.screenshot({path:'/workspace/backups/v1.29.2-preview/couleurs-B-pave-'+(T==='neon'?'neon':'vert')+'.png'});await close();await sleep(100);}}
 await p.evaluate(()=>document.documentElement.removeAttribute('data-theme'));
 const lvs=await p.evaluate(()=>[...document.querySelectorAll('#procWrap tr[data-sid] .scb')].map(b=>(b.className.match(/l\d/)||['-'])[0]).join(','));
 check('grille : niveaux des cases (s0 Indiv. sans code après saisie libre, Collectif N3 ; s3 Indiv. ancienne note)',lvs===(process.env.SHOTS?'-,l3,-,l3,-,l4,-,l4':'-,l2,-,l2,-,l4,-,l4'),lvs);   /* avec SHOTS, la capture sc-coll-groupe redonne N3 au groupe Rouge */
-if(process.env.SHOTS){await tapCell('s0','g1');await tapC('N4-');await tapC('N2');await tapC('N1+');await close();await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(2800);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/couleurs-B-grille.png'});}
+if(process.env.SHOTS){await tapCell('s0','g1');await tapC('N4-');await tapC('N2');await tapC('N1+');await close();await p.evaluate(()=>{document.getElementById('procWrap').scrollIntoView({block:'start'});window.scrollBy(0,-20);});await sleep(2800);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/couleurs-B-grille.png'});}
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,300));
 srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);
 })().catch(e=>{console.log('FATAL',e);process.exit(1);});

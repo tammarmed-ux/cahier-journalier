@@ -52,14 +52,14 @@ const selCls=async cid=>{await p.evaluate(cid=>{const s=document.querySelector('
 await p.evaluate(()=>{const A=window.CJR;A.db().ui.cls='k2';A.db().ui.per=0;});await p.evaluate(()=>{document.querySelector('#tabs button[data-tab="home"]').click();document.querySelector('#tabs button[data-tab="proc"]').click();});await sleep(500);
 const btn=await p.evaluate(()=>{const b=document.querySelector('[data-essdl]');if(!b)return null;const r=b.getBoundingClientRect(),th=b.closest('th');return {w:Math.round(r.width),h:Math.round(r.height),al:b.getAttribute('aria-label'),th:th?th.textContent.trim():'',n:document.querySelectorAll('[data-essdl]').length,x:r.left,y:r.top};});
 check('bouton à côté de « Essai 1 » (un seul), aria-label « Télécharger tous les essais », zone de toucher ≥ 44 px',!!btn&&btn.n===1&&/^Essai 1/.test(btn.th)&&btn.al==='Télécharger tous les essais'&&btn.w>=44&&btn.h>=44,JSON.stringify(btn));
-fs.mkdirSync('/workspace/backups/v1.29.1-preview',{recursive:true});
+fs.mkdirSync('/workspace/backups/v1.29.2-preview',{recursive:true});
 await p.evaluate(()=>{const b=document.querySelector('[data-essdl]');b.scrollIntoView({block:'center'});const sc=b.closest('.tablewrap,.gridwrap')||b.closest('table').parentElement;if(sc)sc.scrollLeft=0;window.scrollBy(0,-120);});await sleep(400);
 const bb=await p.evaluate(()=>{const r=document.querySelector('[data-essdl]').closest('th').getBoundingClientRect();return {y:Math.max(0,r.top-150)};});
-await p.screenshot({path:'/workspace/backups/v1.29.1-preview/essais-icone.png',clip:{x:0,y:bb.y,width:390,height:Math.min(480,844-bb.y)}});
+await p.screenshot({path:'/workspace/backups/v1.29.2-preview/essais-icone.png',clip:{x:0,y:bb.y,width:390,height:Math.min(480,844-bb.y)}});
 await p.click('[data-essdl]');await sleep(400);
 const menu=await p.evaluate(()=>{const m=document.getElementById('essMenu');return m&&m.classList.contains('open')?m.innerText.replace(/\s+/g,' '):'';});
 check('menu : PDF ou CSV (Excel), classe et cycle indiqués',/Télécharger tous les essais/.test(menu)&&/PDF/.test(menu)&&/CSV/.test(menu)&&/2BAC44/.test(menu),menu);
-await p.screenshot({path:'/workspace/backups/v1.29.1-preview/essais-menu.png'});
+await p.screenshot({path:'/workspace/backups/v1.29.2-preview/essais-menu.png'});
 await p.evaluate(()=>{window.__lastPdf=null;});await p.click('#essMenu [data-ess="pdf"]');await p.waitForFunction(()=>window.__lastPdf,{timeout:60000});
 const pb=await p.evaluate(async()=>{const x=window.__lastPdf,a=new Uint8Array(await x.blob.arrayBuffer());let s='';for(let i=0;i<a.length;i+=32768)s+=String.fromCharCode.apply(null,a.subarray(i,i+32768));return {b:btoa(s),n:x.name};});
 const F44=OUT+'/essais-44.pdf';fs.writeFileSync(F44,Buffer.from(pb.b,'base64'));const T=ptxt(F44,1);
@@ -74,7 +74,7 @@ const R45=await make('essais',{cid:'k3',p:0});const F45=OUT+'/essais-45.pdf';fs.
 check('45 élèves : 2 pages, en-tête répété, corps ≥ 7 pt ; 44 : corps ≥ 7 pt',pages(F45)===2&&lg.length===2&&lg[0].n+lg[1].n===45&&/Essai 1/.test(ptxt(F45,2))&&lg.every(t=>t.minBody>=7),JSON.stringify(lg));
 const R30=await make('essais',{cid:'k0',p:0});const F30=OUT+'/essais-30.pdf';fs.writeFileSync(F30,Buffer.from(R30.b64,'base64'));
 check('noms arabes : police arabe intégrée',/NSA/.test(cp.execSync('pdffonts "'+F30+'"').toString()));
-cp.execSync('pdftoppm -png -r 110 -f 1 -l 1 -singlefile "'+F44+'" /workspace/backups/v1.29.1-preview/essais-pdf-44');
+cp.execSync('pdftoppm -png -r 110 -f 1 -l 1 -singlefile "'+F44+'" /workspace/backups/v1.29.2-preview/essais-pdf-44');
 // ----- CSV -----
 await p.evaluate(()=>{window.__dl=null;const ou=URL.createObjectURL,blobs={};URL.createObjectURL=function(x){const u=ou.call(URL,x);blobs[u]=x;return u;};const oc=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){const x=blobs[this.href];if(x&&/\.csv$/.test(this.download)){x.text().then(t=>{window.__dl={n:this.download,c:t};});return;}return oc.call(this);};});
 await p.click('[data-essdl]');await sleep(300);await p.click('#essMenu [data-ess="csv"]');await p.waitForFunction(()=>window.__dl,{timeout:10000}).catch(()=>{});

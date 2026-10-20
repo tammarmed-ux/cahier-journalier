@@ -58,8 +58,8 @@ check('couleur selon le sens : baisse d’absences = vert (good), hausse = rouge
 check('données de démo : A en baisse (vert), R en hausse (rouge), ST stable (gris)',by.A.cl==='good'&&by.L.cl==='bad'&&by.S.cl==='flat',[by.A.b,by.L.b,by.S.b].join(' | '));
 check('Séances effectuées : couleur neutre (bleu) ou gris si stable — ni bon ni mauvais (démo : 5 → 6 = bleu ▲ +1)',by.held.cl===(by.held.dir==='flat'?'flat':'neu')&&by.held.cl==='neu'&&by.held.b==='▲ +1',by.held.dir+'/'+by.held.cl);
 check('accessible sans la couleur : flèche ▲/▼ + nombre, texte lu « semaine dernière N, cette semaine M, en baisse de … (bon signe) »',/^▼ −\d+$/.test(by.A.b)&&/^▲ \+\d+$/.test(by.L.b)&&by.S.b==='= stable'&&/semaine dernière \d+, cette semaine \d+, en baisse de \d+ \(bon signe\)/.test(by.A.sr)&&/en hausse de \d+ \(à surveiller\)/.test(by.L.sr),by.A.sr);
-const cap=await p.evaluate(()=>document.getElementById('hsCap').textContent);
-check('légende : « semaine en cours (lun. → aujourd’hui) comparée à la même période de la semaine dernière » (ou semaine complète le dimanche)',/semaine en cours \(lun\. \d\d\/\d\d → \S+\. \d\d\/\d\d\) comparée à la même période de la semaine dernière \(lun\./.test(cap)||/semaine du lun\..*comparée à la semaine précédente/.test(cap),cap);
+/* 1.29.2 : légende « Évolution… » retirée de l’interface (calcul inchangé) */
+check('légende « Évolution… » retirée (1.29.2), tuiles d’évolution conservées',await p.evaluate(()=>!document.getElementById('hsCap')&&!/Évolution|Pas de comparaison/.test(document.getElementById('homeStats').textContent)));
 const L=await p.evaluate(()=>({sw:document.documentElement.scrollWidth,ov:[...document.querySelectorAll('#homeStats .hs, #homeStats .hs-b')].filter(e=>{const r=e.getBoundingClientRect();return r.right>375.5||r.left<-0.5;}).length,clip:[...document.querySelectorAll('#homeStats .hs-b, #homeStats .hs-vs')].filter(e=>e.scrollWidth>e.clientWidth+1).length}));
 check('375 px : rien ne déborde',L.sw<=375&&L.ov===0&&L.clip===0,JSON.stringify(L));
 await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);await sleep(100);
@@ -68,8 +68,8 @@ await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preferenc
 // pas de comparaison si l’une des deux périodes est vide
 await p.evaluate((KEY,W)=>{const A=window.CJR,raw=JSON.parse(localStorage.getItem(KEY));Object.keys(raw.sessions).forEach(k=>{const [cid,p,s]=k.split('|'),col=A.colsOf(cid,+p).find(c=>c.s===+s&&!c.hol);if(col&&col.date>=W.from)delete raw.sessions[k];});localStorage.setItem(KEY,JSON.stringify(raw));},KEY,W);
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(400);await p.evaluate(()=>document.querySelector('#tabs button[data-tab="home"]').click());await sleep(400);
-const N=await p.evaluate(()=>({ev:[...document.querySelectorAll('#homeStats .hs-ev')].map(e=>e.dataset.dir+':'+e.textContent),cap:document.getElementById('hsCap').textContent}));
-check('aucune séance cette semaine → « — pas de comparaison » partout (pas de chiffre trompeur)',N.ev.length===7&&N.ev.every(x=>x==='none:— pas de comparaison')&&/Pas de comparaison/.test(N.cap),JSON.stringify(N.ev.slice(0,2)));
+const N=await p.evaluate(()=>({ev:[...document.querySelectorAll('#homeStats .hs-ev')].map(e=>e.dataset.dir+':'+e.textContent),cap:(document.getElementById('hsCap')||{}).textContent||''}));
+check('aucune séance cette semaine → « — pas de comparaison » partout (pas de chiffre trompeur)',N.ev.length===7&&N.ev.every(x=>x==='none:— pas de comparaison')&&N.cap==='',JSON.stringify(N.ev.slice(0,2)));
 const k2=await p.evaluate(KEY=>Object.keys(JSON.parse(localStorage.getItem(KEY))).sort().join(','),KEY);check('aucune nouvelle clé de données',k2==='app,cal,classes,lastBackup,periods,sessions,settings,spp,students,ui,version',k2);
 check('aucune erreur de page',errs.length===0,errs.join(' | ').slice(0,300));
 srv.close();await b.close();const ok=results.filter(Boolean).length;console.log(ok+'/'+results.length+' passed');process.exit(ok===results.length?0:1);

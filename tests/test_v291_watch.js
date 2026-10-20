@@ -40,12 +40,12 @@ await p.click('#watchTog');await sleep(200);w=await W();
 check('toucher l’en-tête : la carte s’ouvre (aria-expanded, cj.ui.watchOpen = 1)',w.open&&w.aria==='true'&&!w.hidden&&w.vis&&w.ls==='1',JSON.stringify(w));
 check('badges : « note comp. C1 » et « 5 non just. C2 » ; élèves à 3 + 3 et 4 absents',JSON.stringify(w.items)===JSON.stringify(['s2:note comp. C1','s1:5 non just. C2']),JSON.stringify(w.items));
 check('description : « …ou au moins 5 absences non justifiées dans un cycle. »',w.note==='Note comportementale atteinte dans un cycle, ou au moins 5 absences non justifiées dans un cycle.',w.note);
-if(process.env.SHOTS){await p.evaluate(()=>{const c=document.getElementById('homeWatch');window.scrollTo(0,c.getBoundingClientRect().top+scrollY-110);});await sleep(200);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/surveiller-ouvert.png'});}
+if(process.env.SHOTS){await p.evaluate(()=>{const c=document.getElementById('homeWatch');window.scrollTo(0,c.getBoundingClientRect().top+scrollY-110);});await sleep(200);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/surveiller-ouvert.png'});}
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);await home();w=await W();
 check('état ouvert conservé après rechargement',w.open&&!w.hidden);
 await p.click('#watchTog');await sleep(200);w=await W();
 check('re-toucher : refermée (cj.ui.watchOpen = 0)',!w.open&&w.hidden&&w.ls==='0'&&w.aria==='false');
-if(process.env.SHOTS){await p.evaluate(()=>{const c=document.getElementById('homeWatch');window.scrollTo(0,c.getBoundingClientRect().top+scrollY-300);});await sleep(200);await p.screenshot({path:'/workspace/backups/v1.29.1-preview/surveiller-ferme.png'});}
+if(process.env.SHOTS){await p.evaluate(()=>{const c=document.getElementById('homeWatch');window.scrollTo(0,c.getBoundingClientRect().top+scrollY-300);});await sleep(200);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/surveiller-ferme.png'});}
 await p.evaluate(()=>window.scrollTo(0,0));await p.evaluate(()=>document.querySelector('[data-qa="watch"]').click());await sleep(500);w=await W();
 check('mini-indicateur « alertes » : ouvre la carte',w.open&&!w.hidden);
 const tb=await p.evaluate(()=>{const b=document.getElementById('watchTog').getBoundingClientRect();return Math.round(b.height);});check('en-tête : cible ≥ 44 px',tb>=44,tb);

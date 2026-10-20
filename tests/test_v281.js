@@ -21,7 +21,7 @@ const tok=(uid,email,ver)=>{const t=Math.floor(Date.now()/1000);return b64({alg:
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:120000,args:['--no-sandbox','--disable-dev-shm-usage']});
 // ================= 0. statique =================
 const idx=fs.readFileSync(D+'/index.html','utf8'),sw=fs.readFileSync(D+'/sw.js','utf8'),fj=JSON.parse(fs.readFileSync(D+'/firebase.json','utf8'));
-check('version 1.29.0 / cache cahier-v29 (APP_VER = sw.js) — test 1.28.1 rejoué sur 1.29.0',/var APP_SEMVER='1\.29\.1'/.test(idx)&&/var APP_VER='cahier-v29-1'/.test(idx)&&/const CACHE = 'cahier-v29-1'/.test(sw));
+check('version 1.29.0 / cache cahier-v29 (APP_VER = sw.js) — test 1.28.1 rejoué sur 1.29.0',/var APP_SEMVER='1\.29\.2'/.test(idx)&&/var APP_VER='cahier-v29-2'/.test(idx)&&/const CACHE = 'cahier-v29-2'/.test(sw));
 const rulesDiff=cp.execSync('git -C '+D+' diff v1.28.0 -- firestore.rules').toString();
 check('firestore.rules identique à v1.28.0',rulesDiff==='');
 const keys=h=>[...new Set((h.match(/['"](classRegister\.v2[\w.]*|cahier\.[A-Za-z][\w.]*)['"]/g)||[]).map(x=>x.slice(1,-1)))].sort().join();
@@ -53,7 +53,7 @@ for(let di=0;di<DAYS.length;di++){const day=DAYS[di];
   await p.evaluate(()=>document.querySelector('#tabs button[data-tab="home"]').click());await sleep(500);
   const r=await p.evaluate(()=>({stats:!!document.getElementById('homeStats'),cap:(document.getElementById('hsCap')||{}).textContent||'',today:!!document.getElementById('homeToday'),tt:!!document.getElementById('ttCard'),tiles:document.querySelectorAll('#homeStats .hs').length,wd:new Date().getDay()}));
   const want=NAMES[di]+' '+day.slice(8,10)+'/'+day.slice(5,7);
-  check(day+' ('+NAMES[di]+') : Accueil complet (statistiques, Aujourd’hui, tableau de service), légende « … '+want+' »',r.stats&&r.today&&r.tt&&r.tiles>=8&&r.cap.includes(want)&&errs.length===0,(errs[0]||'')+' '+r.cap.slice(0,140));
+  check(day+' ('+NAMES[di]+') : Accueil complet (statistiques, Aujourd’hui, tableau de service), légende « … '+want+' »',r.stats&&r.today&&r.tt&&r.tiles>=8&&r.cap===''/* 1.29.2 : légende retirée */&&errs.length===0,(errs[0]||'')+' '+r.cap.slice(0,140));
   if(di===6||di===0){await p.evaluate(()=>new Promise((res,rej)=>{const L=['vendor/jspdf.umd.min.js','vendor/jspdf.plugin.autotable.min.js','vendor/bidi-js.min.js','cj-pdf.js'];(function n(i){if(i>=L.length)return res();const e=document.createElement('script');e.src=L[i];e.onload=()=>n(i+1);e.onerror=rej;document.head.appendChild(e);})(0);}));
     const pdf=await p.evaluate(async()=>{const cid=window.CJR.db().ui.cls,out=[];for(const [k,o] of [['cycle',{cid,p:0}],['year',{cid}],['trombi',{cid,mode:'page'}],['grades',{cid,p:0}]]){try{const x=await window.CJPDF.make(k,o);out.push(k+':'+x.blob.size);}catch(e){out.push(k+':ERR '+e.message);}}return out;});
     check(day+' : PDF registre du cycle, bilan annuel, trombinoscope, relevé de notes générés',pdf.every(x=>/:\d{4,}$/.test(x))&&errs.length===0,pdf.join(' '));}
@@ -67,9 +67,9 @@ for(let di=0;di<DAYS.length;di++){const day=DAYS[di];
     d.sessions={[d.classes[0].id+'|0|0']:{date:'2026-09-15',marks:{u0:{s:'A',j:true,r:''},u9:{s:'L',j:false,r:''},u18:{s:'M',j:false,r:'x'},u27:{s:'ST',j:false,r:''}}}};d.evals={aps:{[d.classes[3].id+'|0']:'coll'}};return window.CJApp.applyJSON(JSON.stringify(d));},KEY);
   await p.reload({waitUntil:'networkidle2'});await p.evaluate(()=>navigator.serviceWorker.ready.then(()=>true));await sleep(1500);
   const v0=await p.evaluate(()=>window.CJR.semver),raw0=await p.evaluate(K=>localStorage.getItem(K),KEY);
-  ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.1';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
+  ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.2';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
   await sleep(1200);const raw1=await p.evaluate(K=>localStorage.getItem(K),KEY),cs=await p.evaluate(()=>caches.keys());
-  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.29.1'&&raw0===raw1&&cs.includes('cahier-v29-1')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
+  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.29.2'&&raw0===raw1&&cs.includes('cahier-v29-2')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
   await p.browserContext().close();}
 // ================= 2. lien invitation ↔ compte (émulateurs) =================
 await fetch(`${FSU}/emulator/v1/projects/${P}/databases/(default)/documents`,{method:'DELETE'});
