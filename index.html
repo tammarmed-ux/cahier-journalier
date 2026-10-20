@@ -1266,6 +1266,27 @@ html[data-theme="neon"] .pqA .pq-badge{background:#C6FF00;color:#0A0A12}
 html[data-theme="neon"] .pqA .pq-chip::after,html[data-theme="neon"] .pqA .pq-i{color:#00E5FF}
 html[data-theme="neon"] .pq-pan .scale{color:#C6FF00}html[data-theme="neon"] .pq-pan .scale.hint,html[data-theme="neon"] .pq-pan .apsn{color:var(--ink)}
 html[data-theme="terrain"] .pqA .pq-badge{background:#1C6B3A}
+/* 1.29.2 (b) : Année scolaire en cartes colorées */
+:root{--cy0:#1F5FA8;--cy1:#0E9F6E;--cy2:#E85D04;--cy3:#7C3AED;--cy4:#DB2777;--cy5:#0891B2;--cyh1:#cfd6e2;--cyh2:#eef1f6}
+html[data-theme="terrain"]{--cy0:#1C6B3A;--cy1:#D97706;--cy2:#0E7490;--cy3:#15803D;--cy4:#B45309;--cy5:#155E75;--cyh1:#c9d8cd;--cyh2:#eef4ef}
+html[data-theme="neon"]{--cy0:#00E5FF;--cy1:#C6FF00;--cy2:#FF3DCB;--cy3:#00E5FF;--cy4:#C6FF00;--cy5:#FF3DCB;--cyh1:#3a3a55;--cyh2:#1b1b2b}
+.cy-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}.cy-head b{flex:1;font-size:14px}
+.cy-i{flex:none;border:1px solid var(--line);background:var(--card);color:var(--pri);font-size:17px;border-radius:50%;width:32px;height:32px;padding:0;cursor:pointer;display:grid;place-items:center}html[data-theme="neon"] .cy-i{color:#00E5FF}
+.cy-tl{display:flex;gap:2px;height:14px;border-radius:7px;overflow:hidden;margin-bottom:12px}.cy-tl i{display:block;height:100%}
+.cy-tl .cy-c0,.cy-card.cy-c0{--c:var(--cy0)}.cy-tl .cy-c1,.cy-card.cy-c1{--c:var(--cy1)}.cy-tl .cy-c2,.cy-card.cy-c2{--c:var(--cy2)}.cy-tl .cy-c3,.cy-card.cy-c3{--c:var(--cy3)}.cy-tl .cy-c4,.cy-card.cy-c4{--c:var(--cy4)}.cy-tl .cy-c5,.cy-card.cy-c5{--c:var(--cy5)}
+.cy-tl i[class^="cy-c"]{background:var(--c)}.cy-v,.cy-mini i.v{background:repeating-linear-gradient(135deg,var(--cyh1) 0 4px,var(--cyh2) 4px 8px)}
+.cycdates.cy-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-auto-flow:row dense}
+.cycrow.cy-card{display:block;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:14px;padding:10px 10px 8px;min-width:0}
+.cy-card.on{outline:2px solid var(--acc);outline-offset:-1px}html[data-theme="neon"] .cy-card.on{outline-color:#C6FF00}
+.cy-t{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.cy-t b{font-size:15px}
+.cy-pill{font-size:10px;font-weight:800;background:var(--acc);color:#fff;border-radius:6px;padding:1px 6px}html[data-theme="neon"] .cy-pill{background:#C6FF00;color:#0A0A12}html[data-theme="terrain"] .cy-pill{background:#FCD34D;color:#1A1A1A}
+.cy-d{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:4px;min-height:36px;font-weight:700;font-size:13.5px;color:var(--ink);cursor:pointer;border-radius:8px;width:100%}.cy-d span{color:var(--muted);font-size:12px;margin-left:auto}
+.cy-d:focus-visible{outline:3px solid var(--acc)}
+.cy-card .cy-in{display:none}.cy-card.ed{grid-column:1/-1}.cy-card.ed .cy-in{display:grid;grid-template-columns:1fr 14px 1fr;gap:6px;align-items:center;margin:2px 0 8px}
+.cy-card .cy-in input{min-width:0;padding:6px;font-size:14px}.cy-card .arr{text-align:center;color:var(--muted)}
+.cy-mini{display:flex;gap:2px;height:6px}.cy-mini i{flex:1;border-radius:3px;background:var(--c)}
+.cy-card small{display:block;margin-top:6px;font-size:12px}
+.cy-card + .cy-card{}
 /* 1.29.2 (a) : bloc Absences compact */
 #attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}
 .abs-r2{display:flex;align-items:center;gap:6px;margin-top:6px;min-width:0;font-size:12.5px;color:var(--muted)}#attInfo{flex:1 1 auto;min-width:0}
@@ -2044,7 +2065,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2a';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2b';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3409,6 +3430,7 @@ function homeStatsHtml(S,T){var W=weekCmp(),dm=function(x){return (TX.daysShort[
   return '<div class="card" id="homeStats"><h2>'+esc(TX.statsTitle)+'</h2><div class="hs-grid">'+
     st('stu',S.students,TX.tStudents)+st('cls',S.classes,TX.tClasses)+tl('held',S.held,TX.tHeld,true,true)+
     tl('A',T.A,TX.tAbs)+tl('U',T.U,TX.tU)+tl('S',T.S,TX.tS)+tl('M',T.M,TX.tM)+tl('L',T.L,TX.tL)+tl('K',T.K,TX.tK)+'</div></div>';}
+var CY_ED=-1;document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-cyed]');if(!b)return;var i=+b.dataset.cyed;CY_ED=CY_ED===i?-1:i;renderCalSettings();var c=document.querySelector('.cy-card[data-i="'+i+'"]');if(c&&CY_ED===i){var f=c.querySelector('.cf');if(f)f.focus();}});
 /* 1.29.1 (-q) : « Élèves à surveiller » repliable — clé d’affichage cj.ui.watchOpen (aucune donnée) */
 function watchOpen(){try{return localStorage.getItem('cj.ui.watchOpen')==='1';}catch(e){return false;}}
 function watchSet(o){try{localStorage.setItem('cj.ui.watchOpen',o?'1':'0');}catch(e){}var c=$('homeWatch'),b=$('watchTog'),w=$('watchBody');if(!c||!b||!w)return;c.classList.toggle('open',o);b.setAttribute('aria-expanded',String(o));w.hidden=!o;}
@@ -3605,10 +3627,21 @@ $('homeBody').addEventListener('click',function(e){
 var holEdit=null;
 function renderCalSettings(){
   var C=cal(),cw=cycWarn();
-  $('calSettings').innerHTML='<label class="f">'+esc(TX.cycDatesLbl)+'</label><div class="cycdates" id="cycDates">'+DB.periods.map(function(p,i){var r=DB.cal.cycles[i]||{},c=C.cycles[i];
-      return '<div class="cycrow" data-i="'+i+'"><b>'+esc(cycleName(i))+'</b><input type="date" class="cf" aria-label="'+esc(TX.cycFrom(i+1))+'" value="'+esc(r.from||'')+'"><span class="arr">→</span><input type="date" class="ct" aria-label="'+esc(TX.cycTo(i+1))+'" value="'+esc(r.to||'')+'"><small class="muted">'+(c&&!c.bad?esc(TX.cycWk(c.weeks.length))+(c.skipped.length?' · '+esc(TX.cycHol(c.skipped.length)):''):'')+'</small></div>';}).join('')+'</div>'+
+  /* 1.29.2 (b) : cycles en cartes colorées 2×3 + frise de l’année (proposition B) — mêmes champs .cf/.ct dans .cycrow[data-i], même logique ; affichage seulement */
+  var td=(function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})(),hi=-1;
+  DB.periods.forEach(function(p,i){var r=DB.cal.cycles[i]||{};if(hi<0&&r.from&&r.to&&r.to>=td)hi=i;});
+  function dm(x){return x?x.slice(8,10)+'/'+x.slice(5,7):'—';}
+  function wk(i){var c=C.cycles[i];return c&&!c.bad?{w:c.weeks.length,v:c.skipped.length}:{w:0,v:0};}
+  var tl='<div class="cy-tl" aria-hidden="true">'+DB.periods.map(function(p,i){var k=wk(i);return (k.w?'<i class="cy-c'+i+'" style="flex:'+k.w+'"></i>':'')+(k.v?'<i class="cy-v" style="flex:'+k.v+'"></i>':'');}).join('')+'</div>';
+  $('calSettings').innerHTML='<div class="cy-head"><b>'+esc(TX.cycDatesLbl)+'</b><button type="button" class="pq-ib pq-i cy-i" data-pq-open="cycSheet" aria-label="Comment sont utilisées ces dates ?" aria-haspopup="dialog" aria-expanded="false">ⓘ</button></div>'+tl+
+    '<div class="cycdates cy-grid" id="cycDates">'+DB.periods.map(function(p,i){var r=DB.cal.cycles[i]||{},k=wk(i),on=i===hi,cur=on&&r.from<=td;
+      return '<div class="cycrow cy-card cy-c'+i+(on?' on':'')+(CY_ED===i?' ed':'')+'" data-i="'+i+'"><div class="cy-t"><b>'+esc(cycleName(i))+'</b>'+(on?'<span class="cy-pill">'+(cur?'EN COURS':'À VENIR')+'</span>':'')+'</div>'+
+        '<button type="button" class="cy-d" data-cyed="'+i+'" aria-expanded="'+(CY_ED===i)+'" aria-label="Modifier les dates du '+esc(cycleName(i))+'">'+dm(r.from)+' → '+dm(r.to)+' <span aria-hidden="true">✎</span></button>'+
+        '<div class="cy-in"><input type="date" class="cf" aria-label="'+esc(TX.cycFrom(i+1))+'" value="'+esc(r.from||'')+'"><span class="arr">→</span><input type="date" class="ct" aria-label="'+esc(TX.cycTo(i+1))+'" value="'+esc(r.to||'')+'"></div>'+
+        '<div class="cy-mini" aria-hidden="true">'+'<i></i>'.repeat(Math.min(k.w,12))+'<i class="v"></i>'.repeat(Math.min(k.v,6))+'</div>'+
+        '<small class="muted" title="'+(k.w?esc(TX.cycWk(k.w))+(k.v?' · '+esc(TX.cycHol(k.v)):''):'')+'">'+(k.w?k.w+' sem.'+(k.v?' · '+k.v+' vac.':''):'')+'</small></div>';}).join('')+'</div>'+
     (cw.length?'<div class="warnline" id="cycWarn">'+esc(cw.join(' · '))+'</div>':'')+
-    '<p class="small muted">'+esc(TX.cycNote2)+'</p>'+
+    '<div class="pq-sheet" id="cycSheet" role="dialog" aria-modal="true" aria-labelledby="cycSheetT" hidden><div class="pq-bd" data-pq-close="1"></div><div class="pq-pan"><div class="pq-grab" aria-hidden="true"></div><div class="pq-hd"><b id="cycSheetT">Comment sont utilisées ces dates\u00a0?</b><button type="button" class="pq-x" data-pq-close="1" aria-label="Fermer">✕</button></div><p class="small">'+esc(TX.cycNote2)+'</p><p class="small muted">Touchez les dates d’un cycle pour les modifier.</p></div></div>'+
     '<div class="row2"><button type="button" class="btn sec" id="cycOfficial">'+esc(TX.cycOfficial)+'</button></div>'+
     '<details class="cycauto"><summary>'+esc(TX.cycAutoLbl)+'</summary><div class="ttgrid"><div><label class="f" for="cycAutoStart">'+esc(TX.setStart)+'</label><input type="date" id="cycAutoStart" value="'+esc((DB.cal.cycles[0]||{}).from||'')+'"></div><div><label class="f" for="cycAutoW">'+esc(TX.setWeeks)+'</label><input type="number" id="cycAutoW" min="1" max="20" inputmode="numeric" value="'+DB.cal.weeks+'"></div></div><p class="small muted">'+esc(TX.setCalNote)+'</p><button type="button" class="btn sec" id="cycAutoGo">'+esc(TX.cycAutoGo)+'</button></details>'+
     '<div class="ttgrid"><div><label class="f" for="setOblig">'+esc(TX.setOblig)+'</label><input type="number" id="setOblig" min="1" max="60" step="0.5" inputmode="decimal" value="'+DB.cal.oblig+'"></div><div><label class="f" for="setPerWeek">'+esc(TX.setPerWeek)+'</label><input type="number" id="setPerWeek" min="1" max="10" inputmode="numeric" value="'+DB.cal.perWeek+'"></div></div>'+
