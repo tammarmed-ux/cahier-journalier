@@ -13,6 +13,7 @@ async function ready(page){await waitFor(page,()=>window.CJSync&&window.CJSync.s
 async function newPage(browser,label,{onboarded=true}={}){
   const ctx=await browser.createBrowserContext();const page=await ctx.newPage();
   await page.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  await page.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.school','lycee');}catch(e){}});   /* 1.29.2 (j) : pas d’écran « Vous êtes un enseignant de : » (testé par test_v292_college) */
   if(onboarded)await page.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
   await page.evaluateOnNewDocument(()=>{window.__flash=[];const chk=w=>{const m=document.querySelector('main');if(m)window.__flash.push(w+':'+getComputedStyle(m).visibility+':'+document.documentElement.classList.contains('cj-locked'));};document.addEventListener('DOMContentLoaded',()=>{chk('dcl');requestAnimationFrame(()=>chk('raf'));});});
   page.on('dialog',d=>d.accept(d.type()==='prompt'?'SUPPRIMER':undefined));
