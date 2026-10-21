@@ -31,7 +31,7 @@ await p.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]')
 const em=await p.evaluate(()=>[...document.querySelectorAll('#periodNames .cyb-n .act-em')].map(x=>x.textContent).join(' '));
 check('cartes Cycles B : emoji devant le nom de l’activité',em==='🏃 🏋️ 🏀 ⚡ 🏐 🦘',em);
 check('helper actEmoji : accents/casse, repli sur le type',await p.evaluate(()=>{const f=window.CJR&&CJR.actEmoji;return !!f&&(f('TENNIS DE TABLE')==='🏓'&&f('Échecs')==='♟️'&&f('Handball')==='🤾'&&f('Course de relais')==='🏃'&&f('Zumba','gym')==='🤸'&&f('Zumba','coll')==='⚽');}));
-if(SHOT){await p.evaluate(()=>{const e=document.getElementById('periodNames');e.scrollIntoView({block:'start'});window.scrollBy(0,-120);});await sleep(300);await p.screenshot({path:O+'cycles-B-emoji.png'});}
+if(SHOT){await p.evaluate(()=>CJPS.open('annee'));await sleep(500);await p.evaluate(()=>{const e=document.getElementById('periodNames');e.scrollIntoView({block:'start'});window.scrollBy(0,-110);});await sleep(300);await p.screenshot({path:O+'cycles-B-emoji.png'});}
 check('aucune donnée modifiée',await p.evaluate(d=>{const x=JSON.parse(d),y=JSON.parse(JSON.stringify(CJR.db()));delete x.ui;delete y.ui;return JSON.stringify(x)===JSON.stringify(y);},db0));
 check('aucune erreur JS',!p.errs.length,p.errs.join(' | '));
 await b.close();NEW.close();console.log(res.filter(x=>x).length+'/'+res.length+' passed');process.exit(res.every(x=>x)?0:1);})().catch(e=>{console.log('FATAL',e);process.exit(1);});
