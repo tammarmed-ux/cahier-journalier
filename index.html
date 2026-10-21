@@ -2167,7 +2167,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2f';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2g';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2515,13 +2515,15 @@ function renderStudents(){
   $('stuCount').textContent=list.length+' sur '+plural(DB.students.length,'élève');
   if(!DB.students.length){$('stuList').innerHTML='<li class="empty"><b>Aucun élève pour le moment</b>Touchez <b style="display:inline">+</b> pour en ajouter un, ou utilisez <b style="display:inline">Import en masse</b> pour importer vos listes (Excel, CSV, Massar).</li>';return;}
   if(!list.length){$('stuList').innerHTML='<li class="empty">Aucun élève ne correspond.</li>';return;}
-  var html='';
-  for(var i=0;i<list.length;i++){var s=list[i],y=yearStat(s.classId,s.id);
+  var html='',lim=(!q&&!stuAll&&list.length>STU_LIM)?STU_LIM:list.length;
+  for(var i=0;i<lim;i++){var s=list[i],y=yearStat(s.classId,s.id);
     var chip=(dspActive(s)?'<span class="chip dchip" title="Dispensé de sport – '+esc(dspShort(dspOf(s)))+'">🩺 Dispensé</span> ':'')+(y.A?'<span class="chip '+(y.U>=th?'bad':'warn')+'" title="Absences cette année">'+y.A+' abs.</span>':'');
     html+='<li class="stu" data-id="'+esc(s.id)+'"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><div class="info"><div class="name" dir="auto">'+(isBroken(s)?'<span class="brk">⚠ '+esc(TX.noName)+'</span> ':'')+esc(s.name)+'</div><div class="meta"><span class="chip">'+esc(clsName(s.classId))+'</span> '+(s.sid?'<span dir="auto">#'+esc(s.sid)+'</span> ':'')+(s.parent?'· <span dir="auto">'+esc(s.parent)+'</span>':'')+'</div></div>'+chip+'</li>';}
+  /* 1.29.2 (g) : affichage limité aux 30 premiers (affichage seulement ; recherche, comptes et exports portent sur toute la liste) */
+  if(!q&&list.length>STU_LIM)html+='<li class="stu-more"><button type="button" class="btn sec stu-more-btn" id="stuMore" aria-expanded="'+(stuAll?'true':'false')+'">'+(stuAll?'Réduire':'Voir tout ('+list.length+')')+'</button></li>';
   $('stuList').innerHTML=html;
 }
-var stuBrokenOnly=false;
+var stuBrokenOnly=false,stuAll=false,STU_LIM=30;
 $('stuFix').addEventListener('click',function(e){
   if(e.target.closest('#fixShow')){stuBrokenOnly=!stuBrokenOnly;renderStudents();return;}
   if(e.target.closest('#fixReimp')){var b=DB.students.filter(isBroken)[0];if(b)$('stuClassFilter').value=b.classId;bulkMode='class';$('bulkBtn').click();}
@@ -2535,9 +2537,9 @@ $('trombiBtn').addEventListener('click',function(){classOptions($('trbClass'),$(
 $('trbClass').addEventListener('change',trbInfo);
 $('trbGo').addEventListener('click',function(){var cid=$('trbClass').value,f=document.querySelector('input[name="trbFmt"]:checked');if(!countIn(cid))return;closeModal('trombiModal');runPdf('trombi',{cid:cid,mode:f?f.value:'page'});});
 $('stuSearch').addEventListener('input',renderStudents);
-$('stuClassFilter').addEventListener('change',renderStudents);
+$('stuClassFilter').addEventListener('change',function(){stuAll=false;renderStudents();});
 $('stuSort').addEventListener('change',renderStudents);
-$('stuList').addEventListener('click',function(e){var li=e.target.closest('.stu');if(li)openDetail(li.dataset.id);});
+$('stuList').addEventListener('click',function(e){if(e.target.closest('#stuMore')){var top=!stuAll?null:$('stuList').getBoundingClientRect().top;stuAll=!stuAll;renderStudents();if(!stuAll&&top<0)$('stuList').scrollIntoView({block:'start'});return;}var li=e.target.closest('.stu');if(li)openDetail(li.dataset.id);});
 $('addStudentBtn').addEventListener('click',function(){var c=cls($('stuClassFilter').value);$('addStuSub').textContent=TX.addStuSub(c?c.name:'');openModal('addChoice');});
 
 var editingId=null;
