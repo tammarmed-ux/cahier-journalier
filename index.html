@@ -1364,6 +1364,26 @@ html[data-theme="neon"] .clb-fb.on,html[data-theme="neon"] .cyb-c.on:not(.cyb-au
 html[data-theme="neon"] .pga-b{color:#C6FF00}html[data-theme="neon"] .clb-p,html[data-theme="neon"] .cyb-ty{background:#1B1E27}
 html[data-theme="neon"] .clb-card,html[data-theme="neon"] .pga-c{background:var(--card)}
 
+/* 1.29.2 (h) : Accueil — Calendrier des cycles (rangées colorées B) */
+#homeCal .hc-hd{display:flex;align-items:center;justify-content:space-between;gap:8px}#homeCal .hc-hd h2{margin:0}
+#homeCal .hc-help{margin:4px 0 4px}
+.hc-list{list-style:none;margin:0;padding:0}
+.mk-c0{--c:var(--cy0)}.mk-c1{--c:var(--cy1)}.mk-c2{--c:var(--cy2)}.mk-c3{--c:var(--cy3)}.mk-c4{--c:var(--cy4)}.mk-c5{--c:var(--cy5)}
+.hc-row{display:flex;align-items:center;gap:10px;padding:9px 10px 9px 12px;border:1px solid var(--line);border-left:4px solid var(--c);border-radius:12px;margin-top:7px;background:var(--card);min-width:0}
+.hc-ic{width:32px;height:32px;flex:0 0 32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;background:color-mix(in srgb,var(--c) 16%,var(--card))}
+.hc-m{flex:1;min-width:0}.hc-t{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hc-t span{color:var(--muted);font-weight:600}
+.hc-d{font-size:12px;color:var(--muted);margin:1px 0 5px}
+.hc-r{text-align:right;font-size:12px;color:var(--muted);white-space:nowrap;flex:0 0 auto}.hc-r b{display:block;font-size:15px;color:var(--ink)}
+.hc-wk{display:inline-flex;flex-wrap:wrap;gap:2px;vertical-align:middle}.hc-wk i{display:block;width:9px;height:9px;border-radius:2px;background:var(--c)}
+.hc-wk i.v{background:repeating-linear-gradient(135deg,var(--cyh1) 0 2px,var(--cyh2) 2px 4px);box-shadow:inset 0 0 0 1px var(--cyh1)}
+.hc-pill{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:2px 7px;border-radius:999px;background:var(--c);color:#fff;margin-bottom:2px}
+.hc-pill.hc-pd{background:var(--muted)}html[data-theme="neon"] .hc-pill{color:#0b0b14}
+.hc-done{opacity:.62}.hc-nx{box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 55%,transparent)}
+.hc-sep{display:flex;align-items:center;gap:8px;margin:9px 0 1px;font-size:12px;font-weight:700;color:var(--ink)}.hc-sep:before,.hc-sep:after{content:"";flex:1;border-top:2px dashed var(--muted);opacity:.55}
+.hc-leg{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:11.5px;color:var(--muted);margin-top:9px}.hc-leg .hc-wk{--c:var(--muted)}
+#homeCal .hc-ed{width:100%;margin-top:10px;border-radius:999px}
+#homeCal .hc-bad{border-left-color:var(--muted)}
+.act-em{font-size:.95em}
 /* 1.29.2 (g) : Élèves — Voir tout / Réduire */
 #stuList li.stu-more{list-style:none;display:block;text-align:center;padding:14px 0 10px;border:0;background:none;cursor:default}
 #stuList .stu-more-btn{display:inline-flex;width:auto;min-width:190px;padding:10px 22px;border-radius:999px;font-weight:700;justify-content:center}
@@ -2170,7 +2190,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2g';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2h';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2375,6 +2395,10 @@ function gradeLv(cid){return levelOf(clsName(cid))||'2BAC';}
    Ordre : exception de la classe → type du cycle → APS des notes déjà saisies (données relues d’un ancien client) → déduction d’après le nom de l’activité. */
 function cycApsOf(p){var a=DB.evals&&DB.evals.cyc&&DB.evals.cyc[p];return APS[a]?a:'';}
 function cycAps(p){return cycApsOf(p)||apsGuess(DB.periods[p]||'');}
+/* 1.29.2 (h) : emoji de l’activité, d’après son nom (sans accents ni casse), sinon icône du type — affichage seulement */
+var ACT_EM=[[/volley/,'🏐'],[/basket/,'🏀'],[/hand/,'🤾'],[/foot/,'⚽'],[/rugby/,'🏉'],[/tennis de table|ping/,'🏓'],[/tennis/,'🎾'],[/badminton/,'🏸'],[/relais/,'🏃'],[/vitesse|sprint|haies/,'⚡'],[/course en duree|endurance|demi.?fond/,'🏃'],[/saut en longueur|triple/,'🦘'],[/saut en hauteur|hauteur/,'🤸'],[/disque/,'🥏'],[/javelot/,'🎯'],[/lancer de poids|poids/,'🏋️'],[/gym|acro/,'🤸'],[/natation/,'🏊'],[/judo|lutte/,'🥋'],[/echec/,'♟️']],TYPE_EM={coll:'⚽',athle:'🏃',gym:'🤸'};
+function actEmoji(name,type){var n=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();for(var k=0;k<ACT_EM.length;k++)if(ACT_EM[k][0].test(n))return ACT_EM[k][1];return TYPE_EM[type]||'';}
+function cycEmoji(i){return actEmoji(DB.periods[i],cycAps(i));}
 function apsOver(cid,p){var a=DB.evals&&DB.evals.aps&&DB.evals.aps[evKey(cid,p)];return APS[a]?a:'';}
 function apsOf(cid,p){return apsOver(cid,p)||apsBase(cid,p);}
 function apsBase(cid,p){var k=evKey(cid,p),a=cycApsOf(p);if(a)return a;
@@ -3619,10 +3643,20 @@ function renderHome(){
     '<label class="f" for="ttRoom">'+esc(TX.ttRoom)+'</label><input type="text" id="ttRoom" dir="auto" maxlength="40" placeholder="'+esc(TX.ttRoomPh)+'">'+
     '<div class="actions">'+(e?'<button type="button" class="btn danger" id="ttDel">'+esc(TX.del)+'</button><button type="button" class="btn sec" id="ttCancel">'+esc(TX.cancel)+'</button>':'')+'<button type="button" class="btn" id="ttSave">'+esc(e?TX.ttSaveEdit:TX.ttSaveNew)+'</button></div></div></div></div>';
   /* cycle calendar */
-  h+='<div class="card" id="homeCal"><h2>'+esc(TX.calTitle)+'</h2>';
-  if(cs.length){h+='<p class="small muted" style="margin-top:0">'+esc(TX.calFixed)+'</p><ul class="list cyclist">'+cs.map(function(c){if(c.bad)return '<li><b>'+esc(cycleLabel(c.i))+'</b><span class="small warnline">'+esc(TX.cycBad(c.i+1))+'</span></li>';var inside=c.skipped.length;return '<li class="'+(cur&&cur.i===c.i?'on':'')+'"><b>'+esc(cycleLabel(c.i))+'</b><span class="small muted">'+TX.cycRange(dmy(c.start),dmy(c.end))+' · '+esc(TX.cycWk(c.weeks.length))+(inside?' · '+esc(TX.cycHol(inside)):'')+'</span></li>';}).join('')+'</ul>';}
+  /* 1.29.2 (h) : Calendrier des cycles en rangées colorées (proposition B) — mêmes données cal() (dates, semaines de cours, semaines sautées) ; états calculés d’après la date du jour ; affichage seulement */
+  h+='<div class="card" id="homeCal"><div class="hc-hd"><h2>'+esc(TX.calTitle)+'</h2><button type="button" class="pq-ib pq-i hc-i" data-pq-open="calSheet" aria-label="Comment sont comptées les semaines ?" aria-haspopup="dialog" aria-expanded="false">ⓘ</button></div>';
+  if(cs.length){var okc=cs.filter(function(c){return !c.bad;}),sep=-1;for(var j=0;j<okc.length;j++)if(okc[j].end>=t){sep=okc[j].i;break;}
+    var sepTxt='Aujourd’hui '+t.slice(8,10)+'/'+t.slice(5,7)+(cur?'':(C.H[t]?' · vacances':''));
+    h+='<p class="small muted hc-help">'+esc(TX.calFixed)+'</p><ul class="hc-list" role="list">'+cs.map(function(c){
+      if(c.bad)return '<li class="hc-row hc-bad mk-c'+(c.i%6)+'"><div class="hc-m"><div class="hc-t">'+esc(cycleLabel(c.i))+'</div><span class="small warnline">'+esc(TX.cycBad(c.i+1))+'</span></div></li>';
+      var st=c.end<t?'done':(c.start<=t?'cur':'fut'),nx=c.i===sep,all=c.weeks.map(function(m){return [m,0];}).concat(c.skipped.map(function(m){return [m,1];})).sort(function(a,b){return a[0]<b[0]?-1:1;}),v=c.skipped.length,w=c.weeks.length;
+      var pill=st==='done'?'<span class="hc-pill hc-pd">TERMINÉ</span>':st==='cur'?'<span class="hc-pill">EN COURS</span>':nx?'<span class="hc-pill">'+(function(){var n=Math.round((new Date(c.start+'T12:00:00')-new Date(t+'T12:00:00'))/864e5);return n<=1?(n===1?'DEMAIN':'AUJOURD’HUI'):'DANS '+n+' J';})()+'</span>':'';
+      var full=cycleLabel(c.i)+' · '+TX.cycRange(dmy(c.start),dmy(c.end))+' · '+TX.cycWk(w)+(v?' · '+TX.cycHol(v):'');
+      return (nx&&st!=='done'?'<li class="hc-sep" aria-hidden="true">'+esc(sepTxt)+'</li>':'')+'<li class="hc-row mk-c'+(c.i%6)+(st==='done'?' hc-done':'')+(nx?' hc-nx':'')+'" aria-label="'+esc(full)+'"><span class="hc-ic" aria-hidden="true">'+cycEmoji(c.i)+'</span><div class="hc-m"><div class="hc-t">C'+(c.i+1)+' <span>·</span> <bdi>'+esc(DB.periods[c.i]||cycleName(c.i))+'</bdi></div><div class="hc-d">'+TX.cycRange(dmy(c.start),dmy(c.end))+'</div><span class="hc-wk" aria-hidden="true">'+all.map(function(x){return '<i'+(x[1]?' class="v"':'')+'></i>';}).join('')+'</span></div><div class="hc-r">'+pill+'<b>'+w+' sem.</b>'+(v?'dont '+v+' vac.':'')+'</div></li>';}).join('')+(sep<0&&okc.length?'<li class="hc-sep" aria-hidden="true">'+esc(sepTxt)+'</li>':'')+'</ul>'+
+      '<div class="hc-leg" aria-hidden="true"><span class="hc-wk"><i></i></span> semaine de cours <span class="hc-wk"><i class="v"></i></span> semaine de vacances</div>';}
   else h+='<p class="muted small">'+esc(TX.calNone)+'</p>';
-  h+='<button type="button" class="btn sec" data-goset="1">'+esc(TX.calEdit)+'</button></div>';
+  h+='<div class="pq-sheet" id="calSheet" role="dialog" aria-modal="true" aria-labelledby="calSheetT" hidden><div class="pq-bd" data-pq-close="1"></div><div class="pq-pan"><div class="pq-grab" aria-hidden="true"></div><div class="pq-hd"><b id="calSheetT">Comment sont comptées les semaines\u00a0?</b><button type="button" class="pq-x" data-pq-close="1" aria-label="Fermer">✕</button></div><p class="small">'+esc(TX.setCalNote)+'</p><p class="small muted">'+esc(TX.calFixed)+'</p></div></div>';
+  h+='<button type="button" class="btn sec hc-ed" data-goset="1">✎ '+esc(TX.calEdit)+'</button></div>';
   $('homeBody').innerHTML=h;
   var dflt=e||{day:1,start:'08:00',end:'09:00',classId:(DB.classes[0]||{}).id||'',room:''};
   if(!e&&ttLast){dflt.day=ttLast.day;dflt.start=ttLast.end<'23:00'?ttLast.end:'08:00';dflt.end=addMin(dflt.start,60);dflt.classId=cls(ttLast.classId)?ttLast.classId:dflt.classId;}
@@ -4269,7 +4303,7 @@ function renderSettings(){
   renderCalSettings();
   document.querySelectorAll('#clsManage .clsrow').forEach(function(r){var cnt=r.querySelector('.cnt');if(!cnt)return;if(r.classList.contains('clshead')){cnt.insertAdjacentHTML('beforebegin','<span style="flex:0 0 52px">'+esc(TX.pwShort)+'</span>');return;}var c=cls(r.dataset.cid);cnt.insertAdjacentHTML('beforebegin','<input type="number" class="pwin" min="1" max="10" inputmode="numeric" value="'+clsPw(c)+'" title="'+esc(TX.clsPw)+'" aria-label="'+esc(TX.clsPw)+'">');});
   storeInfo();renderSnaps();
-  $('periodNames').innerHTML=DB.periods.map(function(n,i){return '<div class="cyrow cyb cy-card cy-c'+(i%6)+'" data-cyb="'+i+'"><div class="cyb-h"><b class="cyb-l">'+esc(cycleName(i))+'</b><button type="button" class="cyb-e" data-cybed="1" aria-label="Modifier '+esc(cycleName(i))+'">✎</button></div><div class="cyb-n" dir="auto">'+(n?esc(n):'<i class="muted">'+esc(TX.actPh)+'</i>')+'</div><div class="cyb-s">'+cybSum(i)+'</div><div class="cyb-ed"><input type="text" dir="auto" data-pi="'+i+'" value="'+esc(n)+'" maxlength="40" placeholder="'+esc(TX.actPh)+'" aria-label="Activité du cycle '+(i+1)+'">'+cybChips(i)+'</div>'+cycSelHtml(i)+'</div>';}).join('');
+  $('periodNames').innerHTML=DB.periods.map(function(n,i){return '<div class="cyrow cyb cy-card cy-c'+(i%6)+'" data-cyb="'+i+'"><div class="cyb-h"><b class="cyb-l">'+esc(cycleName(i))+'</b><button type="button" class="cyb-e" data-cybed="1" aria-label="Modifier '+esc(cycleName(i))+'">✎</button></div><div class="cyb-n" dir="auto">'+(n?'<span class="act-em" aria-hidden="true">'+cycEmoji(i)+'</span> '+esc(n):'<i class="muted">'+esc(TX.actPh)+'</i>')+'</div><div class="cyb-s">'+cybSum(i)+'</div><div class="cyb-ed"><input type="text" dir="auto" data-pi="'+i+'" value="'+esc(n)+'" maxlength="40" placeholder="'+esc(TX.actPh)+'" aria-label="Activité du cycle '+(i+1)+'">'+cybChips(i)+'</div>'+cycSelHtml(i)+'</div>';}).join('');
   document.querySelectorAll('[data-pt]').forEach(function(i){var v=DB.settings.points[i.dataset.pt];i.value=v==null&&(i.dataset.pt==='V'||i.dataset.pt==='B')?1:v;});
   $('setSpp').value=DB.spp;$('setThreshold').value=DB.settings.threshold;$('setTeacher').value=DB.settings.teacher;$('setArFont').value=arFontKey(DB.settings.arFont);$('verLine').textContent='Version '+APP_SEMVER;$('setAutoDate').checked=DB.settings.autoDate;
   var n=Object.keys(DB.sessions).length;
@@ -4357,7 +4391,7 @@ $('clsManage').addEventListener('change',function(e){var k=e.target.closest('.cl
 $('clbFlt').addEventListener('click',function(e){var b=e.target.closest('[data-clbf]');if(!b)return;clbF=b.dataset.clbf;clbFilter();});
 $('periodNames').addEventListener('click',function(e){var b=e.target.closest('[data-cybed]');if(b){var k=b.closest('.cyb'),on=!k.classList.contains('ed');document.querySelectorAll('#periodNames .cyb.ed').forEach(function(x){x.classList.remove('ed');});k.classList.toggle('ed',on);if(on){var t=k.querySelector('[data-pi]');if(t)t.focus();}return;}
   var c=e.target.closest('[data-cyt]');if(!c)return;var k2=c.closest('.cyb'),sel=k2.querySelector('select.cytype');if(!sel||(sel.value===c.dataset.cyt&&!sel.classList.contains('auto')))return;sel.value=c.dataset.cyt;sel.dispatchEvent(new Event('change',{bubbles:true}));});
-$('periodNames').addEventListener('change',function(e){var k=e.target.closest('.cyb');if(!k)return;setTimeout(function(){var i=+k.dataset.cyb,n=DB.periods[i]||'';k.querySelector('.cyb-n').innerHTML=n?esc(n):'<i class="muted">'+esc(TX.actPh)+'</i>';k.querySelector('.cyb-s').innerHTML=cybSum(i);var t=k.querySelector('.cyb-tc');if(t)t.outerHTML=cybChips(i);},0);},true);
+$('periodNames').addEventListener('change',function(e){var k=e.target.closest('.cyb');if(!k)return;setTimeout(function(){var i=+k.dataset.cyb,n=DB.periods[i]||'';k.querySelector('.cyb-n').innerHTML=n?'<span class="act-em" aria-hidden="true">'+cycEmoji(i)+'</span> '+esc(n):'<i class="muted">'+esc(TX.actPh)+'</i>';k.querySelector('.cyb-s').innerHTML=cybSum(i);var t=k.querySelector('.cyb-tc');if(t)t.outerHTML=cybChips(i);},0);},true);
 document.querySelector('.pga').addEventListener('click',function(e){var b=e.target.closest('[data-pstep]');if(!b)return;var inp=b.parentNode.querySelector('[data-pt]'),v=parseFloat(String(inp.value).replace(',','.'));if(!(v>=0))v=0;var nv=Math.max(0,Math.min(20,Math.round((v+(+b.dataset.pstep)*0.25)*100)/100));if(nv===v)return;inp.value=nv;inp.dispatchEvent(new Event('change',{bubbles:true}));});
 document.querySelectorAll('[data-pt]').forEach(function(inp){inp.addEventListener('change',function(){var k=inp.dataset.pt,v=parseFloat(String(inp.value).replace(',','.'));if(v>=0&&v<100){DB.settings.points[k]=v;persistNow();toast((k==='V'?'Avertissement (Av)':k==='B'?'Bonus (Bn)':CODE_LABEL[k])+' : '+(k==='B'?'+':'-')+fmtNum(v)+' pt');}else inp.value=DB.settings.points[k];});});
 $('setArFont').addEventListener('change',function(){if(VIEW){this.value=arFontKey(DB.settings.arFont);toast('Lecture seule\u00a0: modification impossible');return;}DB.settings.arFont=arFontKey(this.value);persistNow();applyArFont();toast('Police arabe\u00a0: '+AR_FONTS[DB.settings.arFont].n);});
@@ -4486,7 +4520,7 @@ window.addEventListener('cj:syncstop',phStop);
 window.addEventListener('online',function(){if(phSync())phSchedule(1000);});
 phKeys().then(function(k){(k||[]).forEach(function(id){PH.known[id]=1;});if(k&&k.length){phDecorate();phRefresh();}if(phSync())phListen();}).catch(function(e){phInfo('stockage local indisponible',e);});
 /*PHOTO-END*/
-window.CJR={semver:APP_SEMVER,bhPts:bhPts,bhCnt:bhCnt,bhGet:bhGet,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
+window.CJR={semver:APP_SEMVER,bhPts:bhPts,bhCnt:bhCnt,bhGet:bhGet,actEmoji:actEmoji,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
   cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,colNos:colNos,isVacH:isVacH,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
