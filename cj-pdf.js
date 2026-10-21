@@ -216,7 +216,7 @@ function C(v,st){return st?{content:v,styles:st}:v;}
 function stCell(code,show){var s=ST[code];if(!s)return '';return {content:show===false?'':s.t,styles:{fillColor:s.f||undefined,textColor:s.c,fontStyle:code==='P'?'normal':'bold'}};}
 function zero(v,col){return v?{content:String(v),styles:{textColor:col||INK,fontStyle:'bold'}}:{content:'0',styles:{textColor:[190,196,206]}};}
 function codesH(){return measure(function(s,y){return codesNote(s,y);});}
-function codesNote(d,y){return note(d,y,'Codes\u00a0: P = présent · A = absence non justifiée · AJ = absence justifiée · M = malade non justifié · MJ = malade justifié · R = retard · ST = sans tenue. Ligne grise = élève dispensé(e) de sport. Hachures sable = jour férié ou vacances (motif indiqué)\u00a0: créneau non compté. Taux de présence = séances où l’élève était présent (retards et sans tenue inclus) / séances effectuées.');}
+function codesNote(d,y){return note(d,y,'Codes\u00a0: P = présent · A = absence non justifiée · AJ = absence justifiée · M = malade non justifié · MJ = malade justifié · R = retard · ST = sans tenue. Av = avertissement (−'+A.fmtNum(A.bhPts('V'))+') · Bn = bonus (+'+A.fmtNum(A.bhPts('B'))+'), note comportementale entre 0 et le maximum. Ligne grise = élève dispensé(e) de sport. Hachures sable = jour férié ou vacances (motif indiqué)\u00a0: créneau non compté. Taux de présence = séances où l’élève était présent (retards et sans tenue inclus) / séances effectuées.');}
 
 /* ---------- jours fériés et vacances ---------- */
 function hatch(d,x,y,w,h,step){step=step||1.6;d.setFillColor.apply(d,HOL_F);d.rect(x,y,w,h,'F');d.setDrawColor.apply(d,HOL_L);d.setLineWidth(0.22);
