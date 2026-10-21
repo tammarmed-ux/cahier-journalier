@@ -1304,6 +1304,20 @@ html[data-theme="neon"]{--cy0:#00E5FF;--cy1:#C6FF00;--cy2:#FF3DCB;--cy3:#00E5FF;
 .hy-d:focus-visible{outline:3px solid var(--acc)}.hy-row .btn.ic{min-width:36px;min-height:36px;padding:0}
 .hy-form{margin:8px 0 4px}
 #holHours[hidden]{display:none}
+
+/* 1.29.2 (d) : jamais de défilement horizontal de la page (seule la grille défile, dans son cadre) ; groupes compacts dans le bloc A ; champs date/heure iOS alignés */
+html,body{max-width:100%;overflow-x:hidden}@supports (overflow-x:clip){html,body{overflow-x:clip}}
+.ttform,.ps-card,.pq-pan{max-width:100%;min-width:0}
+.card>*,.ttgrid>*,.row2>*,.actions>*,.abs-r2>*,.cy-in>*,.tw-h>*{min-width:0}
+input,select,textarea{max-width:100%;min-width:0;box-sizing:border-box}
+input[type=date]:not(.cf):not(.ct),input[type=time]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:46px;min-height:46px;line-height:22px;text-align:left}
+input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0;min-height:22px}
+input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-calendar-picker-indicator{margin:0 0 0 4px}
+.abs-r2{flex-wrap:wrap}.abs-r2 #attInfo{order:0}.abs-r2 .pq-i{order:1}.abs-r2 .grpbox{order:2;flex-wrap:wrap;max-width:100%}
+.abs-r2 .grpbox.has-g{flex:1 1 100%}
+.abs-r2 .gstrip{flex:1 1 100%;display:flex;flex-wrap:nowrap;gap:5px;margin:2px 0 0;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 0 3px}
+.abs-r2 .gstrip::-webkit-scrollbar{display:none}
+.abs-r2 .gc-s{flex:none;font-size:12px;padding:3px 9px;min-height:26px;white-space:nowrap}
 /* 1.29.2 (a) : bloc Absences compact */
 #attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}
 .abs-r2{display:flex;align-items:center;gap:6px;margin-top:6px;min-width:0;font-size:12.5px;color:var(--muted)}#attInfo{flex:1 1 auto;min-width:0}
@@ -2082,7 +2096,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2c';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2d';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3147,11 +3161,11 @@ $('grpBody').addEventListener('change',function(e){var t=e.target,c=cls(grpCid),
   if(t.dataset.gname!=null){var v2=t.value.trim().replace(/\s+/g,' ').slice(0,30);g.names[+t.dataset.gname]=v2||('Groupe '+(+t.dataset.gname+1));persistNow();grpChanged();return;}
   if(t.dataset.mv){var k=parseInt(t.value,10);if(g.lock)return;if(k>=0)g.of[t.dataset.mv]=k;else delete g.of[t.dataset.mv];g.at=Date.now();persistNow();grpChanged();}
 });
-function renderGrpBox(){var box=$('attGrp'),cid=DB.ui.cls,c=cls(cid);if(!box)return;if(!c||!countIn(cid)){box.classList.add('hidden');return;}box.classList.remove('hidden');var g=grpOf(c);
+function renderGrpBox(){var box=$('attGrp'),cid=DB.ui.cls,c=cls(cid);if(!box)return;if(!c||!countIn(cid)){box.classList.add('hidden');return;}box.classList.remove('hidden');var g=grpOf(c);box.classList.toggle('has-g',!!g);
   /* 1.29.2 (a) : bouton Groupes compact (même parcours data-grp="open") */
   if(!g){box.innerHTML='<button type="button" class="chip grp-c" data-grp="open" title="Créer les groupes (conseillé après le cycle 1)">👥 Groupes\u00a0: aucun · <b>Créer</b></button>';return;}
   var m=grpMembers(cid);
-  box.innerHTML='<button type="button" class="chip grp-c" data-grp="open" title="Gérer les groupes">👥 '+m.groups.length+' groupe'+(m.groups.length>1?'s':'')+(g.lock?' 🔒':'')+'</button><label class="switch grp-sw"><input type="checkbox" id="attGrpOn"'+(DB.ui.grp?' checked':'')+'> Par groupe</label><div class="gchips" hidden>'+m.groups.map(function(a,i){var st=grpStats(a,10);return '<span class="gchip" style="--gc:'+GRP_COL[i]+';--gs:'+GRP_SOFT[i]+'"><i>'+(i+1)+'</i><span class="gn">'+esc(grpName(g,i))+'</span><small>'+st.n+(st.f||st.m?' · '+st.f+'F/'+st.m+'G':'')+'</small></span>';}).join('')+(m.none.length?'<span class="gchip" style="--gc:#667085;--gs:#f2f4f7"><i>?</i>Sans groupe · '+m.none.length+'</span>':'')+'</div>';}
+  box.innerHTML='<button type="button" class="chip grp-c" data-grp="open" title="Gérer les groupes">👥 '+m.groups.length+' groupe'+(m.groups.length>1?'s':'')+(g.lock?' 🔒':'')+'</button><label class="switch grp-sw"><input type="checkbox" id="attGrpOn"'+(DB.ui.grp?' checked':'')+'> Par groupe</label><div class="gchips gstrip">'+m.groups.map(function(a,i){var st=grpStats(a,10);return '<span class="gchip gc-s" style="--gc:'+GRP_COL[i]+';--gs:'+GRP_SOFT[i]+'" title="'+esc(grpName(g,i)+' · '+st.n+(st.f||st.m?' · '+st.f+'F/'+st.m+'G':''))+'">G'+(i+1)+' · '+st.n+'</span>';}).join('')+(m.none.length?'<span class="gchip gc-s" style="--gc:#667085;--gs:#f2f4f7" title="Sans groupe">? · '+m.none.length+'</span>':'')+'</div>';}
 $('attGrp').addEventListener('click',function(e){if(e.target.closest('[data-grp="open"]'))openGroups(DB.ui.cls);});
 $('attGrp').addEventListener('change',function(e){if(e.target.id==='attGrpOn'){DB.ui.grp=e.target.checked;persist();renderGrid();}});
 
