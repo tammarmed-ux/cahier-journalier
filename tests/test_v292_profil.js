@@ -92,4 +92,4 @@ async function openP(p,k){await p.evaluate(k=>{document.querySelector('#tabs but
  check('aucune erreur JS',p.errs.length===0,p.errs);
  await p.ctx.close();
  /* 8. lecture seule (modérateur) : pas d’édition */
- await b.close();srv.close();console.log(pass+'/'+tot);process.exit(pass===tot?0:1);})().catch(e=>{console.error(e);process.exit(1);});
+ await b.close();srv.close();console.log(pass+'/'+tot+' passed');process.exit(pass===tot?0:1);})().catch(e=>{console.error(e);process.exit(1);});

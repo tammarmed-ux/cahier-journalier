@@ -24,6 +24,8 @@ await p.evaluate((KEY)=>{const d=JSON.parse(localStorage.getItem(KEY));const c=d
   for(let s=0;s<5;s++)put(1,s,'s1',{s:'A',j:false,r:''});   /* 5 dans le cycle 2 */
   for(let s=0;s<6;s++)put(0,s,'s2',{s:'ST',j:false,r:''});   /* note comportementale atteinte (6 × 0,5 = 3) */
   for(let s=0;s<4;s++)put(0,s,'s3',{s:'A',j:false,r:''});
+  /* 1.29.2 (n) : seuil compté dans le CYCLE EN COURS → dates fixées pour que le cycle en cours soit C2 */
+  const D=n=>{const x=new Date(Date.now()+n*864e5);return x.toISOString().slice(0,10);};d.cal.cycles=d.cal.cycles.map((y,i)=>i===0?{from:D(-70),to:D(-21)}:i===1?{from:D(-14),to:D(20)}:{from:D(30+i*40),to:D(60+i*40)});
   d.ui.cls=c.id;d.ui.per=0;localStorage.setItem(KEY,JSON.stringify(d));},KEY);
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);
 const home=async()=>{await p.evaluate(()=>document.querySelector('#tabs button[data-tab="home"]').click());await sleep(400);};
@@ -39,7 +41,7 @@ check('règle par cycle : 2 élèves (5 non just. dans C2 ; note comp. C1) — p
 await p.click('#watchTog');await sleep(200);w=await W();
 check('toucher l’en-tête : la carte s’ouvre (aria-expanded, cj.ui.watchOpen = 1)',w.open&&w.aria==='true'&&!w.hidden&&w.vis&&w.ls==='1',JSON.stringify(w));
 check('badges : « note comp. C1 » et « 5 non just. C2 » ; élèves à 3 + 3 et 4 absents',JSON.stringify(w.items)===JSON.stringify(['s2:note comp. C1','s1:5 non just. C2']),JSON.stringify(w.items));
-check('description : « …ou au moins 5 absences non justifiées dans un cycle. »',w.note==='Note comportementale atteinte dans un cycle, ou au moins 5 absences non justifiées dans un cycle.',w.note);
+check('description : « …ou au moins 5 absences non justifiées dans le cycle en cours. »',w.note==='Note comportementale atteinte dans un cycle, ou au moins 5 absences non justifiées dans le cycle en cours.',w.note);
 if(process.env.SHOTS){await p.evaluate(()=>{const c=document.getElementById('homeWatch');window.scrollTo(0,c.getBoundingClientRect().top+scrollY-110);});await sleep(200);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/surveiller-ouvert.png'});}
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);await home();w=await W();
 check('état ouvert conservé après rechargement',w.open&&!w.hidden);
@@ -52,8 +54,11 @@ const tb=await p.evaluate(()=>{const b=document.getElementById('watchTog').getBo
 // 6 dans un cycle → 1 badge par cycle
 await p.evaluate(K=>{const d=JSON.parse(localStorage.getItem(K)),c=d.classes.find(x=>x.name==='2BACSP4');d.sessions[c.id+'|0|5'].marks.s3={s:'A',j:false,r:''};localStorage.setItem(K,JSON.stringify(d));},KEY);
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);await home();w=await W();
-check('élève à 5 dans C1 ajouté (« 5 non just. C1 »)',w.chip==='3'&&w.items.includes('s3:5 non just. C1'),JSON.stringify(w.items));
-const DATA1=await p.evaluate(K=>{const d=JSON.parse(localStorage.getItem(K));return JSON.stringify([d.students,d.settings,d.classes]);},KEY);
+check('élève à 5 dans C1 (cycle passé) : pas d’alerte, le seuil repart à zéro à chaque cycle (1.29.2 n)',w.chip==='2'&&!w.items.some(x=>x.startsWith('s3')),JSON.stringify(w.items));
+await p.evaluate(K=>{const d=JSON.parse(localStorage.getItem(K));const D=n=>{const x=new Date(Date.now()+n*864e5);return x.toISOString().slice(0,10);};d.cal.cycles[0]={from:D(-20),to:D(5)};d.cal.cycles[1]={from:D(15),to:D(40)};localStorage.setItem(K,JSON.stringify(d));},KEY);
+await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);await home();w=await W();
+check('cycle en cours = C1 : s3 (5 dans C1) en alerte, s1 (5 dans C2) non',w.items.includes('s3:5 non just. C1')&&!w.items.some(x=>x.startsWith('s1')),JSON.stringify(w.items));
+const DATA1=await p.evaluate(K=>{const d=JSON.parse(localStorage.getItem(K));return JSON.stringify([d.students,d.settings,d.classes]);},KEY);   /* (dates de cycles modifiées par le test : cal hors comparaison) */
 check('données inchangées (élèves, réglages, classes)',DATA1===JSON.stringify(JSON.parse(DATA0).filter((x,i)=>i!==1)));
 const K1=await p.evaluate(()=>Object.keys(localStorage).sort());check('une seule nouvelle clé, d’affichage : cj.ui.watchOpen',K1.filter(k=>!K0.split(',').includes(k)).every(k=>k==='cj.ui.watchOpen'||/^classRegister\.v2\.snapm?\.\d+$|^cahier\.snapDay$/.test(k)),JSON.stringify(K1.filter(k=>!K0.split(',').includes(k))));
 for(const T of ['terrain','neon']){await p.evaluate(T=>document.documentElement.setAttribute('data-theme',T),T);await sleep(100);
