@@ -164,7 +164,7 @@ s2.textContent='html.rc-on #calSettings>.cy-head,html.rc-on #calSettings>.cy-tl,
  '.rc-ok{display:block;width:100%;margin-top:12px;min-height:42px;border-radius:12px;border:0;font:inherit;font-weight:750;background:var(--pri);color:#fff;cursor:pointer}html[data-theme="terrain"] .rc-ok{background:#FCD34D;color:#1A1A1A}html[data-theme="neon"] .rc-ok{background:#C6FF00;color:#0A0A12}'+
  '.rc-sh{display:block;font-size:12px;color:var(--muted);margin:0 0 8px}'+
  '#rcSec{margin:0 0 12px}#rcSec .rc-h{display:flex;align-items:center;justify-content:space-between;gap:8px}#rcSec .rc-h b{font-size:16px}'+
- '#rcSec .rc-sub{font-size:12px;color:var(--muted);margin:2px 0 4px}'+
+ '#rcSec .rc-sub{font-size:12.5px;color:var(--muted);margin:0}'+
  '#rcSec .rc-x0{--c:var(--cy0)}#rcSec .rc-x1{--c:var(--cy1)}#rcSec .rc-x2{--c:var(--cy2)}#rcSec .rc-x3{--c:var(--cy3)}#rcSec .rc-x4{--c:var(--cy4)}#rcSec .rc-x5{--c:var(--cy5)}'+
  '#rcSec .rc-fr{position:relative;margin:18px 0 4px}#rcSec .rc-fr .cy-tl{height:22px;border-radius:8px;margin:0}'+
  '#rcSec .rc-fr .cy-tl i[class^="cy-c"]{color:#fff;font:800 11px/22px system-ui,sans-serif;text-align:center;font-style:normal;overflow:hidden}html[data-theme="neon"] #rcSec .rc-fr .cy-tl i[class^="cy-c"]{color:#0A0A12}'+
@@ -200,8 +200,9 @@ function build(){var cs=document.getElementById('calSettings'),pn=document.getEl
   if(tl){var c=tl.cloneNode(true),n=0;c.querySelectorAll('i[class^="cy-c"]').forEach(function(x){x.textContent=String(++n);});fr=c.outerHTML;}
   var mo='',now='';if(ok&&t1>t0){for(var y=t0.getFullYear(),m=t0.getMonth();new Date(y,m,1)<=t1;m++){var a=new Date(y,m,1),z=new Date(y,m+1,1);mo+='<span style="left:'+((pos(Math.max(a,t0))+pos(Math.min(z,t1)))/2).toFixed(1)+'%">'+M[a.getMonth()]+'</span>';}
     var td=iso(new Date());if(td>=cyc[0].from&&td<=cyc[cyc.length-1].to)now='<span class="rc-now" style="left:'+pos(dd(td)).toFixed(1)+'%"><b>aujourd’hui</b></span>';}
-  var h='<div class="rc-h"><b>Répartition cyclique</b><button type="button" class="pq-ib pq-i cy-i" data-pq-open="cycSheet" aria-label="Comment sont utilisées ces dates ?" aria-haspopup="dialog" aria-expanded="false">ⓘ</button></div>'+
-   '<div class="rc-sub">'+P.length+' cycles'+(ok?' · '+e(cyc[0].from.slice(8,10)+'/'+cyc[0].from.slice(5,7))+' → '+e(cyc[cyc.length-1].to.slice(8,10)+'/'+cyc[cyc.length-1].to.slice(5,7)):'')+(tw?' · '+tw+' semaines de cours':'')+'</div>'+
+  /* 1.29.2 (m) : le titre est celui de la page (« Répartition cyclique », h2 du panneau) ; la carte garde ⓘ et le résumé sur une ligne */
+  var h='<div class="rc-h"><span class="rc-sub">'+P.length+' cycles'+(ok?' · '+e(cyc[0].from.slice(8,10)+'/'+cyc[0].from.slice(5,7))+' → '+e(cyc[cyc.length-1].to.slice(8,10)+'/'+cyc[cyc.length-1].to.slice(5,7)):'')+(tw?' · '+tw+' semaines de cours':'')+'</span>'+
+   '<button type="button" class="pq-ib pq-i cy-i" data-pq-open="cycSheet" aria-label="Comment sont utilisées ces dates ?" aria-haspopup="dialog" aria-expanded="false">ⓘ</button></div>'+
    (fr?'<div class="rc-fr" aria-hidden="true">'+fr+now+'</div><div class="rc-mo" aria-hidden="true">'+mo+'</div>':'')+'<div class="rc-v">'+
    P.map(function(p){var r=cyc[p.i]||{},r2=cyc[p.i+1]||{},g=r.to&&r2.from?Math.round((dd(r2.from)-dd(r.to))/864e5)-1:0;
     return '<div class="rc-it rc-x'+(p.i%6)+(p.on?' on':'')+'" data-rc="'+p.i+'"><span class="rc-dot" aria-hidden="true"></span><div class="rc-k">'+
