@@ -1666,6 +1666,8 @@ html[data-theme="neon"] #splash,html[data-theme="neon"] .ln-hero,html[data-theme
     <div class="clb-flt" id="clbFlt"></div>
     <div id="clsManage"></div>
     <div class="row" style="margin-top:10px"><input type="text" class="grow" id="newClassName" dir="auto" placeholder="Nom de la nouvelle classe" maxlength="40"><button class="btn sec" id="addClassBtn">+ Ajouter</button></div>
+    <label class="f" for="setThreshold">Seuil d’alerte (absences non justifiées)</label>
+    <input type="number" id="setThreshold" min="1" max="99" inputmode="numeric">
   </div>
   <div class="card">
     <h2>Points retirés (déduction)</h2>
@@ -1689,8 +1691,6 @@ html[data-theme="neon"] #splash,html[data-theme="neon"] .ln-hero,html[data-theme
     <div id="calSettings"></div>
     <div class="cygrid" id="periodNames"></div>
     <input type="hidden" id="setSpp">
-    <label class="f" for="setThreshold">Seuil d’alerte (absences non justifiées)</label>
-    <input type="number" id="setThreshold" min="1" max="99" inputmode="numeric">
     <input type="checkbox" id="setAutoDate" hidden>
     <input type="hidden" id="setTeacher">
   </div>
@@ -1902,9 +1902,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});}
  function sums(){var S=(window.CJSync&&CJSync.state)||{},bi=txt('bkInfo'),m,r={};
    r.sync=[S.user&&S.user.email?S.user.email:'Non connecté · données sur cet appareil',txt('syncPill')];
    m=txt('secCard').match(/Code d’accès\s*:\s*([^.]+)/i);r.sec=['Code d’accès, chiffrement des données locales',m?m[1].trim().replace(/^./,function(c){return c.toUpperCase();}):''];
-   var nc=document.querySelectorAll('#clsManage .clsrow[data-cid]').length,ne=(bi.match(/(\d+)\s+élève/)||[])[1];r.cls=[nc+' classe'+(nc>1?'s':'')+(ne!=null?' · '+ne+' élève'+(ne>1?'s':''):'')+' · note comportementale',String(nc)];
+   var nc=document.querySelectorAll('#clsManage .clsrow[data-cid]').length,ne=(bi.match(/(\d+)\s+élève/)||[])[1];r.cls=[nc+' classe'+(nc>1?'s':'')+(ne!=null?' · '+ne+' élève'+(ne>1?'s':''):'')+' · note comportementale · alerte à '+val('setThreshold')+' abs.',String(nc)];
    r.pts=['A '+num(val('ptA'))+' · ST '+num(val('ptS'))+' · R '+num(val('ptL'))+' · M '+num(val('ptM')),''];
-   var ncy=document.querySelectorAll('#calSettings input[type=date]').length/2|0;r.annee=[(ncy?ncy+' cycles · ':'')+val('setSpp')+' séances/cycle · alerte à '+val('setThreshold')+' abs.',''];
+   var ncy=document.querySelectorAll('#calSettings input[type=date]').length/2|0;r.annee=[(ncy?ncy+' cycles · ':'')+'activités et dates',''];
    var nh=document.querySelectorAll('#holCard .hy-card').length;r.hol=[nh?nh+' période'+(nh>1?'s':'')+' sans cours':'Aucune période enregistrée',nh?String(nh):''];
    r.pdf=['Bilans, listes, relevés, tests · PDF et CSV',''];
    m=bi.match(/(Dernière sauvegarde : .*|Aucune sauvegarde[^.]*)/);r.bk=[m?m[1].replace(/\.$/,''):'Télécharger, restaurer, photos',''];
