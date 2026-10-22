@@ -9,7 +9,8 @@ cp.execSync('rm -rf '+B+' && mkdir -p '+B+' && git -C '+D+' archive backup-pre-1
 const MT={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.webp':'image/webp','.woff2':'font/woff2','.svg':'image/svg+xml','.ttf':'font/ttf','.jpg':'image/jpeg','.ico':'image/x-icon','.webmanifest':'application/manifest+json'};
 const serve=(R,P)=>http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]);if(u.endsWith('/'))u+='index.html';const f=path.join(R,u);if(!f.startsWith(R)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end();}r.writeHead(200,{'Content-Type':MT[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(r);}).listen(P);
 const S1=serve(D,8064),S2=serve(B,8066);
-const LYC=fs.readFileSync('/workspace/backups/data-APRES-1.29.1-20261020.json','utf8');let b;
+/* 2u : classes enregistrées déjà dans l’ordre d’affichage (tri 2u sans effet) pour comparer la mise en page à 2s ; le tri est vérifié par test_v292_tri */
+const LYC=(()=>{const o=JSON.parse(fs.readFileSync('/workspace/backups/data-APRES-1.29.1-20261020.json','utf8')),E=['1BACSH1','1BACLSH2','1BACSH3','1BACLSH4','2BACSP4','2BACSP5','2BACSP6','2BACSVT1','2BACSVT2'];o.classes.sort((x,y)=>E.indexOf(x.name)-E.indexOf(y.name));return JSON.stringify(o);})();let b;
 async function page(port,{w=1440,h=900,theme='',block=null}={}){const ctx=await b.createBrowserContext();const p=await ctx.newPage();const mob=w<600;
  await p.setViewport({width:w,height:h,isMobile:mob,hasTouch:mob});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('dialog',d=>d.dismiss());
  await p.setBypassServiceWorker(true);await p.setRequestInterception(true);p.on('request',q=>{const u=q.url();if(block&&block.test(u))return q.abort();(u.startsWith('http://localhost:'+port)||u.startsWith('data:')||u.startsWith('blob:'))?q.continue():q.abort();});
@@ -67,10 +68,11 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
  const budget=R=>{const s=fs.readFileSync(R+'/sw.js','utf8').match(/const ASSETS = \[([\s\S]*?)\];/)[1];return [...s.matchAll(/'([^']+)'/g)].map(m=>m[1]).reduce((t,f)=>t+fs.statSync(R+'/'+(f==='./'?'index.html':f)).size,0);};
  const bN=budget(D),bO=budget(B);
  check('desk.js : chargé après le démarrage (LAZY_ASSETS, pas dans ASSETS), en-tête no-cache',!/desk/.test(A)&&/'\.\/desk\.js'/.test(LZ)&&/"\/desk\.js"/.test(fs.readFileSync(D+'/firebase.json','utf8')));
- check('budget de démarrage non augmenté ('+bN+' o ≤ '+bO+' o, ≤ 737 280)',bN<=bO&&bN<=737280,[bN,bO]);
+ check('budget de démarrage : mise en page sans hausse, seul le tri des classes 2u ajouté ('+bN+' o ≤ '+bO+' + 600 o, ≤ 737 280)',bN<=bO+600&&bN<=737280,[bN,bO]);
  const idxN=fs.readFileSync(D+'/index.html','utf8'),idxO=fs.readFileSync(B+'/index.html','utf8');
  const HO="  var n=DB.students.length,c=DB.classes.length;\n  $('hdrSub').textContent=(DB.settings.teacher?DB.settings.teacher+' · ':'')+plural(n,'élève')+' · '+c+' classe'+(c>1?'s':'');\n",HN="  $('hdrSub').textContent=DB.settings.teacher||'Élèves et absences';\n";
- check('index.html : seuls la version (APP_VER cahier-v29-2t) et le texte d’en-tête (sans compteurs) changent',idxO.includes(HO)&&idxN===idxO.replace("var APP_VER='cahier-v29-2s';","var APP_VER='cahier-v29-2t';").replace(HO,HN)&&/'cahier-v29-2t'/.test(idxN));
+ const U2=x=>x.replace(/\/\* 1\.29\.2 \(u\)[^\n]*\nfunction clsK\([^\n]*\nfunction CS\(\)[^\n]*\n/,'').split('CS()').join('DB.classes').replace('CS:CS,','').replace("'cahier-v29-2u'","'cahier-v29-2t'");
+ check('index.html : seuls la version, le texte d’en-tête (sans compteurs, 2t) et le tri d’affichage des classes (2u, défait pour la comparaison) changent',idxO.includes(HO)&&U2(idxN)===idxO.replace("var APP_VER='cahier-v29-2s';","var APP_VER='cahier-v29-2t';").replace(HO,HN)&&/'cahier-v29-2u'/.test(idxN));
  check('college.js charge desk.js seulement si (min-width:1024px)',/matchMedia\('\(min-width:1024px\)'\)/.test(fs.readFileSync(D+'/college.js','utf8'))&&/s\.src='desk\.js'/.test(fs.readFileSync(D+'/college.js','utf8')));
  check('desk.js : tout le CSS sous @media (min-width:1024px)',(()=>{const t=fs.readFileSync(D+'/desk.js','utf8');return /@media\s*\(min-width:1024px\)/.test(t)&&!/@media\s*\(max-width/.test(t);})());
  /* 1. téléphone 390 px : identique au pixel près, desk.js jamais chargé */

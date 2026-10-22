@@ -2192,7 +2192,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2t';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2u';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2285,6 +2285,9 @@ if(!localStorage.getItem(KEY))persistNow();
 
 /* ================= model ================= */
 function cls(id){for(var i=0;i<DB.classes.length;i++)if(DB.classes[i].id===id)return DB.classes[i];return null;}
+/* 1.29.2 (u) : ordre d’affichage des classes (niveau, filière LSH=SH, n°) ; copie, DB.classes inchangé */
+function clsK(n){var s=String(n||'').toUpperCase().replace(/[^0-9A-Z]/g,''),m=/^([123])A(.*)$/.exec(s)||/^(TC|1BAC|2BAC)(.*)$/.exec(s),t=m?m[2]:s,d=/\d+$/.exec(t);return [m?{TC:4,'1BAC':5,'2BAC':6}[m[1]]||+m[1]:9,m?(d?t.slice(0,d.index):t).replace(/^L(?=SH)/,''):'',d&&m?+d[0]:-1];}
+function CS(){return DB.classes.slice().sort(function(x,y){var p=clsK(x.name),q=clsK(y.name);return p[0]-q[0]||p[1].localeCompare(q[1])||p[2]-q[2]||String(x.name).localeCompare(String(y.name),'fr',{numeric:true});});}
 function clsName(id){var c=cls(id);return c?c.name:'?';}
 function byId(id){for(var i=0;i<DB.students.length;i++)if(DB.students[i].id===id)return DB.students[i];return null;}
 /* ordre des élèves : code Massar (chaîne, sans casse ni espaces), sans code → à la fin, par nom ; dir=-1 : Z→A (sans code toujours à la fin) */
@@ -2482,7 +2485,7 @@ function dspShort(d){return !d?'':d.type==='annee'?'Toute l’année':'1er semes
 /* ================= UI plumbing ================= */
 function classOptions(sel,value,allLabel){
   var h=allLabel?'<option value="">'+esc(allLabel)+'</option>':'';
-  DB.classes.forEach(function(c){h+='<option value="'+esc(c.id)+'">'+esc(c.name)+' ('+countIn(c.id)+')'+(CX.opt?CX.opt(c,sel):'')+'</option>';});
+  CS().forEach(function(c){h+='<option value="'+esc(c.id)+'">'+esc(c.name)+' ('+countIn(c.id)+')'+(CX.opt?CX.opt(c,sel):'')+'</option>';});
   sel.innerHTML=h;
   if(value!=null&&(value===''?!!allLabel:!!cls(value)))sel.value=value;else if(!allLabel&&DB.classes.length)sel.value=DB.classes[0].id;
 }
@@ -2525,7 +2528,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')document.que
 function renderStudents(){
   classOptions($('stuClassFilter'),$('stuClassFilter').value,'Toutes les classes');
   var q=$('stuSearch').value.trim().toLowerCase(),f=$('stuClassFilter').value,sort=$('stuSort').value,th=DB.settings.threshold;
-  var cn={};DB.classes.forEach(function(c,i){cn[c.id]=i;});
+  var cn={};CS().forEach(function(c,i){cn[c.id]=i;});
   var brk=DB.students.filter(isBroken);if(!brk.length)stuBrokenOnly=false;
   var fb=$('stuFix');fb.classList.toggle('hidden',!brk.length);
   if(brk.length){var bc={};brk.forEach(function(s){bc[clsName(s.classId)]=1;});
@@ -3311,10 +3314,10 @@ function renderReports(){
   var rsel=$('repClass');classOptions(rsel,rsel.options.length?rsel.value:curCls(),'Toutes les classes');
   periodOptions($('repScope'),$('repScope').value||String(DB.ui.per),true);
   var d=reportData(),th=d.th,year=isMulti(d.scope),sem=isSem(d.scope),scy=scopeCycles(d.scope);
-  var all=!d.cid,cl=all?DB.classes.filter(function(c){return countIn(c.id);}):[cls(d.cid)].filter(Boolean),held=0;
+  var all=!d.cid,cl=all?CS().filter(function(c){return countIn(c.id);}):[cls(d.cid)].filter(Boolean),held=0;
   cl.forEach(function(c){if(year){scy.forEach(function(p){held+=heldCount(c.id,p);});}else held+=heldCount(c.id,+d.scope);});
   $('repInfo').textContent=(all?plural(cl.length,'classe')+' · ':'')+plural(held,'séance')+' effectuée'+(held>1?'s':'')+(all?' (cumul de toutes les classes)':'')+' · '+plural(d.rows.length,'élève')+' · alerte à partir de '+th+' absences non justifiées';
-  var key=repSort.k,ci={};DB.classes.forEach(function(c,i){ci[c.id]=i;});
+  var key=repSort.k,ci={};CS().forEach(function(c,i){ci[c.id]=i;});
   d.rows.sort(function(a,b){
     if(key==='name')return all?((ci[a.s.classId]-ci[b.s.classId])||cmpStu(a.s,b.s,repSort.dir)):cmpStu(a.s,b.s,repSort.dir);
     if(key==='cls')return (ci[a.s.classId]-ci[b.s.classId])*repSort.dir||cmpStu(a.s,b.s);
@@ -3470,7 +3473,7 @@ function slotName(t){return isAS(t)?TX.asShort:clsName(t.classId);}
 function tmin(x){var q=x.split(':');return +q[0]*60+(+q[1]);}
 function addMin(x,m){var t=Math.min(tmin(x)+m,23*60+59);return pad(Math.floor(t/60))+':'+pad(t%60);}
 function fmtH(m){var h=Math.floor(m/60),r=Math.round(m%60);return h+' h'+(r?' '+pad(r):'');}
-function service(){var cm=0,am=0,cnt={};DB.cal.tt.forEach(function(t){var m=tmin(t.end)-tmin(t.start);if(isAS(t))am+=m;else if(cls(t.classId)){cm+=m;cnt[t.classId]=(cnt[t.classId]||0)+1;}});var warn=[];DB.classes.forEach(function(c){var n=cnt[c.id]||0,x=clsPw(c);if(n!==x)warn.push({c:c,n:n,x:x});});
+function service(){var cm=0,am=0,cnt={};DB.cal.tt.forEach(function(t){var m=tmin(t.end)-tmin(t.start);if(isAS(t))am+=m;else if(cls(t.classId)){cm+=m;cnt[t.classId]=(cnt[t.classId]||0)+1;}});var warn=[];CS().forEach(function(c){var n=cnt[c.id]||0,x=clsPw(c);if(n!==x)warn.push({c:c,n:n,x:x});});
   var dm=[0,0,0,0,0,0,0],da=[0,0,0,0,0,0,0],dw=[];DB.cal.tt.forEach(function(t){var m=tmin(t.end)-tmin(t.start);if(isAS(t))da[t.day]+=m;else if(cls(t.classId))dm[t.day]+=m;});
   var mn=Math.round(DB.cal.dayMin*60),mx=Math.round(DB.cal.dayMax*60),fx=Math.round(DB.cal.friMax*60);
   for(var d=1;d<=6;d++){if(!dm[d])continue;if(d===5&&dm[d]>fx)dw.push(TX.friMaxW(fmtH(dm[d]),fmtH(fx),da[5]?fmtH(da[5]):''));else if(d!==5&&dm[d]>mx)dw.push(TX.dayMaxW(TX.days[d],fmtH(dm[d]),fmtH(mx)));if(dm[d]<mn)dw.push(TX.dayMinW(TX.days[d],fmtH(dm[d]),fmtH(mn)));}
@@ -3580,7 +3583,7 @@ function watchOpen(){try{return localStorage.getItem('cj.ui.watchOpen')==='1';}c
 function watchSet(o){try{localStorage.setItem('cj.ui.watchOpen',o?'1':'0');}catch(e){}var c=$('homeWatch'),b=$('watchTog'),w=$('watchBody');if(!c||!b||!w)return;c.classList.toggle('open',o);b.setAttribute('aria-expanded',String(o));w.hidden=!o;}
 function homeStats(){
   var th=DB.settings.threshold,tot=emptyStat(),held=0,per=[],watch=[],K=['A','J','U','L','M','K','S'];
-  DB.classes.forEach(function(c){
+  CS().forEach(function(c){
     var list=studentsIn(c.id),ch=0,cst=emptyStat();for(var p=0;p<DB.periods.length;p++)ch+=heldCount(c.id,p);held+=ch;
     list.forEach(function(s){var y=yearStat(c.id,s.id);K.forEach(function(k){cst[k]+=y[k];});
       var capped=[];y.per.forEach(function(st,i){if(st.capped)capped.push(i);});
@@ -3633,7 +3636,7 @@ function renderHome(){
   var tOpen=!!e||ttOpen;   /* 1.29.1 (-s) : formulaire replié par défaut (ouvert pour modifier une carte ou après « Ajouter ») — état d’affichage seulement */
   h+='<div class="ttform'+(e?' edit':'')+'" id="ttForm"><h3>'+'<button type="button" id="ttTog" aria-expanded="'+tOpen+'" aria-controls="ttBody"><span>'+esc(e?TX.ttEditT:TX.ttAdd)+'</span><svg class="tt-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3><div id="ttBody"'+(tOpen?'':' hidden')+'><div class="ttgrid">'+
     '<div><label class="f" for="ttDay">'+esc(TX.ttDay)+'</label><select id="ttDay">'+[1,2,3,4,5,6].map(function(x){return '<option value="'+x+'">'+esc(TX.days[x])+'</option>';}).join('')+'</select></div>'+
-    '<div><label class="f" for="ttClass">'+esc(TX.ttClass)+'</label><select id="ttClass">'+DB.classes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>';}).join('')+'<option value="__as">'+esc(TX.asName)+'</option></select></div>'+
+    '<div><label class="f" for="ttClass">'+esc(TX.ttClass)+'</label><select id="ttClass">'+CS().map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>';}).join('')+'<option value="__as">'+esc(TX.asName)+'</option></select></div>'+
     '<div><label class="f" for="ttStart">'+esc(TX.ttStart)+'</label><input type="time" id="ttStart" step="300"></div>'+
     '<div><label class="f" for="ttEnd">'+esc(TX.ttEnd)+'</label><input type="time" id="ttEnd" step="300"></div></div>'+
     '<label class="f" for="ttRoom">'+esc(TX.ttRoom)+'</label><input type="text" id="ttRoom" dir="auto" maxlength="40" placeholder="'+esc(TX.ttRoomPh)+'">'+
@@ -4165,7 +4168,7 @@ function renderPlan(){
   if(P.noname)h+='<p class="warnline">'+esc(TX.impNoName(P.noname))+'</p>';
   if(!P.groups.length)h+='<p class="warnline">'+esc(TX.impNothing)+'</p>';
   P.groups.forEach(function(g){
-    var opts=(g.label&&g.key.indexOf('c:')!==0?'<option value="__new">'+esc(TX.impCreate(g.label))+'</option>':'')+DB.classes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(TX.impInto(c.name))+'</option>';}).join('')+'<option value="__skip">'+esc(TX.impSkip)+'</option>';
+    var opts=(g.label&&g.key.indexOf('c:')!==0?'<option value="__new">'+esc(TX.impCreate(g.label))+'</option>':'')+CS().map(function(c){return '<option value="'+esc(c.id)+'">'+esc(TX.impInto(c.name))+'</option>';}).join('')+'<option value="__skip">'+esc(TX.impSkip)+'</option>';
     h+='<div class="impg'+(g.choice==='__skip'?' skip':'')+'"><div class="impg-h"><b dir="auto">'+esc(g.label||TX.impUnknown)+'</b>'+(g.how?'<span class="small muted">'+esc(TX.impHow[g.how])+'</span>':'')+'</div>'+
       (g.srcs.length?'<div class="small muted src" dir="auto">'+esc(g.srcs.join(' · '))+'</div>':'')+
       '<div class="impg-c"><span class="chip ok">'+esc(TX.impNew(g.add.length))+'</span>'+(g.fix.length?'<span class="chip ok">'+esc(TX.impFix(g.fix.length))+'</span>':'')+(g.dup?'<span class="chip warn">'+esc(TX.impDup(g.dup))+'</span>':'')+'</div>'+
@@ -4280,7 +4283,7 @@ function capLine(c){var i=capInfo(c.id),dv=fmtNum(i.def);
 var clbF='';
 function clbSum(c){var i=capInfo(c.id),n=countIn(c.id);return '<div class="clb-sum"><b class="clb-n" dir="auto">'+esc(c.name)+'</b><button type="button" class="clb-e" data-clbed="1" aria-label="Modifier '+esc(c.name)+'">✎</button><small class="clb-m">'+plural(n,'élève')+'</small><div class="clb-ch"><span class="clb-p">'+clsPw(c)+' S/sem</span><span class="clb-p" title="Note comportementale (points par cycle)">🛡 '+fmtNum(i.v)+(i.man?'':' <i>auto</i>')+'</span></div></div>';}
 function clbLv(c){return levelOf(c.name)||'Autres';}
-function clbFilter(){var f=$('clbFlt');if(!f)return;var L=[];DB.classes.forEach(function(c){var l=clbLv(c);if(L.indexOf(l)<0)L.push(l);});if(clbF&&L.indexOf(clbF)<0)clbF='';
+function clbFilter(){var f=$('clbFlt');if(!f)return;var L=[];CS().forEach(function(c){var l=clbLv(c);if(L.indexOf(l)<0)L.push(l);});if(clbF&&L.indexOf(clbF)<0)clbF='';
   f.innerHTML=DB.classes.length>3&&L.length>1?['']. concat(L).map(function(l){var n=l?DB.classes.filter(function(c){return clbLv(c)===l;}).length:DB.classes.length;return '<button type="button" class="clb-fb'+(l===clbF?' on':'')+'" data-clbf="'+esc(l)+'">'+(l?esc(l):'Toutes')+' · '+n+'</button>';}).join(''):'';
   document.querySelectorAll('#clsManage .clb-card').forEach(function(k){var c=cls(k.dataset.clb);k.hidden=!!(clbF&&c&&clbLv(c)!==clbF);k.classList.toggle('lv2',!!c&&/^2/.test(levelOf(c.name)||''));k.classList.toggle('lvt',!!c&&/^TC/i.test(levelOf(c.name)||''));});}
 /* 1.29.2 (e) : cartes Cycles et activités (proposition B) — mêmes champs data-pi / select.cytype ; les pastilles de type choisissent l’option du même select */
@@ -4288,14 +4291,14 @@ var CYB_IC={coll:'⚽',athle:'🏃',gym:'🤸'};
 function cybSum(i){var a=cycAps(i),x=cycApsOf(i);return '<span class="cyb-ty">'+(CYB_IC[a]||'')+' '+esc(APS[a]?APS[a].l:'')+(x?'':' <i>· auto</i>')+'</span>';}
 function cybChips(i){var a=cycAps(i),x=cycApsOf(i);return '<div class="cyb-tc" role="group" aria-label="Type d’activité du cycle '+(i+1)+'"><span class="cyb-c cyb-auto'+(x?'':' on')+'" title="Déduit du nom de l’activité tant qu’aucun type n’est choisi">Auto</span>'+APS_KEYS.map(function(k){return '<button type="button" class="cyb-c'+(x&&k===a?' on':'')+'" data-cyt="'+k+'">'+CYB_IC[k]+' '+esc(APS[k].l)+'</button>';}).join('')+'</div>';}
 /* sélecteur « Sport collectif / Athlétisme / Gymnastique » à côté du nom du cycle ; tant qu’aucun choix n’est fait : déduit du nom de l’activité (« auto ») */
-function cycSelHtml(i){var x=cycApsOf(i),a=cycAps(i),ov=DB.classes.filter(function(c){var o=apsOver(c.id,i);return o&&o!==a;}).map(function(c){return c.name;});
+function cycSelHtml(i){var x=cycApsOf(i),a=cycAps(i),ov=CS().filter(function(c){var o=apsOver(c.id,i);return o&&o!==a;}).map(function(c){return c.name;});
   return '<select class="cytype'+(x?'':' auto')+'" data-cy="'+i+'" aria-label="Type d’activité du cycle '+(i+1)+'" title="'+esc(x?'Type du cycle (toutes les classes)':'Déduit du nom de l’activité – choisissez pour confirmer')+'">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===a?' selected':'')+'>'+esc(APS[k].l)+(k===a&&!x?' (auto)':'')+'</option>';}).join('')+'</select>'+
     (ov.length?'<small class="cyov">Choix propre à\u00a0: '+esc(ov.join(', '))+'</small>':'');}
 function renderSettings(){
   classOptions($('expClass'),$('expClass').value||curCls(),'Toutes les classes');
   periodOptions($('expPeriod'),$('expPeriod').value||String(DB.ui.per),false);
   /* 1.29.2 (e) : une carte par classe (résumé + ✎) ; la zone de modification contient les mêmes champs qu’avant (.clsrow, .pwin, .capline) */
-  $('clsManage').innerHTML=DB.classes.map(function(c){var n=countIn(c.id);return '<div class="clb-card" data-clb="'+esc(c.id)+'">'+clbSum(c)+'<div class="clb-ed"><label class="f">'+esc(TX.clsName)+' · '+esc(TX.pwShort)+'</label><div class="clsrow hascap" data-cid="'+esc(c.id)+'"><input type="text" dir="auto" value="'+esc(c.name)+'" maxlength="40" aria-label="Nom de la classe"><span class="cnt">'+plural(n,'élève')+'</span><button class="btn danger" data-del="1" aria-label="Supprimer la classe">✕</button></div>'+capLine(c)+'</div></div>';}).join('')||'<p class="muted">Aucune classe.</p>';clbFilter();
+  $('clsManage').innerHTML=CS().map(function(c){var n=countIn(c.id);return '<div class="clb-card" data-clb="'+esc(c.id)+'">'+clbSum(c)+'<div class="clb-ed"><label class="f">'+esc(TX.clsName)+' · '+esc(TX.pwShort)+'</label><div class="clsrow hascap" data-cid="'+esc(c.id)+'"><input type="text" dir="auto" value="'+esc(c.name)+'" maxlength="40" aria-label="Nom de la classe"><span class="cnt">'+plural(n,'élève')+'</span><button class="btn danger" data-del="1" aria-label="Supprimer la classe">✕</button></div>'+capLine(c)+'</div></div>';}).join('')||'<p class="muted">Aucune classe.</p>';clbFilter();
   renderCalSettings();
   document.querySelectorAll('#clsManage .clsrow').forEach(function(r){var cnt=r.querySelector('.cnt');if(!cnt)return;if(r.classList.contains('clshead')){cnt.insertAdjacentHTML('beforebegin','<span style="flex:0 0 52px">'+esc(TX.pwShort)+'</span>');return;}var c=cls(r.dataset.cid);cnt.insertAdjacentHTML('beforebegin','<input type="number" class="pwin" min="1" max="10" inputmode="numeric" value="'+clsPw(c)+'" title="'+esc(TX.clsPw)+'" aria-label="'+esc(TX.clsPw)+'">');});
   storeInfo();renderSnaps();
@@ -4516,7 +4519,7 @@ window.addEventListener('cj:syncstop',phStop);
 window.addEventListener('online',function(){if(phSync())phSchedule(1000);});
 phKeys().then(function(k){(k||[]).forEach(function(id){PH.known[id]=1;});if(k&&k.length){phDecorate();phRefresh();}if(phSync())phListen();}).catch(function(e){phInfo('stockage local indisponible',e);});
 /*PHOTO-END*/
-window.CJR={semver:APP_SEMVER,cyNow:cyNow,bhPts:bhPts,bhCnt:bhCnt,bhGet:bhGet,actEmoji:actEmoji,actPicto:actPicto,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
+window.CJR={semver:APP_SEMVER,CS:CS,cyNow:cyNow,bhPts:bhPts,bhCnt:bhCnt,bhGet:bhGet,actEmoji:actEmoji,actPicto:actPicto,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
   cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,colNos:colNos,isVacH:isVacH,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
