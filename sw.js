@@ -1,5 +1,5 @@
 /* TATABO3 (cahier journalier digital) – service worker (hors ligne ; 1.29.1 : ouverture réseau d’abord, 3 s max, sinon copie locale) */
-const CACHE = 'cahier-v29-2q';
+const CACHE = 'cahier-v29-2r';
 /* 1.29.1 : préchargement réduit à l’essentiel du démarrage (installation rapide, même si iOS coupe l’app tôt) ;
    le reste (PDF, polices, grandes images) est mis en cache juste après l’activation, sans bloquer la mise à jour, et à la demande */
 const ASSETS = [
@@ -45,7 +45,8 @@ const SDK_FILES = ['firebase-app.js', 'firebase-auth.js', 'firebase-firestore.js
 const fresh = u => new Request(u, { cache: 'reload' });
 self.addEventListener('install', event => {
   /* 1.29.1 : en cas d’échec (connexion coupée), le cache incomplet est supprimé ; l’ancienne version reste active, nouvel essai à la prochaine ouverture */
-  event.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(fresh))).then(() => self.skipWaiting(), e => caches.delete(CACHE).then(() => { throw e; })));
+  /* 1.29.2 (r) : « ./ » recopié depuis index.html (répare une copie écrasée par l’ancienne version en ouvrant /accueil/) */
+  event.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(fresh)).then(() => c.match('./index.html')).then(r => r && c.put('./', r))).then(() => self.skipWaiting(), e => caches.delete(CACHE).then(() => { throw e; })));
 });
 /* best effort, après l’activation (ne retarde jamais la mise à jour) : autres polices arabes + SDK de synchronisation */
 function warmExtras() {
@@ -81,6 +82,9 @@ self.addEventListener('fetch', event => {
     return;
   }
   if (url.origin !== self.location.origin) return;
+  /* 1.29.2 (r) : page publique autonome /accueil/ (site vitrine) — ni servie ni mise en cache par l’application (réseau direct, budget du cache inchangé) */
+  const SCOPE = new URL(self.registration.scope).pathname;
+  if (url.pathname === SCOPE + 'accueil' || url.pathname.startsWith(SCOPE + 'accueil/')) return;
   /* 1.29.1 : ouverture de l’application (navigation) — réseau d’abord, au plus ~3 s, sinon la copie locale (hors ligne ou réseau lent) */
   if (req.mode === 'navigate') {
     event.respondWith(new Promise(resolve => {
@@ -89,7 +93,8 @@ self.addEventListener('fetch', event => {
       const finish = r => { if (!done && r) { done = true; resolve(r); } };
       const timer = setTimeout(() => { fallback().then(hit => { if (hit) finish(hit); }); }, 3000);
       fetch(req, { cache: 'no-cache' }).then(res => {
-        if (res && res.ok && res.type === 'basic') {
+        /* 1.29.2 (r) : seule l’ouverture de l’application elle-même (/ ou /index.html) remplace sa copie locale */
+        if (res && res.ok && res.type === 'basic' && (url.pathname === SCOPE || url.pathname === SCOPE + 'index.html')) {
           const copy = res.clone();
           caches.open(CACHE).then(c => c.put('./index.html', copy.clone()).then(() => c.put('./', copy))).catch(() => null);
         }

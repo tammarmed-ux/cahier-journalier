@@ -658,7 +658,6 @@ input[type=time]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border
 .clsrow .pwin{flex:0 0 52px;width:52px;padding:8px 4px;text-align:center}
 .card.remind{background:var(--warn-soft);border:1px solid #f2d7a6}
 .card.remind b{color:var(--warn)}.card.remind p{margin:6px 0 10px}
-.svcdays{margin-top:4px;color:var(--muted);line-height:1.5}.svcdays span{white-space:nowrap}
 .ttgrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 
 .sc{display:block;font-size:10.5px;color:#98a2b3;font-weight:400;line-height:1.15;letter-spacing:.02em}
@@ -2015,7 +2014,6 @@ var TX={
  bkRemindSub:'Vos données sont enregistrées automatiquement sur cet appareil. Une sauvegarde (fichier) vous protège en cas de perte, de nettoyage du navigateur ou de changement de téléphone.',
  bkRemindBtn:'Télécharger une sauvegarde',
  storeInfo:function(kb,p){return 'Enregistrement automatique sur cet appareil : '+kb+' Ko utilisés. Stockage persistant : '+(p===true?'accordé.':p===false?'non accordé (le navigateur pourrait effacer les données en cas de manque d’espace : faites des sauvegardes).':'non disponible.');},
- plusAS:function(h){return ' + '+h+' ASS';},
  dayMaxW:function(d,h,m){return d+' : '+h+' (maximum '+m+')';},
  dayMinW:function(d,h,m){return d+' : '+h+' (minimum '+m+')';},
  friMaxW:function(h,m,a){return 'Vendredi : '+h+' de classes (maximum '+m+(a?' + '+a+' d’ASS':'')+')';},
@@ -2024,7 +2022,6 @@ var TX={
  setDayNote:'Heures de classe par jour travaillé (hors ASS). Un jour sans classe est autorisé ; le minimum ne s’applique qu’aux jours avec des classes. Le vendredi, le maximum concerne les classes du matin ; l’ASS s’y ajoute l’après-midi.',
  dayLimSet:'Limites journalières enregistrées',
  ttTitle:'Emploi du temps (tableau de service)',
- ttHelp:'Les dates des séances S1, S2… de chaque cycle sont déduites de vos créneaux (l’ASS ne génère pas de séance). Touchez un créneau pour le modifier.',
  ttEmpty:'Aucun créneau pour le moment.',ttAdd:'Ajouter un créneau',ttEditT:'Modifier le créneau',ttSaveNew:'Ajouter le créneau',ttSaveEdit:'Enregistrer',
  ttDay:'Jour',ttStart:'Début',ttEnd:'Fin',ttClass:'Classe ou ASS',ttRoom:'Salle / terrain (facultatif)',ttRoomPh:'ex. Terrain 1',
  ttBadTime:'L’heure de fin doit être après l’heure de début.',
@@ -2195,7 +2192,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2q';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2r';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3627,11 +3624,10 @@ function renderHome(){
   /* timetable */
   var SV=service(),svok=SV.tot===SV.ob&&!SV.warn.length&&!SV.dw.length;
   h+='<div class="card" id="ttCard"><div class="tw-h"><h2>'+esc(TX.ttTitle)+'</h2><button type="button" class="tw-add" data-ttadd="1" aria-label="'+esc(TX.ttAdd)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button></div><div class="svc'+(svok?' ok':' bad')+'" id="svcBox"><div class="svc-main">'+esc(TX.svcLabel)+' <b id="svcTot">'+fmtH(SV.tot)+' / '+fmtH(SV.ob)+'</b>'+(svok?' <span class="chip ok">✓</span>':'')+'</div><div class="svc-bar" aria-hidden="true"><i style="width:'+(SV.ob?Math.min(100,Math.round(SV.tot/SV.ob*100)):0)+'%"></i></div><div class="small" id="svcBreak">'+esc(TX.svcBreak(fmtH(SV.cm),fmtH(SV.am)))+'</div>'+
-    '<div class="small svcdays" id="svcDays">'+[1,2,3,4,5,6].map(function(d){return '<span>'+esc(TX.daysShort[d])+' '+fmtH(SV.dm[d])+(SV.da[d]?esc(TX.plusAS(fmtH(SV.da[d]))):'')+'</span>';}).join(' · ')+'</div>'+
     (SV.dw.length?'<div class="warnline" id="svcDayW">'+SV.dw.map(esc).join('<br>')+'</div>':'')+
     (SV.tot!==SV.ob?'<div class="warnline" id="svcDiff">'+esc(TX.svcDiff(fmtH(SV.tot),fmtH(SV.ob)))+'</div>':'')+
     (SV.warn.length?'<div class="warnline" id="svcCls">'+esc(TX.svcCheck(DB.cal.perWeek,SV.warn.map(function(w){return w.c.name+' ('+w.n+'/'+w.x+')';}).join(', ')))+'</div>':'')+
-    '</div>'+ttWeekTop()+'<p class="small muted">'+esc(TX.ttHelp)+'</p><div class="week tw">';
+    '</div>'+ttWeekTop()+'<div class="week tw">';
   if(DB.cal.tt.length)for(var d=1;d<=6;d++)h+=ttDayHtml(d,DB.cal.tt.filter(function(x){return x.day===d;}).sort(byStart));   /* 1.28.0 : jours en cartes (vue semaine lisible à 375 px) */
   h+='</div>';
   var e=ttEdit&&DB.cal.tt.filter(function(x){return x.id===ttEdit;})[0];if(!e)ttEdit=null;

@@ -1,0 +1,5 @@
+Polices auto-hébergées (sous-ensembles latins, woff2), licence SIL Open Font License 1.1 :
+- Inter (Rasmus Andersson) — https://github.com/rsms/inter
+- Poppins (Indian Type Foundry) — https://github.com/itfoundry/Poppins
+- Caveat (Impallari Type) — https://github.com/googlefonts/caveat
+Texte de la licence : https://openfontlicense.org
