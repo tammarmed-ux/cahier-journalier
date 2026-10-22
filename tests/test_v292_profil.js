@@ -91,7 +91,7 @@ async function openP(p,k){await p.evaluate(k=>{document.querySelector('#tabs but
  const mf=await p.evaluate(()=>({nom:document.getElementById('pfNom').value,pre:document.getElementById('pfPre').value,etab:document.getElementById('pfEtab').value,civ:document.getElementById('pfS').dataset.civ,prev:document.getElementById('pfPrev').textContent}));
  await tap(p,'#pfS [data-pf="save"]');await settle(p);
  const ms=await p.evaluate(()=>({te:CJR.db().settings.teacher,hdr:document.getElementById('hdrSub').textContent}));
- check('Enregistrer : « M. … » réécrit en « E. Tammar Mohamed - Lycée qualifiant Baja » (en-tête aussi)',mf.nom==='Tammar'&&mf.pre==='Mohamed'&&mf.etab==='Lycée qualifiant Baja'&&mf.civ==='M.'&&mf.prev==='E. Tammar Mohamed - Lycée qualifiant Baja'&&ms.te==='E. Tammar Mohamed - Lycée qualifiant Baja'&&ms.hdr.startsWith('E. Tammar Mohamed - Lycée qualifiant Baja · '),{mf,ms});
+ check('Enregistrer : « M. … » réécrit en « E. Tammar Mohamed - Lycée qualifiant Baja » (en-tête aussi)',mf.nom==='Tammar'&&mf.pre==='Mohamed'&&mf.etab==='Lycée qualifiant Baja'&&mf.civ==='M.'&&mf.prev==='E. Tammar Mohamed - Lycée qualifiant Baja'&&ms.te==='E. Tammar Mohamed - Lycée qualifiant Baja'&&ms.hdr==='E. Tammar Mohamed - Lycée qualifiant Baja',{mf,ms});
  /* 6. photo */
  await p.evaluate(()=>{const d=CJR.db();d.settings.teacher='E. Tammar Mohamed - Lycée qualifiant Baja';CJR.cx.render();});await settle(p);await sleep(300);
  await tap(p,'#pfCard [data-pf="photo"]');await settle(p);

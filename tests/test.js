@@ -133,7 +133,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   await mod.evaluate(()=>{const r=[...document.querySelectorAll('#modCard .mrow')].find(x=>x.innerText.includes('Amina'));r.querySelector('[data-mact="view"]').click();});
   await waitFor(mod,()=>document.getElementById('roBar'));
   check('viewer opened with banner',(await mod.$eval('#roBar',e=>e.innerText)).includes('Lecture seule – cahier de Amina Benali'));
-  check('viewer shows member data (header)',(await mod.$eval('#hdrSub',e=>e.textContent)).includes('AMINA – Lycée · 7 élèves'));
+  check('viewer shows member data (header)',(await mod.evaluate(()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})())).includes('AMINA – Lycée · 7 élèves'));
   await mod.evaluate(()=>document.querySelector('#tabs button[data-tab="students"]').click());await sleep(500);
   check('viewer students list shows member students',(await mod.evaluate(()=>document.getElementById('stuList').innerText)).includes('AMINA Élève'));
   await mod.evaluate(()=>document.querySelector('#tabs button[data-tab="attendance"]').click());await sleep(3000);
@@ -153,7 +153,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   await mod.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(400);
   await mod.evaluate(()=>{const i=document.getElementById('setTeacher');i.value='HACKED';i.dispatchEvent(new Event('change',{bubbles:true}));});
   await sleep(600);
-  check('viewer edit reverted in memory',(await mod.$eval('#hdrSub',e=>e.textContent)).includes('AMINA – Lycée'));
+  check('viewer edit reverted in memory',(await mod.evaluate(()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})())).includes('AMINA – Lycée'));
   await mod.evaluate(()=>{const i=document.getElementById('newClassName');i.value='ZZZ';document.getElementById('addClassBtn').click();});await sleep(600);
   check('viewer class add reverted',!(await mod.evaluate(()=>document.body.innerText.includes('ZZZ'))));
   check('rules: moderator cannot write member cahier',(await tryOp(mod,'set',`users/${mem1Uid}/cahier/meta`,{data:'x'})).startsWith('err:permission-denied'));
@@ -165,7 +165,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   check('member cloud data untouched',JSON.stringify((await adminGet(`users/${mem1Uid}/cahier/meta`)).fields)===memCloudBefore);
   await mod.evaluate(()=>document.getElementById('roQuit').click());await sleep(800);
   check('exit viewer: banner gone',!(await mod.$('#roBar')));
-  check('exit viewer: own data back',(await mod.$eval('#hdrSub',e=>e.textContent)).includes('MOD – Lycée · 3 élèves'));
+  check('exit viewer: own data back',(await mod.evaluate(()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})())).includes('MOD – Lycée · 3 élèves'));
   check('exit viewer: localStorage identical',(await ls(mod))===modLocalBefore);
   check('exit viewer: sync meta not dirty',(await mod.evaluate(()=>window.CJSync.meta().dirty))===dirtyBefore);
   await sleep(2500);
@@ -189,7 +189,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   check('non-member: nothing uploaded',!(await adminGet(`users/${out.localId}/cahier/meta`)).fields);
   check('non-member: rules deny own write',(await tryOp(intr,'set',`users/${out.localId}/cahier/meta`,{data:'x'})).startsWith('err:permission-denied'));
   check('non-member: rules deny profile write',(await tryOp(intr,'set',`profiles/${out.localId}`,{email:'intrus@example.com'})).startsWith('err:permission-denied'));
-  check('non-member: local data still there',(await intr.$eval('#hdrSub',e=>e.textContent)).includes('2 élèves'));
+  check('non-member: local data still there',(await intr.evaluate(()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})())).includes('2 élèves'));
 
   // ---------- disable member (live) ----------
   await mod.evaluate(()=>{const r=[...document.querySelectorAll('#modCard .mrow')].find(x=>x.innerText.includes('Amina'));r.querySelector('[data-mact="toggle"]').click();});
@@ -207,7 +207,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   await waitFor(mem,()=>window.CJSync.state.role==='member');
   check('reactivated member regains access live',true);
   await waitFor(mem2,()=>window.CJSync.state.role==='member');
-  await waitFor(mem2,()=>document.getElementById('hdrSub').textContent.includes('7 élèves'),null,20000);
+  await waitFor(mem2,()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})().includes('7 élèves'),null,20000);
   check('second device pulled member data after reactivation',true);
 
   // ---------- member changes password ----------
@@ -232,7 +232,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   await mod.$eval('#mdRefresh',b=>b.click());await waitFor(mod,()=>!window.CJSync.state.mod.loading&&window.CJSync.state.mod.list.some(m=>m.email==='youssef.test@example.com'&&m.p));
   await mod.evaluate(()=>{const r=[...document.querySelectorAll('#modCard .mrow')].find(x=>x.innerText.includes('Youssef'));r.querySelector('[data-mact="view"]').click();});
   await waitFor(mod,()=>document.getElementById('roBar'),null,20000);
-  check('moderator views chunked cahier',(await mod.$eval('#hdrSub',e=>e.textContent)).includes('300 élèves'));
+  check('moderator views chunked cahier',(await mod.evaluate(()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})())).includes('300 élèves'));
   await mod.click('#roQuit');await sleep(600);
   check('after 2nd view: moderator localStorage own data intact',(await mod.evaluate(k=>JSON.parse(localStorage.getItem(k)).settings.teacher,KEY))==='MOD2 – Lycée');
 

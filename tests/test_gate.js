@@ -40,7 +40,7 @@ async function gotoSettings(page){await page.click('#tabs button[data-tab="setti
 const role=page=>page.evaluate(()=>window.CJSync.state.role);
 const ls=(page,k=KEY)=>page.evaluate(k=>localStorage.getItem(k),k);
 const synced=page=>waitFor(page,()=>{const s=window.CJSync.state,m=window.CJSync.meta();return s.ready&&!m.dirty&&!s.uploading;},null,30000);
-const hdr=page=>page.$eval('#hdrSub',e=>e.textContent);
+const hdr=page=>page.evaluate(()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})());
 async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)=>{const S=window.CJSync.state,F=S.sdk.F;try{const ref=path.split('/').length%2?F.collection(S.db,...path.split('/')):F.doc(S.db,...path.split('/'));
   if(op==='get'){const d=await F.getDocFromServer(ref);return 'ok:'+(d.exists()?'exists':'missing');}
   if(op==='list'){const q=await F.getDocsFromServer(ref);return 'ok:'+q.size;}
@@ -230,7 +230,7 @@ async function tryOp(page,op,path,data){return page.evaluate(async(op,path,data)
   await mem.evaluate(k=>{const v=document.getElementById('view-settings');if(!v.classList.contains('active'))document.querySelector('#tabs button[data-tab="settings"]').click();window.CJPS&&CJPS.open(k);},'sync');await mem.click('#syOut');await waitFor(mem,()=>document.getElementById('gEmail'));
   await gateSignIn(mem,'amina.test@example.com','NouveauMdp-2026');
   await waitFor(mem,()=>window.CJSync.state.role==='member'&&!document.documentElement.classList.contains('cj-locked'));
-  await waitFor(mem,()=>document.getElementById('hdrSub').textContent.includes('AMINA – Lycée · 7 élèves'),null,15000).catch(()=>{});
+  await waitFor(mem,()=>(()=>{const d=CJR.db(),n=d.students.length;return document.getElementById('hdrSub').textContent+' · '+n+' élève'+(n>1?'s':'');})().includes('AMINA – Lycée · 7 élèves'),null,15000).catch(()=>{});
   check('switch back: first user data restored',(await hdr(mem)).includes('AMINA – Lycée · 7 élèves'),await hdr(mem));
   check('switch back: no YOUSSEF data visible',!/YOUSSEF/.test(await appText(mem)));
   check('switch back: dispense kept',(await ls(mem)).includes('"dispense"'));
