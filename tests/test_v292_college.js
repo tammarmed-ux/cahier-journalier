@@ -11,6 +11,7 @@ const COL=(()=>{const d=JSON.parse(LYC);d.classes.forEach(c=>c.name=REN[c.name]|
 let b;
 async function page(data,{block=false,gate=false}={}){const tmp=fs.mkdtempSync('/tmp/cx-');const ctx=await b.createBrowserContext();const p=await ctx.newPage();
   await p.setViewport({width:390,height:844,deviceScaleFactor:1,isMobile:true,hasTouch:true});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('dialog',d=>d.dismiss());
+  /* 1.29.2 (l) : sans contourner le service worker, college.js pouvait être servi par lui malgré le blocage */if(block)await p.setBypassServiceWorker(true);
   await p.setRequestInterception(true);p.on('request',q=>{const u=q.url();if(block&&/college\.js/.test(u))return q.abort();(u.startsWith('http://localhost:'+PORT)||u.startsWith('data:')||u.startsWith('blob:'))?q.continue():q.abort();});
   await p.evaluateOnNewDocument((o)=>{if(!sessionStorage.getItem('seeded')){localStorage.clear();if(o)localStorage.setItem('classRegister.v2',o);sessionStorage.setItem('seeded','1');}localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));},data);
   await p.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});
@@ -26,7 +27,7 @@ const PRINT=()=>{const R=CJR,d=R.db(),o={};d.classes.forEach(c=>{o[c.name]={lv:R
 (async()=>{
  b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
  /* 1. lycée : identique avec et sans college.js */
- const p0=await page(LYC,{block:true});const f0=await p0.evaluate(PRINT),j0=await p0.evaluate(()=>CJApp.getJSON());
+ const p0=await page(LYC,{block:true});check('référence sans college.js : college.js réellement bloqué (service worker contourné)',await p0.evaluate(()=>!(CJR.cx&&CJR.cx.CX.ready)));const f0=await p0.evaluate(PRINT),j0=await p0.evaluate(()=>CJApp.getJSON());
  const v0=await p0.evaluate(()=>{document.querySelector('#tabs button[data-tab="attendance"]').click();return document.getElementById('view-attendance').innerHTML.replace(/ · (TC|1BAC|2BAC|1AC|2AC|3AC|Niveau \?)<\/option>/g,'</option>');});await p0.ctx.close();
  const p1=await page(LYC,{gate:true});await sleep(2500);const f1=await p1.evaluate(PRINT),j1=await p1.evaluate(()=>CJApp.getJSON());
  const v1=await p1.evaluate(()=>{document.querySelector('#tabs button[data-tab="attendance"]').click();return document.getElementById('view-attendance').innerHTML.replace(/ · (TC|1BAC|2BAC|1AC|2AC|3AC|Niveau \?)<\/option>/g,'</option>');});

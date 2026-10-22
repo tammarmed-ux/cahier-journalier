@@ -149,6 +149,86 @@ document.addEventListener('click',function(ev){var t=ev.target;if(!t.closest)ret
 function obs(id,f){var el=document.getElementById(id);if(el)new MutationObserver(function(){f();}).observe(el,{childList:true});}
 obs('clsManage',deco);obs('gridWrap',warn);obs('procWrap',warn);deco();warn();
 document.addEventListener('change',function(ev){if(ev.target&&/^(attClass|procClass)$/.test(ev.target.id))setTimeout(warn,0);},true);
+/* ---- Paramètres › « Répartition cyclique » (1.29.2 l, proposition C) — affichage seulement ----
+   Une frise des mois (repère « aujourd’hui ») + une ligne de temps : une carte par cycle (activité, type, dates, semaines, pauses de vacances).
+   Les écrans d’origine (#calSettings « Dates des cycles », #periodNames « Cycles et activités ») restent dans la page avec leurs gestionnaires :
+   ✎ dates = même bouton [data-cyed] ; ✎ activité / type = clic sur le ✎ d’origine [data-cybed] ; la carte d’origine ouverte s’affiche en feuille (dialogue).
+   Mêmes champs, mêmes écritures ; rien n’est lu ni écrit ailleurs. Sans ce fichier : écran 1.29.2 (k) inchangé. */
+(function(){
+var M=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+var s2=document.createElement('style');s2.id='rcCss';
+s2.textContent='html.rc-on #calSettings>.cy-head,html.rc-on #calSettings>.cy-tl,html.rc-on #calSettings>label.f,html.rc-on #cycDates>.cy-card:not(.ed),html.rc-on #periodNames>.cyb:not(.ed){display:none}'+
+ 'html.rc-on #cycDates,html.rc-on #periodNames{display:block;margin:0}'+
+ 'html.rc-on #cycDates>.cy-card.ed,html.rc-on #periodNames>.cyb.ed{position:fixed;left:0;right:0;bottom:0;z-index:1201;max-width:560px;margin:0 auto;border-radius:18px 18px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.25);max-height:85vh;overflow:auto;outline:0;background:var(--card)}'+
+ '#rcBd{position:fixed;inset:0;z-index:1200;background:rgba(10,12,20,.45)}#rcBd[hidden]{display:none}'+
+ '.rc-ok{display:block;width:100%;margin-top:12px;min-height:42px;border-radius:12px;border:0;font:inherit;font-weight:750;background:var(--pri);color:#fff;cursor:pointer}html[data-theme="terrain"] .rc-ok{background:#FCD34D;color:#1A1A1A}html[data-theme="neon"] .rc-ok{background:#C6FF00;color:#0A0A12}'+
+ '.rc-sh{display:block;font-size:12px;color:var(--muted);margin:0 0 8px}'+
+ '#rcSec{margin:0 0 12px}#rcSec .rc-h{display:flex;align-items:center;justify-content:space-between;gap:8px}#rcSec .rc-h b{font-size:16px}'+
+ '#rcSec .rc-sub{font-size:12px;color:var(--muted);margin:2px 0 4px}'+
+ '#rcSec .rc-x0{--c:var(--cy0)}#rcSec .rc-x1{--c:var(--cy1)}#rcSec .rc-x2{--c:var(--cy2)}#rcSec .rc-x3{--c:var(--cy3)}#rcSec .rc-x4{--c:var(--cy4)}#rcSec .rc-x5{--c:var(--cy5)}'+
+ '#rcSec .rc-fr{position:relative;margin:18px 0 4px}#rcSec .rc-fr .cy-tl{height:22px;border-radius:8px;margin:0}'+
+ '#rcSec .rc-fr .cy-tl i[class^="cy-c"]{color:#fff;font:800 11px/22px system-ui,sans-serif;text-align:center;font-style:normal;overflow:hidden}html[data-theme="neon"] #rcSec .rc-fr .cy-tl i[class^="cy-c"]{color:#0A0A12}'+
+ '#rcSec .rc-now{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--ink);border-radius:2px}#rcSec .rc-now b{position:absolute;top:-16px;left:-26px;font-size:9.5px;white-space:nowrap}'+
+ '#rcSec .rc-mo{position:relative;height:13px;font-size:10px;color:var(--muted);margin:3px 0 12px}#rcSec .rc-mo span{position:absolute;transform:translateX(-50%);white-space:nowrap}'+
+ '#rcSec .rc-v{position:relative;padding-left:26px}#rcSec .rc-v:before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--line)}'+
+ '#rcSec .rc-it{position:relative;margin-bottom:8px}#rcSec .rc-dot{position:absolute;left:-23px;top:12px;width:14px;height:14px;border-radius:50%;background:var(--c);border:3px solid var(--card);box-shadow:0 0 0 1px var(--line);box-sizing:border-box}'+
+ '#rcSec .rc-it.on .rc-dot{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 40%,transparent)}'+
+ '#rcSec .rc-k{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:12px;padding:8px 9px}'+
+ '#rcSec .rc-t,#rcSec .rc-m{display:flex;align-items:center;gap:6px}#rcSec .rc-m{margin-top:5px;flex-wrap:wrap}#rcSec .rc-t .rc-dt,#rcSec .rc-m .rc-ed{margin-left:auto}'+
+ '#rcSec .rc-lab{font-size:12.5px;font-weight:800;color:var(--c)}'+
+ '#rcSec .rc-pill{font-size:10px;font-weight:800;background:var(--acc);color:#fff;border-radius:6px;padding:1px 6px}html[data-theme="neon"] #rcSec .rc-pill{background:#C6FF00;color:#0A0A12}html[data-theme="terrain"] #rcSec .rc-pill{background:#FCD34D;color:#1A1A1A}'+
+ '#rcSec .rc-act{font-weight:800;font-size:15px;line-height:1.25;display:flex;gap:6px;align-items:flex-start;margin-top:3px}#rcSec .rc-act svg{width:20px;height:20px;flex:none}'+
+ '#rcSec .rc-ed{border:0;background:none;color:var(--muted);font-size:15px;width:32px;height:32px;margin:-6px -4px -6px 0;border-radius:8px;cursor:pointer}'+
+ '#rcSec .rc-dt{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;font:700 13px/1.2 system-ui,sans-serif;padding:5px 8px;cursor:pointer;white-space:nowrap;min-height:30px}#rcSec .rc-dt span{color:var(--muted);font-weight:400;margin-left:3px}'+
+ '#rcSec .rc-ty{font:inherit;font-size:11.5px;padding:3px 8px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink);cursor:pointer}#rcSec .rc-ty i{color:var(--muted);font-style:normal}'+
+ 'html[data-theme="neon"] #rcSec .rc-ty,html[data-theme="neon"] #rcSec .rc-dt{background:#1B1E27}#rcSec .rc-wk{font-size:11.5px;color:var(--muted)}'+
+ '#rcSec .rc-gp{font-size:11px;color:var(--muted);margin:-2px 0 8px;display:flex;align-items:center;gap:6px}#rcSec .rc-gp i{display:inline-block;width:34px;height:8px;border-radius:4px;background:repeating-linear-gradient(135deg,var(--cyh1) 0 4px,var(--cyh2) 4px 8px)}'+
+ '#rcSec button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}';
+document.head.appendChild(s2);
+function q(s,r){return (r||document).querySelector(s);}
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dd(s){return new Date(s+'T12:00:00');}
+var last='';
+function build(){var cs=document.getElementById('calSettings'),pn=document.getElementById('periodNames');if(!cs||!pn||!q('#cycDates',cs))return;
+  var sec=document.getElementById('rcSec');if(!sec){sec=document.createElement('section');sec.id='rcSec';sec.setAttribute('aria-label','Répartition cyclique');cs.parentNode.insertBefore(sec,cs);
+    var bd=document.createElement('div');bd.id='rcBd';bd.hidden=true;document.body.appendChild(bd);document.documentElement.classList.add('rc-on');}
+  var cyc=(R.db().cal||{}).cycles||[],P=[].map.call(pn.querySelectorAll('.cyb[data-cyb]'),function(k){var i=+k.dataset.cyb,d=q('#cycDates .cy-card[data-i="'+i+'"]'),n=k.querySelector('.cyb-n'),em=n&&n.querySelector('.act-em'),ty=k.querySelector('.cyb-ty');
+    return {i:i,lab:(k.querySelector('.cyb-l')||{}).textContent||'',em:em?em.innerHTML:'',act:n?(em?n.textContent.replace(em.textContent,''):n.textContent).trim():'',ph:!!(n&&n.querySelector('i.muted')),ty:ty?ty.innerHTML:'',
+      dt:d?(d.querySelector('.cy-d')||{}).firstChild.textContent.trim():'',wk:d?(d.querySelector('small')||{}).textContent||'':'',pill:d&&d.querySelector('.cy-pill')?d.querySelector('.cy-pill').textContent:'',on:!!(d&&d.classList.contains('on'))};});
+  var ok=cyc.length&&cyc[0].from&&cyc[cyc.length-1].to,t0=ok?dd(cyc[0].from):0,t1=ok?dd(cyc[cyc.length-1].to):0,pos=function(x){return Math.max(0,Math.min(100,(x-t0)/(t1-t0)*100));};
+  var tw=P.reduce(function(a,p){return a+(parseInt(p.wk,10)||0);},0),tl=q('.cy-tl',cs),fr='';
+  if(tl){var c=tl.cloneNode(true),n=0;c.querySelectorAll('i[class^="cy-c"]').forEach(function(x){x.textContent=String(++n);});fr=c.outerHTML;}
+  var mo='',now='';if(ok&&t1>t0){for(var y=t0.getFullYear(),m=t0.getMonth();new Date(y,m,1)<=t1;m++){var a=new Date(y,m,1),z=new Date(y,m+1,1);mo+='<span style="left:'+((pos(Math.max(a,t0))+pos(Math.min(z,t1)))/2).toFixed(1)+'%">'+M[a.getMonth()]+'</span>';}
+    var td=iso(new Date());if(td>=cyc[0].from&&td<=cyc[cyc.length-1].to)now='<span class="rc-now" style="left:'+pos(dd(td)).toFixed(1)+'%"><b>aujourd’hui</b></span>';}
+  var h='<div class="rc-h"><b>Répartition cyclique</b><button type="button" class="pq-ib pq-i cy-i" data-pq-open="cycSheet" aria-label="Comment sont utilisées ces dates ?" aria-haspopup="dialog" aria-expanded="false">ⓘ</button></div>'+
+   '<div class="rc-sub">'+P.length+' cycles'+(ok?' · '+e(cyc[0].from.slice(8,10)+'/'+cyc[0].from.slice(5,7))+' → '+e(cyc[cyc.length-1].to.slice(8,10)+'/'+cyc[cyc.length-1].to.slice(5,7)):'')+(tw?' · '+tw+' semaines de cours':'')+'</div>'+
+   (fr?'<div class="rc-fr" aria-hidden="true">'+fr+now+'</div><div class="rc-mo" aria-hidden="true">'+mo+'</div>':'')+'<div class="rc-v">'+
+   P.map(function(p){var r=cyc[p.i]||{},r2=cyc[p.i+1]||{},g=r.to&&r2.from?Math.round((dd(r2.from)-dd(r.to))/864e5)-1:0;
+    return '<div class="rc-it rc-x'+(p.i%6)+(p.on?' on':'')+'" data-rc="'+p.i+'"><span class="rc-dot" aria-hidden="true"></span><div class="rc-k">'+
+     '<div class="rc-t"><span class="rc-lab">'+e(p.lab)+'</span>'+(p.pill?'<span class="rc-pill">'+e(p.pill)+'</span>':'')+
+     '<button type="button" class="rc-dt" data-cyed="'+p.i+'" aria-label="Modifier les dates du '+e(p.lab)+'">'+e(p.dt)+'<span aria-hidden="true">✎</span></button></div>'+
+     '<div class="rc-act" dir="auto">'+(p.em?'<span aria-hidden="true">'+p.em+'</span>':'')+(p.ph?'<i class="muted" style="font-weight:400">'+e(p.act)+'</i>':'<span>'+e(p.act)+'</span>')+'</div>'+
+     '<div class="rc-m"><button type="button" class="rc-ty" data-rcact="'+p.i+'" aria-label="Type d’activité du '+e(p.lab)+' : modifier">'+p.ty+'</button><span class="rc-wk">'+e(p.wk)+'</span>'+
+     '<button type="button" class="rc-ed" data-rcact="'+p.i+'" aria-label="Modifier l’activité du '+e(p.lab)+'">✎</button></div></div></div>'+
+     (g>=7?'<div class="rc-gp"><i aria-hidden="true"></i>Pause · '+Math.round(g/7)+' sem. (vacances)</div>':'');}).join('')+'</div>';
+  if(h!==last){last=h;sec.innerHTML=h;}
+  sheet();}
+/* feuille d’édition : la carte d’origine ouverte (.cy-card.ed / .cyb.ed) + bouton Terminé (même bouton bascule que le ✎ d’origine) */
+function sheet(){var dc=q('#cycDates>.cy-card.ed'),ac=q('#periodNames>.cyb.ed'),bd=document.getElementById('rcBd');
+  if(dc&&!dc.querySelector('.rc-ok')){dc.insertAdjacentHTML('beforeend','<button type="button" class="rc-ok" data-cyed="'+dc.dataset.i+'">Terminé</button>');dc.setAttribute('role','dialog');dc.setAttribute('aria-label','Dates du cycle '+(+dc.dataset.i+1));}
+  if(ac&&!ac.querySelector('.rc-ok')){ac.insertAdjacentHTML('beforeend','<button type="button" class="rc-ok" data-cybed="1">Terminé</button>');ac.setAttribute('role','dialog');ac.setAttribute('aria-label','Activité du cycle '+(+ac.dataset.cyb+1));}
+  if(bd){var on=!!(dc||ac);if(bd.hidden===on)bd.hidden=!on;}}
+function closeAll(){var a=q('#periodNames>.cyb.ed [data-cybed]');if(a)a.click();var d=q('#cycDates>.cy-card.ed');if(d){var b=d.querySelector('.cy-d');if(b)b.click();}}
+document.addEventListener('click',function(ev){var t=ev.target;if(!t.closest)return;
+  if(t.closest('#rcBd')){closeAll();return;}
+  var a=t.closest('#rcSec [data-rcact]');if(a){var i=a.getAttribute('data-rcact'),d=q('#cycDates>.cy-card.ed');if(d){var b=d.querySelector('.cy-d');if(b)b.click();}var k=q('#periodNames>.cyb[data-cyb="'+i+'"]');if(k&&!k.classList.contains('ed')){var x=k.querySelector('[data-cybed]');if(x)x.click();}setTimeout(sheet,0);return;}
+  /* ouvrir les dates ferme l’activité ouverte (une seule feuille) */
+  if(t.closest('#rcSec [data-cyed]')){var o=q('#periodNames>.cyb.ed [data-cybed]');if(o)o.click();}},true);
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&(q('#cycDates>.cy-card.ed')||q('#periodNames>.cyb.ed')))closeAll();});
+var tm=0;function sch(){if(!tm)tm=setTimeout(function(){tm=0;build();},0);}
+['calSettings','periodNames'].forEach(function(id){var el=document.getElementById(id);if(el)new MutationObserver(sch).observe(el,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});});
+build();
+})();
 /* les listes de classes déjà affichées reprennent leur libellé */
 X.render();
 

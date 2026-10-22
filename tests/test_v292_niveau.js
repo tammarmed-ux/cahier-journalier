@@ -11,6 +11,7 @@ const COL=(()=>{const d=JSON.parse(LYC);d.classes.forEach(c=>c.name=REN[c.name]|
 const LYU=(()=>{const d=JSON.parse(LYC);d.classes.find(c=>c.name==='2BACSVT1').name='Groupe A';return JSON.stringify(d);})();
 let b;
 async function page(data,block){const ctx=await b.createBrowserContext();const p=await ctx.newPage();await p.setViewport({width:390,height:844,isMobile:true,hasTouch:true});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('dialog',d=>d.dismiss());
+  /* 1.29.2 (l) : sans contourner le service worker, college.js pouvait être servi par lui malgré le blocage */if(block)await p.setBypassServiceWorker(true);
   await p.setRequestInterception(true);p.on('request',q=>{const u=q.url();if(block&&/college\.js/.test(u))return q.abort();(u.startsWith('http://localhost:'+PORT)||u.startsWith('data:')||u.startsWith('blob:'))?q.continue():q.abort();});
   await p.evaluateOnNewDocument(o=>{if(!sessionStorage.getItem('seeded')){localStorage.clear();localStorage.setItem('classRegister.v2',o);sessionStorage.setItem('seeded','1');}localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));},data);
   await p.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});
@@ -54,7 +55,7 @@ const GRADES=()=>{const R=CJR,d=R.db(),o={};d.classes.forEach(c=>d.periods.forEa
  check('noms proposés reconnus : 1AC-/2AC-/3AC- (collège)',await p.evaluate(()=>['1AC-X','2AC-Groupe A','3AC-B 2'].map(CJR.levelOf).join()==='1AC,2AC,3AC'));
  check('collège : aucune erreur JS',!p.errs.length,p.errs);await p.ctx.close();
  /* lycée : « Groupe A » non reconnu → pastille + message, calcul inchangé (2BAC comme avant) */
- const q0=await page(LYU,true);const l0=await q0.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.forEach((x,pi)=>CJR.studentsIn(c.id).forEach(s=>{const g=CJR.gradeOf(c.id,s.id,pi);o.push(g.total+'|'+g.proc);})));return o.join();});await q0.ctx.close();
+ const q0=await page(LYU,true);check('référence sans college.js : college.js réellement bloqué (service worker contourné)',await q0.evaluate(()=>!(CJR.cx&&CJR.cx.CX.ready)));const l0=await q0.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.forEach((x,pi)=>CJR.studentsIn(c.id).forEach(s=>{const g=CJR.gradeOf(c.id,s.id,pi);o.push(g.total+'|'+g.proc);})));return o.join();});await q0.ctx.close();
  const q=await page(LYU);const l1=await q.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.forEach((x,pi)=>CJR.studentsIn(c.id).forEach(s=>{const g=CJR.gradeOf(c.id,s.id,pi);o.push(g.total+'|'+g.proc);})));return o.join();});
  check('lycée : toutes les notes /20 et procédurales identiques avec ou sans college.js (y compris la classe non reconnue)',l0===l1&&l0.length>1000);
  const la=await att(q,'Groupe A');
