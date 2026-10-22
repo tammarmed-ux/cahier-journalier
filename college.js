@@ -375,3 +375,12 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
   var d=R.db(),S=window.CJSync&&CJSync.state;if((d.settings&&d.settings.school)||ls(LK)||infer(d)){clearInterval(iv);return;}
   tries++;if(!S||!S.user||S.ready||!navigator.onLine||tries>20)ask();},700);   /* attend les données du compte (20 × 0,7 s au plus) */
 })();
+/* 1.29.2 (p) : barre d’onglets et bouton + épinglés sans position:fixed sur mobile.
+   iOS 26 (Safari / navigateurs intégrés aux applis) décale les éléments position:fixed pendant le défilement (barre d’adresse qui se replie, clavier) :
+   la barre devient position:sticky en bas de page (main occupe au moins la hauteur de l’écran) et le bouton + d’Élèves est placé dans la barre
+   (position:absolute au-dessus d’elle, visible seulement sur l’onglet Élèves). Aucun calcul JS de position ; affichage seulement. */
+(function(){var mq=window.matchMedia&&matchMedia('(max-width:899px)'),nav=document.getElementById('tabs'),fab=document.getElementById('addStudentBtn'),home=fab&&fab.parentNode,nx=fab&&fab.nextSibling;if(!mq||!nav||!fab)return;
+var st=document.createElement('style');st.id='navPin';st.textContent='@media (max-width:899px){main{min-height:100vh;box-sizing:border-box;padding-bottom:24px}nav.tabs{position:sticky;bottom:0}'+
+ 'nav.tabs>#addStudentBtn{position:absolute;right:18px;bottom:calc(100% + 18px)}nav.tabs>button[data-tab="students"]:not(.active)~#addStudentBtn{display:none}}';document.head.appendChild(st);
+function place(){if(mq.matches){if(fab.parentNode!==nav)nav.appendChild(fab);}else if(fab.parentNode!==home)home.insertBefore(fab,nx&&nx.parentNode===home?nx:null);}
+place();if(mq.addEventListener)mq.addEventListener('change',place);else if(mq.addListener)mq.addListener(place);})();
