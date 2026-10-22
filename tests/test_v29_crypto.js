@@ -70,7 +70,7 @@ const ERR=[];
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:240000,args:['--no-sandbox','--disable-dev-shm-usage']});
 // ================= 0. statique =================
 const idx=fs.readFileSync(D+'/index.html','utf8'),sw=fs.readFileSync(D+'/sw.js','utf8'),cj=fs.readFileSync(D+'/cj-crypto.js','utf8');
-check('version 1.29.0 / version publiée cahier-v29 (APP_VER = cache sw.js) ; cj-crypto.js en cache hors ligne',/var APP_SEMVER='1\.29\.2'/.test(idx)&&/var APP_VER='cahier-v29-2p'/.test(idx)&&/const CACHE = 'cahier-v29-2p'/.test(sw)&&/'\.\/cj-crypto\.js'/.test(sw));
+check('version 1.29.0 / version publiée cahier-v29 (APP_VER = cache sw.js) ; cj-crypto.js en cache hors ligne',/var APP_SEMVER='1\.29\.2'/.test(idx)&&/var APP_VER='cahier-v29-2q'/.test(idx)&&/const CACHE = 'cahier-v29-2q'/.test(sw)&&/'\.\/cj-crypto\.js'/.test(sw));
 /* 1.29.2 (j) : seul ajout permis dans firebase.json = en-tête no-cache de /college.js */
 const FBD=cp.execSync('git -C '+D+' diff -U0 v1.28.1 -- firebase.json').toString().split('\n').filter(l=>/^[+-]/.test(l)&&!/^(\+\+\+|---) /.test(l));
 check('firestore.rules identique à 1.28.1 ; firebase.json identique sauf l’en-tête no-cache de college.js (1.29.2 j)',cp.execSync('git -C '+D+' diff v1.28.1 -- firestore.rules').toString()===''&&FBD.every(l=>/^\+/.test(l))&&FBD.join('\n').replace(/\s+/g,'')==='+{+"source":"/college.js",+"headers":[+{+"key":"Cache-Control",+"value":"no-cache"+}+]+},',FBD);
@@ -117,7 +117,7 @@ check('1.28.1 : le vidage brut contient bien les noms en clair (contrôle du tes
 ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.2';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
 await unlockGate(p);await sleep(600);
 const cachesNow=await p.evaluate(()=>caches.keys());
-check('mise à jour réelle 1.28.1 → '+sem+' par le service worker (cache '+cachesNow.join(',')+')',sem==='1.29.2'&&cachesNow.includes('cahier-v29-2p')&&!cachesNow.includes('cahier-v28-1'));
+check('mise à jour réelle 1.28.1 → '+sem+' par le service worker (cache '+cachesNow.join(',')+')',sem==='1.29.2'&&cachesNow.includes('cahier-v29-2q')&&!cachesNow.includes('cahier-v28-1'));
 const L290=await logical(p);const dump290=await rawDump(p);
 const kd=(a,b)=>{if(a===b)return 'égal';let i=0;while(a[i]===b[i])i++;return a.length+'/'+b.length+' @'+i+' '+a.slice(i-40,i+40)+' ≠ '+b.slice(i-40,i+40);};
 const c281=Object.keys(L281.ls).filter(k=>k in L290.ls);

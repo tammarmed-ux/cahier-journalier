@@ -389,3 +389,62 @@ function place(){if(mq.matches){put(w,nh,nav);w.appendChild(nav);w.appendChild(f
 function stu(){w.classList.toggle('np-stu',vs.classList.contains('active'));}
 new MutationObserver(stu).observe(vs,{attributes:true,attributeFilter:['class']});stu();
 place();if(mq.addEventListener)mq.addEventListener('change',place);else if(mq.addListener)mq.addListener(place);})();
+/* 1.29.2 (q) : affichage seulement (propositions A choisies).
+   · Accueil › « Comparaison des classes » : barres classées. Le tableau d’origine (mêmes chiffres, calculés par le cœur) est relu ligne par ligne puis présenté
+     du taux le plus élevé au plus bas ; chaque ligne garde data-cmpcls → le même gestionnaire ouvre les absences de la classe.
+   · Élèves : barre d’outils compacte. Les éléments d’origine (mêmes id, mêmes gestionnaires : recherche, filtre de classe, tri, import, tests, trombinoscope) sont
+     déplacés ; seuls les libellés changent. Sans college.js : présentation d’origine. */
+(function(){var R=window.CJR;if(!R)return;
+var css='#homeCmp .q-sub{margin:-4px 0 10px;font-size:12px;color:var(--muted)}#homeCmp .qxa{list-style:none;margin:0;padding:0}'+
+ '#homeCmp .qxa li{display:grid;grid-template-columns:22px 1fr auto;column-gap:8px;row-gap:5px;align-items:center;padding:9px 2px;border-top:1px solid var(--line);cursor:pointer}#homeCmp .qxa li:first-child{border-top:0}'+
+ '#homeCmp .qxa li:focus-visible{outline:2px solid var(--pri);outline-offset:1px;border-radius:8px}#homeCmp .qxa .rk{font-size:12px;font-weight:800;color:var(--muted);text-align:center}'+
+ '#homeCmp .qxa .nm{min-width:0;font-weight:700;font-size:14.5px;display:flex;gap:6px;align-items:center}#homeCmp .qxa .rt{font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}'+
+ '#homeCmp .qxa .mt{grid-column:2/4;font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:center}#homeCmp .qxa .br{flex:1;height:6px;border-radius:4px;background:color-mix(in srgb,var(--line) 70%,transparent);overflow:hidden}'+
+ '#homeCmp .qxa .br i{display:block;height:100%;border-radius:4px;background:var(--bad)}#homeCmp .q-lv{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.02em;padding:1px 6px;border-radius:6px;color:#fff;background:var(--lc);vertical-align:1px}'+
+ 'html[data-theme="neon"] #homeCmp .q-lv{color:#0A0A12}'+
+ '#homeCmp:not(.q-open) .qxa li.q-x{display:none}#homeCmp .q-h2{display:flex;align-items:center;gap:6px}#homeCmp .q-tog{border:0;background:none;color:var(--muted);width:32px;height:32px;margin:-6px 0;padding:0;border-radius:9px;display:grid;place-items:center;cursor:pointer;flex:none}'+
+ '#homeCmp .q-tog svg{width:20px;height:20px;transition:transform .2s}#homeCmp.q-open .q-tog svg{transform:rotate(180deg)}#homeCmp .q-tog:focus-visible{outline:2px solid var(--pri)}html[data-theme="neon"] #homeCmp .q-tog{color:#C6FF00}'+
+ '#stuTools{display:flex;flex-direction:column;gap:8px}#stuTools .ex-s{position:relative}#stuTools .ex-s svg{position:absolute;left:11px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted);pointer-events:none}'+
+ '#stuTools .ex-s input{width:100%;padding-left:36px;box-sizing:border-box}#stuTools .ex-f{display:grid;grid-template-columns:1fr 1fr;gap:8px}'+
+ '#stuTools .ex-f select{width:100%!important;min-width:0;min-height:40px!important;font-size:14px!important;padding:6px 8px!important;flex:none!important}#stuTools .ex-c{font-size:12.5px;color:var(--muted)}'+
+ '#stuTools .ex-a{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}#stuTools .xb{font:inherit;cursor:pointer;color:var(--ink);background:var(--card);border:1px solid var(--line);margin:0;box-shadow:none;text-transform:none;letter-spacing:0;min-width:0;width:auto;height:auto;border-radius:12px;'+
+ 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 4px;font-size:12.5px;font-weight:650;line-height:1.15;text-align:center;min-height:68px}'+
+ '#stuTools .xb svg{width:20px;height:20px;color:var(--pri);flex:none}html[data-theme="neon"] #stuTools .xb svg{color:#C6FF00}#stuTools .xb:focus-visible{outline:2px solid var(--pri);outline-offset:2px}';
+var st=document.createElement('style');st.id='cmpEleCss';st.textContent=css;document.head.appendChild(st);
+function e(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function pl(n,w){return n+' '+w+(n>1?'s':'');}
+function lc(l){return /^2/.test(l)?'var(--cy2,#F26B1D)':/^TC/i.test(l)?'var(--cy1,#1F9D6B)':'var(--pri)';}
+/* Comparaison des classes */
+function cmp(){var card=document.getElementById('homeCmp'),tb=card&&card.querySelector('table.cmp');if(!tb)return;
+  var rows=[].map.call(tb.querySelectorAll('tbody tr[data-cmpcls]'),function(tr){var td=tr.querySelectorAll('td'),rt=td[4].textContent.replace(/\s+/g,' ').trim(),bi=td[4].querySelector('.bar i'),v=parseFloat(rt.replace(',','.'));
+    return {id:tr.getAttribute('data-cmpcls'),name:td[0].textContent,n:+td[1].textContent,held:+td[2].textContent,abs:+td[3].textContent,rate:rt,rv:isNaN(v)?-1:v,w:bi?parseFloat(bi.style.width)||0:0};});
+  if(!rows.length)return;rows.sort(function(a,b){return b.rv-a.rv||a.name.localeCompare(b.name);});
+  var ul=document.createElement('ul');ul.className='qxa';ul.innerHTML=rows.map(function(x,i){var l='';try{l=(R.levelOf&&R.levelOf(x.name))||'';}catch(er){}
+    return '<li data-cmpcls="'+e(x.id)+'" tabindex="0" role="button" style="--lc:'+lc(l)+'"><span class="rk">'+(i+1)+'</span><span class="nm">'+(l?'<span class="q-lv">'+e(l)+'</span>':'')+'<span dir="auto">'+e(x.name)+'</span></span><span class="rt">'+e(x.rate)+'</span>'+
+     '<span class="mt"><span class="br"><i style="width:'+x.w+'%"></i></span>'+pl(x.n,'élève')+' · '+pl(x.held,'séance')+' · '+x.abs+' abs.</span></li>';}).join('');
+  var p=document.createElement('p');p.className='q-sub';p.textContent='Taux d’absence, du plus élevé au plus bas';tb.parentNode.insertBefore(p,tb);tb.parentNode.replaceChild(ul,tb);
+  /* 3 premières classes ; les autres repliées (flèche à côté du titre, état mémorisé sur l’appareil : cj.ui.cmpOpen) */
+  var h2=card.querySelector('h2');ul.id='cmpList';
+  if(rows.length>3&&h2){[].forEach.call(ul.children,function(li,i){if(i>2)li.classList.add('q-x');});var o=ls('cj.ui.cmpOpen')==='1';card.classList.toggle('q-open',o);
+    h2.classList.add('q-h2');h2.insertAdjacentHTML('beforeend','<button type="button" class="q-tog" aria-controls="cmpList" aria-expanded="'+o+'" aria-label="Afficher toutes les classes ('+rows.length+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>');}}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(er){}return null;}
+var hb=document.getElementById('homeBody');if(hb){new MutationObserver(cmp).observe(hb,{childList:true,subtree:true});cmp();
+  hb.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('#homeCmp .q-tog');if(!b)return;ev.stopPropagation();var c=document.getElementById('homeCmp'),o=!c.classList.contains('q-open');c.classList.toggle('q-open',o);b.setAttribute('aria-expanded',String(o));ls('cj.ui.cmpOpen',o?'1':'0');});
+  hb.addEventListener('keydown',function(ev){if((ev.key==='Enter'||ev.key===' ')&&ev.target.matches&&ev.target.matches('#homeCmp .qxa li')){ev.preventDefault();ev.target.click();}});}
+/* Élèves : barre d’outils compacte */
+var g=function(i){return document.getElementById(i);},S=g('stuSearch'),F=g('stuClassFilter'),C=g('stuCount'),O=g('stuSort'),B=g('bulkBtn'),T=g('testsBtn'),Tr=g('trombiBtn'),card=S&&S.closest('.card');
+if(card&&F&&C&&O&&B&&T&&Tr&&!g('stuTools')){
+  var I={up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7 9 5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>',
+   ts:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6"/></svg>',
+   tr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="8" rx="2"/><rect x="14" y="3" width="7" height="8" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>',
+   se:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>'};
+  S.placeholder='Rechercher un élève…';O.setAttribute('aria-label','Trier');
+  [[B,I.up,'Importer des élèves'],[T,I.ts,'Tests physiques'],[Tr,I.tr,'Trombinoscope']].forEach(function(a){a[0].className='xb';a[0].removeAttribute('style');a[0].type='button';a[0].innerHTML=a[1]+'<span>'+a[2]+'</span>';});
+  var box=document.createElement('div');box.id='stuTools';
+  var s=document.createElement('div');s.className='ex-s';s.innerHTML=I.se;s.appendChild(S);
+  var f=document.createElement('div');f.className='ex-f';f.appendChild(F);f.appendChild(O);
+  var c=document.createElement('div');c.className='ex-c';c.appendChild(C);
+  var a=document.createElement('div');a.className='ex-a';a.appendChild(B);a.appendChild(T);a.appendChild(Tr);
+  box.appendChild(s);box.appendChild(f);box.appendChild(c);box.appendChild(a);
+  while(card.firstChild)card.removeChild(card.firstChild);card.appendChild(box);}
+})();
