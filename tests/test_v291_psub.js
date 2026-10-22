@@ -1,4 +1,5 @@
-/* 1.29.1 (-u) : Paramètres façon réglages iOS — liste groupée + sous-pages (affichage seulement) */
+/* 1.29.2 (v) : la ligne « Mon Cahier Journalier » (#cjcRow, bouton, sans data-ps-open) n’est pas une rubrique : listes lues sur .ps-row[data-ps-open].
+   1.29.1 (-u) : Paramètres façon réglages iOS — liste groupée + sous-pages (affichage seulement) */
 const puppeteer=require('/workspace/cj-emu/node_modules/puppeteer-core');const fs=require('fs');const http=require('http');const path=require('path');
 const results=[];function check(n,ok,x){results.push(!!ok);console.log((ok?'PASS':'FAIL')+' - '+n+(x?' :: '+x:''));}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));const KEY='classRegister.v2';const D='/workspace/cj-deploy';const OUT='/workspace/backups/v1.29.2-preview/';
@@ -27,7 +28,7 @@ const open=async th=>{await p.evaluate(th=>{if(th)localStorage.setItem('cj.theme
 const tap=async sel=>{await p.evaluate(q=>document.querySelector(q).scrollIntoView({block:'center'}),sel);await sleep(120);await p.click(sel);await sleep(250);};
 const st=()=>p.evaluate(()=>{const V=document.getElementById('view-settings');const vis=e=>!!e&&e.offsetParent!==null;return {list:vis(document.getElementById('psList')),head:vis(document.getElementById('psHead')),cur:CJPS.cur(),
   title:document.getElementById('psTitle').textContent,cards:[...V.querySelectorAll(':scope>.card')].filter(vis).map(c=>c.dataset.ps||c.id||'?'),
-  rows:[...document.querySelectorAll('#psList .ps-row')].filter(vis).map(r=>r.dataset.psOpen),hs:history.state&&history.state.cjps};});
+  rows:[...document.querySelectorAll('#psList .ps-row[data-ps-open]')].filter(vis).map(r=>r.dataset.psOpen),hs:history.state&&history.state.cjps};});
 await open('');
 const keys0=await p.evaluate(()=>Object.keys(localStorage).filter(k=>!/snap/i.test(k)).sort().join());
 let s=await st();
@@ -35,11 +36,11 @@ const ALL=['sync','sec','cls','pts','annee','hol','pdf','bk','snap','theme','mod
 check('liste : les 13 sections en lignes (Établissement retiré, 1.29.2 n) (modérateur), aucune carte affichée',s.list&&!s.head&&s.cards.length===0&&JSON.stringify(s.rows)===JSON.stringify(ALL),JSON.stringify(s));
 const caps=await p.evaluate(()=>[...document.querySelectorAll('#psList .ps-grp')].filter(g=>!g.hidden).map(g=>(g.querySelector('.ps-cap')||{textContent:''}).textContent));
 check('groupes : Compte & sécurité / Classes & année scolaire / Données / Apparence / Modérateur / Présentation / (zone dangereuse en bas)',JSON.stringify(caps)===JSON.stringify(['Compte & sécurité','Classes & année scolaire','Données','Apparence','Modérateur','Présentation','']),JSON.stringify(caps));
-const rowInfo=await p.evaluate(()=>[...document.querySelectorAll('#psList .ps-row')].map(r=>{const b=r.getBoundingClientRect();return {k:r.dataset.psOpen,h:Math.round(b.height),w:Math.round(b.width),t:r.querySelector('b').textContent,s:r.querySelector('small').textContent,v:r.querySelector('.ps-val').textContent,ico:!!r.querySelector('.ps-ico').textContent,ch:!!r.querySelector('.ps-chev')};}));
+const rowInfo=await p.evaluate(()=>[...document.querySelectorAll('#psList .ps-row[data-ps-open]')].map(r=>{const b=r.getBoundingClientRect();return {k:r.dataset.psOpen,h:Math.round(b.height),w:Math.round(b.width),t:r.querySelector('b').textContent,s:r.querySelector('small').textContent,v:r.querySelector('.ps-val').textContent,ico:!!r.querySelector('.ps-ico').textContent,ch:!!r.querySelector('.ps-chev')};}));
 check('lignes : icône, titre, résumé, chevron ; ≥ 44 px ; dans l’écran',rowInfo.every(r=>r.ico&&r.ch&&r.t&&r.s&&r.h>=44&&r.w<=390),JSON.stringify(rowInfo.filter(r=>!(r.ico&&r.ch&&r.t&&r.s&&r.h>=44&&r.w<=390))));
 const RI=Object.fromEntries(rowInfo.map(r=>[r.k,r]));
 check('résumés/valeurs tirés de l’existant (9 classes · 306 élèves, thème Actuel, 3 utilisateurs, dernière sauvegarde, points A 0,5)',/^9 classes · 306 élèves/.test(RI.cls.s)&&RI.cls.v==='9'&&RI.theme.v==='Actuel'&&RI.mod.v==='3'&&/Dernière sauvegarde/.test(RI.bk.s)&&/^A 0,5/.test(RI.pts.s)&&/cycles · activités et dates/.test(RI.annee.s)&&/alerte à \d+ abs./.test(RI.cls.s)&&/mohamed\.tammar/.test(RI.sync.s),JSON.stringify(RI));
-check('zone dangereuse en dernier, en rouge',await p.evaluate(()=>{const r=[...document.querySelectorAll('#psList .ps-row')].pop();return r.dataset.psOpen==='dz'&&getComputedStyle(r.querySelector('b')).color==='rgb(198, 47, 58)';}));
+check('zone dangereuse en dernier, en rouge',await p.evaluate(()=>{const r=[...document.querySelectorAll('#psList .ps-row[data-ps-open]')].pop();return r.dataset.psOpen==='dz'&&getComputedStyle(r.querySelector('b')).color==='rgb(198, 47, 58)';}));
 if(SHOT){await sleep(2600);await p.setViewport({width:390,height:1500,deviceScaleFactor:2,isMobile:true,hasTouch:true});await sleep(300);await p.evaluate(()=>scrollTo(0,0));await sleep(200);await p.screenshot({path:OUT+'param-ios-liste.png'});await p.setViewport({width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true});await sleep(200);}
 /* sous-page Sauvegarde + retour (historique) + position de défilement */
 await p.evaluate(()=>scrollTo(0,150));await sleep(150);const y0=await p.evaluate(()=>scrollY);

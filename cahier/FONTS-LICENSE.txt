@@ -1,0 +1,3 @@
+cahier/poppins-*.woff : sous-ensembles latins de la police Poppins (Indian Type Foundry, Jonny Pinhorn),
+distribuée sous SIL Open Font License 1.1 — https://openfontlicense.org — https://github.com/itfoundry/Poppins
+Utilisées uniquement pour le PDF « Mon Cahier Journalier » (1.29.2 v).

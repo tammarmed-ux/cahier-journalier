@@ -2192,7 +2192,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2u';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2v';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -4526,6 +4526,7 @@ window.CJR={semver:APP_SEMVER,CS:CS,cyNow:cyNow,bhPts:bhPts,bhCnt:bhCnt,bhGet:bh
 window.CJR.photoData=function(id){return PH.cur&&PH.cur.id===id?PH.cur.d:null;};window.CJR.photoAll=function(){try{if(!window.indexedDB)return Promise.resolve({});return phAll('p').then(function(a){var o={};(a||[]).forEach(function(x){if(x&&x.id&&phOk(x.d))o[x.id]=x.d;});return o;}).catch(function(){return {};});}catch(e){return Promise.resolve({});}};   /* 1.28.0 (-l) : trombinoscope (lecture seule) */
 window.CJR.cx={CX:CX,LEVEL_CAP:LEVEL_CAP,APS:APS,SC_IND:SC_IND,SC_COL:SC_COL,TT_LV:TT_LV,LVO:LVO,render:render,persist:persist,service:service,isAS:isAS,defAS:defAS,uid:uid};
 window.CJR.photo={known:function(){return Object.keys(PH.known);},bytes:phBytes,state:function(){return {blocked:PH.blocked,listening:!!PH.unsub,pushing:PH.pushing};},push:function(){phPush();},set:phSet,del:phRemove,get:function(i){return phGet('p',i);}};   /* 1.28.0 : photo (fiche PDF, tests) */
+window.CJR.pdf={lib:pdfLib,deliver:deliverPdf};   /* 1.29.2 (v) : cahier journalier (cj-cahier.js) */
 window.CJApp={
   key:KEY,
   getJSON:function(){if(VIEW)return localStorage.getItem(KEY)||JSON.stringify(VIEW.own);if(saveT)persistNow();return localStorage.getItem(KEY)||JSON.stringify(DB);},

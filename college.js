@@ -374,6 +374,23 @@ setInterval(function(){var g=document.getElementById('cxGate');if(g&&!window.CJG
 var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!window.CJGateOpen||ro())return;
   var d=R.db(),S=window.CJSync&&CJSync.state;if((d.settings&&d.settings.school)||ls(LK)||infer(d)){clearInterval(iv);return;}
   tries++;if(!S||!S.user||S.ready||!navigator.onLine||tries>20)ask();},700);   /* attend les données du compte (20 × 0,7 s au plus) */
+/* 1.29.2 (v) : « Mon Cahier Journalier » — ligne en tête de Paramètres › Données (au-dessus de « Exporter les documents ») + chargeur.
+   Au toucher : jsPDF (même chargement que les autres PDF) puis cj-cahier.js (module à part, jamais au démarrage) ; PDF remis par le chemin habituel (téléchargement, ou feuille Partager sur iPhone).
+   Lecture seule (profil lu par pfGet, sans écriture) ; aucune donnée, clé, synchro, export ni import n’est modifié. */
+(function(){var L=document.getElementById('psList'),g=L&&L.querySelector('[data-ps-open="pdf"]');if(!g||document.getElementById('cjcRow'))return;
+ var st=document.createElement('style');st.textContent='.cjc-row{cursor:default;align-items:flex-start}.cjc-row:active{background:none}.cjc-row .ps-tx small{white-space:normal}.cjc-btn{margin-top:8px;align-self:flex-start;max-width:100%;white-space:normal;text-align:left}.cjc-btn:disabled{opacity:.75;cursor:progress}';document.head.appendChild(st);
+ var row=document.createElement('div');row.className='ps-row cjc-row';row.id='cjcRow';
+ row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b><small>Couverture, service, trombinoscope, registres et notes de toutes les classes · PDF A4</small><button type="button" class="btn cjc-btn" id="cjcBtn">📥 Télécharger mon cahier journalier d’EPS</button></span>';
+ g.parentNode.insertBefore(row,g);
+ var b=row.querySelector('#cjcBtn'),lbl=b.textContent,busy=0;
+ function js(src){return new Promise(function(ok,ko){var el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=function(){el.remove();ko(new Error(src));};document.head.appendChild(el);});}
+ function end(){busy=0;b.disabled=false;b.textContent=lbl;}
+ b.addEventListener('click',function(){if(busy)return;var P=R.pdf;if(!P){toast2('⚠ Mettez l’application à jour pour créer le cahier journalier');return;}busy=1;b.disabled=true;b.textContent='Génération… préparation';
+  P.lib().then(function(){return window.CJCahier?0:js('cj-cahier.js');}).then(function(){var p=null;try{p=pfGet().p;}catch(x){}
+   return CJCahier.make({pf:p,onProgress:function(i,n){b.textContent='Génération… page '+i+'/'+n;}});})
+  .then(function(r){end();if(r&&r.blob){P.deliver(r.blob,r.name);}else if(r&&r.printed)toast2('Choisissez « Enregistrer en PDF » dans la fenêtre d’impression');})
+  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.'));});});
+})();
 })();
 /* 1.29.2 (p) : barre d’onglets et bouton + épinglés sans position:fixed sur mobile.
    iOS 26 (Safari / navigateurs intégrés aux applis) décale les éléments position:fixed pendant le défilement (barre d’adresse qui se replie, clavier) :

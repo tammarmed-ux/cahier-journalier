@@ -57,7 +57,8 @@ const SCAN=function SCAN(){const out=[],seen=new Set();
  if(document.documentElement.scrollWidth>innerWidth)out.push({why:'page plus large que l’écran',el:'html',t:document.documentElement.scrollWidth+' > '+innerWidth});
  return out;};
 /* 2t : l’en-tête n’affiche plus « · N élèves · N classes » ; pour comparer le reste au pixel près, on remet l’ancien texte */
-const OLDH=p=>p.evaluate(()=>{const d=CJR.db(),n=d.students.length,c=d.classes.length;document.getElementById('hdrSub').textContent=(d.settings.teacher?d.settings.teacher+' · ':'')+n+' élève'+(n>1?'s':'')+' · '+c+' classe'+(c>1?'s':'');});
+const OLDH=p=>p.evaluate(()=>{const cr=document.getElementById('cjcRow');if(cr)cr.remove();   /* 2v : ligne « Mon Cahier Journalier » retirée pour comparer */
+ const d=CJR.db(),n=d.students.length,c=d.classes.length;document.getElementById('hdrSub').textContent=(d.settings.teacher?d.settings.teacher+' · ':'')+n+' élève'+(n>1?'s':'')+' · '+c+' classe'+(c>1?'s':'');});
 const TABS=['home','students','attendance','proc','reports','settings'];
 const shot=async p=>{await p.evaluate(()=>window.scrollTo(0,0));await sleep(150);return (await p.screenshot({fullPage:true,encoding:'base64'}));};
 const J=p=>p.evaluate(()=>{const o=JSON.parse(CJApp.getJSON());delete o.ui;return JSON.stringify(o);});
@@ -71,8 +72,8 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
  check('budget de démarrage : mise en page sans hausse, seul le tri des classes 2u ajouté ('+bN+' o ≤ '+bO+' + 600 o, ≤ 737 280)',bN<=bO+600&&bN<=737280,[bN,bO]);
  const idxN=fs.readFileSync(D+'/index.html','utf8'),idxO=fs.readFileSync(B+'/index.html','utf8');
  const HO="  var n=DB.students.length,c=DB.classes.length;\n  $('hdrSub').textContent=(DB.settings.teacher?DB.settings.teacher+' · ':'')+plural(n,'élève')+' · '+c+' classe'+(c>1?'s':'');\n",HN="  $('hdrSub').textContent=DB.settings.teacher||'Élèves et absences';\n";
- const U2=x=>x.replace(/\/\* 1\.29\.2 \(u\)[^\n]*\nfunction clsK\([^\n]*\nfunction CS\(\)[^\n]*\n/,'').split('CS()').join('DB.classes').replace('CS:CS,','').replace("'cahier-v29-2u'","'cahier-v29-2t'");
- check('index.html : seuls la version, le texte d’en-tête (sans compteurs, 2t) et le tri d’affichage des classes (2u, défait pour la comparaison) changent',idxO.includes(HO)&&U2(idxN)===idxO.replace("var APP_VER='cahier-v29-2s';","var APP_VER='cahier-v29-2t';").replace(HO,HN)&&/'cahier-v29-2u'/.test(idxN));
+ const U2=x=>x.replace(/window\.CJR\.pdf=\{lib:pdfLib,deliver:deliverPdf\};[^\n]*\n/,'').replace(/\/\* 1\.29\.2 \(u\)[^\n]*\nfunction clsK\([^\n]*\nfunction CS\(\)[^\n]*\n/,'').split('CS()').join('DB.classes').replace('CS:CS,','').replace("'cahier-v29-2v'","'cahier-v29-2t'");
+ check('index.html : seuls la version, le texte d’en-tête (sans compteurs, 2t) et le tri d’affichage des classes (2u, défait pour la comparaison) changent',idxO.includes(HO)&&U2(idxN)===idxO.replace("var APP_VER='cahier-v29-2s';","var APP_VER='cahier-v29-2t';").replace(HO,HN)&&/'cahier-v29-2v'/.test(idxN));
  check('college.js charge desk.js seulement si (min-width:1024px)',/matchMedia\('\(min-width:1024px\)'\)/.test(fs.readFileSync(D+'/college.js','utf8'))&&/s\.src='desk\.js'/.test(fs.readFileSync(D+'/college.js','utf8')));
  check('desk.js : tout le CSS sous @media (min-width:1024px)',(()=>{const t=fs.readFileSync(D+'/desk.js','utf8');return /@media\s*\(min-width:1024px\)/.test(t)&&!/@media\s*\(max-width/.test(t);})());
  /* 1. téléphone 390 px : identique au pixel près, desk.js jamais chargé */
