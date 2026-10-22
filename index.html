@@ -1666,7 +1666,7 @@ html[data-theme="neon"] #splash,html[data-theme="neon"] .ln-hero,html[data-theme
     <div class="clb-flt" id="clbFlt"></div>
     <div id="clsManage"></div>
     <div class="row" style="margin-top:10px"><input type="text" class="grow" id="newClassName" dir="auto" placeholder="Nom de la nouvelle classe" maxlength="40"><button class="btn sec" id="addClassBtn">+ Ajouter</button></div>
-    <label class="f" for="setThreshold">Seuil d’alerte (absences non justifiées)</label>
+    <label class="f" for="setThreshold">Seuil d’alerte par cycle (absences non justifiées)</label>
     <input type="number" id="setThreshold" min="1" max="99" inputmode="numeric">
   </div>
   <div class="card">
@@ -1966,7 +1966,7 @@ var TX={
  cmpTitle:'Comparaison des classes',cmpHead:['Classe','Élèves','Séances','Abs.','Taux'],
  cmpNote:'Taux d’absence = (A + AJ + M + MJ) ÷ (élèves × séances effectuées), sur toute l’année.',
  watchTitle:'Élèves à surveiller',
- watchNote:function(th){return 'Note comportementale atteinte dans un cycle, ou au moins '+th+' absences non justifiées dans un cycle.';},   /* 1.29.1 (-q) : seuil compté par cycle */
+ watchNote:function(th){return 'Note comportementale atteinte dans un cycle, ou au moins '+th+' absences non justifiées dans le cycle en cours.';},   /* 1.29.1 (-q) : seuil compté par cycle */
  watchNone:'Aucun élève à signaler pour le moment.',
  capBadge:function(c){return 'note comp. C'+c;},njBadge:function(n,c){return n+' non just.'+(c?' C'+c:'');},
  asName:'ASS – Association sportive scolaire',asShort:'ASS',asNoSess:'pas de séance à noter',
@@ -2110,6 +2110,9 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function pad(n){return (n<10?'0':'')+n;}
 function todayStr(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+/* 1.29.2 (n) : seuil d’alerte PAR CYCLE — cycle en cours = dernier cycle commencé (vacances : le cycle précédent jusqu’au début du suivant) */
+function cyNow(){var t=todayStr(),i=0;DB.cal.cycles.forEach(function(c,k){if(c.from&&c.from<=t&&k<DB.periods.length)i=k;});return i;}
+function cyU(cid,sid){return perStat(cid,sid,cyNow()).U;}
 function fmtDate(s){if(!s)return '';var p=s.split('-');var d=new Date(+p[0],p[1]-1,+p[2]);return ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'][d.getDay()]+' '+p[2]+'/'+p[1]+'/'+p[0];}
 function fmtDT(t){var d=new Date(t);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' à '+pad(d.getHours())+'h'+pad(d.getMinutes());}
 function shortDate(s){if(!s)return '';var p=s.split('-');return p[2]+'/'+p[1];}
@@ -2542,7 +2545,7 @@ function renderStudents(){
   if(!list.length){$('stuList').innerHTML='<li class="empty">Aucun élève ne correspond.</li>';return;}
   var html='',lim=(!q&&!stuAll&&list.length>STU_LIM)?STU_LIM:list.length;
   for(var i=0;i<lim;i++){var s=list[i],y=yearStat(s.classId,s.id);
-    var chip=(dspActive(s)?'<span class="chip dchip" title="Dispensé de sport – '+esc(dspShort(dspOf(s)))+'">🩺 Dispensé</span> ':'')+(y.A?'<span class="chip '+(y.U>=th?'bad':'warn')+'" title="Absences cette année">'+y.A+' abs.</span>':'');
+    var chip=(dspActive(s)?'<span class="chip dchip" title="Dispensé de sport – '+esc(dspShort(dspOf(s)))+'">🩺 Dispensé</span> ':'')+(y.A?'<span class="chip '+(cyU(s.classId,s.id)>=th?'bad':'warn')+'" title="Absences cette année">'+y.A+' abs.</span>':'');
     html+='<li class="stu" data-id="'+esc(s.id)+'"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><div class="info"><div class="name" dir="auto">'+(isBroken(s)?'<span class="brk">⚠ '+esc(TX.noName)+'</span> ':'')+esc(s.name)+'</div><div class="meta"><span class="chip">'+esc(clsName(s.classId))+'</span> '+(s.sid?'<span dir="auto">#'+esc(s.sid)+'</span> ':'')+(s.parent?'· <span dir="auto">'+esc(s.parent)+'</span>':'')+'</div></div>'+chip+'</li>';}
   /* 1.29.2 (g) : affichage limité aux 30 premiers (affichage seulement ; recherche, comptes et exports portent sur toute la liste) */
   if(!q&&list.length>STU_LIM)html+='<li class="stu-more"><button type="button" class="btn sec stu-more-btn" id="stuMore" aria-expanded="'+(stuAll?'true':'false')+'">'+(stuAll?'Réduire':'Voir tout ('+list.length+')')+'</button></li>';
@@ -2620,14 +2623,14 @@ function openDetail(id){
   if(s.notes)h+='<dt>Remarques</dt><dd dir="auto" style="white-space:pre-wrap">'+esc(s.notes)+'</dd>';
   h+='</dl>'+physFormHtml(s)+'<h3>Année entière</h3><div class="stats">'+
     '<div class="stat bad"><b>'+y.A+'</b><span>Absences</span></div>'+
-    '<div class="stat '+(y.U>=th?'bad':'')+'"><b>'+y.U+'</b><span>Non justifiées</span></div>'+
+    '<div class="stat"><b>'+y.U+'</b><span>Non justifiées</span></div>'+
     '<div class="stat"><b style="color:#0f766e">'+y.S+'</b><span>Sans tenue</span></div>'+
     '<div class="stat"><b style="color:#7e22ce">'+y.M+'</b><span>Malade non just.</span></div>'+
     '<div class="stat warn"><b>'+y.L+'</b><span>Retards</span></div>'+
     '<div class="stat"><b style="color:#9333ea">'+y.K+'</b><span>Malade just.</span></div>'+
     '<div class="stat ok"><b>'+y.J+'</b><span>Justifiées</span></div>'+
     '<div class="stat bad"><b>'+fmtPts(y.ded)+'</b><span>Points retirés (année)</span></div></div>';
-  if(y.U>=th)h+='<p class="small" style="color:var(--bad);font-weight:650">⚠ Seuil d’alerte atteint ('+th+' absences non justifiées).</p>';
+  var u=cyU(s.classId,s.id);if(u>=th)h+='<p class="small" style="color:var(--bad);font-weight:650">⚠ Seuil d’alerte atteint ce cycle ('+u+' absences non justifiées, seuil '+th+', '+esc(cycleLabel(cyNow()))+').</p>';
   h+=gradeDetailHtml(s);
   h+='<h3>Par cycle</h3><div class="tablewrap"><table class="ptab"><thead><tr><th>Cycle</th><th>Séances</th><th>Abs.</th><th>Non just.</th><th>'+CODE_TXT.S+'</th><th>M</th><th>Retards</th><th>'+CODE_TXT.K+'</th><th>Just.</th><th>Pts</th></tr></thead><tbody>';
   y.per.forEach(function(st,i){function c(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
@@ -2780,7 +2783,7 @@ function totalsHtml(cid,sid,p){
   if(ATT_VIEW==='notes')return gradeCells(cid,sid,p)+yrCell(y,th);
   return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class="t pts'+(st.ded?'':' z')+(st.capped?' cap':'')+'" title="'+fmtPts(st.raw)+' / '+fmtNum(st.cap)+'">'+fmtPts(st.ded)+'</td>'+yrCell(y,th);
 }
-function yrCell(y,th){return '<td class="t yr'+(y.A?'':' z')+(y.U>=th?' bad':'')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';}
+function yrCell(y,th){return '<td class="t yr'+(y.A?'':' z')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';}
 function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;document.querySelectorAll('#attView button').forEach(function(b){b.classList.toggle('on',b.dataset.v===ATT_VIEW);});
   if(ATT_VIEW==='abs'||!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
   var sp=gradeSpec(cid,p);el.classList.remove('hidden');
@@ -2835,7 +2838,7 @@ function renderProcGrid(){
 }
 function flagRows(){
   var th=DB.settings.threshold,cid=DB.ui.cls;
-  $('gridWrap').querySelectorAll('tbody tr[data-sid]').forEach(function(tr){tr.classList.toggle('flag',yearStat(cid,tr.dataset.sid).U>=th);});
+  $('gridWrap').querySelectorAll('tbody tr[data-sid]').forEach(function(tr){tr.classList.toggle('flag',perStat(cid,tr.dataset.sid,DB.ui.per).U>=th);});
 }
 function updateInfo(){
   var cid=DB.ui.cls,n=heldCount(cid,DB.ui.per);
@@ -2844,7 +2847,7 @@ function updateInfo(){
 function refreshRow(tr){
   var sid=tr.dataset.sid,cells=tr.querySelectorAll('td.t');cells.forEach(function(c){c.remove();});
   tr.insertAdjacentHTML('beforeend',totalsHtml(DB.ui.cls,sid,DB.ui.per));
-  tr.classList.toggle('flag',yearStat(DB.ui.cls,sid).U>=DB.settings.threshold);gradeFootUpd();
+  tr.classList.toggle('flag',perStat(DB.ui.cls,sid,DB.ui.per).U>=DB.settings.threshold);gradeFootUpd();
 }
 function refreshColumn(s){
   var cid=DB.ui.cls,p=DB.ui.per,r=rec(cid,p,s),wrap=$('gridWrap');
@@ -3328,14 +3331,14 @@ function renderReports(){
   if(year)scy.forEach(function(i){h+=H('p'+i,TX.cyc+(i+1),cycleLabel(i)+' – points retirés');});
   h+=H('A','Abs.')+H('U','Non just.')+H('S',CODE_TXT.S,'Sans tenue')+H('M','M','Malade non justifié')+H('L','Retards')+H('K',CODE_TXT.K,'Malade justifié')+H('J','Just.')+'</tr></thead><tbody>';
   var flagged=0,capN=0;
-  d.rows.forEach(function(r){var f=r.st.U>=th;if(f)flagged++;
+  d.rows.forEach(function(r){var f=year?scopeCycles(d.scope).some(function(q){return perStat(r.s.classId,r.s.id,q).U>=th;}):r.st.U>=th;if(f)flagged++;
     h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+((year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope))?' <span class="chip dchip" title="Dispensé – '+esc(dspShort(dspOf(r.s)))+'">🩺</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>'+(all?'<td class="clsc"><b>'+esc(clsName(r.s.classId))+'</b></td>':'');
     if(year){h+='<td class="ptsc'+(r.y.ded?'':' z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';(sem?r.st.per:r.y.per).forEach(function(st){h+='<td class="'+(st.ded?(st.capped?'capc':''):'z')+'">'+fmtPts(st.ded)+'</td>';});}
     else{if(r.st.capped)capN++;h+='<td class="ptsc'+(r.st.capped?' capc':'')+(r.st.ded?'':' z')+'"><b>'+fmtPts(r.st.ded)+'</b> / '+fmtNum(r.st.cap)+(r.st.raw>r.st.cap?'<br><small>limité à la note comportementale ('+fmtPts(r.st.raw)+')</small>':(r.st.capped?'<br><small>note comportementale atteinte</small>':''))+'</td>';}
     h+=C(r.st.A)+C(r.st.U)+C(r.st.S)+C(r.st.M)+C(r.st.L)+C(r.st.K)+C(r.st.J)+'</tr>';});
   if(!d.rows.length)h+='<tr><td colspan="17" class="empty">Aucun élève dans cette sélection.</td></tr>';
   $('repTable').innerHTML=h+'</tbody>';
-  $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.';
+  $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus sur un cycle (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées sur un cycle. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.';
   if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' à la note comportementale maximale.</b>';
   var dspN=d.rows.filter(function(r){return year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope);}).length;
   if(dspN)$('repLegend').innerHTML+='<br><span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';
@@ -3343,7 +3346,7 @@ function renderReports(){
   else if(cl.length){var cg=[],cgk={};cl.forEach(function(c){var i=capInfo(c.id),k=fmtNum(i.v)+' pts'+(i.man?' (personnalisée)':i.lv?' ('+i.lv+')':'');if(!cgk[k]){cgk[k]={k:k,v:i.v,n:[]};cg.push(cgk[k]);}cgk[k].n.push(c.name);});
     cg.sort(function(a,b){return b.v-a.v;});$('repInfo').textContent+=' · note comportementale par cycle\u00a0: '+cg.map(function(g){return g.k+'\u00a0: '+g.n.join(', ');}).join(' · ');}
   // alerts across all classes
-  var al=[];DB.students.forEach(function(s){var y=yearStat(s.classId,s.id);if(y.U>=th)al.push({s:s,y:y});});
+  var al=[],cn=cyNow();DB.students.forEach(function(s){var y=perStat(s.classId,s.id,cn);if(y.U>=th)al.push({s:s,y:y});});
   al.sort(function(a,b){return b.y.U-a.y.U||cmpStu(a.s,b.s);});
   /* 1.29.2 : alertes repliables (cj.ui.alertsOpen), 5 premières puis « Voir tout (N) » — affichage seulement */
   alertsUi(al.length);
@@ -3585,7 +3588,7 @@ function homeStats(){
     var list=studentsIn(c.id),ch=0,cst=emptyStat();for(var p=0;p<DB.periods.length;p++)ch+=heldCount(c.id,p);held+=ch;
     list.forEach(function(s){var y=yearStat(c.id,s.id);K.forEach(function(k){cst[k]+=y[k];});
       var capped=[];y.per.forEach(function(st,i){if(st.capped)capped.push(i);});
-      var nj=[];y.per.forEach(function(st,i){if(st.U>=th)nj.push(i);});   /* 1.29.1 (-q) : absences non justifiées comptées par cycle (un cycle ≥ seuil) */
+      var nj=[],cn=cyNow();if(y.per[cn]&&y.per[cn].U>=th)nj.push(cn);   /* 1.29.1 (-q) : absences non justifiées comptées par cycle (un cycle ≥ seuil) */
       if(capped.length||nj.length)watch.push({s:s,c:c,y:y,capped:capped,nj:nj,njMax:nj.reduce(function(m,i){return Math.max(m,y.per[i].U);},0)});});
     K.forEach(function(k){tot[k]+=cst[k];});
     var ab=cst.A+cst.M+cst.K,den=list.length*ch;per.push({c:c,n:list.length,held:ch,abs:ab,rate:den?ab/den:null});
@@ -4382,7 +4385,7 @@ $('periodNames').addEventListener('change',function(e){
   var i=+e.target.dataset.pi,v=e.target.value.trim().replace(/\s+/g,' ');e.target.value=v;DB.periods[i]=v;persistNow();calReset();
   var rw=e.target.closest('.cyrow');if(rw){rw.querySelectorAll('select.cytype,small.cyov').forEach(function(x){x.remove();});rw.insertAdjacentHTML('beforeend',cycSelHtml(i));}toast(cycleLabel(i));});
 $('setSpp').addEventListener('change',function(){var v=parseInt(this.value,10);if(v>0&&v<=30){if(v<DB.spp&&!confirm('Afficher seulement '+v+' séances par cycle ? Les marques des séances au-delà de '+v+' sont conservées mais masquées et non comptées.')){this.value=DB.spp;return;}DB.spp=v;persistNow();toast(v+' séances par cycle');}else this.value=DB.spp;});
-$('setThreshold').addEventListener('change',function(){var v=parseInt(this.value,10);if(v>0&&v<100){DB.settings.threshold=v;persistNow();toast('Seuil d’alerte : '+v);}else this.value=DB.settings.threshold;});
+$('setThreshold').addEventListener('change',function(){var v=parseInt(this.value,10);if(v>0&&v<100){DB.settings.threshold=v;persistNow();toast('Seuil d’alerte par cycle : '+v);}else this.value=DB.settings.threshold;});
 /* 1.29.2 (e) : interactions d’affichage (cartes Classes / Cycles, − ＋ des points) — les enregistrements passent par les listeners existants (événement change) */
 $('clsManage').addEventListener('click',function(e){var b=e.target.closest('[data-clbed]');if(!b)return;var k=b.closest('.clb-card'),on=!k.classList.contains('ed');document.querySelectorAll('#clsManage .clb-card.ed').forEach(function(x){x.classList.remove('ed');});k.classList.toggle('ed',on);b.setAttribute('aria-expanded',on?'true':'false');});
 $('clsManage').addEventListener('change',function(e){var k=e.target.closest('.clb-card');if(!k)return;setTimeout(function(){var c=cls(k.dataset.clb),s=k.querySelector('.clb-sum');if(c&&s){s.outerHTML=clbSum(c);clbFilter();}},0);},true);
@@ -4518,7 +4521,7 @@ window.addEventListener('cj:syncstop',phStop);
 window.addEventListener('online',function(){if(phSync())phSchedule(1000);});
 phKeys().then(function(k){(k||[]).forEach(function(id){PH.known[id]=1;});if(k&&k.length){phDecorate();phRefresh();}if(phSync())phListen();}).catch(function(e){phInfo('stockage local indisponible',e);});
 /*PHOTO-END*/
-window.CJR={semver:APP_SEMVER,bhPts:bhPts,bhCnt:bhCnt,bhGet:bhGet,actEmoji:actEmoji,actPicto:actPicto,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
+window.CJR={semver:APP_SEMVER,cyNow:cyNow,bhPts:bhPts,bhCnt:bhCnt,bhGet:bhGet,actEmoji:actEmoji,actPicto:actPicto,arFontKey:arFontKey,arFontFiles:arFontFiles,db:function(){return DB;},TX:TX,cls:cls,clsName:clsName,byId:byId,studentsIn:studentsIn,countIn:countIn,rec:rec,codeOf:codeOf,perStat:perStat,yearStat:yearStat,allStudents:allStudents,groupStat:groupStat,scopeCycles:scopeCycles,scopeStat:scopeStat,dspInScope:dspInScope,isSem:isSem,isMulti:isMulti,semName:semName,semLabel:semLabel,heldCount:heldCount,sessCount:sessCount,colsOf:colsOf,sessDate:sessDate,cycleName:cycleName,cycleLabel:cycleLabel,holShort:holShort,
   cmpStu:cmpStu,sidKey:sidKey,dspOf:dspOf,dspActive:dspActive,dspAt:dspAt,dspInCycle:dspInCycle,dspShort:dspShort,dspLabel:dspLabel,capOf:capOf,capTxt:capTxt,gradeOf:gradeOf,OPA:OPA,athTime:athTime,athVal:athVal,athMark:athMark,athFmt:athFmt,athEvtL:athEvtL,athOf:athOf,sessNo:sessNo,colNos:colNos,isVacH:isVacH,normEv:normEv,normEvals:normEvals,cycAps:cycAps,cycApsOf:cycApsOf,apsOver:apsOver,athEs:athEs,athBest:athBest,athMarkV:athMarkV,ntrOf:ntrOf,evtOf:evtOf,evtGuess:evtGuess,gradeSpec:gradeSpec,compFormula:compFormula,apsOf:apsOf,APS:APS,capInfo:capInfo,levelOf:levelOf,fmtNum:fmtNum,fmtPts:fmtPts,dmy:dmy,todayStr:todayStr,pad:pad,slug:slug,historyOf:historyOf,cmp:cmp,cal:cal,
   grpOf:grpOf,grpName:grpName,grpIdx:grpIdx,grpMembers:grpMembers,grpStats:grpStats,classMean:classMean,lvlOf:lvlOf,sexOf:sexOf,TESTS:TESTS,phys:phys,hasPhys:hasPhys,imcOf:imcOf,imcCat:imcCat,physScores:physScores,GRP_COL:GRP_COL,GRP_SOFT:GRP_SOFT,
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
