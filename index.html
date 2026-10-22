@@ -1607,7 +1607,11 @@ html[data-theme="neon"] #splash,html[data-theme="neon"] .ln-hero,html[data-theme
 <section class="view" id="view-settings">
   <div class="card" id="syncCard"><h2>Synchronisation</h2><p class="small muted" style="margin-top:0">Chargement…</p></div>
   <div class="card" id="secCard"><h2>🔒 Sécurité de cet appareil</h2><p class="small muted" style="margin-top:0">Chargement…</p></div>
-  <div class="card" id="themeCard"><h2>🎨 Thème</h2><p class="small muted" style="margin-top:0">Apparence de l’application sur cet appareil (aussi accessible par l’icône palette en haut). Vos données et les PDF ne changent pas.</p><div id="themeSw" role="radiogroup" aria-label="Thème"></div></div>
+  <div class="card" id="themeCard"><h2>🎨 Thème et police</h2><p class="small muted" style="margin-top:0">Apparence de l’application sur cet appareil (aussi accessible par l’icône palette en haut). Vos données et les PDF ne changent pas.</p><div id="themeSw" role="radiogroup" aria-label="Thème"></div>
+    <label class="f" for="setArFont">Police arabe (noms arabes dans l’application et les PDF)</label>
+    <select id="setArFont"><option value="noto">Noto Sans Arabic (par défaut)</option><option value="amiri">Amiri</option><option value="naskh">Noto Naskh Arabic</option><option value="cairo">Cairo</option><option value="tajawal">Tajawal</option></select>
+    <p class="arprev" id="arPrev" dir="rtl" lang="ar">محمد الإدريسي – لا إله إلا الله – أحمد (أ) ٢٠٢٦</p>
+  </div>
   <div class="card hidden" id="modCard"></div>
   <div class="card">
     <h2>Exporter les documents (PDF)</h2>
@@ -1684,16 +1688,11 @@ html[data-theme="neon"] #splash,html[data-theme="neon"] .ln-hero,html[data-theme
     <h2>Répartition cyclique</h2>
     <div id="calSettings"></div>
     <div class="cygrid" id="periodNames"></div>
-    <label class="f" for="setSpp">Séances par cycle</label>
-    <input type="number" id="setSpp" min="1" max="30" inputmode="numeric">
+    <input type="hidden" id="setSpp">
     <label class="f" for="setThreshold">Seuil d’alerte (absences non justifiées)</label>
     <input type="number" id="setThreshold" min="1" max="99" inputmode="numeric">
-    <label class="chk" style="margin-top:12px"><input type="checkbox" id="setAutoDate"> Inscrire la date du jour quand je commence une séance</label>
-    <label class="f" for="setTeacher">Enseignant / établissement (affiché en haut, facultatif)</label>
-    <input type="text" id="setTeacher" dir="auto" placeholder="ex. Mohamed Tammar – Lycée qualifiant Baja">
-    <label class="f" for="setArFont">Police arabe (noms arabes dans l’application et les PDF)</label>
-    <select id="setArFont"><option value="noto">Noto Sans Arabic (par défaut)</option><option value="amiri">Amiri</option><option value="naskh">Noto Naskh Arabic</option><option value="cairo">Cairo</option><option value="tajawal">Tajawal</option></select>
-    <p class="arprev" id="arPrev" dir="rtl" lang="ar">محمد الإدريسي – لا إله إلا الله – أحمد (أ) ٢٠٢٦</p>
+    <input type="checkbox" id="setAutoDate" hidden>
+    <input type="hidden" id="setTeacher">
   </div>
   <div class="card" id="holCard"></div>
   <div class="card" id="onbCard">
@@ -1883,7 +1882,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});}
  var V=document.getElementById('view-settings');if(!V)return;
  var G=[['Compte & sécurité',['sync','sec']],['Classes & année scolaire',['cls','pts','annee','hol']],['Données',['pdf','bk','snap']],['Apparence',['theme']],['Modérateur',['mod']],['Présentation',['onb']],['',['dz']]];
  var I={sync:['🔄','Compte et synchronisation'],sec:['🔒','Sécurité de cet appareil'],cls:['🏫','Classes'],pts:['➖','Points retirés (déduction)'],annee:['📅','Répartition cyclique'],hol:['🏖','Vacances et jours fériés'],
-  pdf:['📄','Exporter les documents'],bk:['💾','Sauvegarde et restauration'],snap:['🕒','Sauvegardes de sécurité'],theme:['🎨','Thème'],mod:['🛡','Espace modérateur'],onb:['👋','Présentation'],dz:['⚠️','Zone dangereuse']};
+  pdf:['📄','Exporter les documents'],bk:['💾','Sauvegarde et restauration'],snap:['🕒','Sauvegardes de sécurité'],theme:['🎨','Thème et police'],mod:['🛡','Espace modérateur'],onb:['👋','Présentation'],dz:['⚠️','Zone dangereuse']};
  var H2={pdf:/^Exporter les documents/,bk:/^Sauvegarde et restauration$/,cls:/^Classes$/,pts:/^Points retirés/,annee:/^Répartition cyclique$/};
  var ID={sync:'syncCard',sec:'secCard',snap:'snapCard',theme:'themeCard',mod:'modCard',hol:'holCard',onb:'onbCard',dz:'dangerZone'};
  var C={};[].slice.call(V.children).forEach(function(c){if(!c.classList.contains('card'))return;var k=null;
@@ -2166,7 +2165,7 @@ function normalize(d){
     if(r.marks&&typeof r.marks==='object')Object.keys(r.marks).forEach(function(id){var m=r.marks[id]||{};if(m.s==='A'||m.s==='L'||m.s==='M'||m.s==='ST')marks[id]={s:m.s,j:(m.s==='A'||m.s==='M')&&!!m.j,r:String(m.r||'')};});
     b.sessions[k]={date:/^\d{4}-\d{2}-\d{2}$/.test(r.date||'')?r.date:'',marks:marks};
   });
-  if(d.settings){var t=parseInt(d.settings.threshold,10);if(t>0)b.settings.threshold=t;b.settings.teacher=String(d.settings.teacher||'');b.settings.autoDate=d.settings.autoDate!==false;if(/^(college|lycee)$/.test(d.settings.school))b.settings.school=d.settings.school;b.settings.arFont=arFontKey(d.settings.arFont);
+  if(d.settings){var t=parseInt(d.settings.threshold,10);if(t>0)b.settings.threshold=t;b.settings.teacher=String(d.settings.teacher||'');b.settings.autoDate=d.settings.autoDate!==false;if(/^(college|lycee)$/.test(d.settings.school))b.settings.school=d.settings.school;b.settings.arFont=arFontKey(d.settings.arFont);var q=d.settings.profile;if(q&&typeof q==='object'){var o={};['civ','nom','pre','aref','prov','ville','etab'].forEach(function(k){if(typeof q[k]=='string')o[k]=q[k].slice(0,80);});if(q.t>0)o.t=+q.t;b.settings.profile=o;}
     if(d.settings.points)['A','L','M','K','S','J','V','B'].forEach(function(k){var v=parseFloat(d.settings.points[k]);if(v>=0&&v<100)b.settings.points[k]=v;});}   /* 1.29.2 (f) : V = Avertissement (Av, −), B = Bonus (Bn, +) — clés additives */
   if(d.ui){b.ui.cls=String(d.ui.cls||'');b.ui.per=Math.max(0,Math.min(b.periods.length-1,parseInt(d.ui.per,10)||0));b.ui.mode=d.ui.mode==='edit'?'edit':'cycle';b.ui.grp=!!d.ui.grp;}
   b.lastBackup=d.lastBackup||null;
@@ -2193,7 +2192,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2m';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2n';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -4525,7 +4524,7 @@ window.CJR={semver:APP_SEMVER,bhPts:bhPts,bhCnt:bhCnt,bhGet:bhGet,actEmoji:actEm
   user:function(){try{var u=window.CJSync&&window.CJSync.state&&window.CJSync.state.user;return u?(u.displayName||u.email||''):'';}catch(e){return '';}}};
 window.CJR.photoData=function(id){return PH.cur&&PH.cur.id===id?PH.cur.d:null;};window.CJR.photoAll=function(){try{if(!window.indexedDB)return Promise.resolve({});return phAll('p').then(function(a){var o={};(a||[]).forEach(function(x){if(x&&x.id&&phOk(x.d))o[x.id]=x.d;});return o;}).catch(function(){return {};});}catch(e){return Promise.resolve({});}};   /* 1.28.0 (-l) : trombinoscope (lecture seule) */
 window.CJR.cx={CX:CX,LEVEL_CAP:LEVEL_CAP,APS:APS,SC_IND:SC_IND,SC_COL:SC_COL,TT_LV:TT_LV,LVO:LVO,render:render,persist:persist,service:service,isAS:isAS,defAS:defAS,uid:uid};
-window.CJR.photo={known:function(){return Object.keys(PH.known);},bytes:phBytes,state:function(){return {blocked:PH.blocked,listening:!!PH.unsub,pushing:PH.pushing};},push:function(){phPush();}};   /* 1.28.0 : photo (fiche PDF, tests) */
+window.CJR.photo={known:function(){return Object.keys(PH.known);},bytes:phBytes,state:function(){return {blocked:PH.blocked,listening:!!PH.unsub,pushing:PH.pushing};},push:function(){phPush();},set:phSet,del:phRemove,get:function(i){return phGet('p',i);}};   /* 1.28.0 : photo (fiche PDF, tests) */
 window.CJApp={
   key:KEY,
   getJSON:function(){if(VIEW)return localStorage.getItem(KEY)||JSON.stringify(VIEW.own);if(saveT)persistNow();return localStorage.getItem(KEY)||JSON.stringify(DB);},
