@@ -448,3 +448,7 @@ if(card&&F&&C&&O&&B&&T&&Tr&&!g('stuTools')){
   box.appendChild(s);box.appendChild(f);box.appendChild(c);box.appendChild(a);
   while(card.firstChild)card.removeChild(card.firstChild);card.appendChild(box);}
 })();
+/* 1.29.2 (s) : mise en page ordinateur (≥ 1024 px) dans desk.js, chargé seulement sur grand écran (téléphone / tablette en portrait : rien ne change). */
+(function(){var mq=window.matchMedia&&matchMedia('(min-width:1024px)'),done=0;if(!mq)return;
+function go(){if(done||!mq.matches)return;done=1;var s=document.createElement('script');s.src='desk.js';document.head.appendChild(s);}
+go();if(mq.addEventListener)mq.addEventListener('change',go);else if(mq.addListener)mq.addListener(go);})();
