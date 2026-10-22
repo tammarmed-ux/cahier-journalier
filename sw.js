@@ -1,5 +1,5 @@
 /* TATABO3 (cahier journalier digital) – service worker (hors ligne ; 1.29.1 : ouverture réseau d’abord, 3 s max, sinon copie locale) */
-const CACHE = 'cahier-v29-2r';
+const CACHE = 'cahier-v29-2s';
 /* 1.29.1 : préchargement réduit à l’essentiel du démarrage (installation rapide, même si iOS coupe l’app tôt) ;
    le reste (PDF, polices, grandes images) est mis en cache juste après l’activation, sans bloquer la mise à jour, et à la demande */
 const ASSETS = [
@@ -27,6 +27,7 @@ const LAZY_ASSETS = [
   './og-image-t3.png',
   /* exports PDF : bibliothèques et polices locales (aucun CDN) */
   './college.js',   /* 1.29.2 (j) : mode Collège, chargé après le démarrage */
+  './desk.js',      /* 1.29.2 (s) : mise en page ordinateur (≥ 1024 px), chargée par college.js */
   './cj-pdf.js',
   './vendor/jspdf.umd.min.js',
   './vendor/jspdf.plugin.autotable.min.js',

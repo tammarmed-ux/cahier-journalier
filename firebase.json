@@ -114,6 +114,15 @@
         ]
       },
       {
+        "source": "/desk.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
         "source": "/op2007-athle.js",
         "headers": [
           {
