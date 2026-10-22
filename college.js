@@ -410,7 +410,7 @@ var css='#homeCmp .q-sub{margin:-4px 0 10px;font-size:12px;color:var(--muted)}#h
  '#stuTools .ex-a{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}#stuTools .xb{font:inherit;cursor:pointer;color:var(--ink);background:var(--card);border:1px solid var(--line);margin:0;box-shadow:none;text-transform:none;letter-spacing:0;min-width:0;width:auto;height:auto;border-radius:12px;'+
  'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 4px;font-size:12.5px;font-weight:650;line-height:1.15;text-align:center;min-height:68px}'+
  '#stuTools .xb svg{width:20px;height:20px;color:var(--pri);flex:none}html[data-theme="neon"] #stuTools .xb svg{color:#C6FF00}#stuTools .xb:focus-visible{outline:2px solid var(--pri);outline-offset:2px}';
-var st=document.createElement('style');st.id='cmpEleCss';st.textContent=css;document.head.appendChild(st);
+css+='#clsManage .clb-ch .clb-p[title^="Note comportementale"]{display:none}';var st=document.createElement('style');st.id='cmpEleCss';st.textContent=css;document.head.appendChild(st);
 function e(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function pl(n,w){return n+' '+w+(n>1?'s':'');}
 function lc(l){return /^2/.test(l)?'var(--cy2,#F26B1D)':/^TC/i.test(l)?'var(--cy1,#1F9D6B)':'var(--pri)';}

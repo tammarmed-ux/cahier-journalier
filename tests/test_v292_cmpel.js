@@ -70,5 +70,15 @@ const stu=p=>p.evaluate(()=>{document.querySelector('#tabs button[data-tab="stud
  const P3=await page(D3,false);await home(P3);await settle(P3);
  const v3=await P3.evaluate(()=>({n:document.querySelectorAll('#homeCmp .qxa li').length,tog:!!document.querySelector('#homeCmp .q-tog')}));
  check('3 classes : toutes affichées, pas de flèche',v3.n===3&&!v3.tog,v3);
+ const clsInfo=async P=>{await P.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();CJPS.open('cls');});await settle(P);
+  return P.evaluate(()=>{const cards=[...document.querySelectorAll('#clsManage .clb-card')];const sh=cards.map(k=>k.querySelector('.clb-ch .clb-p[title^="Note comportementale"]'));
+   const vis=sh.filter(x=>x&&x.getClientRects().length>0).length,txt=sh.map(x=>x?x.textContent:''),others=cards.map(k=>[...k.querySelectorAll('.clb-ch .clb-p')].filter(x=>x.getClientRects().length>0).length);
+   const k=cards[0];k.querySelector('.clb-e').click();const sel=k.querySelector('.capsel'),inp=k.querySelector('.capin');
+   const r={cards:cards.length,shields:sh.filter(Boolean).length,vis,txt,others,
+    sel:!!sel&&sel.getClientRects().length>0&&[...sel.options].map(o=>o.value).join(),inp:!!inp&&inp.getClientRects().length>0&&inp.value};k.querySelector('.clb-e').click();return r;});};
+ const cN=await clsInfo(N),cO=await clsInfo(O);
+ check('Classes : pastille 🛡 « auto » masquée sur toutes les cartes (toujours présente sans college.js)',cN.cards===9&&cN.shields===9&&cN.vis===0&&cO.vis===9&&JSON.stringify(cN.txt)===JSON.stringify(cO.txt),[cN.vis,cO.vis,cN.txt]);
+ check('Classes : autres pastilles (niveau, S/sem) toujours visibles',cN.others.every(x=>x>=1),cN.others);
+ check('Classes : ✎ ouvre toujours la note comportementale (défaut / valeur personnalisée) avec la même valeur',cN.sel==='auto,m'&&cN.inp!==false&&cN.inp===cO.inp,[cN.sel,cN.inp,cO.inp]);
  check('aucune erreur JS',N.errs.length===0&&O.errs.length===0,[N.errs,O.errs]);
  await b.close();srv.close();console.log(pass+'/'+tot+' passed');process.exit(pass===tot?0:1);})().catch(e=>{console.error(e);process.exit(1);});
