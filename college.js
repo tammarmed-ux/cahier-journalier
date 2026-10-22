@@ -143,21 +143,33 @@ var pfCss='#pfWrap{display:none}#view-settings.ps-sub[data-psv="sync"]>#pfWrap{d
  '#pfS .avs{display:flex;gap:12px;align-items:center;margin:0 0 8px}#pfS .avs span{width:52px;height:52px;border-radius:50%;overflow:hidden;flex:none}#pfS .avs svg{width:100%;height:100%;display:block}#pfS .avs small{color:var(--muted);font-size:12px}'+
  '#pfS .opt:focus-visible,.pf-av:focus-visible,.pfC .pf-ed:focus-visible{outline:3px solid var(--acc);outline-offset:2px}';
 var st3=document.createElement('style');st3.id='pfCss';st3.textContent=pfCss;document.head.appendChild(st3);
-function pfCopy(){try{var c=JSON.parse(ls(PK)||'null');return c&&typeof c==='object'?c:null;}catch(x){return null;}}
+/* 1.29.2 (o) : copie de l’appareil chiffrée quand le code d’accès est actif (même enveloppe AES-GCM que les photos : CJCrypto.phSeal / phOpen, id « _pfc ») ;
+   en clair seulement quand le cahier lui-même est en clair. pfMem = copie déchiffrée en mémoire. */
+var pfMem,pfMode;
+function cm(){try{return window.CJCrypto?CJCrypto.mode():'plain';}catch(x){return 'plain';}}
+function pfRaw(){try{var c=JSON.parse(ls(PK)||'null');return c&&typeof c==='object'?c:null;}catch(x){return null;}}
+function pfCopy(){if(pfMem!==undefined)return pfMem;var r=pfRaw();return r&&!r.e?r:null;}
+function pfWrite(c){pfMem=c;if(cm()==='open'){CJCrypto.phSeal({id:'_pfc',t:Date.now(),d:JSON.stringify(c)}).then(function(v){if(v&&v.e)ls(PK,JSON.stringify({e:v.e,t:v.t}));}).catch(function(){});}else ls(PK,JSON.stringify(c));}
+function pfLoadCopy(){var r=pfRaw();pfMode=cm();
+  if(r&&typeof r.e==='string'){if(pfMode==='open')CJCrypto.phOpen({id:'_pfc',t:r.t,e:r.e}).then(function(o){try{pfMem=o&&o.d?JSON.parse(o.d):null;}catch(x){pfMem=null;}pfLast='';pfReapply();pfDraw();}).catch(function(){});return;}
+  pfMem=r;if(r&&pfMode==='open')pfWrite(r);}   /* copie en clair d’avant l’activation du code : rechiffrée */
+/* code activé / désactivé pendant la session : la copie suit (chiffrée / en clair) */
+setInterval(function(){var m=cm();if(m!==pfMode){pfMode=m;if(pfMem&&m!=='locked')pfWrite(pfMem);}},3000);
 function pfClean(p){var o={};PFK.forEach(function(k){var v=p&&p[k];if(typeof v==='string'&&v.trim())o[k]=v.trim().slice(0,80);});if(o.civ&&o.civ!=='M.'&&o.civ!=='Mme')delete o.civ;return o;}
-function pfParse(t){var p=String(t||'').split(/\s+[–—-]\s+/),w=(p[0]||'').trim(),c='M.',m=/^(Mme|Mlle|M\.|E\.|Pr\.?)\s+/i.exec(w);if(m){if(/^ml?l?e$|^mme$/i.test(m[1]))c='Mme';w=w.slice(m[0].length);}
+function pfParse(t){var p=String(t||'').split(/\s+[–—-]\s+/),w=(p[0]||'').trim(),c='M.',m=/^(Mme\.?|Mlle\.?|M\.|E\.|Pr\.?)\s+/i.exec(w);if(m){if(/^(mme|mlle)\.?$/i.test(m[1]))c='Mme';w=w.slice(m[0].length);}
   var x=w.split(/\s+/).filter(Boolean);return pfClean({civ:c,nom:x[0]||'',pre:x.slice(1).join(' '),etab:p.slice(1).join(' - ')});}
-function pfTeacher(p){var n=[p.civ,p.nom,p.pre].filter(Boolean).join(' ');return p.etab?(n?n+' - ':'')+p.etab:n;}
+/* 1.29.2 (o) : « E. » = Enseignant / Enseignante, toujours (M. et Mme) ; la civilité ne choisit que l’illustration */
+function pfTeacher(p){var n=[p.nom,p.pre].filter(Boolean).join(' ');n=n?'E. '+n:'';return p.etab?(n?n+' - ':'')+p.etab:n;}
 function pfHas(q){return !!(q&&typeof q==='object'&&PFK.some(function(k){return q[k];}));}
 function pfOwn(c,s){return !!c&&(c.teacher===s.teacher||(pfHas(c.p)&&pfHas(s.profile)&&c.p.nom===s.profile.nom&&c.p.pre===s.profile.pre));}
 /* profil affiché : enregistré → copie de l’appareil (si settings.teacher inchangé) → pré-rempli d’après settings.teacher */
 function pfGet(){var s=R.db().settings,c=pfCopy(),own=pfOwn(c,s),q=pfHas(s.profile)?s.profile:own&&pfHas(c.p)?c.p:null;return {p:q||pfParse(s.teacher),saved:!!q,dob:own&&typeof c.dob==='string'?c.dob:''};}
 /* après une synchro avec un appareil 1.29.1 (settings.profile retiré) : on le remet d’après la copie de l’appareil ; si le profil enregistré a changé ailleurs : la copie suit */
 function pfReapply(){var s=R.db().settings,c=pfCopy();if(!c)return;
-  if(pfHas(s.profile)){if(pfOwn(c,s)&&(c.teacher!==s.teacher||JSON.stringify(c.p)!==JSON.stringify(s.profile))){c.teacher=s.teacher;c.p=s.profile;ls(PK,JSON.stringify(c));}return;}
+  if(pfHas(s.profile)){if(pfOwn(c,s)&&(c.teacher!==s.teacher||JSON.stringify(c.p)!==JSON.stringify(s.profile))){c.teacher=s.teacher;c.p=s.profile;pfWrite(c);}return;}
   if(pfHas(c.p)&&c.teacher===s.teacher&&!ro()){s.profile=pfClean(c.p);if(c.p.t>0)s.profile.t=+c.p.t;X.persist();}}
 function pfSave(p,dob){if(ro())return;var s=R.db().settings,o=pfClean(p);o.t=Date.now();s.profile=o;s.teacher=pfTeacher(o);
-  ls(PK,JSON.stringify({teacher:s.teacher,p:o,dob:/^\d{4}-\d{2}-\d{2}$/.test(dob||'')?dob:''}));X.persist();X.render();pfDraw();}
+  pfWrite({teacher:s.teacher,p:o,dob:/^\d{4}-\d{2}-\d{2}$/.test(dob||'')?dob:''});X.persist();X.render();pfDraw();}
 function pfAv(civ){return pfPhOk&&pfPh?'<img alt="" src="'+pfPh+'">':(civ==='Mme'?PF_F:PF_M);}
 function pfLoadPh(){var P=R.photo;if(!P||!P.get)return;P.get(PFID).then(function(r){var d=r&&r.d,ok=typeof d==='string'&&/^data:image\/(jpeg|webp|png);base64,/.test(d);if(ok!==pfPhOk||d!==pfPh){pfPhOk=ok;pfPh=ok?d:null;pfDraw();}}).catch(function(){});}
 function pfDob(d){return d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'';}
@@ -165,7 +177,7 @@ var pfLast='';
 function pfDraw(){var el=document.getElementById('pfCard');if(!el)return;var g=pfGet(),p=g.p,c=isC(),r=ro(),q=function(v,ph){return v?e(v):'<i>'+ph+'</i>';};
   var h='<div class="pfC">'+(r?'':'<button type="button" class="pf-ed" data-pf="edit" aria-label="Modifier le profil">✎</button>')+
    '<div class="top"><button type="button" class="pf-av" data-pf="photo" aria-label="Photo du profil'+(r?'':' : changer')+'"'+(r?' disabled':'')+'><span>'+pfAv(p.civ)+'</span>'+(r?'':'<i aria-hidden="true">📷</i>')+'</button>'+
-   '<div class="n"><small>Professeur d’EPS</small><b>'+e([p.civ||'M.',p.nom,p.pre].filter(Boolean).join(' '))+'</b><span class="ty">'+(c?'COLLÈGE':'LYCÉE')+'</span></div></div>'+
+   '<div class="n"><small>Professeur d’EPS</small><b>'+e(['E.',p.nom,p.pre].filter(Boolean).join(' '))+'</b><span class="ty">'+(c?'COLLÈGE':'LYCÉE')+'</span> <span class="ty cv">'+e(p.civ||'M.')+'</span></div></div>'+
    '<dl><dt>Établissement</dt><dd>'+q(p.etab,'à compléter')+'</dd><dt>AREF</dt><dd>'+q(p.aref,'à choisir')+'</dd><dt>Direction prov.</dt><dd>'+q(p.prov,'—')+'</dd><dt>Ville</dt><dd>'+q(p.ville,'—')+'</dd>'+
    '<dt>Naissance</dt><dd>'+(g.dob?e(pfDob(g.dob))+' <i>🔒 sur cet appareil</i>':'<i>🔒 sur cet appareil</i>')+'</dd></dl>'+
    (g.saved||r?'':'<p class="pf-hint">Pré-rempli d’après « '+e(R.db().settings.teacher||'—')+' » — touchez ✎ pour vérifier.</p>')+'</div>';
@@ -214,7 +226,7 @@ function pfInit(){
   document.addEventListener('change',function(ev){var t=ev.target;if(t.id==='pfCam'||t.id==='pfGal'){pfFile(t.files&&t.files[0]);t.value='';}});
   document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){var sh=document.getElementById('pfS');if(sh&&!sh.hidden)pfSheet(null);}});
   var hs=document.getElementById('hdrSub');if(hs)new MutationObserver(function(){pfReapply();pfDraw();}).observe(hs,{childList:true,characterData:true,subtree:true});
-  pfReapply();pfDraw();pfLoadPh();setTimeout(pfLoadPh,3000);}
+  pfLoadCopy();pfReapply();pfDraw();pfLoadPh();setTimeout(pfLoadPh,3000);}
 build();texts();
 document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('#tabs button,[data-ps-open="sync"],#psBack'))setTimeout(function(){texts();panel();},0);},true);
 
