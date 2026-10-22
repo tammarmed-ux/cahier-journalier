@@ -16,7 +16,7 @@ async function run(b,root,port,isNew){const s=serve(root,port);const ctx=await b
  await ctx.close();s.close();return out;}
 (async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
  const A=await run(b,'/tmp/cj-head',8051,false),B=await run(b,'/workspace/cj-deploy',8052,true);
- const keys=Object.keys(A.views);let dv=keys.filter(k=>A.views[k]!==B.views[k]);let dg=Object.keys(A.grades).filter(k=>JSON.stringify(A.grades[k])!==JSON.stringify(B.grades[k]));
+ const keys=Object.keys(A.views);/* 1.29.2 (k) : seul ajout visible voulu = suffixe de niveau « · TC » dans les <option> des sélecteurs de classe ; retiré avant comparaison (les notes, elles, sont comparées strictement) */const sx=v=>v.replace(/ · (?:TC|1BAC|2BAC|1AC|2AC|3AC|Niveau \?)<\/option>/g,'</option>');let nsx=0;keys.forEach(k=>{if(sx(B.views[k])!==B.views[k])nsx++;B.views[k]=sx(B.views[k]);});console.log('vues avec suffixe de niveau retiré :',nsx);let dv=keys.filter(k=>A.views[k]!==B.views[k]);let dg=Object.keys(A.grades).filter(k=>JSON.stringify(A.grades[k])!==JSON.stringify(B.grades[k]));
  const h=x=>crypto.createHash('sha256').update(x).digest('hex').slice(0,16);
  const nStu=JSON.parse(DATA).students.length;
  const rep={data:process.env.DATA||'data-APRES-1.29.1-20261020.json',students:nStu,classes:JSON.parse(DATA).classes.length,cells:keys.length,gradeSpecs:Object.keys(A.grades).length,viewsDiff:dv,gradesDiff:dg,jsonSame:A.json===B.json,hashViewsHead:h(keys.map(k=>A.views[k]).join()),hashViewsNew:h(keys.map(k=>B.views[k]).join())};

@@ -27,11 +27,11 @@ const PRINT=()=>{const R=CJR,d=R.db(),o={};d.classes.forEach(c=>{o[c.name]={lv:R
  b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
  /* 1. lycée : identique avec et sans college.js */
  const p0=await page(LYC,{block:true});const f0=await p0.evaluate(PRINT),j0=await p0.evaluate(()=>CJApp.getJSON());
- const v0=await p0.evaluate(()=>{document.querySelector('#tabs button[data-tab="attendance"]').click();return document.getElementById('view-attendance').innerHTML;});await p0.ctx.close();
+ const v0=await p0.evaluate(()=>{document.querySelector('#tabs button[data-tab="attendance"]').click();return document.getElementById('view-attendance').innerHTML.replace(/ · (TC|1BAC|2BAC|1AC|2AC|3AC|Niveau \?)<\/option>/g,'</option>');});await p0.ctx.close();
  const p1=await page(LYC,{gate:true});await sleep(2500);const f1=await p1.evaluate(PRINT),j1=await p1.evaluate(()=>CJApp.getJSON());
- const v1=await p1.evaluate(()=>{document.querySelector('#tabs button[data-tab="attendance"]').click();return document.getElementById('view-attendance').innerHTML;});
+ const v1=await p1.evaluate(()=>{document.querySelector('#tabs button[data-tab="attendance"]').click();return document.getElementById('view-attendance').innerHTML.replace(/ · (TC|1BAC|2BAC|1AC|2AC|3AC|Niveau \?)<\/option>/g,'</option>');});
  check('lycée : niveaux, maxima, notes comportementales, barèmes OP 2007, textes et légende identiques avec college.js',f0===f1,[f0.length,f1.length]);
- check('lycée : écran Absences / Notes /20 identique (HTML)',v0===v1);
+ check('lycée : écran Absences / Notes /20 identique (HTML, hors libellé de niveau des options de classe)',v0===v1);
  check('lycée : données enregistrées identiques (aucune écriture, pas de réglage school ajouté)',j0===j1&&!/"school"/.test(j1));
  check('lycée déduit des noms de classes : pas d’écran de choix',await p1.evaluate(()=>CJR.cxMode()==='lycee'&&!document.getElementById('cxChoice')&&!document.getElementById('cxGate')));
  const ps=await p1.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();const r=document.querySelector('#psList [data-ps-open="ets"]');return {row:!!r,sum:r&&r.textContent,grp:r&&r.parentNode.firstChild===r};});

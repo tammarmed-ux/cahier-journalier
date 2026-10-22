@@ -115,6 +115,43 @@ function panel(){if(!card)return;var c=isC(),d=R.db(),sv=X.service(),as=asList()
 build();texts();
 document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('#tabs button,[data-ps-open="ets"],#psBack'))setTimeout(function(){texts();panel();},0);},true);
 
+/* ---- niveau de chaque classe, visible (1.29.2 k) ----
+   Le niveau est lu dans le NOM de la classe (seule donnée de classe gardée par toutes les versions : 1.29.1 ne garde que id, name, cap, capM, pw, grp).
+   Nom non reconnu : pastille « Niveau ? » + message là où l’on note ; choisir le niveau = renommer la classe (« 1AC-… »), après confirmation.
+   Collège : aucune note /20 ni note procédurale calculée tant que le niveau est inconnu (« — », données non modifiées).
+   Lycée : calcul inchangé (barème 2BAC par défaut, comme avant), signalé par la même pastille. */
+var LVS={college:['1AC','2AC','3AC'],lycee:['TC','1BAC','2BAC']};
+CX.unk=function(cid){if(!isC())return false;var c=R.cls(cid);return !!c&&!R.levelOf(c.name);};
+CX.opt=function(c,sel){return sel&&/^(attClass|procClass|stuClassFilter)$/.test(sel.id)?' · '+(R.levelOf(c.name)||'Niveau ?'):'';};
+css+='#clsManage .clb-p.cx-lvb{font-weight:750;background:color-mix(in srgb,var(--cx-a) 12%,var(--card));border-color:color-mix(in srgb,var(--cx-a) 35%,transparent);color:var(--ink)}'+
+ 'html[data-theme="neon"] #clsManage .clb-p.cx-lvb{background:#232A12;border-color:#5C7A00;color:#E8FF9E}'+
+ '#clsManage .clb-p.cx-lvq,.cx-lvw{background:#FFF3DC;border:1px solid #F2C46B;color:#7A4A00}html[data-theme="neon"] #clsManage .clb-p.cx-lvq,html[data-theme="neon"] .cx-lvw{background:#3A2E10;border-color:#8A6A12;color:#FBCB4B}'+
+ '.cx-lvw{border-radius:12px;padding:10px 12px;margin:0 0 10px;font-size:13.5px;line-height:1.35}.cx-lvw small{display:block;margin-top:6px;font-size:12px;opacity:.85}'+
+ '.cx-lvp{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.cx-lvp button{all:unset;box-sizing:border-box;min-height:36px;padding:6px 14px;border-radius:999px;font-weight:750;font-size:14px;cursor:pointer;background:var(--card);color:var(--ink);border:1.5px solid currentColor}'+
+ '.cx-lvp button.go{background:var(--cx-a);color:var(--cx-on);border-color:var(--cx-a)}.cx-lvp button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}';
+st.textContent=css;
+function deco(){document.querySelectorAll('#clsManage .clb-card').forEach(function(k){var c=R.cls(k.dataset.clb),ch=k.querySelector('.clb-ch');if(!c||!ch)return;var l=R.levelOf(c.name),b=ch.querySelector('.cx-lvb'),t=l||'Niveau ?',cl='clb-p cx-lvb'+(l?'':' cx-lvq');
+  if(!b){b=document.createElement('span');ch.insertBefore(b,ch.firstChild);}if(b.textContent!==t)b.textContent=t;if(b.className!==cl)b.className=cl;var ti=l?'Niveau reconnu dans le nom : '+l:'Niveau non reconnu dans le nom de la classe';if(b.title!==ti)b.title=ti;});}
+function newName(c,l){return l+'-'+String(c.name).trim();}
+function warn(){var cid=R.db().ui.cls,c=R.cls(cid),unk=!!c&&!R.levelOf(c.name),m=isC()?'college':'lycee';
+  [['attCard','att'],['procCard','proc']].forEach(function(x){var card=document.getElementById(x[0]),id='cxLvW-'+x[1],w=document.getElementById(id);if(!card)return;
+    if(!unk){if(w)w.parentNode.removeChild(w);return;}
+    if(w&&w.getAttribute('data-cid')===cid&&w.getAttribute('data-m')===m)return;if(!w){w=document.createElement('div');w.id=id;w.className='cx-lvw';w.setAttribute('role','alert');card.parentNode.insertBefore(w,card);}
+    w.setAttribute('data-cid',cid);w.setAttribute('data-m',m);
+    w.innerHTML='<b>⚠ Niveau non reconnu</b> — choisis le niveau de «\u00a0'+e(c.name)+'\u00a0»\u00a0:<div class="cx-lvp">'+LVS[m].map(function(l){return '<button type="button" data-cxl="'+l+'">'+l+'</button>';}).join('')+'</div>'+
+     '<small>Le niveau est lu dans le nom de la classe\u00a0: elle sera renommée (ex. «\u00a0'+e(newName(c,LVS[m][0]))+'\u00a0»), modifiable dans Paramètres › Classes. '+(m==='college'?'En attendant, les notes /20 restent «\u00a0—\u00a0» (rien n’est effacé).':'En attendant, barème 2BAC appliqué par défaut (comme avant).')+'</small>';});}
+document.addEventListener('click',function(ev){var t=ev.target;if(!t.closest)return;var w=t.closest('.cx-lvw');if(!w)return;var c=R.cls(w.getAttribute('data-cid'));if(!c)return;
+  var b=t.closest('[data-cxl]'),go=t.closest('[data-cxgo]'),no=t.closest('[data-cxno]');
+  if(b&&!go){var l=b.getAttribute('data-cxl'),nn=newName(c,l);w.querySelector('.cx-lvp').innerHTML='<span style="flex-basis:100%">Renommer «\u00a0'+e(c.name)+'\u00a0» en «\u00a0'+e(nn)+'\u00a0»\u00a0?</span><button type="button" class="go" data-cxgo="'+l+'">Renommer</button><button type="button" data-cxno="1">Annuler</button>';return;}
+  if(no){w.removeAttribute('data-cid');warn();return;}
+  if(go&&!ro()){var nn2=newName(c,go.getAttribute('data-cxgo'));if(R.db().classes.some(function(x){return x!==c&&x.name===nn2;})){w.querySelector('.cx-lvp span').textContent='Une classe porte déjà le nom «\u00a0'+nn2+'\u00a0».';return;}
+    c.name=nn2;MC.d=null;X.persist();X.render();setTimeout(function(){deco();warn();panel();},0);}});
+function obs(id,f){var el=document.getElementById(id);if(el)new MutationObserver(function(){f();}).observe(el,{childList:true});}
+obs('clsManage',deco);obs('gridWrap',warn);obs('procWrap',warn);deco();warn();
+document.addEventListener('change',function(ev){if(ev.target&&/^(attClass|procClass)$/.test(ev.target.id))setTimeout(warn,0);},true);
+/* les listes de classes déjà affichées reprennent leur libellé */
+X.render();
+
 /* ---- choix à la première ouverture : « Vous êtes un enseignant de : » ---- */
 var asked=false,pick='';
 /* écran à part (#cxGate) : copie de l’habillage de l’écran de connexion (règles CSS #gate recopiées), l’écran de connexion n’est jamais modifié */

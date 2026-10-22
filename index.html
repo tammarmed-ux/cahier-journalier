@@ -2193,7 +2193,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2j';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2k';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2371,7 +2371,7 @@ function evtOf(cid,p){if(!OPA)return '';var k=evKey(cid,p),e=DB.evals&&DB.evals.
   Object.keys(cnt).forEach(function(x){if(!best||cnt[x]>cnt[best])best=x;});return best||evtGuess(DB.periods[p]||'');}
 function evtSet(cid,p,e){var k=evKey(cid,p);if(!DB.evals||typeof DB.evals!=='object')DB.evals={};if(!DB.evals.evt)DB.evals.evt={};if(e)DB.evals.evt[k]=e;else delete DB.evals.evt[k];}
 /* note Produit de l’élève d’après ses essais (null si aucun essai ; .err = 'sex' | 'fmt' | 'evt' ; .i = meilleur essai) */
-function athEs(cid,sid,p,es){var s=byId(sid),evt=evtOf(cid,p);es=es||[];if(!es.some(function(x){return x;}))return null;var E=OPA&&OPA.events[evt];if(!E)return {err:'evt'};if(!s||(s.sex!=='F'&&s.sex!=='G'))return {err:'sex'};
+function athEs(cid,sid,p,es){var s=byId(sid),evt=evtOf(cid,p);es=es||[];if(!es.some(function(x){return x;}))return null;if(CX.unk&&CX.unk(cid))return {err:'lv'};var E=OPA&&OPA.events[evt];if(!E)return {err:'evt'};if(!s||(s.sex!=='F'&&s.sex!=='G'))return {err:'sex'};
   var B=athBest(evt,es);if(!B.best)return {err:'fmt',bad:B.bad};var r=athMarkV(gradeLv(cid),s.sex,evt,B.best.val);r.i=B.best.i;r.raw=B.best.raw;r.bad=B.bad;return r;}
 function athOf(cid,sid,p){var e=evGet(sid,cid,p);return e&&e.essais?athEs(cid,sid,p,e.essais):null;}
 /* recalcul des notes Produit calculées (changement d’épreuve) ; une note saisie à la main n’est jamais remplacée */
@@ -2430,7 +2430,7 @@ function compFormula(c){var P=c.P,st=c.st,parts=[];function a(n,co,l){if(n&&co)p
   return fmtNum(c.max)+' − '+(parts.length?(parts.length>1?'(':'')+parts.join(' + ')+(parts.length>1?')':''):'0')+(c.raw>c.max?' → retrait limité à '+fmtNum(c.max):'')+' = '+fmtNum(c.v);}
 function gradeOf(cid,sid,p){var sp=gradeSpec(cid,p),e=evGet(sid,cid,p)||{},c=compOf(cid,sid,p),sum=c.v,ok=true,over=false,vals={};
   sp.cols.forEach(function(k){var v=e[k.k];vals[k.k]=v==null?null:v;if(v==null)ok=false;else if(v>k.max){over=true;ok=false;}else sum+=v;});
-  var ps=0,pok=true;sp.proc.forEach(function(k){var v=e[k.k];if(v==null||v>k.max)pok=false;else ps+=v;});
+  var ps=0,pok=true;sp.proc.forEach(function(k){var v=e[k.k];if(v==null||v>k.max)pok=false;else ps+=v;});if(CX.unk&&CX.unk(cid))ok=pok=false;
   return {spec:sp,vals:vals,comp:c,complete:ok,over:over,total:ok?r2(sum):null,partial:r2(sum),proc:pok?r2(ps):null,procPartial:r2(ps),sid:sid,essais:e.essais||[],prodAuto:!!e.prodAuto,perfEvent:e.perfEvent||''};}
 function capTxt(cid){var i=capInfo(cid);return fmtNum(i.v)+' pts par cycle'+(i.man?' (personnalisée'+(i.lv?', '+i.lv:'')+')':i.lv?' ('+i.lv+')':'');}
 function r2(x){return Math.round(x*100)/100;}
@@ -2483,7 +2483,7 @@ function dspShort(d){return !d?'':d.type==='annee'?'Toute l’année':'1er semes
 /* ================= UI plumbing ================= */
 function classOptions(sel,value,allLabel){
   var h=allLabel?'<option value="">'+esc(allLabel)+'</option>':'';
-  DB.classes.forEach(function(c){h+='<option value="'+esc(c.id)+'">'+esc(c.name)+' ('+countIn(c.id)+')</option>';});
+  DB.classes.forEach(function(c){h+='<option value="'+esc(c.id)+'">'+esc(c.name)+' ('+countIn(c.id)+')'+(CX.opt?CX.opt(c,sel):'')+'</option>';});
   sel.innerHTML=h;
   if(value!=null&&(value===''?!!allLabel:!!cls(value)))sel.value=value;else if(!allLabel&&DB.classes.length)sel.value=DB.classes[0].id;
 }
@@ -2977,7 +2977,7 @@ function gradeChange(e){var pi=e.target.closest('input.pin');if(pi){var ptr=pi.c
     var es=(pe.essais||[]).slice();while(es.length<=qi)es.push('');es[qi]=pv;while(es.length&&!es[es.length-1])es.pop();
     var o={essais:es.length?es:null,perfEvent:es.length&&evt?evt:null},r=athEs(pc,psid,pp,es);
     if(r&&r.v!=null){if(pe.g1==null||pe.prodAuto){o.g1=r.v;o.prodAuto=true;}else if(pv)toast('Produit saisi à la main conservé (barème\u00a0: '+fmtNum(r.v)+'). Effacez-le pour appliquer le barème.');}
-    else{if(pe.prodAuto){o.g1=null;o.prodAuto=null;}if(pv&&r)toast(r.err==='sex'?'Sexe non renseigné dans la fiche de l’élève\u00a0: note non calculée':r.err==='fmt'?'Format non reconnu – '+athHint(evt):'Choisissez l’épreuve pour calculer la note');}
+    else{if(pe.prodAuto){o.g1=null;o.prodAuto=null;}if(pv&&r)toast(r.err==='lv'?'Niveau de la classe non reconnu\u00a0: note non calculée':r.err==='sex'?'Sexe non renseigné dans la fiche de l’élève\u00a0: note non calculée':r.err==='fmt'?'Format non reconnu – '+athHint(evt):'Choisissez l’épreuve pour calculer la note');}
     evSet(psid,pc,pp,o);persist();pi.value=pv;
     var tmp0=document.createElement('tr');tmp0.innerHTML=trialCells(pc,psid,pp,gradeOf(pc,psid,pp),(byId(psid)||{}).name||'');var nt=tmp0.querySelectorAll('td');ptr.querySelectorAll('td.raw').forEach(function(td,q){if(nt[q]){td.className=nt[q].className;td.title=nt[q].title;var ip=td.querySelector('input');if(ip&&ip!==document.activeElement)ip.placeholder=nt[q].querySelector('input').placeholder;}});
     gradeRowUpd(ptr,pc,psid,pp);gradeFootUpd();return;}
