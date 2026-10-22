@@ -21,7 +21,7 @@ const tok=(uid,email,ver)=>{const t=Math.floor(Date.now()/1000);return b64({alg:
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:120000,args:['--no-sandbox','--disable-dev-shm-usage']});
 // ================= 0. statique =================
 const idx=fs.readFileSync(D+'/index.html','utf8'),sw=fs.readFileSync(D+'/sw.js','utf8'),fj=JSON.parse(fs.readFileSync(D+'/firebase.json','utf8'));
-check('version 1.29.0 / cache cahier-v29 (APP_VER = sw.js) — test 1.28.1 rejoué sur 1.29.0',/var APP_SEMVER='1\.29\.2'/.test(idx)&&/var APP_VER='cahier-v29-2o'/.test(idx)&&/const CACHE = 'cahier-v29-2o'/.test(sw));
+check('version 1.29.0 / cache cahier-v29 (APP_VER = sw.js) — test 1.28.1 rejoué sur 1.29.0',/var APP_SEMVER='1\.29\.2'/.test(idx)&&/var APP_VER='cahier-v29-2p'/.test(idx)&&/const CACHE = 'cahier-v29-2p'/.test(sw));
 const rulesDiff=cp.execSync('git -C '+D+' diff v1.28.0 -- firestore.rules').toString();
 check('firestore.rules identique à v1.28.0',rulesDiff==='');
 const keys=h=>[...new Set((h.match(/['"](classRegister\.v2[\w.]*|cahier\.[A-Za-z][\w.]*)['"]/g)||[]).map(x=>x.slice(1,-1)))].sort().join();
@@ -69,7 +69,7 @@ for(let di=0;di<DAYS.length;di++){const day=DAYS[di];
   const v0=await p.evaluate(()=>window.CJR.semver),raw0=await p.evaluate(K=>localStorage.getItem(K),KEY);
   ROOT=D;let sem='';for(let i=0;i<8&&sem!=='1.29.2';i++){await p.reload({waitUntil:'networkidle2'});await sleep(1200);sem=await p.evaluate(()=>window.CJR&&window.CJR.semver);}
   await sleep(1200);const raw1=await p.evaluate(K=>localStorage.getItem(K),KEY),cs=await p.evaluate(()=>caches.keys());
-  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.29.2'&&raw0===raw1&&cs.includes('cahier-v29-2o')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
+  check('mise à jour réelle v'+v0+' → v'+sem+' : classRegister.v2 identique octet pour octet, cache '+cs.join(','),v0==='1.28.0'&&sem==='1.29.2'&&raw0===raw1&&cs.includes('cahier-v29-2p')&&!cs.includes('cahier-v28')&&errs.length===0,raw0.length+' car. '+errs.join('|'));
   await p.browserContext().close();}
 // ================= 2. lien invitation ↔ compte (émulateurs) =================
 await fetch(`${FSU}/emulator/v1/projects/${P}/databases/(default)/documents`,{method:'DELETE'});

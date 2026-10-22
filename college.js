@@ -179,7 +179,7 @@ function pfDraw(){var el=document.getElementById('pfCard');if(!el)return;var g=p
    '<div class="top"><button type="button" class="pf-av" data-pf="photo" aria-label="Photo du profil'+(r?'':' : changer')+'"'+(r?' disabled':'')+'><span>'+pfAv(p.civ)+'</span>'+(r?'':'<i aria-hidden="true">📷</i>')+'</button>'+
    '<div class="n"><small>Professeur d’EPS</small><b>'+e(['E.',p.nom,p.pre].filter(Boolean).join(' '))+'</b><span class="ty">'+(c?'COLLÈGE':'LYCÉE')+'</span> <span class="ty cv">'+e(p.civ||'M.')+'</span></div></div>'+
    '<dl><dt>Établissement</dt><dd>'+q(p.etab,'à compléter')+'</dd><dt>AREF</dt><dd>'+q(p.aref,'à choisir')+'</dd><dt>Direction prov.</dt><dd>'+q(p.prov,'—')+'</dd><dt>Ville</dt><dd>'+q(p.ville,'—')+'</dd>'+
-   '<dt>Naissance</dt><dd>'+(g.dob?e(pfDob(g.dob))+' <i>🔒 sur cet appareil</i>':'<i>🔒 sur cet appareil</i>')+'</dd></dl>'+
+   '<dt>Naissance</dt><dd>'+(g.dob?e(pfDob(g.dob))+' <i>🔒</i>':'<i>🔒 à compléter</i>')+'</dd></dl>'+
    (g.saved||r?'':'<p class="pf-hint">Pré-rempli d’après « '+e(R.db().settings.teacher||'—')+' » — touchez ✎ pour vérifier.</p>')+'</div>';
   if(h!==pfLast){pfLast=h;el.innerHTML=h;}}
 function pfSheet(h){var bd=document.getElementById('pfBd'),sh=document.getElementById('pfS');if(!bd){bd=document.createElement('div');bd.id='pfBd';bd.hidden=true;sh=document.createElement('div');sh.id='pfS';sh.hidden=true;sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');document.body.appendChild(bd);document.body.appendChild(sh);}
@@ -187,7 +187,7 @@ function pfSheet(h){var bd=document.getElementById('pfBd'),sh=document.getElemen
 function pfEdit(){if(ro())return;var g=pfGet(),p=g.p,cv=p.civ||'M.',inp=function(id,l,v,ph){return '<label class="f" for="'+id+'">'+l+'</label><input type="text" id="'+id+'" maxlength="80" dir="auto" value="'+e(v||'')+'"'+(ph?' placeholder="'+e(ph)+'"':'')+'>';};
   var sh=pfSheet('<h3 id="pfT">Profil de l’enseignant</h3><div class="cx-seg" role="radiogroup" aria-label="Civilité">'+['M.','Mme'].map(function(c){return '<button type="button" role="radio" data-pfc="'+c+'" aria-checked="'+(c===cv)+'">'+c+'</button>';}).join('')+'</div>'+
    '<div class="two"><div>'+inp('pfNom','Nom',p.nom)+'</div><div>'+inp('pfPre','Prénom',p.pre)+'</div></div>'+
-   '<label class="f" for="pfDob">Date de naissance</label><input type="date" id="pfDob" value="'+e(g.dob)+'"><div class="lock">🔒 Gardée sur cet appareil seulement (jamais envoyée, ni dans les sauvegardes ni dans les PDF)</div>'+
+   '<label class="f" for="pfDob">Date de naissance</label><input type="date" id="pfDob" value="'+e(g.dob)+'"><div class="lock">🔒 Jamais envoyée, ni dans les sauvegardes ni dans les PDF</div>'+
    '<label class="f" for="pfAref">Direction régionale (AREF)</label><select id="pfAref"><option value="">— Choisir —</option>'+AREF.map(function(a){return '<option'+(a===p.aref?' selected':'')+'>'+e(a)+'</option>';}).join('')+'</select>'+
    '<div class="two"><div>'+inp('pfProv','Direction provinciale',p.prov)+'</div><div>'+inp('pfVille','Ville',p.ville)+'</div></div>'+
    inp('pfEtab','Établissement de travail',p.etab,'ex. Lycée qualifiant …')+

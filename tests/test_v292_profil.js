@@ -80,6 +80,18 @@ async function openP(p,k){await p.evaluate(k=>{document.querySelector('#tabs but
  check('autre compte sur le même appareil (settings.teacher différent) : la copie n’est pas appliquée',ot.pr===null&&ot.name==='E. Autre Compte'&&!/1985|12\/04/.test(ot.dob),ot);
  const pa=await p.evaluate(async()=>{const o={};for(const t of ['E. Ouali Hind - Lycée qualifiant Baja','M. Alami Karim - Collège Ibn Sina','Mme Bennani Salma Nour - Lycée X','Mme. Idrissi Aya']){const d=CJR.db(),k=d.settings.teacher,pr=d.settings.profile;d.settings.teacher=t;delete d.settings.profile;localStorage.removeItem('cahier.profile');CJR.cx.render();await new Promise(r=>setTimeout(r,150));o[t]=[document.querySelector('#pfCard .n b').textContent,document.querySelector('#pfCard .ty.cv').textContent,document.querySelector('#pfCard dd').textContent];d.settings.teacher=k;d.settings.profile=pr;}CJR.cx.render();return o;});
  check('pré-remplissage : préfixes « E. », « M. », « Mme » reconnus (nom, civilité, établissement)',JSON.stringify(Object.values(pa))===JSON.stringify([['E. Ouali Hind','M.','Lycée qualifiant Baja'],['E. Alami Karim','M.','Collège Ibn Sina'],['E. Bennani Salma Nour','Mme','Lycée X'],['E. Idrissi Aya','Mme','à compléter']]),pa);
+ /* 1.29.2 (p) : « sur cet appareil » retiré de l’écran du profil */
+ await tap(p,'#pfCard [data-pf="edit"]');await settle(p);
+ check('texte « sur cet appareil » absent de la carte et de la feuille du profil',await p.evaluate(()=>!/sur cet appareil/.test(document.getElementById('pfWrap').textContent+document.getElementById('pfS').textContent)));
+ await tap(p,'#pfS [data-pf="cancel"]');await settle(p);
+ /* 1.29.2 (p) : settings.teacher enregistré « M. … » par la préversion 2n → pas de réécriture au chargement ; Enregistrer → « E. … » */
+ const mm=await p.evaluate(async()=>{const d=CJR.db();d.settings.teacher='M. Tammar Mohamed - Lycée qualifiant Baja';delete d.settings.profile;CJR.cx.persist();CJR.cx.render();await new Promise(r=>setTimeout(r,400));return {te:CJR.db().settings.teacher,raw:JSON.parse(CJApp.getJSON()).settings.teacher,name:document.querySelector('#pfCard .n b').textContent,cv:document.querySelector('#pfCard .ty.cv').textContent};});
+ check('« M. Tammar Mohamed - … » (2n) : rien n’est réécrit au chargement ; carte « E. Tammar Mohamed », civilité M.',mm.te==='M. Tammar Mohamed - Lycée qualifiant Baja'&&mm.raw===mm.te&&mm.name==='E. Tammar Mohamed'&&mm.cv==='M.',mm);
+ await tap(p,'#pfCard [data-pf="edit"]');await settle(p);
+ const mf=await p.evaluate(()=>({nom:document.getElementById('pfNom').value,pre:document.getElementById('pfPre').value,etab:document.getElementById('pfEtab').value,civ:document.getElementById('pfS').dataset.civ,prev:document.getElementById('pfPrev').textContent}));
+ await tap(p,'#pfS [data-pf="save"]');await settle(p);
+ const ms=await p.evaluate(()=>({te:CJR.db().settings.teacher,hdr:document.getElementById('hdrSub').textContent}));
+ check('Enregistrer : « M. … » réécrit en « E. Tammar Mohamed - Lycée qualifiant Baja » (en-tête aussi)',mf.nom==='Tammar'&&mf.pre==='Mohamed'&&mf.etab==='Lycée qualifiant Baja'&&mf.civ==='M.'&&mf.prev==='E. Tammar Mohamed - Lycée qualifiant Baja'&&ms.te==='E. Tammar Mohamed - Lycée qualifiant Baja'&&ms.hdr.startsWith('E. Tammar Mohamed - Lycée qualifiant Baja · '),{mf,ms});
  /* 6. photo */
  await p.evaluate(()=>{const d=CJR.db();d.settings.teacher='E. Tammar Mohamed - Lycée qualifiant Baja';CJR.cx.render();});await settle(p);await sleep(300);
  await tap(p,'#pfCard [data-pf="photo"]');await settle(p);
