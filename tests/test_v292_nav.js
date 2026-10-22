@@ -21,13 +21,13 @@ const tap=async(p,sel)=>{await p.evaluate(s=>{const e=document.querySelector(s);
 const J=p=>p.evaluate(()=>{const o=JSON.parse(CJApp.getJSON());delete o.ui;return JSON.stringify(o);});
 const settle=p=>p.evaluate(()=>new Promise(r=>setTimeout(r,250)));
 async function openAnnee(p){await p.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();CJPS.open('annee');});await settle(p);}
-const nb=p=>p.evaluate(()=>{const n=document.getElementById('tabs').getBoundingClientRect(),f=document.getElementById('addStudentBtn'),fr=f.getBoundingClientRect(),cs=getComputedStyle(f);return {pos:getComputedStyle(document.getElementById('tabs')).position,nTop:Math.round(n.top),nBot:Math.round(n.bottom),vh:innerHeight,fPar:f.parentNode.id||f.parentNode.tagName,fVis:cs.display!=='none'&&fr.height>0,fBot:Math.round(fr.bottom),fRight:Math.round(innerWidth-fr.right),sy:Math.round(scrollY)};});
+const nb=p=>p.evaluate(()=>{const n=document.getElementById('tabs').getBoundingClientRect(),f=document.getElementById('addStudentBtn'),fr=f.getBoundingClientRect(),cs=getComputedStyle(f);return {pos:getComputedStyle(document.getElementById('navPin')||document.getElementById('tabs')).position,nb:document.querySelectorAll('#tabs button').length,fw:Math.round(fr.width),nTop:Math.round(n.top),nBot:Math.round(n.bottom),vh:innerHeight,fPar:f.parentNode.id||f.parentNode.tagName,fVis:cs.display!=='none'&&fr.height>0,fBot:Math.round(fr.bottom),fRight:Math.round(innerWidth-fr.right),sy:Math.round(scrollY)};});
 (async()=>{b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
  const p=await page(LYC,false);
  await p.evaluate(()=>document.querySelector('#tabs button[data-tab="students"]').click());await settle(p);
  const out=[];for(const y of [0,800,2500,99999,300]){await p.evaluate(y=>window.scrollTo(0,y),y);await sleep(120);out.push(await nb(p));}
- check('Élèves : barre position:sticky, collée au bas de l’écran à chaque position de défilement (aucun position:fixed)',out.every(o=>o.pos==='sticky'&&o.nBot===o.vh),out);
- check('bouton + dans la barre, visible, au-dessus d’elle, à droite (18 px)',out.every(o=>o.fPar==='tabs'&&o.fVis&&o.fBot<=o.nTop-12&&o.fRight===18),out[0]);
+ check('Élèves : barre position:sticky, collée au bas de l’écran à chaque position de défilement (aucun position:fixed)',out.every(o=>o.pos==='sticky'&&o.nBot===o.vh&&o.nb===6),out);
+ check('bouton + épinglé avec la barre (#navPin), 58 px, visible, au-dessus d’elle, à droite (18 px) ; #tabs garde ses 6 onglets',out.every(o=>o.fPar==='navPin'&&o.fVis&&o.fw===58&&o.fBot<=o.nTop-12&&o.fRight===18&&o.nb===6),out[0]);
  await p.setViewport({width:390,height:700,isMobile:true,hasTouch:true});await sleep(200);const o2=await nb(p);
  check('hauteur d’écran qui change (barre d’adresse iOS) : barre toujours en bas',o2.nBot===o2.vh&&o2.fBot<=o2.nTop-12,o2);
  await p.setViewport({width:390,height:844,isMobile:true,hasTouch:true});await sleep(200);
@@ -39,7 +39,7 @@ const nb=p=>p.evaluate(()=>{const n=document.getElementById('tabs').getBoundingC
  await p.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();CJPS.open('theme');window.scrollTo(0,0);});await settle(p);const o3=await nb(p);
  check('page courte (Thème et police) : barre en bas de l’écran, pas au milieu',o3.nBot===o3.vh,o3);
  await p.setViewport({width:1100,height:900});await sleep(300);
- const dk=await p.evaluate(()=>({par:document.getElementById('addStudentBtn').parentNode.id,pos:getComputedStyle(document.getElementById('addStudentBtn')).position,nav:getComputedStyle(document.getElementById('tabs')).position}));
- check('ordinateur (≥ 900 px) : bouton + remis dans Élèves (position:fixed d’origine), barre comme avant',dk.par==='view-students'&&dk.pos==='fixed'&&dk.nav==='sticky',dk);
+ const dk=await p.evaluate(()=>({par:document.getElementById('addStudentBtn').parentNode.id,pos:getComputedStyle(document.getElementById('addStudentBtn')).position,nav:getComputedStyle(document.getElementById('tabs')).position,pin:!!document.getElementById('navPin'),np:document.getElementById('tabs').parentNode.tagName}));
+ check('ordinateur (≥ 900 px) : bouton + remis dans Élèves (position:fixed d’origine), barre comme avant',dk.par==='view-students'&&dk.pos==='fixed'&&dk.nav==='sticky'&&!dk.pin&&dk.np==='BODY',dk);
  check('aucune erreur JS',p.errs.length===0,p.errs);
  await b.close();srv.close();console.log(pass+'/'+tot+' passed');process.exit(pass===tot?0:1);})().catch(e=>{console.error(e);process.exit(1);});
