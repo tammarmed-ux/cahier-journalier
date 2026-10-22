@@ -35,10 +35,10 @@ const PRINT=()=>{const R=CJR,d=R.db(),o={};d.classes.forEach(c=>{o[c.name]={lv:R
  check('lycée : écran Absences / Notes /20 identique (HTML, hors libellé de niveau des options de classe)',v0===v1);
  check('lycée : données enregistrées identiques (aucune écriture, pas de réglage school ajouté)',j0===j1&&!/"school"/.test(j1));
  check('lycée déduit des noms de classes : pas d’écran de choix',await p1.evaluate(()=>CJR.cxMode()==='lycee'&&!document.getElementById('cxChoice')&&!document.getElementById('cxGate')));
- const ps=await p1.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();const r=document.querySelector('#psList [data-ps-open="ets"]');return {row:!!r,sum:r&&r.textContent,grp:r&&r.parentNode.firstChild===r};});
- check('Paramètres : ligne « Établissement » en tête de Classes & année scolaire (Lycée · service 21 h)',ps.row&&ps.grp&&/Lycée · service 21 h/.test(ps.sum),ps);
- const pn=await p1.evaluate(async()=>{CJPS.open('ets');await new Promise(r=>setTimeout(r,100));const c=document.getElementById('cxCard');return {vis:c.offsetHeight>0,seg:[...c.querySelectorAll('[data-cxm]')].map(x=>x.getAttribute('aria-checked')).join(),ass:c.querySelector('#cxAss').hidden,ob:c.querySelector('#cxOb').textContent,title:document.getElementById('psTitle').textContent};});
- check('Établissement (lycée) : sous-page visible, Lycée coché, section ASS masquée, service 21 h',pn.vis&&pn.seg==='true,false'&&pn.ass&&pn.ob==='21 h'&&pn.title==='Établissement',pn);
+ const ps=await p1.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();const r=document.querySelector('#psList [data-ps-open="ets"]');return {row:!!r,sync:!!document.querySelector('#psList [data-ps-open="sync"]')};});
+ check('Paramètres : plus de ligne « Établissement » (1.29.2 n : « Mon service » dans Compte et synchronisation)',!ps.row&&ps.sync,ps);
+ const pn=await p1.evaluate(async()=>{CJPS.open('sync');await new Promise(r=>setTimeout(r,100));const c=document.getElementById('cxCard');return {vis:c.offsetHeight>0,seg:[...c.querySelectorAll('[data-cxm]')].map(x=>x.getAttribute('aria-checked')).join(),ass:c.querySelector('#cxAss').hidden,ob:c.querySelector('#cxOb').textContent,title:document.getElementById('psTitle').textContent};});
+ check('Mon service (lycée) : visible dans Compte et synchronisation, Lycée coché, section ASS masquée, service 21 h',pn.vis&&pn.seg==='true,false'&&pn.ass&&pn.ob==='21 h'&&/Compte/.test(pn.title),pn);
  const lt=await p1.evaluate(async()=>{const d=CJR.db(),o=[];document.querySelector('#tabs button[data-tab="proc"]').click();for(let p=0;p<d.periods.length;p++){d.ui.per=p;for(const c of d.classes){d.ui.cls=c.id;CJR.cx.render();o.push((document.querySelector('.view.active')||document.body).innerHTML);}}return o.join(' ');});
  check('lycée : Note procédurale de toutes les classes et cycles : « OP 2007 », jamais « OP 2009 » (2BAC finit par « AC »)',/OP 2007/.test(lt)&&!/OP 2009/.test(lt));
  check('lycée : aucune erreur JS',!p1.errs.length,p1.errs);await p1.ctx.close();
@@ -110,7 +110,7 @@ const PRINT=()=>{const R=CJR,d=R.db(),o={};d.classes.forEach(c=>{o[c.name]={lv:R
  check('emploi du temps : pastilles de niveau 1AC / 2AC / 3AC et ASS',['lv-1AC:1AC','lv-2AC:2AC','lv-3AC:3AC'].every(x=>tl.includes(x))&&tl.some(x=>/ASS/.test(x)),tl);
  /* Paramètres › Établissement (collège) */
  await p3.evaluate(()=>{document.querySelector('#tabs button[data-tab="settings"]').click();});await sleep(200);
- const s0=await p3.evaluate(async()=>{const d=CJR.db();d.settings.school='college';CJPS.open('ets');await new Promise(r=>setTimeout(r,150));document.querySelector('[data-cxm="college"]').click();const c=document.getElementById('cxCard');
+ const s0=await p3.evaluate(async()=>{const d=CJR.db();d.settings.school='college';CJPS.open('sync');await new Promise(r=>setTimeout(r,150));document.querySelector('[data-cxm="college"]').click();const c=document.getElementById('cxCard');
    return {ass:!c.querySelector('#cxAss').hidden,on:c.querySelector('#cxAsOn').checked,sl:[...c.querySelectorAll('[data-cxs]')].map(x=>x.checked),lab:[...c.querySelectorAll('.cx-row b')].map(x=>x.textContent),svc:c.querySelector('#cxSvc').textContent,txt:c.textContent};});
  check('Établissement (collège) : ASS visible, « Participer à l’ASS » + Mercredi / Vendredi 15:00–17:00, total « classes … + ASS … = … »',s0.ass&&s0.lab.includes('Participer à l’ASS')&&s0.lab.includes('Mercredi 15:00–17:00')&&s0.lab.includes('Vendredi 15:00–17:00')&&/^Service\u00a0: classes .+ \+ ASS .+ = /.test(s0.svc),s0);
  check('libellés : « ASS », jamais « AS » seul',!/\bAS\b/.test(s0.txt.replace(/ASS/g,'')),s0.txt);

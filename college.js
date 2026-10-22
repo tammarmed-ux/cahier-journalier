@@ -61,7 +61,7 @@ var css='html{--cx-a:#0B3A6E;--cx-on:#fff;--cx-as:#8A5300;--cx-ass:#FFF3DC}html[
  '.cx-sw{-webkit-appearance:none;appearance:none;margin:0;width:42px;height:25px;border-radius:999px;background:color-mix(in srgb,currentColor 22%,transparent);position:relative;flex:none;cursor:pointer;transition:background .15s}'+
  '.cx-sw:after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}.cx-sw:checked{background:var(--cx-a)}.cx-sw:checked:after{left:20px}'+
  'html[data-theme="neon"] .cx-sw:checked:after{background:#0A0A12}.cx-sw:focus-visible{outline:3px solid var(--acc);outline-offset:2px}.cx-sw:disabled{opacity:.5}'+
- '#cxCard .ps-cap{margin:16px 4px 6px}#cxSvc{margin:10px 4px 0}.ps-i-ets{background:#DCFCE7}';
+ '#cxCard .ps-cap{margin:16px 4px 6px}#cxSvc{margin:10px 4px 0}';
 var st=document.createElement('style');st.id='cxCss';st.textContent=css;document.head.appendChild(st);
 
 /* ---- service et ASS ---- */
@@ -90,30 +90,133 @@ function setAll(on){if(ro())return;var d=R.db(),tt=d.cal.tt;d.cal.asInit=true;
 /* ---- Paramètres › Établissement ---- */
 var V=document.getElementById('view-settings'),card=null,row=null;
 function e(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-function build(){if(!V||!window.CJPS||!CJPS.add||card)return;
+/* 1.29.2 (n) : le panneau « Établissement » est retiré de Paramètres ; ses contrôles (Lycée | Collège, service, ASS — mêmes clés settings.school / cahier.school / cal.tt)
+   forment la carte « Mon service » du panneau « Compte et synchronisation », sous la carte professionnelle (profil). */
+function build(){if(!V||!window.CJPS||card)return;var sc=document.getElementById('syncCard');if(!sc)return;
+  var w=document.createElement('div');w.id='pfWrap';w.innerHTML='<div id="pfCard"></div>';sc.parentNode.insertBefore(w,sc);
   card=document.createElement('div');card.className='card';card.id='cxCard';
-  card.innerHTML='<h2>Établissement</h2><div class="cx-seg" role="radiogroup" aria-label="Vous êtes un enseignant de"><button type="button" role="radio" data-cxm="lycee">🎓 Lycée</button><button type="button" role="radio" data-cxm="college">🎒 Collège</button></div>'+
+  card.innerHTML='<h2>Mon service</h2><div class="cx-seg" role="radiogroup" aria-label="Vous êtes un enseignant de"><button type="button" role="radio" data-cxm="lycee">🎓 Lycée</button><button type="button" role="radio" data-cxm="college">🎒 Collège</button></div>'+
    '<div class="cx-box"><div class="cx-row"><div class="t"><b>Service obligatoire</b></div><b id="cxOb"></b></div><div class="cx-row"><div class="t"><b>Niveaux reconnus</b><small>d’après le nom des classes</small></div><b id="cxLv"></b></div></div>'+
    '<div id="cxAss"><div class="ps-cap">Association sportive scolaire (ASS)</div><div class="cx-box">'+
    '<label class="cx-row"><div class="t"><b>Participer à l’ASS</b><small>Créneaux comptés dans le service, sans séance ni appel</small></div><input type="checkbox" role="switch" class="cx-sw" id="cxAsOn" aria-label="Participer à l’ASS"></label>'+
    SL.map(function(s,i){return '<label class="cx-row" data-cxr="'+i+'"><span class="cx-as">ASS</span><div class="t"><b>'+s.l+' 15:00–17:00</b><small>2 h</small></div><input type="checkbox" role="switch" class="cx-sw" data-cxs="'+i+'" aria-label="ASS '+s.l+' 15:00–17:00"></label>';}).join('')+
    '</div></div><p class="small muted" id="cxSvc"></p>';
-  V.appendChild(card);CJPS.add('ets',card,'🏫','Établissement');
-  var g=document.querySelector('#psList [data-psg~="cls"] .ps-card');
-  if(g){row=document.createElement('button');row.type='button';row.className='ps-row';row.setAttribute('data-ps-open','ets');
-    row.innerHTML='<span class="ps-ico ps-i-ets" aria-hidden="true">🎒</span><span class="ps-tx"><b>Établissement</b><small data-ps-sum="ets"></small></span><span class="ps-val" data-ps-val="ets"></span><span class="ps-chev" aria-hidden="true">›</span>';g.insertBefore(row,g.firstChild);}
+  w.appendChild(card);
   card.addEventListener('click',function(ev){var b=ev.target.closest('[data-cxm]');if(b&&b.getAttribute('aria-checked')!=='true')setMode(b.getAttribute('data-cxm'));});
   card.addEventListener('change',function(ev){var t=ev.target;if(t.id==='cxAsOn')setAll(t.checked);else if(t.hasAttribute('data-cxs'))setSlot(SL[+t.getAttribute('data-cxs')],t.checked);});
-  panel();}
+  pfInit();panel();}
 function panel(){if(!card)return;var c=isC(),d=R.db(),sv=X.service(),as=asList(),r=ro();
   card.querySelectorAll('[data-cxm]').forEach(function(b){b.setAttribute('aria-checked',String(b.getAttribute('data-cxm')===(c?'college':'lycee')));b.disabled=r;});
   card.querySelector('#cxOb').textContent=fh(Math.round(d.cal.oblig*60));card.querySelector('#cxLv').textContent=c?'1AC · 2AC · 3AC':'TC · 1BAC · 2BAC';
   card.querySelector('#cxAss').hidden=!c;var on=card.querySelector('#cxAsOn');on.checked=as.length>0;on.disabled=r;
   SL.forEach(function(s,i){var x=card.querySelector('[data-cxs="'+i+'"]');x.checked=as.some(function(t){return slotIs(t,s);});x.disabled=r||!as.length;card.querySelector('[data-cxr="'+i+'"]').classList.toggle('off',!as.length);});
   var ok=sv.tot===sv.ob;card.querySelector('#cxSvc').innerHTML=c?'Service\u00a0: classes '+fh(sv.cm)+' + ASS '+fh(sv.am)+' = <b style="color:var(--ink)">'+fh(sv.tot)+'</b>'+(ok?' ✓':' · service obligatoire '+fh(sv.ob)):'';
-  if(row){var a=row.querySelector('[data-ps-sum]');a.textContent=(c?'Collège':'Lycée')+' · service '+fh(sv.ob)+(c?' · ASS '+fh(sv.am):'');}}
+  if(row){var a=row.querySelector('[data-ps-sum]');a.textContent=(c?'Collège':'Lycée')+' · service '+fh(sv.ob)+(c?' · ASS '+fh(sv.am):'');}pfDraw();}
+/* ---- Profil de l’enseignant — carte professionnelle (1.29.2 n, proposition C) ----
+   Stockage (additif, aucune clé existante modifiée) :
+   · settings.teacher (texte existant) est RÉÉCRIT seulement quand l’enseignant enregistre son profil : « M. Nom Prénom - Établissement » → en-tête, salutation, PDF inchangés sur toutes les versions ;
+   · settings.profile = {civ, nom, pre, aref, prov, ville, etab, t} (liste blanche, textes ≤ 80, gardée par normalize depuis 1.29.2 n ; une version 1.29.1 le retire) ;
+   · copie sur l’appareil localStorage « cahier.profile » = {teacher, p, dob} : remise dans settings.profile si une synchro 1.29.1 l’a retiré (seulement si settings.teacher est resté le même) ;
+   · date de naissance : UNIQUEMENT dans cette copie locale (jamais dans les données, la synchro, les sauvegardes ni les PDF) ;
+   · photo : stockage photo des élèves (IndexedDB, chiffrée comme elles, synchro users/{uid}/photos) sous l’identifiant réservé « _prof », 256 px JPEG ≤ 25 Ko ; absente → illustration M. / Mme.
+   Rien n’est écrit tant que l’enseignant n’enregistre pas : le profil affiché est pré-rempli d’après settings.teacher. */
+var PK='cahier.profile',PFID='_prof',PFK=['civ','nom','pre','aref','prov','ville','etab'],pfPh=null,pfPhOk=false;
+var AREF=['Tanger-Tétouan-Al Hoceïma','L’Oriental','Fès-Meknès','Rabat-Salé-Kénitra','Béni Mellal-Khénifra','Casablanca-Settat','Marrakech-Safi','Drâa-Tafilalet','Souss-Massa','Guelmim-Oued Noun','Laâyoune-Sakia El Hamra','Dakhla-Oued Ed-Dahab'];
+var PF_M='<svg viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="48" fill="#DCE8F7"/><path d="M14 92c4-18 18-26 34-26s30 8 34 26" fill="#1E4E8C"/><path d="M40 62h16v10l-8 6-8-6z" fill="#E9B98F"/><path d="M38 70l10 8 10-8 4 2-14 14-14-14z" fill="#fff"/><ellipse cx="48" cy="42" rx="17" ry="20" fill="#F1C59C"/><path d="M30 40c0-14 8-21 18-21s18 7 18 21c-3-6-8-9-12-9-6 0-9 3-15 3-4 0-7 2-9 6z" fill="#2B2018"/><circle cx="41" cy="43" r="2" fill="#2B2018"/><circle cx="55" cy="43" r="2" fill="#2B2018"/><path d="M42 52c4 3 8 3 12 0" stroke="#9A5B3C" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M36 52c2 9 7 13 12 13s10-4 12-13c-2 3-6 5-12 5s-10-2-12-5z" fill="#3A2C22" opacity=".85"/></svg>';
+var PF_F='<svg viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="48" fill="#FBE3EC"/><path d="M14 92c4-18 18-26 34-26s30 8 34 26" fill="#B4235A"/><path d="M28 46c0-18 9-28 20-28s20 10 20 28v22c-6 4-13 6-20 6s-14-2-20-6z" fill="#3B2418"/><path d="M41 62h14v10l-7 5-7-5z" fill="#E9B98F"/><ellipse cx="48" cy="43" rx="15" ry="18" fill="#F3CDA8"/><path d="M33 40c2-11 8-16 15-16s13 5 15 16c-5-6-10-8-15-8s-10 2-15 8z" fill="#3B2418"/><circle cx="42" cy="44" r="2" fill="#2B2018"/><circle cx="54" cy="44" r="2" fill="#2B2018"/><path d="M43 52c3 2 7 2 10 0" stroke="#B35454" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+var pfCss='#pfWrap{display:none}#view-settings.ps-sub[data-psv="sync"]>#pfWrap{display:block}'+
+ '.pfC{position:relative;border-radius:18px;padding:16px;color:#fff;background:linear-gradient(135deg,var(--pri),color-mix(in srgb,var(--pri) 55%,var(--acc)));overflow:hidden;margin:0 0 12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}'+
+ 'html[data-theme="neon"] .pfC{background:linear-gradient(135deg,#1B2A06,#0E3B44);border:1px solid #2F3A1A}html[data-theme="terrain"] .pfC{background:linear-gradient(135deg,#1F5F3A,#2E7D4F)}'+
+ '.pfC:after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08);pointer-events:none}'+
+ '.pfC .top{display:flex;gap:12px;align-items:center;position:relative}.pfC .n{min-width:0}.pfC .n b{display:block;font-size:18px;line-height:1.2;overflow-wrap:anywhere}.pfC .n small{opacity:.85;font-size:12.5px}'+
+ '.pfC .ty{display:inline-block;margin-top:6px;font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.2);letter-spacing:.04em}'+
+ '.pfC dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:12px 0 0;font-size:12.5px;position:relative}.pfC dt{opacity:.78}.pfC dd{margin:0;font-weight:650;overflow-wrap:anywhere}.pfC dd i{opacity:.75;font-weight:400}'+
+ '.pfC .pf-ed{position:absolute;right:8px;top:8px;z-index:1;border:0;border-radius:10px;width:36px;height:36px;font-size:16px;color:#fff;background:rgba(255,255,255,.18);cursor:pointer}'+
+ '.pf-av{position:relative;flex:none;width:76px;height:76px;border-radius:50%;padding:0;border:0;background:none;cursor:pointer}.pf-av>span{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px rgba(255,255,255,.85)}.pf-av svg,.pf-av img{width:100%;height:100%;display:block;object-fit:cover}'+
+ '.pf-av i{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;background:#fff;color:#222;font-size:13px;line-height:26px;text-align:center;font-style:normal;box-shadow:0 1px 4px rgba(0,0,0,.3)}'+
+ '.pf-hint{position:relative;margin:10px 0 0;font-size:12px;opacity:.9}'+
+ '#pfBd{position:fixed;inset:0;z-index:1200;background:rgba(10,12,20,.45)}#pfBd[hidden],#pfS[hidden]{display:none}'+
+ '#pfS{position:fixed;left:0;right:0;bottom:0;z-index:1201;max-width:560px;margin:0 auto;background:var(--card);color:var(--ink);border-radius:18px 18px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.25);max-height:88vh;overflow:auto}'+
+ '#pfS h3{margin:0 0 10px;font-size:16px}#pfS label.f{display:block;margin:10px 0 4px}#pfS input,#pfS select{width:100%;box-sizing:border-box}#pfS .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}'+
+ '#pfS .lock{font-size:12px;color:var(--muted);margin-top:4px}#pfS .acts{display:flex;gap:8px;margin-top:14px}#pfS .acts .btn{flex:1}'+
+ '#pfS .opt{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:12px 4px;border-top:1px solid var(--line);font-size:15px;cursor:pointer}#pfS .opt:first-of-type{border-top:0}#pfS .opt[disabled]{opacity:.45;cursor:default}#pfS .opt .i{width:30px;text-align:center;font-size:18px}'+
+ '#pfS .avs{display:flex;gap:12px;align-items:center;margin:0 0 8px}#pfS .avs span{width:52px;height:52px;border-radius:50%;overflow:hidden;flex:none}#pfS .avs svg{width:100%;height:100%;display:block}#pfS .avs small{color:var(--muted);font-size:12px}'+
+ '#pfS .opt:focus-visible,.pf-av:focus-visible,.pfC .pf-ed:focus-visible{outline:3px solid var(--acc);outline-offset:2px}';
+var st3=document.createElement('style');st3.id='pfCss';st3.textContent=pfCss;document.head.appendChild(st3);
+function pfCopy(){try{var c=JSON.parse(ls(PK)||'null');return c&&typeof c==='object'?c:null;}catch(x){return null;}}
+function pfClean(p){var o={};PFK.forEach(function(k){var v=p&&p[k];if(typeof v==='string'&&v.trim())o[k]=v.trim().slice(0,80);});if(o.civ&&o.civ!=='M.'&&o.civ!=='Mme')delete o.civ;return o;}
+function pfParse(t){var p=String(t||'').split(/\s+[–—-]\s+/),w=(p[0]||'').trim(),c='M.',m=/^(Mme|Mlle|M\.|E\.|Pr\.?)\s+/i.exec(w);if(m){if(/^ml?l?e$|^mme$/i.test(m[1]))c='Mme';w=w.slice(m[0].length);}
+  var x=w.split(/\s+/).filter(Boolean);return pfClean({civ:c,nom:x[0]||'',pre:x.slice(1).join(' '),etab:p.slice(1).join(' - ')});}
+function pfTeacher(p){var n=[p.civ,p.nom,p.pre].filter(Boolean).join(' ');return p.etab?(n?n+' - ':'')+p.etab:n;}
+function pfHas(q){return !!(q&&typeof q==='object'&&PFK.some(function(k){return q[k];}));}
+function pfOwn(c,s){return !!c&&(c.teacher===s.teacher||(pfHas(c.p)&&pfHas(s.profile)&&c.p.nom===s.profile.nom&&c.p.pre===s.profile.pre));}
+/* profil affiché : enregistré → copie de l’appareil (si settings.teacher inchangé) → pré-rempli d’après settings.teacher */
+function pfGet(){var s=R.db().settings,c=pfCopy(),own=pfOwn(c,s),q=pfHas(s.profile)?s.profile:own&&pfHas(c.p)?c.p:null;return {p:q||pfParse(s.teacher),saved:!!q,dob:own&&typeof c.dob==='string'?c.dob:''};}
+/* après une synchro avec un appareil 1.29.1 (settings.profile retiré) : on le remet d’après la copie de l’appareil ; si le profil enregistré a changé ailleurs : la copie suit */
+function pfReapply(){var s=R.db().settings,c=pfCopy();if(!c)return;
+  if(pfHas(s.profile)){if(pfOwn(c,s)&&(c.teacher!==s.teacher||JSON.stringify(c.p)!==JSON.stringify(s.profile))){c.teacher=s.teacher;c.p=s.profile;ls(PK,JSON.stringify(c));}return;}
+  if(pfHas(c.p)&&c.teacher===s.teacher&&!ro()){s.profile=pfClean(c.p);if(c.p.t>0)s.profile.t=+c.p.t;X.persist();}}
+function pfSave(p,dob){if(ro())return;var s=R.db().settings,o=pfClean(p);o.t=Date.now();s.profile=o;s.teacher=pfTeacher(o);
+  ls(PK,JSON.stringify({teacher:s.teacher,p:o,dob:/^\d{4}-\d{2}-\d{2}$/.test(dob||'')?dob:''}));X.persist();X.render();pfDraw();}
+function pfAv(civ){return pfPhOk&&pfPh?'<img alt="" src="'+pfPh+'">':(civ==='Mme'?PF_F:PF_M);}
+function pfLoadPh(){var P=R.photo;if(!P||!P.get)return;P.get(PFID).then(function(r){var d=r&&r.d,ok=typeof d==='string'&&/^data:image\/(jpeg|webp|png);base64,/.test(d);if(ok!==pfPhOk||d!==pfPh){pfPhOk=ok;pfPh=ok?d:null;pfDraw();}}).catch(function(){});}
+function pfDob(d){return d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'';}
+var pfLast='';
+function pfDraw(){var el=document.getElementById('pfCard');if(!el)return;var g=pfGet(),p=g.p,c=isC(),r=ro(),q=function(v,ph){return v?e(v):'<i>'+ph+'</i>';};
+  var h='<div class="pfC">'+(r?'':'<button type="button" class="pf-ed" data-pf="edit" aria-label="Modifier le profil">✎</button>')+
+   '<div class="top"><button type="button" class="pf-av" data-pf="photo" aria-label="Photo du profil'+(r?'':' : changer')+'"'+(r?' disabled':'')+'><span>'+pfAv(p.civ)+'</span>'+(r?'':'<i aria-hidden="true">📷</i>')+'</button>'+
+   '<div class="n"><small>Professeur d’EPS</small><b>'+e([p.civ||'M.',p.nom,p.pre].filter(Boolean).join(' '))+'</b><span class="ty">'+(c?'COLLÈGE':'LYCÉE')+'</span></div></div>'+
+   '<dl><dt>Établissement</dt><dd>'+q(p.etab,'à compléter')+'</dd><dt>AREF</dt><dd>'+q(p.aref,'à choisir')+'</dd><dt>Direction prov.</dt><dd>'+q(p.prov,'—')+'</dd><dt>Ville</dt><dd>'+q(p.ville,'—')+'</dd>'+
+   '<dt>Naissance</dt><dd>'+(g.dob?e(pfDob(g.dob))+' <i>🔒 sur cet appareil</i>':'<i>🔒 sur cet appareil</i>')+'</dd></dl>'+
+   (g.saved||r?'':'<p class="pf-hint">Pré-rempli d’après « '+e(R.db().settings.teacher||'—')+' » — touchez ✎ pour vérifier.</p>')+'</div>';
+  if(h!==pfLast){pfLast=h;el.innerHTML=h;}}
+function pfSheet(h){var bd=document.getElementById('pfBd'),sh=document.getElementById('pfS');if(!bd){bd=document.createElement('div');bd.id='pfBd';bd.hidden=true;sh=document.createElement('div');sh.id='pfS';sh.hidden=true;sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');document.body.appendChild(bd);document.body.appendChild(sh);}
+  if(h==null){bd.hidden=sh.hidden=true;sh.innerHTML='';return null;}sh.innerHTML=h;bd.hidden=sh.hidden=false;var f=sh.querySelector('input,button,select');if(f)f.focus({preventScroll:true});return sh;}
+function pfEdit(){if(ro())return;var g=pfGet(),p=g.p,cv=p.civ||'M.',inp=function(id,l,v,ph){return '<label class="f" for="'+id+'">'+l+'</label><input type="text" id="'+id+'" maxlength="80" dir="auto" value="'+e(v||'')+'"'+(ph?' placeholder="'+e(ph)+'"':'')+'>';};
+  var sh=pfSheet('<h3 id="pfT">Profil de l’enseignant</h3><div class="cx-seg" role="radiogroup" aria-label="Civilité">'+['M.','Mme'].map(function(c){return '<button type="button" role="radio" data-pfc="'+c+'" aria-checked="'+(c===cv)+'">'+c+'</button>';}).join('')+'</div>'+
+   '<div class="two"><div>'+inp('pfNom','Nom',p.nom)+'</div><div>'+inp('pfPre','Prénom',p.pre)+'</div></div>'+
+   '<label class="f" for="pfDob">Date de naissance</label><input type="date" id="pfDob" value="'+e(g.dob)+'"><div class="lock">🔒 Gardée sur cet appareil seulement (jamais envoyée, ni dans les sauvegardes ni dans les PDF)</div>'+
+   '<label class="f" for="pfAref">Direction régionale (AREF)</label><select id="pfAref"><option value="">— Choisir —</option>'+AREF.map(function(a){return '<option'+(a===p.aref?' selected':'')+'>'+e(a)+'</option>';}).join('')+'</select>'+
+   '<div class="two"><div>'+inp('pfProv','Direction provinciale',p.prov)+'</div><div>'+inp('pfVille','Ville',p.ville)+'</div></div>'+
+   inp('pfEtab','Établissement de travail',p.etab,'ex. Lycée qualifiant …')+
+   '<p class="small muted" style="margin:10px 0 0">Lycée / Collège, service et ASS : carte « Mon service ». Affiché en haut et sur les PDF : <b id="pfPrev"></b></p>'+
+   '<div class="acts"><button type="button" class="btn sec" data-pf="cancel">Annuler</button><button type="button" class="btn" data-pf="save">Enregistrer</button></div>');
+  sh.setAttribute('aria-labelledby','pfT');sh.dataset.civ=cv;pfPrev();}
+function pfForm(){var sh=document.getElementById('pfS'),v=function(id){var x=sh.querySelector('#'+id);return x?x.value:'';};return {civ:sh.dataset.civ,nom:v('pfNom'),pre:v('pfPre'),aref:v('pfAref'),prov:v('pfProv'),ville:v('pfVille'),etab:v('pfEtab')};}
+function pfPrev(){var b=document.getElementById('pfPrev');if(b)b.textContent=pfTeacher(pfClean(pfForm()))||'—';}
+function pfPhotoSheet(){if(ro())return;var g=pfGet(),cv=g.p.civ||'M.';
+  var sh=pfSheet('<h3 id="pfT">Photo du profil</h3><div class="avs"><span>'+PF_M+'</span><span>'+PF_F+'</span><small>Sans photo : illustration selon la civilité (M. / Mme)</small></div>'+
+   '<button type="button" class="opt" data-pf="cam"><span class="i" aria-hidden="true">📷</span>Prendre une photo</button>'+
+   '<button type="button" class="opt" data-pf="gal"><span class="i" aria-hidden="true">🖼</span>Choisir dans la galerie</button>'+
+   '<button type="button" class="opt" data-pf="ill"'+(pfPhOk?'':' disabled')+'><span class="i" aria-hidden="true">↺</span>Revenir à l’illustration '+e(cv)+'</button>'+
+   '<p class="small muted" style="margin:8px 0 0">Recadrée 256 px, ≤ 25 Ko, chiffrée et synchronisée comme les photos d’élèves.</p>'+
+   '<input type="file" accept="image/*" capture="user" id="pfCam" hidden><input type="file" accept="image/*" id="pfGal" hidden>'+
+   '<div class="acts"><button type="button" class="btn sec" data-pf="cancel">Fermer</button></div>');sh.setAttribute('aria-labelledby','pfT');}
+/* photo : carré central 256 px, JPEG de qualité décroissante jusqu’à ≤ 25 Ko */
+function pfFile(f){if(!f||!/^image\//.test(f.type||'image/'))return;var u=URL.createObjectURL(f),im=new Image();
+  im.onload=function(){var c=document.createElement('canvas');c.width=c.height=256;var x=c.getContext('2d'),m=Math.min(im.naturalWidth,im.naturalHeight);
+    x.fillStyle='#fff';x.fillRect(0,0,256,256);x.drawImage(im,(im.naturalWidth-m)/2,(im.naturalHeight-m)/2,m,m,0,0,256,256);URL.revokeObjectURL(u);
+    var d=null,qs=[.86,.78,.7,.62,.54,.46,.38,.3];for(var i=0;i<qs.length;i++){var t=c.toDataURL('image/jpeg',qs[i]);if(Math.ceil((t.length-t.indexOf(',')-1)*3/4)<=25*1024){d=t;break;}}
+    if(!d){toast2('Photo trop lourde, essayez une autre image.');return;}
+    R.photo.set(PFID,d).then(function(){pfPh=d;pfPhOk=true;pfLast='';pfDraw();pfSheet(null);toast2('Photo du profil enregistrée');}).catch(function(){toast2('Photo non enregistrée');});};
+  im.onerror=function(){URL.revokeObjectURL(u);toast2('Image illisible');};im.src=u;}
+function toast2(t){var z=document.getElementById('toast');if(z&&window.CJApp&&CJApp.toast)CJApp.toast(t);else if(z){z.textContent=t;z.classList.add('show');setTimeout(function(){z.classList.remove('show');},2200);}}
+function pfInit(){
+  document.addEventListener('click',function(ev){var t=ev.target;if(!t.closest)return;
+    if(t.closest('#pfBd')){pfSheet(null);return;}
+    var c=t.closest('#pfS [data-pfc]');if(c){var sh=document.getElementById('pfS');sh.dataset.civ=c.getAttribute('data-pfc');sh.querySelectorAll('[data-pfc]').forEach(function(b){b.setAttribute('aria-checked',String(b===c));});pfPrev();return;}
+    var b=t.closest('[data-pf]');if(!b||!t.closest('#pfCard,#pfS'))return;var a=b.getAttribute('data-pf');
+    if(a==='edit')pfEdit();else if(a==='photo')pfPhotoSheet();else if(a==='cancel')pfSheet(null);
+    else if(a==='save'){var dob=document.getElementById('pfDob').value;pfSave(pfForm(),dob);pfSheet(null);toast2('Profil enregistré');}
+    else if(a==='cam')document.getElementById('pfCam').click();else if(a==='gal')document.getElementById('pfGal').click();
+    else if(a==='ill'&&!ro()&&R.photo&&R.photo.del)R.photo.del(PFID).then(function(){pfPh=null;pfPhOk=false;pfLast='';pfDraw();pfSheet(null);toast2('Illustration rétablie');});});
+  document.addEventListener('input',function(ev){if(ev.target.closest&&ev.target.closest('#pfS'))pfPrev();});
+  document.addEventListener('change',function(ev){var t=ev.target;if(t.id==='pfCam'||t.id==='pfGal'){pfFile(t.files&&t.files[0]);t.value='';}});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){var sh=document.getElementById('pfS');if(sh&&!sh.hidden)pfSheet(null);}});
+  var hs=document.getElementById('hdrSub');if(hs)new MutationObserver(function(){pfReapply();pfDraw();}).observe(hs,{childList:true,characterData:true,subtree:true});
+  pfReapply();pfDraw();pfLoadPh();setTimeout(pfLoadPh,3000);}
 build();texts();
-document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('#tabs button,[data-ps-open="ets"],#psBack'))setTimeout(function(){texts();panel();},0);},true);
+document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('#tabs button,[data-ps-open="sync"],#psBack'))setTimeout(function(){texts();panel();},0);},true);
 
 /* ---- niveau de chaque classe, visible (1.29.2 k) ----
    Le niveau est lu dans le NOM de la classe (seule donnée de classe gardée par toutes les versions : 1.29.1 ne garde que id, name, cap, capM, pw, grp).

@@ -31,8 +31,8 @@ const st=()=>p.evaluate(()=>{const V=document.getElementById('view-settings');co
 await open('');
 const keys0=await p.evaluate(()=>Object.keys(localStorage).filter(k=>!/snap/i.test(k)).sort().join());
 let s=await st();
-const ALL=['sync','sec','ets','cls','pts','annee','hol','pdf','bk','snap','theme','mod','onb','dz'];
-check('liste : les 14 sections en lignes (dont Établissement, 1.29.2 j) (modérateur), aucune carte affichée',s.list&&!s.head&&s.cards.length===0&&JSON.stringify(s.rows)===JSON.stringify(ALL),JSON.stringify(s));
+const ALL=['sync','sec','cls','pts','annee','hol','pdf','bk','snap','theme','mod','onb','dz'];
+check('liste : les 13 sections en lignes (Établissement retiré, 1.29.2 n) (modérateur), aucune carte affichée',s.list&&!s.head&&s.cards.length===0&&JSON.stringify(s.rows)===JSON.stringify(ALL),JSON.stringify(s));
 const caps=await p.evaluate(()=>[...document.querySelectorAll('#psList .ps-grp')].filter(g=>!g.hidden).map(g=>(g.querySelector('.ps-cap')||{textContent:''}).textContent));
 check('groupes : Compte & sécurité / Classes & année scolaire / Données / Apparence / Modérateur / Présentation / (zone dangereuse en bas)',JSON.stringify(caps)===JSON.stringify(['Compte & sécurité','Classes & année scolaire','Données','Apparence','Modérateur','Présentation','']),JSON.stringify(caps));
 const rowInfo=await p.evaluate(()=>[...document.querySelectorAll('#psList .ps-row')].map(r=>{const b=r.getBoundingClientRect();return {k:r.dataset.psOpen,h:Math.round(b.height),w:Math.round(b.width),t:r.querySelector('b').textContent,s:r.querySelector('small').textContent,v:r.querySelector('.ps-val').textContent,ico:!!r.querySelector('.ps-ico').textContent,ch:!!r.querySelector('.ps-chev')};}));
