@@ -41,6 +41,8 @@ const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]
   check('photo EPS marquée « à fournir » et mentions légales « à fournir »'+tag,/photo EPS réelle à fournir/.test(await p.$eval('.fin .art',e=>e.innerHTML))&&/Mentions légales \(à fournir\)/i.test(r.txt));
   check('aucun chiffre inventé (pas de %, « + de », « utilisateurs »)'+tag,!/\d+\s?%|\+\s?de\s?\d|\d+\s+(professeurs|utilisateurs|enseignants)/i.test(r.txt));
   if(mob){const vis=()=>p.evaluate(()=>getComputedStyle(document.getElementById('navList')).display);const v0=await vis();await p.click('.nav .burger');await sleep(150);const v1=await vis();const ae=await p.$eval('.nav .burger',e=>e.getAttribute('aria-expanded'));
+   const cov=await p.evaluate(()=>{const h=document.querySelector('header.nav').getBoundingClientRect(),l=[...document.querySelectorAll('#navList a,.nav .act a')].map(a=>a.getBoundingClientRect().bottom);return{hb:h.bottom,mx:Math.max(...l)};});
+   check('menu mobile ouvert : fond opaque sous tous les liens (pas de texte superposé au héros)',cov.hb>=cov.mx,cov);
    await p.evaluate(()=>document.querySelector('#navList a[href="#faq"]').click());await sleep(150);const v2=await vis();
    check('menu mobile : ☰ ouvre la navigation, un lien la referme',v0==='none'&&v1==='flex'&&ae==='true'&&v2==='none',[v0,v1,ae,v2]);}
   await ctx.close();}
