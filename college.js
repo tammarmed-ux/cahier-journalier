@@ -375,12 +375,13 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
   var d=R.db(),S=window.CJSync&&CJSync.state;if((d.settings&&d.settings.school)||ls(LK)||infer(d)){clearInterval(iv);return;}
   tries++;if(!S||!S.user||S.ready||!navigator.onLine||tries>20)ask();},700);   /* attend les données du compte (20 × 0,7 s au plus) */
 /* 1.29.2 (v) : « Mon Cahier Journalier » — ligne en tête de Paramètres › Données (au-dessus de « Exporter les documents ») + chargeur.
+   1.29.2 (w) : carte compacte sans sous-titre, bouton « Télécharger la version physique (PAPERASSE) ⬇️ » ; PDF vectoriel (texte réel, arabe, photos haute définition).
    Au toucher : jsPDF (même chargement que les autres PDF) puis cj-cahier.js (module à part, jamais au démarrage) ; PDF remis par le chemin habituel (téléchargement, ou feuille Partager sur iPhone).
    Lecture seule (profil lu par pfGet, sans écriture) ; aucune donnée, clé, synchro, export ni import n’est modifié. */
 (function(){var L=document.getElementById('psList'),g=L&&L.querySelector('[data-ps-open="pdf"]');if(!g||document.getElementById('cjcRow'))return;
- var st=document.createElement('style');st.textContent='.cjc-row{cursor:default;align-items:flex-start}.cjc-row:active{background:none}.cjc-row .ps-tx small{white-space:normal}.cjc-btn{margin-top:8px;align-self:flex-start;max-width:100%;white-space:normal;text-align:left}.cjc-btn:disabled{opacity:.75;cursor:progress}';document.head.appendChild(st);
+ var st=document.createElement('style');st.textContent='.cjc-row{cursor:default;align-items:center;min-height:0;padding-top:8px;padding-bottom:9px}.cjc-row:active{background:none}.cjc-row .ps-tx{min-width:0}.cjc-btn{display:block;margin-top:6px;width:100%;max-width:100%;min-height:0;padding:7px 10px;font-size:13px;line-height:1.25;white-space:normal;text-align:center}.cjc-btn:disabled{opacity:.75;cursor:progress}';document.head.appendChild(st);
  var row=document.createElement('div');row.className='ps-row cjc-row';row.id='cjcRow';
- row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b><small>Couverture, service, trombinoscope, registres et notes de toutes les classes · PDF A4</small><button type="button" class="btn cjc-btn" id="cjcBtn">📥 Télécharger mon cahier journalier d’EPS</button></span>';
+ row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger la version physique (PAPERASSE) ⬇️</button></span>';
  g.parentNode.insertBefore(row,g);
  var b=row.querySelector('#cjcBtn'),lbl=b.textContent,busy=0;
  function js(src){return new Promise(function(ok,ko){var el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=function(){el.remove();ko(new Error(src));};document.head.appendChild(el);});}
