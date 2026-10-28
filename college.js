@@ -470,3 +470,22 @@ if(card&&F&&C&&O&&B&&T&&Tr&&!g('stuTools')){
 (function(){var mq=window.matchMedia&&matchMedia('(min-width:1024px)'),done=0;if(!mq)return;
 function go(){if(done||!mq.matches)return;done=1;var s=document.createElement('script');s.src='desk.js';document.head.appendChild(s);}
 go();if(mq.addEventListener)mq.addEventListener('change',go);else if(mq.addListener)mq.addListener(go);})();
+/* 1.29.2 (x) : « Relevé de notes (CSV) » à côté de chaque bouton du relevé PDF (Paramètres › Exporter les documents, Absences, Note procéd.).
+   Une ligne par élève (même ordre que le relevé PDF) : Nom et prénom ; Code Massar ; S1 Test 1 à 3 = note /20 des cycles 1 à 3 ; S2 Test 1 à 3 = cycles 4 à 6
+   (même calcul que le relevé PDF : CJR.gradeOf(...).total ; case vide sans note). UTF-8 avec BOM, séparateur « ; », virgule décimale.
+   Lecture seule : aucune donnée, clé, synchro ni export existant modifié (les anciens CSV restent dans le code, leur carte est masquée dans index.html). */
+(function(){var R=window.CJR;if(!R||!R.gradeOf||document.getElementById('csvGrades'))return;
+ function cell(v){v=v==null?'':String(v);if(/^[=+\-@]/.test(v)&&!/^[-+]?\d[\d\s.,]*$/.test(v))v="'"+v;return /[;"\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+ function rows(cid){var n=(R.db().periods||[]).length,out=[['Nom et prénom','Code Massar','S1 Test 1','S1 Test 2','S1 Test 3','S2 Test 1','S2 Test 2','S2 Test 3']];
+  R.studentsIn(cid).forEach(function(s){var r=[s.name||'',s.sid||''];for(var p=0;p<6;p++){var g=p<n?R.gradeOf(cid,s.id,p):null;r.push(g&&g.total!=null?R.fmtNum(g.total):'');}out.push(r);});return out;}
+ function csv(cid){var c=R.cls(cid);if(!c){R.toast('Choisissez une classe pour le relevé de notes');return;}if(!R.studentsIn(cid).length){R.toast('Aucun élève dans cette classe');return;}
+  var t='\uFEFF'+rows(cid).map(function(r){return r.map(cell).join(';');}).join('\r\n')+'\r\n',b=new Blob([t],{type:'text/csv;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download='Releve-notes_'+R.slug(c.name)+'_'+R.todayStr()+'.csv';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(u);},1500);}
+ R.gradesCsv=rows;   /* pour les tests (lecture seule) */
+ var pg=document.getElementById('pdfGrades');if(pg){var b=document.createElement('button');b.className='btn sec';b.id='csvGrades';b.type='button';b.textContent='⬇️ Relevé de notes (CSV)';pg.parentNode.insertBefore(b,pg.nextSibling);
+  b.addEventListener('click',function(){csv(document.getElementById('expClass').value);});}
+ function add(id){var p=document.getElementById(id);if(!p||p.nextElementSibling&&p.nextElementSibling.hasAttribute('data-csvrel'))return;var b=document.createElement('button');b.type='button';b.className='btn sec pq-ib';b.setAttribute('data-csvrel','');b.title='Relevé de notes (CSV)';b.setAttribute('aria-label',b.title);
+  b.innerHTML='<span aria-hidden="true">⬇️</span><span class="pq-sr">Relevé de notes (CSV)</span>';p.parentNode.insertBefore(b,p.nextSibling);}
+ ['attEval','procEval'].forEach(function(w){var e=document.getElementById(w),id=w==='attEval'?'attGradesPdf':'procGradesPdf';if(!e)return;add(id);if(window.MutationObserver)new MutationObserver(function(){add(id);}).observe(e,{childList:true});});
+ document.addEventListener('click',function(e){if(e.target.closest('[data-csvrel]'))csv(R.db().ui.cls);});
+})();
