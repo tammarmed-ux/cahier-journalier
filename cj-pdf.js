@@ -519,7 +519,7 @@ function repGroups(o){var DB=A.db(),cid=o.cid||'',cl=DB.classes.filter(function(
 function testVals(list,k){return list.map(function(s){return k==='imc'?A.imcOf(s):A.phys(s,k);}).filter(function(v){return v!=null;});}
 function mstat(v){if(!v.length)return null;var t=0;v.forEach(function(x){t+=x;});var m=t/v.length,q=0;v.forEach(function(x){q+=(x-m)*(x-m);});return {n:v.length,m:m,sd:Math.sqrt(q/v.length),min:Math.min.apply(null,v),max:Math.max.apply(null,v)};}
 function f2(x){return x==null?'—':num(Math.round(x*100)/100);}
-function allTests(){var out=[];A.TESTS.forEach(function(t){out.push(t);if(t.k==='w')out.push({k:'imc',l:'IMC',u:'kg/m²',d:0});});return out;}
+function allTests(){var out=[];(A.TESTV||A.TESTS).forEach(function(t){out.push(t);if(t.k==='w')out.push({k:'imc',l:'IMC',u:'kg/m²',d:0});});return out;}
 var IMC_COL={Maigreur:[28,126,214],Normal:[31,138,76],Surpoids:[217,119,6],'Obésité':[198,47,58]};
 function testsOfStudent(d,y,s){var list=A.studentsIn(s.classId),sx=A.sexOf(s),same=list.filter(function(x){return sx&&A.sexOf(x)===sx;}),rows=[];
   allTests().forEach(function(t){var v=t.k==='imc'?A.imcOf(s):A.phys(s,t.k),cs=mstat(testVals(list,t.k)),ss=sx?mstat(testVals(same,t.k)):null,pos='';
@@ -535,7 +535,7 @@ function repTests(o){var DB=A.db(),cid=o.cid||'',cl=DB.classes.filter(function(c
   var d=newDoc(m),y=titleBlock(d,m),TT=allTests();
   cl.forEach(function(c,ci){if(ci){d.addPage();y=TOP;}var list=A.studentsIn(c.id),tested=list.filter(A.hasPhys),sc=A.physScores(c.id);
     var imcs=testVals(list,'imc'),cat={Maigreur:0,Normal:0,Surpoids:0,'Obésité':0};imcs.forEach(function(b){cat[A.imcCat(b)]++;});
-    var ims=mstat(imcs),vma=mstat(testVals(list,'vma')),filled=0,cells=0;list.forEach(function(s){A.TESTS.forEach(function(t){cells++;if(A.phys(s,t.k)!=null)filled++;});});
+    var ims=mstat(imcs),vma=mstat(testVals(list,'vma')),filled=0,cells=0;list.forEach(function(s){(A.TESTV||A.TESTS).forEach(function(t){cells++;if(A.phys(s,t.k)!=null)filled++;});});
     y=section(d,y,'Classe '+c.name,pl(list.length,'élève'),30);
     y=cards(d,y,[{v:tested.length+' / '+list.length,l:'Élèves testés',s:'au moins un test'},{v:pct(cells?filled/cells:0,0),l:'Complétude',s:filled+' résultats sur '+cells},{v:ims?num(r1(ims.m)):'—',l:'IMC moyen',s:ims?imcs.length+' élèves mesurés':'taille et poids requis',c:ST.P.ch},{v:vma?num(r1(vma.m))+' km/h':'—',l:'VMA moyenne',s:vma?vma.n+' élèves':'',c:PRI}]);
     y=section(d,y,'IMC et indice physique','',56);
@@ -546,11 +546,11 @@ function repTests(o){var DB=A.db(),cid=o.cid||'',cl=DB.classes.filter(function(c
     y=section(d,y,'Statistiques par test','',40);
     var F=list.filter(function(s){return A.sexOf(s)==='F';}),G=list.filter(function(s){return A.sexOf(s)==='G';});
     y=table(d,y,['Test','Unité','Mesurés','Moyenne','Écart-type','Min','Max','Moy. filles','Moy. garçons'],TT.map(function(t){var a=mstat(testVals(list,t.k)),f=mstat(testVals(F,t.k)),g=mstat(testVals(G,t.k));return [C(t.l,{halign:'left',fontStyle:'bold'}),t.u,a?a.n:0,C(a?f2(a.m):'—',{fontStyle:'bold'}),a?f2(a.sd):'—',a?f2(a.min):'—',a?f2(a.max):'—',f?f2(f.m):'—',g?f2(g.m):'—'];}),{fs:7.1,cols:{0:{cellWidth:44}}});
-    d.addPage();y=TOP;var tN='Indice physique\u00a0: moyenne des scores standardisés (z) de la classe pour chaque test disponible (IMC noté par l’écart à la zone 18,5–25\u00a0; vitesse 30 m et FC de repos\u00a0: plus bas = mieux\u00a0; navette et VMA comptent comme un seul test d’endurance), ramenée sur 100 (50 = moyenne de la classe). Ligne grise = élève dispensé(e).';
-    var head=['N°','Nom et prénom','Sexe','Taille','Poids','IMC','Dét. V','Dét. H','FC rep.','Palier','VMA','30 m','Soupl.','Méd.-b.','Équil.','Indice'];
-    var units=['','','','cm','kg','','cm','cm','bpm','','km/h','s','cm','m','s','/100'];
+    d.addPage();y=TOP;var tN='Indice physique\u00a0: moyenne des scores standardisés (z) de la classe pour chaque test disponible (IMC noté par l’écart à la zone 18,5–25\u00a0; vitesse 30 m et FC de repos\u00a0: plus bas = mieux\u00a0; endurance : VMA (navette)), ramenée sur 100 (50 = moyenne de la classe). Ligne grise = élève dispensé(e).';
+    var head=['N°','Nom et prénom','Sexe','Taille','Poids','IMC','Dét. V','Dét. H','FC rep.','VMA','30 m','Soupl.','Méd.-b.','Équil.','Indice'];
+    var units=['','','','cm','kg','','cm','cm','bpm','km/h','s','cm','m','s','/100'];
     var dsp={};y=fitTable(d,y,head.map(function(h,i){return units[i]?h+'\n('+units[i]+')':h;}),list.map(function(s,i){if(A.dspActive(s))dsp[i]=1;var b=A.imcOf(s),row=[i+1,C(s.name,{halign:'center',fontStyle:'bold'}),sexTxt(s),f2(A.phys(s,'h')),f2(A.phys(s,'w')),b==null?'—':C(num(b),{textColor:IMC_COL[A.imcCat(b)],fontStyle:'bold'})];
-      ['dv','dh','fc','nav','vma','v30','soup','mb','eq'].forEach(function(k){var v=A.phys(s,k);row.push(v==null?C('—',{textColor:[190,196,206]}):f2(v));});var ix=sc[s.id];row.push(ix==null?C('—',{textColor:MUTED}):C(num(Math.round(ix)),{fontStyle:'bold',textColor:ix>=55?ST.P.ch:ix<45?ST.A.c:INK}));return row;}),
+      ['dv','dh','fc','vma','v30','soup','mb','eq'].forEach(function(k){var v=A.phys(s,k);row.push(v==null?C('—',{textColor:[190,196,206]}):f2(v));});var ix=sc[s.id];row.push(ix==null?C('—',{textColor:MUTED}):C(num(Math.round(ix)),{fontStyle:'bold',textColor:ix>=55?ST.P.ch:ix<45?ST.A.c:INK}));return row;}),
       {fs:7,tag:'tests:'+c.name,cols:{0:{cellWidth:6},1:{cellWidth:38}},cell:function(h){if(h.section==='head'){h.cell.styles.fontSize=6.3;h.cell.styles.cellPadding=0.8;}if(h.section==='body'&&dsp[h.row.index])h.cell.styles.fillColor=DSP_F;}},{newPage:false,reserve:measure(function(s,y){return note(s,y,tN);}),before:function(d,y){return section(d,y,'Résultats individuels – '+c.name,'valeurs brutes · indice sur 100');}});
     y=note(d,y,tN);});
   return {doc:d,meta:m,name:'Tests-physiques_'+A.slug(cid?A.clsName(cid):'toutes-classes')+'_'+A.todayStr()+'.pdf'};}
