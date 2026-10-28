@@ -490,8 +490,14 @@ go();if(mq.addEventListener)mq.addEventListener('change',go);else if(mq.addListe
  R.gradesCsv=rows;   /* pour les tests (lecture seule) */
  var pg=document.getElementById('pdfGrades');if(pg){var b=document.createElement('button');b.className='btn sec';b.id='csvGrades';b.type='button';b.textContent='⬇️ Relevé de notes (CSV)';pg.parentNode.insertBefore(b,pg.nextSibling);
   b.addEventListener('click',function(){csv(document.getElementById('expClass').value);});}
- function add(id){var p=document.getElementById(id);if(!p||p.nextElementSibling&&p.nextElementSibling.hasAttribute('data-csvrel'))return;var b=document.createElement('button');b.type='button';b.className='btn sec pq-ib';b.setAttribute('data-csvrel','');b.title='Relevé de notes (CSV)';b.setAttribute('aria-label',b.title);
+ /* 1.29.2 (y) : téléphone (< 900 px), Note procéd. : l’icône CSV passe en 2e ligne (après ⓘ, 32 px) pour laisser sa largeur au choix de l’APS ; ailleurs, à côté du PDF */
+ var MQM=window.matchMedia&&matchMedia('(max-width:899px)'),cs=document.createElement('style');cs.textContent='@media (max-width:899px){.pqA .pq-row>[data-csvrel].pq-csvm{width:32px;min-width:32px;height:32px;min-height:32px;margin-left:0;border-radius:10px}}';document.head.appendChild(cs);
+ function place(){var e=document.getElementById('procEval'),p=document.getElementById('procGradesPdf'),c=e&&e.querySelector('[data-csvrel]');if(!c||!p)return;
+  var r2=MQM&&MQM.matches?e.querySelectorAll('.pq-row')[1]:null;
+  if(r2){c.classList.add('pq-csvm');if(c.parentNode!==r2||c.nextSibling)r2.appendChild(c);}else{c.classList.remove('pq-csvm');if(p.nextElementSibling!==c)p.parentNode.insertBefore(c,p.nextSibling);}}
+ function add(id){var p=document.getElementById(id);if(!p||(p.closest('#attEval,#procEval')||p.parentNode).querySelector('[data-csvrel]'))return;var b=document.createElement('button');b.type='button';b.className='btn sec pq-ib';b.setAttribute('data-csvrel','');b.title='Relevé de notes (CSV)';b.setAttribute('aria-label',b.title);
   b.innerHTML='<span aria-hidden="true">⬇️</span><span class="pq-sr">Relevé de notes (CSV)</span>';p.parentNode.insertBefore(b,p.nextSibling);}
- ['attEval','procEval'].forEach(function(w){var e=document.getElementById(w),id=w==='attEval'?'attGradesPdf':'procGradesPdf';if(!e)return;add(id);if(window.MutationObserver)new MutationObserver(function(){add(id);}).observe(e,{childList:true});});
+ ['attEval','procEval'].forEach(function(w){var e=document.getElementById(w),id=w==='attEval'?'attGradesPdf':'procGradesPdf';if(!e)return;add(id);place();if(window.MutationObserver)new MutationObserver(function(){add(id);place();}).observe(e,{childList:true});});
+ if(MQM){if(MQM.addEventListener)MQM.addEventListener('change',place);else if(MQM.addListener)MQM.addListener(place);}
  document.addEventListener('click',function(e){if(e.target.closest('[data-csvrel]'))csv(R.db().ui.cls);});
 })();
