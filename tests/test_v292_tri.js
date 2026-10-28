@@ -43,12 +43,13 @@ async function lists(p){const o={};for(const t of ['home','students','attendance
   check(lab+' : données (classRegister.v2 hors ui) identiques à 2t',dn===dO);
   check(lab+' : aucune erreur JS',!N.errs.length&&!O.errs.length,[N.errs,O.errs]);await N.ctx.close();await O.ctx.close();}
  /* 3. exports et import : code inchangé */
- const ni=fs.readFileSync(D+'/index.html','utf8'),oi=fs.readFileSync(B+'/index.html','utf8');
+ const X=require('./undo_2x.js');   /* 2x : changements propres à 2x défaits (barre latérale, cache 2x, navette masquée) */
+ const ni=X.index(fs.readFileSync(D+'/index.html','utf8')),oi=fs.readFileSync(B+'/index.html','utf8');
  const fn=(s,n)=>{const i=s.indexOf('function '+n+'(');let j=s.indexOf('\nfunction ',i+5);return s.slice(i,j);};
  const EX=['allStudents','exportGrid','exportScopeAll','exportYear','exportStudents','exportRecords','normalize','applyJSON'].filter(n=>oi.includes('function '+n+'('));
  check('exports CSV/JSON et normalisation : code identique ('+EX.join(', ')+')',EX.every(n=>fn(ni,n)===fn(oi,n)),EX.filter(n=>fn(ni,n)!==fn(oi,n)));
  const V2=x=>x.replace(/\/\* 1\.29\.2 \(v\) : « Mon Cahier Journalier »[\s\S]*?\n\}\)\(\);\n(?=\}\)\(\);)/,'');   /* 2v : bloc « Mon Cahier Journalier » ajouté en fin d’IIFE (défait pour la comparaison) */
- check('cj-pdf.js, college.js (hors bloc 2v), desk.js, cj-crypto.js, op2007-athle.js inchangés',['cj-pdf.js','college.js','desk.js','cj-crypto.js','op2007-athle.js'].every(f=>V2(fs.readFileSync(D+'/'+f,'utf8'))===fs.readFileSync(B+'/'+f,'utf8')));
+ check('cj-pdf.js, college.js (hors bloc 2v), desk.js, cj-crypto.js, op2007-athle.js inchangés',['cj-pdf.js','college.js','desk.js','cj-crypto.js','op2007-athle.js'].every(f=>V2(X.file(D,f,fs.readFileSync(D+'/'+f,'utf8')))===fs.readFileSync(B+'/'+f,'utf8')));
  const rem=[],add=[];{const a=oi.split('\n'),c=ni.split('\n');const sa=new Set(c),sb=new Set(a);a.forEach(l=>{if(!sa.has(l))rem.push(l);});c.forEach(l=>{if(!sb.has(l))add.push(l);});}
  check('index.html : seules les lignes d’affichage changent (DB.classes → CS() pour lire une copie triée) + la version + CJR.CS (copie triée, pour college.js et les tests)',rem.every(l=>/cahier-v29-2t/.test(l)||add.includes(l.replace('window.CJR={semver:APP_SEMVER,','window.CJR={semver:APP_SEMVER,CS:CS,'))||add.some(x=>x===l.replace(/DB\.classes(?=\.(forEach|map|filter))/g,'CS()')))&&add.every(l=>rem.includes(l.replace('CS:CS,',''))||/cahier-v29-2w|^function clsK\(|^function CS\(|^window\.CJR\.pdf=\{lib:pdfLib,deliver:deliverPdf\};|^\/\* 1\.29\.2 \(u\)/.test(l)||rem.some(x=>x.replace(/DB\.classes(?=\.(forEach|map|filter))/g,'CS()')===l))&&!/DB\.classes\s*=|DB\.classes\.(sort|reverse|splice)/.test(add.join('\n')),{rem:rem.length,add:add.length});
  const sw=fs.readFileSync(D+'/sw.js','utf8'),A=(sw.match(/ASSETS\s*=\s*\[([\s\S]*?)\]/)||[])[1].match(/'[^']+'/g).map(x=>x.slice(1,-1)),sz=A.reduce((t,f)=>t+fs.statSync(D+'/'+(f==='./'?'index.html':f.replace(/^\.\//,''))).size,0);

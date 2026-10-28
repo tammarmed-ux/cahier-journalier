@@ -99,15 +99,16 @@ const idb=p=>p.evaluate(()=>new Promise(res=>{try{const out={};const q=indexedDB
  /* code : lecture seule, rien d’autre ne change */
  const cj=fs.readFileSync(D+'/cj-cahier.js','utf8');
  check('cj-cahier.js lecture seule (aucune écriture : localStorage, IndexedDB, save, photo.set, synchro)',!/localStorage|indexedDB|\.setItem|\bsave\(|photo\.set|\.put\(|Firestore|firebase/i.test(cj));
- const ni=fs.readFileSync(D+'/index.html','utf8'),oi=fs.readFileSync(B+'/index.html','utf8');
+ const X=require('./undo_2x.js');   /* 2x : changements propres à 2x défaits (barre latérale, cache 2x, navette masquée) */
+ const ni=X.index(fs.readFileSync(D+'/index.html','utf8')),oi=fs.readFileSync(B+'/index.html','utf8');
  check('index.html : seulement la version et window.CJR.pdf={lib:pdfLib,deliver:deliverPdf}',ni.replace(/window\.CJR\.pdf=\{lib:pdfLib,deliver:deliverPdf\};[^\n]*\n/,'').replace("'cahier-v29-2w'","'cahier-v29-2v'")===oi.replace(/window\.CJR\.pdf=\{lib:pdfLib,deliver:deliverPdf\};[^\n]*\n/,''));
- const nc=fs.readFileSync(D+'/college.js','utf8'),oc=fs.readFileSync(B+'/college.js','utf8');
+ const nc=X.college(fs.readFileSync(D+'/college.js','utf8')),oc=fs.readFileSync(B+'/college.js','utf8');
  const cut=x=>x.replace(/\/\* 1\.29\.2 \(v\) : « Mon Cahier Journalier »[\s\S]*?\n\}\)\(\);\n(?=\}\)\(\);)/,'');
  check('college.js : seul le bloc « Mon Cahier Journalier » change',cut(nc)===cut(oc)&&nc!==oc);
- check('cj-pdf.js, desk.js, cj-crypto.js, op2007-athle.js, vendor/ inchangés',['cj-pdf.js','desk.js','cj-crypto.js','op2007-athle.js','core.js'].filter(f=>fs.existsSync(D+'/'+f)).every(f=>fs.readFileSync(D+'/'+f,'utf8')===fs.readFileSync(B+'/'+f,'utf8'))&&cp.execSync('git -C '+D+' diff --stat backup-pre-1.29.2w -- vendor').toString()==='');
+ check('cj-pdf.js, desk.js, cj-crypto.js, op2007-athle.js, vendor/ inchangés',['cj-pdf.js','desk.js','cj-crypto.js','op2007-athle.js','core.js'].filter(f=>fs.existsSync(D+'/'+f)).every(f=>X.file(D,f,fs.readFileSync(D+'/'+f,'utf8'))===fs.readFileSync(B+'/'+f,'utf8'))&&cp.execSync('git -C '+D+' diff --stat backup-pre-1.29.2w -- vendor').toString()==='');
  const sw=fs.readFileSync(D+'/sw.js','utf8'),A=(sw.match(/ASSETS\s*=\s*\[([\s\S]*?)\]/)||[])[1].match(/'[^']+'/g).map(x=>x.slice(1,-1)),LZ=(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)||[])[1].match(/'[^']+'/g).map(x=>x.slice(1,-1));
  const sz=A.reduce((t,f)=>t+fs.statSync(D+'/'+(f==='./'?'index.html':f.replace(/^\.\//,''))).size,0);
  const need=['./cj-cahier.js','./cahier/cover.html','./cahier/logo.jpg','./cahier/roi.jpg','./cahier/splash.jpg'].concat(['400','400i','500','600','700','800','800i','900','900i'].map(x=>'./cahier/poppins-'+x+'.ttf'));
- check('sw.js : cj-cahier.js et cahier/ hors démarrage, mis en cache à la demande (LAZY_ASSETS), fichiers présents',need.every(f=>LZ.includes(f)&&!A.includes(f)&&fs.existsSync(D+'/'+f.slice(2)))&&/'cahier-v29-2w'/.test(sw)&&!/\.woff'/.test(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)[1]));
+ check('sw.js : cj-cahier.js et cahier/ hors démarrage, mis en cache à la demande (LAZY_ASSETS), fichiers présents',need.every(f=>LZ.includes(f)&&!A.includes(f)&&fs.existsSync(D+'/'+f.slice(2)))&&/'cahier-v29-2x'/.test(sw)&&!/\.woff'/.test(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)[1]));
  check('budget de démarrage ≤ 737 280 o ('+sz+' o)',sz<=737280);
  console.log(pass+'/'+tot+' passed');await b.close();S1.close();S2.close();process.exit(pass===tot?0:1);})().catch(e=>{console.log('FATAL',e);process.exit(1);});
