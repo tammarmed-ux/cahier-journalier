@@ -8,7 +8,7 @@ const IDX=[["{k:'nav',hid:1,l:","{k:'nav',l:"],["\n/* 1.29.2 (x) : « Test navet
  ["t=String(st.notes||''),v={},m;\n      m=/","t=String(st.notes||''),v={},m;\n      m=/(?:test\\s+)?(?:navette|palier|luc[\\s-]*l[ée]ger|l[ée]ger)[^0-9\\n]{0,25}?(\\d{1,2}(?:[.,]\\d{1,2})?)/i.exec(t);if(m)v.nav=tiNum(m[1]);\n      m=/"],
  ["'+TESTV.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]","'+TESTS.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]"],["(Taille, Poids, VMA,","(Taille, Poids, Navette, VMA,"],
  ["  TESTV.forEach(function(t){var v=phys(s,t.k);","  TESTS.forEach(function(t){var v=phys(s,t.k);"],["TESTS:TESTS,TESTV:TESTV,","TESTS:TESTS,"],
- ["(«\\u00a0VMA\\u00a0»)","(«\\u00a0navette\\u00a0», «\\u00a0palier\\u00a0», «\\u00a0VMA\\u00a0»)"],["'cahier-v29-2y'","'cahier-v29-2w'"],['<div class="csvline" hidden>','<div class="csvline">']];
+ ["(«\\u00a0VMA\\u00a0»)","(«\\u00a0navette\\u00a0», «\\u00a0palier\\u00a0», «\\u00a0VMA\\u00a0»)"],["'cahier-v29-2z'","'cahier-v29-2w'"],['<div class="csvline" hidden>','<div class="csvline">']];
 const PDF=[["function allTests(){var out=[];(A.TESTV||A.TESTS).forEach(","function allTests(){var out=[];A.TESTS.forEach("],["list.forEach(function(s){(A.TESTV||A.TESTS).forEach(function(t){cells++;","list.forEach(function(s){A.TESTS.forEach(function(t){cells++;"],
  ["endurance\u00a0: VMA (navette)","navette et VMA comptent comme un seul test d’endurance"],["'FC rep.','VMA',","'FC rep.','Palier','VMA',"],
  ["var units=['','','','cm','kg','','cm','cm','bpm','km/h',","var units=['','','','cm','kg','','cm','cm','bpm','','km/h',"],["['dv','dh','fc','vma','v30','soup','mb','eq'].forEach","['dv','dh','fc','nav','vma','v30','soup','mb','eq'].forEach"]];
