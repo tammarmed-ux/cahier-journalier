@@ -379,17 +379,23 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
    Au toucher : jsPDF (même chargement que les autres PDF) puis cj-cahier.js (module à part, jamais au démarrage) ; PDF remis par le chemin habituel (téléchargement, ou feuille Partager sur iPhone).
    Lecture seule (profil lu par pfGet, sans écriture) ; aucune donnée, clé, synchro, export ni import n’est modifié. */
 (function(){var L=document.getElementById('psList'),g=L&&L.querySelector('[data-ps-open="pdf"]');if(!g||document.getElementById('cjcRow'))return;
- var st=document.createElement('style');st.textContent='.cjc-row{cursor:default;align-items:center;min-height:0;padding-top:8px;padding-bottom:9px}.cjc-row:active{background:none}.cjc-row .ps-tx{min-width:0}.cjc-btn{display:block;margin-top:6px;width:100%;max-width:100%;min-height:0;padding:7px 10px;font-size:13px;line-height:1.25;white-space:normal;text-align:center}.cjc-btn:disabled{opacity:.75;cursor:progress}';document.head.appendChild(st);
+ var st=document.createElement('style');st.textContent='.cjc-row{cursor:default;align-items:center;min-height:0;padding-top:8px;padding-bottom:9px}.cjc-row:active{background:none}.cjc-row .ps-tx{min-width:0}.cjc-btn{display:block;margin-top:6px;width:100%;max-width:100%;min-height:0;padding:7px 10px;font-size:13px;line-height:1.25;white-space:normal;text-align:center}.cjc-btn:disabled{opacity:.75;cursor:progress}.cjc-btn.cjc-ready{background:#16a34a;border-color:#16a34a;color:#fff}';document.head.appendChild(st);
  var row=document.createElement('div');row.className='ps-row cjc-row';row.id='cjcRow';
  row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger la version physique (PAPERASSE) ⬇️</button></span>';
  g.parentNode.insertBefore(row,g);
  var b=row.querySelector('#cjcBtn'),lbl=b.textContent,busy=0;
  function js(src){return new Promise(function(ok,ko){var el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=function(){el.remove();ko(new Error(src));};document.head.appendChild(el);});}
  function end(){busy=0;b.disabled=false;b.textContent=lbl;}
- b.addEventListener('click',function(){if(busy)return;var P=R.pdf;if(!P){toast2('⚠ Mettez l’application à jour pour créer le cahier journalier');return;}busy=1;b.disabled=true;b.textContent='Génération… préparation';
+ /* 1.29.2 (y) : la génération dure souvent plus de 5 s ; passé ce délai le navigateur ne considère plus le téléchargement comme demandé par l’utilisateur
+    (Chrome / Edge le bloquent alors sans bruit s’il y a déjà eu un téléchargement : « plusieurs fichiers »). Le PDF prêt est donc remis par un nouveau toucher :
+    le bouton devient « Enregistrer le cahier ». iPhone / iPad : fenêtre « PDF prêt » (Partager / Enregistrer) comme avant. */
+ var rdy=null,IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ function ready(r){busy=0;rdy=r;b.disabled=false;b.classList.add('cjc-ready');b.textContent='⬇️ Enregistrer le cahier (PDF · '+Math.max(1,Math.round(r.blob.size/1048576))+' Mo)';toast2('Cahier journalier prêt\u00a0: touchez « Enregistrer le cahier »');}
+ b.addEventListener('click',function(){if(rdy){var x=rdy;rdy=null;b.classList.remove('cjc-ready');b.textContent=lbl;R.pdf.deliver(x.blob,x.name);return;}
+  if(busy)return;var P=R.pdf;if(!P){toast2('⚠ Mettez l’application à jour pour créer le cahier journalier');return;}busy=1;b.disabled=true;b.textContent='Génération… préparation';
   P.lib().then(function(){return window.CJCahier?0:js('cj-cahier.js');}).then(function(){var p=null;try{p=pfGet().p;}catch(x){}
    return CJCahier.make({pf:p,onProgress:function(i,n){b.textContent='Génération… page '+i+'/'+n;}});})
-  .then(function(r){end();if(r&&r.blob){P.deliver(r.blob,r.name);}else if(r&&r.printed)toast2('Choisissez « Enregistrer en PDF » dans la fenêtre d’impression');})
+  .then(function(r){var ua=navigator.userActivation;if(r&&r.blob&&!IOS&&!(ua&&ua.isActive)){ready(r);return;}end();if(r&&r.blob){P.deliver(r.blob,r.name);}else if(r&&r.printed)toast2('Choisissez « Enregistrer en PDF » dans la fenêtre d’impression');})
   .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.'));});});
 })();
 })();
