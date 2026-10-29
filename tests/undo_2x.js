@@ -8,7 +8,7 @@ const IDX=[["{k:'nav',hid:1,l:","{k:'nav',l:"],["\n/* 1.29.2 (x) : « Test navet
  ["t=String(st.notes||''),v={},m;\n      m=/","t=String(st.notes||''),v={},m;\n      m=/(?:test\\s+)?(?:navette|palier|luc[\\s-]*l[ée]ger|l[ée]ger)[^0-9\\n]{0,25}?(\\d{1,2}(?:[.,]\\d{1,2})?)/i.exec(t);if(m)v.nav=tiNum(m[1]);\n      m=/"],
  ["'+TESTV.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]","'+TESTS.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]"],["(Taille, Poids, VMA,","(Taille, Poids, Navette, VMA,"],
  ["  TESTV.forEach(function(t){var v=phys(s,t.k);","  TESTS.forEach(function(t){var v=phys(s,t.k);"],["TESTS:TESTS,TESTV:TESTV,","TESTS:TESTS,"],
- ["(«\\u00a0VMA\\u00a0»)","(«\\u00a0navette\\u00a0», «\\u00a0palier\\u00a0», «\\u00a0VMA\\u00a0»)"],["'cahier-v29-2zb'","'cahier-v29-2w'"],['<div class="csvline" hidden>','<div class="csvline">']];
+ ["(«\\u00a0VMA\\u00a0»)","(«\\u00a0navette\\u00a0», «\\u00a0palier\\u00a0», «\\u00a0VMA\\u00a0»)"],["'cahier-v29-2zc'","'cahier-v29-2w'"],['<div class="csvline" hidden>','<div class="csvline">']];
 /* 2z : une seule barre de défilement sur l’écran d’accès (CSS ajouté après la règle html,body overflow-x) */
 IDX.unshift(["html.cj-locked,html:has(>body>#cjLock){overflow:hidden}",""],["/* 1.29.2 (d) pas de défilement horizontal ; bloc A compact ; date/heure iOS ; (z) accès/PIN : 1 ascenseur */","/* 1.29.2 (d) : jamais de défilement horizontal de la page (seule la grille défile, dans son cadre) ; groupes compacts dans le bloc A ; champs date/heure iOS alignés */"]);
 /* 2z (g) : déconnexion / visite hors session → /accueil/ ; ancienne page d’accueil intégrée retirée (texte d’origine relu dans backup-pre-1.29.2z) */

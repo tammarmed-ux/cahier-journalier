@@ -112,6 +112,6 @@ const idb=p=>p.evaluate(()=>new Promise(res=>{try{const out={};const q=indexedDB
  const sw=fs.readFileSync(D+'/sw.js','utf8'),A=(sw.match(/ASSETS\s*=\s*\[([\s\S]*?)\]/)||[])[1].match(/'[^']+'/g).map(x=>x.slice(1,-1)),LZ=(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)||[])[1].match(/'[^']+'/g).map(x=>x.slice(1,-1));
  const sz=A.reduce((t,f)=>t+fs.statSync(D+'/'+(f==='./'?'index.html':f.replace(/^\.\//,''))).size,0);
  const need=['./cj-cahier.js','./cahier/cover.html','./cahier/logo.jpg','./cahier/roi.jpg','./cahier/splash.jpg'].concat(['400','400i','500','600','700','800','800i','900','900i'].map(x=>'./cahier/poppins-'+x+'.ttf'));
- check('sw.js : cj-cahier.js et cahier/ hors démarrage, mis en cache à la demande (LAZY_ASSETS), fichiers présents',need.every(f=>LZ.includes(f)&&!A.includes(f)&&fs.existsSync(D+'/'+f.slice(2)))&&/'cahier-v29-2zb'/.test(sw)&&!/\.woff'/.test(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)[1]));
+ check('sw.js : cj-cahier.js et cahier/ hors démarrage, mis en cache à la demande (LAZY_ASSETS), fichiers présents',need.every(f=>LZ.includes(f)&&!A.includes(f)&&fs.existsSync(D+'/'+f.slice(2)))&&/'cahier-v29-2zc'/.test(sw)&&!/\.woff'/.test(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)[1]));
  check('budget de démarrage ≤ 737 280 o ('+sz+' o)',sz<=737280);
  console.log(pass+'/'+tot+' passed');await b.close();S1.close();S2.close();process.exit(pass===tot?0:1);})().catch(e=>{console.log('FATAL',e);process.exit(1);});
