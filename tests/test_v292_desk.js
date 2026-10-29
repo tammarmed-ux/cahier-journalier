@@ -58,7 +58,7 @@ const SCAN=function SCAN(){const out=[],seen=new Set();
  if(document.documentElement.scrollWidth>innerWidth)out.push({why:'page plus large que l’écran',el:'html',t:document.documentElement.scrollWidth+' > '+innerWidth});
  return out;};
 /* 2x : boutons « Relevé de notes (CSV) » ajoutés et carte « Tableaux Excel (CSV) » masquée (demande du propriétaire) — défaits avant de comparer au pixel près avec 2w */
-const NEUT=p=>p.evaluate(()=>{document.querySelectorAll('[data-csvrel],#csvGrades').forEach(e=>e.remove());const c=document.querySelector('.csvline');if(c)c.hidden=false;});
+const NEUT=p=>p.evaluate(()=>{if(!document.getElementById('neut2zb')){const z=document.createElement('style');z.id='neut2zb';z.textContent='html header.top .h-ver,html #dkSide .h-ver{display:block!important}html header.top .h-title+.sub{margin-top:0!important}';document.head.appendChild(z);}/* 2zb défait pour comparer */document.querySelectorAll('[data-csvrel],#csvGrades').forEach(e=>e.remove());const c=document.querySelector('.csvline');if(c)c.hidden=false;});
 const TABS=['home','students','attendance','proc','reports','settings'];
 const shot=async p=>{await p.evaluate(()=>window.scrollTo(0,0));await sleep(150);return (await p.screenshot({fullPage:true,encoding:'base64'}));};
 const J=p=>p.evaluate(()=>{const o=JSON.parse(CJApp.getJSON());delete o.ui;return JSON.stringify(o);});
@@ -74,7 +74,7 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
  check('budget de démarrage ≤ 737 280 o et sans hausse ('+bN+' o ; 2w : '+bO+' o)',bN<=bO&&bN<=737280,[bN,bO]);
  const idxN=fs.readFileSync(D+'/index.html','utf8'),idxO=fs.readFileSync(B+'/index.html','utf8');
  const undo=X.index(idxN);
- check('index.html : seuls la version (cahier-v29-2z) et le masquage de « Test navette (palier) » changent',undo===idxO&&/var APP_VER='cahier-v29-2za'/.test(idxN)&&/const CACHE = 'cahier-v29-2za'/.test(fs.readFileSync(D+'/sw.js','utf8')),X.missing(X.IDX,idxN));
+ check('index.html : seuls la version (cahier-v29-2z) et le masquage de « Test navette (palier) » changent',undo===idxO&&/var APP_VER='cahier-v29-2zb'/.test(idxN)&&/const CACHE = 'cahier-v29-2zb'/.test(fs.readFileSync(D+'/sw.js','utf8')),X.missing(X.IDX,idxN));
  check('college.js : seul le bloc « Relevé de notes (CSV) » ajouté en fin de fichier',X.college(fs.readFileSync(D+'/college.js','utf8'))===fs.readFileSync(B+'/college.js','utf8'));
  check('college.js charge desk.js seulement si (min-width:1024px)',/matchMedia\('\(min-width:1024px\)'\)/.test(fs.readFileSync(D+'/college.js','utf8'))&&/s\.src='desk\.js'/.test(fs.readFileSync(D+'/college.js','utf8')));
  check('desk.js : CSS sous @media (min-width:1024px), éléments ajoutés masqués hors de cette largeur, seule clé ajoutée tatabo3.desk.mini',(()=>{const t=fs.readFileSync(D+'/desk.js','utf8');return /@media\s*\(min-width:1024px\)/.test(t)&&!/@media\s*\(max-width/.test(t)&&/#dkSide,#dkBar\{display:none\}@media \(min-width:1024px\)/.test(t)&&[...t.matchAll(/localStorage\.(?:set|get|remove)Item\(([^,)]+)/g)].every(m=>m[1]==='MK')&&/MK='tatabo3\.desk\.mini'/.test(t);})());

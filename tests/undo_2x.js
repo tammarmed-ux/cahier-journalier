@@ -8,7 +8,7 @@ const IDX=[["{k:'nav',hid:1,l:","{k:'nav',l:"],["\n/* 1.29.2 (x) : « Test navet
  ["t=String(st.notes||''),v={},m;\n      m=/","t=String(st.notes||''),v={},m;\n      m=/(?:test\\s+)?(?:navette|palier|luc[\\s-]*l[ée]ger|l[ée]ger)[^0-9\\n]{0,25}?(\\d{1,2}(?:[.,]\\d{1,2})?)/i.exec(t);if(m)v.nav=tiNum(m[1]);\n      m=/"],
  ["'+TESTV.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]","'+TESTS.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]"],["(Taille, Poids, VMA,","(Taille, Poids, Navette, VMA,"],
  ["  TESTV.forEach(function(t){var v=phys(s,t.k);","  TESTS.forEach(function(t){var v=phys(s,t.k);"],["TESTS:TESTS,TESTV:TESTV,","TESTS:TESTS,"],
- ["(«\\u00a0VMA\\u00a0»)","(«\\u00a0navette\\u00a0», «\\u00a0palier\\u00a0», «\\u00a0VMA\\u00a0»)"],["'cahier-v29-2za'","'cahier-v29-2w'"],['<div class="csvline" hidden>','<div class="csvline">']];
+ ["(«\\u00a0VMA\\u00a0»)","(«\\u00a0navette\\u00a0», «\\u00a0palier\\u00a0», «\\u00a0VMA\\u00a0»)"],["'cahier-v29-2zb'","'cahier-v29-2w'"],['<div class="csvline" hidden>','<div class="csvline">']];
 /* 2z : une seule barre de défilement sur l’écran d’accès (CSS ajouté après la règle html,body overflow-x) */
 IDX.unshift(["html.cj-locked,html:has(>body>#cjLock){overflow:hidden}",""],["/* 1.29.2 (d) pas de défilement horizontal ; bloc A compact ; date/heure iOS ; (z) accès/PIN : 1 ascenseur */","/* 1.29.2 (d) : jamais de défilement horizontal de la page (seule la grille défile, dans son cadre) ; groupes compacts dans le bloc A ; champs date/heure iOS alignés */"]);
 /* 2z (g) : déconnexion / visite hors session → /accueil/ ; ancienne page d’accueil intégrée retirée (texte d’origine relu dans backup-pre-1.29.2z) */
@@ -25,6 +25,7 @@ IDX.unshift(["html.cj-locked,html:has(>body>#cjLock){overflow:hidden}",""],["/* 
   ["html.cj-sa #gate .g-back{display:none}",""]);}
 /* 2za : sous-titres gris de Paramètres masqués, lignes compactes */
 IDX.unshift([".ps-tx small{display:none}/* 2za : sous-titres gris masqués (résumés toujours calculés) */",".ps-tx small:empty{display:none}"],["padding:7px 12px 7px 14px;min-height:48px;","padding:9px 12px 9px 14px;min-height:56px;"]);
+IDX.unshift(["\nheader.top .h-ver,#dkSide .h-ver{display:none!important}header.top .h-title+.sub{margin-top:6px}/* 2zb : numéro de version retiré de l’en-tête (toujours dans Paramètres › À propos) */",""]);
 const PDF=[["function allTests(){var out=[];(A.TESTV||A.TESTS).forEach(","function allTests(){var out=[];A.TESTS.forEach("],["list.forEach(function(s){(A.TESTV||A.TESTS).forEach(function(t){cells++;","list.forEach(function(s){A.TESTS.forEach(function(t){cells++;"],
  ["endurance\u00a0: VMA (navette)","navette et VMA comptent comme un seul test d’endurance"],["'FC rep.','VMA',","'FC rep.','Palier','VMA',"],
  ["var units=['','','','cm','kg','','cm','cm','bpm','km/h',","var units=['','','','cm','kg','','cm','cm','bpm','','km/h',"],["['dv','dh','fc','vma','v30','soup','mb','eq'].forEach","['dv','dh','fc','nav','vma','v30','soup','mb','eq'].forEach"]];
