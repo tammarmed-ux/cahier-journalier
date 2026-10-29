@@ -11,7 +11,7 @@ const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]
 (async()=>{
  /* 1) fichiers */
  const A=D+'/accueil/';const html=fs.readFileSync(A+'index.html','utf8');
- const refs=[...html.matchAll(/(?:src|href)="([^"#][^"]*)"|url\(([^)]+)\)/g)].map(m=>(m[1]||m[2]).replace(/["']/g,'')).filter(u=>!/^(https?:|\/$|data:)/.test(u));
+ const refs=[...html.matchAll(/(?:src|href)="([^"#][^"]*)"|url\(([^)]+)\)/g)].map(m=>(m[1]||m[2]).replace(/["']/g,'')).filter(u=>!/^(https?:|\/$|\/#connexion$|data:)/.test(u));
  const miss=refs.filter(u=>!fs.existsSync(path.join(A,u)));check('toutes les ressources de /accueil/ existent ('+refs.length+')',miss.length===0,miss);
  {const hs=[...html.matchAll(/href="(https:\/\/wa\.me\/[^"]+)"/g)].map(m=>m[1].replace(/&amp;/g,'&'));const dt=hs.map(h=>{const u=new URL(h);return u.origin+u.pathname+'|'+u.searchParams.get('text');});
   check('liens WhatsApp : 6 (3 invitation, 3 contact), numéro 212691679101, texte décodé identique au message demandé',hs.length===6&&dt.filter(x=>x==='https://wa.me/212691679101|'+decodeURIComponent(WA_INV.split('text=')[1])).length===3&&dt.filter(x=>x==='https://wa.me/212691679101|'+decodeURIComponent(WA_CON.split('text=')[1])).length===3&&decodeURIComponent(WA_INV.split('text=')[1]).split('\n').length===5,dt);}
