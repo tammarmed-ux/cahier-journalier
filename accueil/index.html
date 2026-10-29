@@ -75,6 +75,24 @@ summary .ic{color:var(--mut);transition:.2s}details[open] summary .ic{transform:
 .fin ul{list-style:none;padding:0 0 0 26px;margin:0;border-left:1px solid rgba(255,255,255,.2)}.fin li{display:flex;gap:10px;align-items:center;margin:12px 0;font-size:15px}.fin li .ic{background:#fff;color:var(--navy);border-radius:50%;padding:3px;font-size:20px}
 .fin .hand{position:absolute;right:30px;bottom:22px;top:auto;color:#fff}
 footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .w{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+/* 1.29.2 (z) ordinateur : chaque partie tient dans un écran (1366×657, 1280×633, 1920×950 utiles) — espaces et tailles proportionnels à la hauteur ; téléphone inchangé */
+@media (min-width:901px){
+ .hero,section{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center}section>.w{width:100%}
+ .hero{padding:clamp(84px,13vh,120px) 0 clamp(16px,3vh,40px)}
+ .kick{padding:clamp(5px,.9vh,7px) 14px}
+ .hero h1{font-size:clamp(34px,6.6vh,54px);margin:clamp(10px,2vh,22px) 0 clamp(8px,1.8vh,18px)}
+ .hero p.lead{font-size:clamp(15px,2.4vh,17px);margin-bottom:clamp(14px,3vh,28px)}
+ .cta{flex-wrap:nowrap}.cta .btn{padding:clamp(10px,1.7vh,13px) clamp(16px,1.8vw,22px)}
+ .badges{margin-top:clamp(12px,3vh,30px)}
+ .devs{width:100%;max-width:calc(100svh - 40px);margin-left:auto}
+ section{padding:clamp(24px,5vh,84px) 0}
+ .sh{max-width:900px;margin-bottom:clamp(18px,4vh,46px)}.sh h2,.how h2{font-size:clamp(26px,4.8vh,36px);margin-top:clamp(4px,1vh,10px);margin-bottom:clamp(6px,1.6vh,12px)}
+ .card{padding:clamp(16px,2.8vh,26px)}.card .bx{width:clamp(42px,6vh,52px);height:clamp(42px,6vh,52px);margin-bottom:clamp(10px,2vh,18px)}.card p{margin-bottom:clamp(10px,2vh,18px)}
+ .more{margin-top:clamp(14px,3vh,30px)}
+ .how h2{margin-bottom:clamp(14px,3.4vh,30px)}.step{margin-bottom:clamp(12px,3vh,28px)}
+ .faqh{margin-bottom:clamp(14px,3vh,26px)}.faqh h2{font-size:clamp(26px,4.6vh,34px)}
+ .fin{padding:0}.fin .w{flex:1}
+}
 @media (max-width:900px){
  .w{padding:0 20px}.nav ul,.nav .act{display:none}.nav .burger{display:block;margin-left:auto}.nav .w{height:64px;flex-wrap:wrap}
  .nav.open{background:var(--navy2);box-shadow:0 20px 40px -20px rgba(0,0,0,.6)}.nav.open ul{display:flex;flex-direction:column;gap:0;width:100%;order:3;margin:0;padding:6px 0}.nav.open ul a{display:block;padding:12px 0;border-top:1px solid rgba(255,255,255,.1)}.nav.open ul a.on{box-shadow:none}
