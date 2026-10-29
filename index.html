@@ -90,6 +90,7 @@ header.top .h-logo{flex:0 0 auto;width:34px;height:34px;border-radius:9px;displa
 header.top .h-txt{flex:1 1 auto;min-width:0;line-height:1.2;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 header.top .h-ver{font-size:11.5px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);white-space:nowrap}
 header.top .h-ttl b{color:#FFB37A;font-weight:800}
+header.top .h-ver,#dkSide .h-ver{display:none!important}header.top .h-title+.sub{margin-top:6px}/* 2zb : numéro de version retiré de l’en-tête (toujours dans Paramètres › À propos) */
 /* 1.29.1 (-i) : logo TATABO3 adapté au thème — Actuel : orange/blanc/marine ; Vert terrain : jaune/blanc/vert ; Néon sport : citron/blanc/noir (icône installée inchangée : 07·2 orange) */
 :root{--wmA:#E75C04;--wmI:#FFFFFF;--wmD:#0A3768;--mkB:#E75C04;--mkT:#FFFFFF;--mkL:#0A3768}
 html[data-theme="terrain"]{--wmA:#FCD34D;--wmI:#FFFFFF;--wmD:#0F4A27;--mkB:#FCD34D;--mkT:#0F4A27;--mkL:#1F8A4C}
@@ -2132,7 +2133,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2za';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2zb';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
