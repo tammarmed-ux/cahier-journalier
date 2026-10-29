@@ -1304,8 +1304,8 @@ html[data-theme="neon"]{--cy0:#00E5FF;--cy1:#C6FF00;--cy2:#FF3DCB;--cy3:#00E5FF;
 .hy-form{margin:8px 0 4px}
 #holHours[hidden]{display:none}
 
-/* 1.29.2 (d) : jamais de défilement horizontal de la page (seule la grille défile, dans son cadre) ; groupes compacts dans le bloc A ; champs date/heure iOS alignés */
-html,body{max-width:100%;overflow-x:hidden}@supports (overflow-x:clip){html,body{overflow-x:clip}}
+/* 1.29.2 (d) pas de défilement horizontal ; bloc A compact ; date/heure iOS ; (z) accès/PIN : 1 ascenseur */
+html,body{max-width:100%;overflow-x:hidden}@supports (overflow-x:clip){html,body{overflow-x:clip}}html.cj-locked,html:has(>body>#cjLock){overflow:hidden}
 .ttform,.ps-card,.pq-pan{max-width:100%;min-width:0}
 .card>*,.ttgrid>*,.row2>*,.actions>*,.abs-r2>*,.cy-in>*,.tw-h>*{min-width:0}
 input,select,textarea{max-width:100%;min-width:0;box-sizing:border-box}
