@@ -40,7 +40,7 @@ const NEED=['cj-cahier.js','cahier/roi.jpg','cahier/logo.jpg','cahier/splash.jpg
  /* 0. statique */
  const sw=fs.readFileSync(D+'/sw.js','utf8'),LZ=(/const LAZY_ASSETS = \[([\s\S]*?)\];/.exec(sw)||[])[1]||'',AS=(/const ASSETS = \[([\s\S]*?)\];/.exec(sw)||[])[1]||'';
  const cf=fs.readdirSync(D+'/cahier').filter(f=>/\.(jpe?g|png|ttf|woff2?|html)$/.test(f)).map(f=>'cahier/'+f);
- check('sw.js : cache cahier-v29-2z ; cj-cahier.js et tous les fichiers de cahier/ dans LAZY_ASSETS (hors démarrage)',/const CACHE = 'cahier-v29-2z'/.test(sw)&&['cj-cahier.js'].concat(cf).every(f=>LZ.includes("'./"+f+"'")&&!AS.includes("'./"+f+"'")),cf.filter(f=>!LZ.includes("'./"+f+"'")));
+ check('sw.js : cache cahier-v29-2z ; cj-cahier.js et tous les fichiers de cahier/ dans LAZY_ASSETS (hors démarrage)',/const CACHE = 'cahier-v29-2za'/.test(sw)&&['cj-cahier.js'].concat(cf).every(f=>LZ.includes("'./"+f+"'")&&!AS.includes("'./"+f+"'")),cf.filter(f=>!LZ.includes("'./"+f+"'")));
  const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});const wb=await webkit.launch();
  /* 1. barre latérale */
  for(const w of [1280,1440])for(const th of ['','terrain','neon']){const p=await open(b,PORT,{w,h:800,theme:th});await sidebar('Chrome',CH,p,w,th);await p.ctx.close();
@@ -50,7 +50,7 @@ const NEED=['cj-cahier.js','cahier/roi.jpg','cahier/logo.jpg','cahier/splash.jpg
   p.on('response',r=>{const u=r.url();const k=NEED.find(f=>u.endsWith('/'+f));if(k)got.push(k+':'+r.status());});
   const s=await b.target().createCDPSession();await s.send('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:DL,browserContextId:p.ctx.id});
   if(expire)await p.evaluateOnNewDocument(()=>{});if(expire)await p.evaluate(()=>{Object.defineProperty(navigator,'userActivation',{configurable:true,get:()=>({isActive:false,hasBeenActive:true})});});
-  await tab(p,'settings');await sleep(900);await CH.click(p,'#cjcBtn');let t='';for(let i=0;i<150;i++){await sleep(1000);t=await p.evaluate(()=>document.getElementById('cjcBtn').textContent);if(!/Génération/.test(t)&&i>1)break;}
+  await tab(p,'settings');await sleep(900);await CH.click(p,'#cjcRow');await sleep(500);await CH.click(p,'#cjcBtn');   /* 2za : sous-page */let t='';for(let i=0;i<150;i++){await sleep(1000);t=await p.evaluate(()=>document.getElementById('cjcBtn').textContent);if(!/Génération/.test(t)&&i>1)break;}
   let readyTxt='';if(/Enregistrer le cahier/.test(t)){readyTxt=t;await sleep(300);if(fs.readdirSync(DL).length)readyTxt+=' (déjà téléchargé ?)';await CH.click(p,'#cjcBtn');}
   let f=null;for(let i=0;i<30&&!f;i++){await sleep(500);f=fs.readdirSync(DL).find(x=>/\.pdf$/.test(x));}
   const n=f?pdfOk(DL+'/'+f):0,lbl2=await p.evaluate(()=>document.getElementById('cjcBtn').textContent);
@@ -62,14 +62,14 @@ const NEED=['cj-cahier.js','cahier/roi.jpg','cahier/logo.jpg','cahier/splash.jpg
  check('Chrome ordinateur 1440 px, clic d’origine expiré : bouton « Enregistrer le cahier » puis vrai clic → PDF téléchargé ('+r.n+' pages), bouton remis à l’état initial',/^⬇️ Enregistrer le cahier \(PDF · \d+ Mo\)$/.test(r.readyTxt)&&r.f&&r.n>=90&&/PAPERASSE/.test(r.lbl2)&&!r.errs.length,r);
  r=await chromeCahier('mob',{w:390,h:844,mobile:true},true);
  check('Chrome téléphone 390 px (Android), clic expiré : « Enregistrer le cahier » puis vrai toucher → PDF téléchargé ('+r.n+' pages)',/Enregistrer le cahier/.test(r.readyTxt)&&r.f&&r.n>=90&&!r.errs.length,r);
- { const q=await wopen(wb,{base:BASE,w:1280,h:800,sw:false});await q.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(900);
+ { const q=await wopen(wb,{base:BASE,w:1280,h:800,sw:false});await q.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(900);await WK.click(q,'#cjcRow');await sleep(500);
    const dl=q.waitForEvent('download',{timeout:150000}).catch(()=>null);await WK.click(q,'#cjcBtn');
    let t='';for(let i=0;i<150;i++){await sleep(1000);t=await q.evaluate(()=>document.getElementById('cjcBtn').textContent);if(!/Génération/.test(t)&&i>1)break;}
    if(/Enregistrer le cahier/.test(t))await WK.click(q,'#cjcBtn');const d=await dl;let n=0;if(d){const f='/tmp/t2y-wk.pdf';await d.saveAs(f);n=pdfOk(f);}
    check('WebKit ordinateur 1280 px : vrai clic → cahier PDF téléchargé ('+n+' pages), sans erreur',!!d&&d.suggestedFilename()==='Cahier-journalier-EPS-2026-2027.pdf'&&n>=90&&!q.errs.length,[t,q.errs,q.logs]);await q.ctx.close();}
  { const q=await wopen(wb,{base:BASE,mobile:true,sw:false});
    await q.evaluate(()=>{window.__sh=null;navigator.canShare=d=>!!(d&&d.files&&d.files.length);navigator.share=d=>{const f=d.files[0];window.__sh={name:f.name,type:f.type,size:f.size};return Promise.resolve();};});
-   await q.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(900);await WK.click(q,'#cjcBtn');
+   await q.evaluate(()=>document.querySelector('#tabs button[data-tab="settings"]').click());await sleep(900);await WK.click(q,'#cjcRow');await sleep(500);await WK.click(q,'#cjcBtn');
    let t='';for(let i=0;i<150;i++){await sleep(1000);t=await q.evaluate(()=>document.getElementById('cjcBtn').textContent);if(!/Génération/.test(t)&&i>1)break;}
    const m=await q.evaluate(()=>({open:document.getElementById('pdfModal').classList.contains('open'),share:!!document.getElementById('pdfShare'),href:(document.getElementById('pdfOpen')||{}).href||''}));
    await q.screenshot({path:'/tmp/t2y-cahier-iphone.png'});if(m.share)await WK.click(q,'#pdfShare');await sleep(500);const sh=await q.evaluate(()=>window.__sh);

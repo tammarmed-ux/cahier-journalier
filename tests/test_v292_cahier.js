@@ -28,11 +28,14 @@ const idb=p=>p.evaluate(()=>new Promise(res=>{try{const out={};const q=indexedDB
  for(const [lab,w,h] of [['390 px',390,844],['1280 px',1280,900]]){loaded.length=0;const p=await page(8070,{w,h});
   {const ld=p.req.filter(u=>/cj-cahier|\/cahier\//.test(u)),wc=await p.evaluate(()=>!!window.CJCahier);check(lab+' : cj-cahier.js et cahier/ ne sont pas chargés par la page au démarrage (seulement mis en cache hors ligne par le service worker, comme desk.js)',!ld.length&&!wc,[ld,wc]);}
   await tab(p,'settings');await sleep(700);
-  const r=await p.evaluate(()=>{const e=document.getElementById('cjcRow');if(!e)return null;e.scrollIntoView({block:'center'});const g=e.closest('.ps-grp'),n=e.nextElementSibling,bt=document.getElementById('cjcBtn'),bb=bt.getBoundingClientRect(),rb=e.getBoundingClientRect();
-   const nr=n.getBoundingClientRect();return {grp:g&&g.getAttribute('data-psg'),next:n&&n.getAttribute('data-ps-open'),title:e.querySelector('b').textContent,btn:bt.textContent,vis:!!e.offsetParent&&bb.width>0,inRow:bb.left>=rb.left&&bb.right<=rb.right+1,ovf:document.documentElement.scrollWidth>innerWidth,cls:bt.className,
-    small:e.querySelectorAll('small').length,txt:e.querySelector('.ps-tx').innerText.replace(/\s+/g,' ').trim(),h:Math.round(rb.height),hNext:Math.round(nr.height)};});
-  check(lab+' : Paramètres › Données : ligne « Mon Cahier Journalier » juste au-dessus de « Exporter les documents », sans sous-titre, bouton exactement « Télécharger la version physique (PAPERASSE) ⬇️ »',r&&/pdf/.test(r.grp)&&r.next==='pdf'&&r.title==='Mon Cahier Journalier'&&r.btn==='Télécharger la version physique (PAPERASSE) ⬇️'&&!r.small&&r.txt==='Mon Cahier Journalier Télécharger la version physique (PAPERASSE) ⬇️'&&/\bbtn\b/.test(r.cls)&&r.vis&&r.inRow&&!r.ovf,r);
-  check(lab+' : carte compacte ('+(r&&r.h)+' px, ≤ 100 px)',r&&r.h<=100,r);
+  /* 2za : ligne ordinaire (titre + chevron, sans bouton ni sous-titre) ; vrai toucher → sous-page avec le bouton sur une ligne ; cj-cahier.js non chargé à l’ouverture */
+  const r=await p.evaluate(()=>{const e=document.getElementById('cjcRow');if(!e)return null;e.scrollIntoView({block:'center'});const g=e.closest('.ps-grp'),n=e.nextElementSibling,rb=e.getBoundingClientRect(),nr=n.getBoundingClientRect();
+   return {grp:g&&g.getAttribute('data-psg'),next:n&&n.getAttribute('data-ps-open'),open:e.getAttribute('data-ps-open'),title:e.querySelector('b').textContent,btnInRow:!!e.querySelector('#cjcBtn'),chev:!!e.querySelector('.ps-chev'),
+    small:e.querySelectorAll('small').length,txt:e.querySelector('.ps-tx').innerText.replace(/\s+/g,' ').trim(),h:e.clientHeight,hNext:n.clientHeight,ovf:document.documentElement.scrollWidth>innerWidth};});
+  check(lab+' : Paramètres › Données : ligne « Mon Cahier Journalier » ordinaire (icône, titre, chevron, sans sous-titre ni bouton) juste au-dessus de « Exporter les documents », même hauteur',r&&/pdf/.test(r.grp)&&r.next==='pdf'&&r.open==='cjc'&&r.title==='Mon Cahier Journalier'&&!r.btnInRow&&r.chev&&!r.small&&r.txt==='Mon Cahier Journalier'&&r.h===r.hNext&&!r.ovf,r);
+  await p.click('#cjcRow');await sleep(700);
+  const q=await p.evaluate(()=>{const bt=document.getElementById('cjcBtn'),bb=bt.getBoundingClientRect();return {title:document.getElementById('psTitle').textContent,btn:bt.textContent,vis:bb.width>0&&bb.height>0&&bb.top>=0&&bb.bottom<=innerHeight,oneLine:bt.scrollWidth<=bt.clientWidth&&bb.height<=48,cls:bt.className,cah:!!window.CJCahier};});
+  check(lab+' : vrai toucher → sous-page « Mon Cahier Journalier » : bouton exactement « Télécharger la version physique (PAPERASSE) ⬇️ », visible, sur une ligne ; cj-cahier.js pas chargé à l’ouverture',q.title==='Mon Cahier Journalier'&&q.btn==='Télécharger la version physique (PAPERASSE) ⬇️'&&q.vis&&q.oneLine&&/\bbtn\b/.test(q.cls)&&!q.cah&&!p.req.some(u=>/cj-cahier/.test(u)),q);
   if(w<600)await p.evaluate(async()=>{const c=document.createElement('canvas');c.width=c.height=600;const x=c.getContext('2d');x.fillStyle='#1971c2';x.fillRect(0,0,600,600);x.fillStyle='#fff';x.font='bold 220px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('TM',300,310);await CJR.photo.set('_prof',c.toDataURL('image/jpeg',.9));});
   const s0=await snap(p),i0=await idb(p);const prog=[];await p.exposeFunction('__pg',t=>prog.push(t));
   await p.evaluate(()=>{const bt=document.getElementById('cjcBtn');new MutationObserver(()=>window.__pg(bt.textContent)).observe(bt,{childList:true,characterData:true,subtree:true});window.__lastPdf=null;bt.click();});
@@ -76,7 +79,7 @@ const idb=p=>p.evaluate(()=>new Promise(res=>{try{const out={};const q=indexedDB
  /* portrait du Roi manquant : arrêt, aucun PDF, message d’erreur */
  {const p=await page(8070,{block:/\/cahier\/roi\.jpg/});const warn=[];p.on('console',m=>{if(m.type()==='warning')warn.push(m.text());});const toasts=[];await p.exposeFunction('__tt',t=>toasts.push(t));
   await p.evaluate(()=>new MutationObserver(()=>document.querySelectorAll('.toast,#toast,[class*="toast"]').forEach(e=>e.textContent&&window.__tt(e.textContent))).observe(document.body,{childList:true,subtree:true,characterData:true}));
-  await tab(p,'settings');await sleep(600);const s0=await snap(p);
+  await tab(p,'settings');await sleep(600);const s0=await snap(p);await p.click('#cjcRow');await sleep(500);
   await p.evaluate(()=>{window.__lastPdf=null;document.getElementById('cjcBtn').click();});await p.waitForFunction(()=>{const b=document.getElementById('cjcBtn');return !b.disabled;},{timeout:120000,polling:300}).catch(()=>{});await sleep(800);
   const e=await p.evaluate(()=>CJCahier.make({}).then(()=>'made',x=>String(x&&x.message||x)));
   const r={pdf:await p.evaluate(()=>!!window.__lastPdf),btn:await p.evaluate(()=>document.getElementById('cjcBtn').textContent),toasts:[...new Set(toasts)].slice(0,3),e};
@@ -109,6 +112,6 @@ const idb=p=>p.evaluate(()=>new Promise(res=>{try{const out={};const q=indexedDB
  const sw=fs.readFileSync(D+'/sw.js','utf8'),A=(sw.match(/ASSETS\s*=\s*\[([\s\S]*?)\]/)||[])[1].match(/'[^']+'/g).map(x=>x.slice(1,-1)),LZ=(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)||[])[1].match(/'[^']+'/g).map(x=>x.slice(1,-1));
  const sz=A.reduce((t,f)=>t+fs.statSync(D+'/'+(f==='./'?'index.html':f.replace(/^\.\//,''))).size,0);
  const need=['./cj-cahier.js','./cahier/cover.html','./cahier/logo.jpg','./cahier/roi.jpg','./cahier/splash.jpg'].concat(['400','400i','500','600','700','800','800i','900','900i'].map(x=>'./cahier/poppins-'+x+'.ttf'));
- check('sw.js : cj-cahier.js et cahier/ hors démarrage, mis en cache à la demande (LAZY_ASSETS), fichiers présents',need.every(f=>LZ.includes(f)&&!A.includes(f)&&fs.existsSync(D+'/'+f.slice(2)))&&/'cahier-v29-2z'/.test(sw)&&!/\.woff'/.test(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)[1]));
+ check('sw.js : cj-cahier.js et cahier/ hors démarrage, mis en cache à la demande (LAZY_ASSETS), fichiers présents',need.every(f=>LZ.includes(f)&&!A.includes(f)&&fs.existsSync(D+'/'+f.slice(2)))&&/'cahier-v29-2za'/.test(sw)&&!/\.woff'/.test(sw.match(/LAZY_ASSETS\s*=\s*\[([\s\S]*?)\]/)[1]));
  check('budget de démarrage ≤ 737 280 o ('+sz+' o)',sz<=737280);
  console.log(pass+'/'+tot+' passed');await b.close();S1.close();S2.close();process.exit(pass===tot?0:1);})().catch(e=>{console.log('FATAL',e);process.exit(1);});
