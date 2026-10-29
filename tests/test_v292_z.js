@@ -3,7 +3,10 @@
       « Réduire la barre » / « Agrandir la barre » ; bascule au VRAI clic (Chrome souris + WebKit), 1280 px, 3 thèmes, agrandie et réduite, même taille 32 px.
    2. menu latéral : aucune barre de défilement visible ; tient sans défiler à 1366×768 et 1280×720 (100 % et 125 %), agrandi et réduit ;
       la molette fait toujours défiler s’il manque de place ; aucun 2e ascenseur à côté de la barre.
-   3. téléphone 390 px : desk.js non chargé (inchangé). Port 8233.
+   3. téléphone 390 px : desk.js non chargé (inchangé).
+   4. écran d’accès (#gate), accueil intégré (#landing), code PIN (#cjLock) : UNE seule barre de défilement (celle de l’écran), la page masquée derrière ne défile plus
+      (avant : html overflow-x:clip ⇒ body{overflow:hidden} sans effet ⇒ ascenseur du navigateur + ascenseur de l’écran) ; application ouverte : un seul ascenseur (le navigateur) ;
+      390 px / iPhone : rendu identique au pixel près. Chrome lancé AVEC barres de défilement visibles. Port 8233.
    Usage : NODE_PATH=<puppeteer-core>:<playwright> node tests/test_v292_z.js */
 const {serve,open,sleep}=require('/workspace/cj-emu/pc_h.js');const puppeteer=require('puppeteer-core');const {webkit}=require('playwright');const {wopen}=require('/workspace/cj-emu/wk_h.js');
 const fs=require('fs'),path=require('path');const D=path.resolve(__dirname,'..'),PORT=8233,BASE='http://localhost:'+PORT+'/';serve(D,PORT);
@@ -47,4 +50,34 @@ const NAV=()=>{const n=document.getElementById('tabs'),cs=getComputedStyle(n);re
  /* 3. téléphone */
  {const p=await open(b,PORT,{w:390,h:844});await sleep(500);const r=await p.evaluate(()=>({dk:document.documentElement.classList.contains('cj-dk'),s:!!document.getElementById('deskCss'),side:!!document.getElementById('dkSide')}));
   check('téléphone 390 px : desk.js non chargé, aucune barre latérale (inchangé)',!r.dk&&!r.s&&!r.side&&!p.errs.length,[r,p.errs]);await p.ctx.close();}
+
+ /* 4. une seule barre de défilement (Chrome avec ascenseurs visibles comme sous Windows) */
+ {const vb=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox'],ignoreDefaultArgs:['--hide-scrollbars']});
+  const SB=()=>{const v=e=>e&&getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().height>0;const own=e=>v(e)&&e.offsetWidth-e.clientWidth>0&&e.scrollHeight>e.clientHeight;
+   const L=[];if(innerWidth-document.documentElement.clientWidth>0)L.push('navigateur');const top=document.getElementById('cjLock')?['cjLock']:['gate','landing'];for(const id of top)if(own(document.getElementById(id)))L.push(id);
+   for(const e of document.querySelectorAll('main, main *, #dkSide, #dkSide *, nav.tabs'))if(own(e)&&e.getBoundingClientRect().height>200)L.push(e.tagName+'#'+e.id+'.'+(e.className||''));return L;};
+  const OLD='html.cj-locked,html:has(>body>#cjLock){overflow-x:clip!important;overflow-y:visible!important}';
+  const fresh=async(w,h,mob)=>{const ctx=await vb.createBrowserContext();const p=await ctx.newPage();p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));await p.setViewport({width:w,height:h,isMobile:!!mob,hasTouch:!!mob});
+   await p.goto(BASE+'#connexion',{waitUntil:'networkidle0'});await sleep(3000);p.ctx=ctx;return p;};   /* 2z (g) : « Se connecter » de /accueil/ */
+  for(const [lbl,w,h] of [['1366×768',1366,657],['1280×720',1280,609],['1920×1080',1920,953]]){const p=await fresh(w,h);
+   const land=await p.evaluate(()=>getComputedStyle(document.getElementById('landing')).display);const gate=await p.evaluate(SB);
+   if(OUT&&w===1366)await p.screenshot({path:OUT+'/acces-1366x768.png'});
+   await p.evaluate(()=>{const o=document.createElement('div');o.id='cjLock';o.style.cssText='position:fixed;inset:0;z-index:1100;overflow-y:auto;background:#0B3A6E';o.innerHTML='<div style="height:1600px">PIN</div>';document.body.appendChild(o);});await sleep(300);const pin=await p.evaluate(SB);
+   await p.evaluate(()=>document.getElementById('cjLock').remove());await sleep(200);
+   await p.evaluate(OLD=>{const s=document.createElement('style');s.id='zold';s.textContent=OLD;document.head.appendChild(s);},OLD);await sleep(300);const avant=await p.evaluate(SB);await p.evaluate(()=>document.getElementById('zold').remove());
+   const g=await p.evaluate(()=>{const e=document.getElementById('gate');return e.scrollHeight>e.clientHeight;});
+   check(lbl+' : écran de connexion (ancien accueil intégré masqué) et code PIN — une seule barre de défilement, celle de l’écran (avant la correction : '+avant.join(' + ')+')',
+    land==='none'&&!gate.includes('navigateur')&&!pin.includes('navigateur')&&pin.length===1&&gate.length===(g?1:0)&&avant.includes('navigateur')&&!p.errs.length,{land,gate,pin,avant,g,errs:p.errs});
+   await p.evaluate(()=>{try{CJIntro.skipSplash();}catch(e){}document.documentElement.classList.remove('cj-locked','cj-land');const x=document.getElementById('gate');if(x)x.style.display='none';window.CJGateOpen=true;});await sleep(1200);
+   const app=await p.evaluate(SB);check(lbl+' : application ouverte — un seul ascenseur (navigateur), aucun ascenseur interne à côté de la barre latérale',app.length===1&&app[0]==='navigateur',app);
+   await p.ctx.close();}
+  {const p=await fresh(390,844,true);await p.evaluate(()=>document.documentElement.classList.remove('cj-land'));await sleep(500);const a=await p.screenshot();const s=await p.evaluate(SB);
+   await p.evaluate(OLD=>{const s=document.createElement('style');s.id='zold';s.textContent=OLD;document.head.appendChild(s);},OLD);await sleep(300);const b2=await p.screenshot();
+   check('390 px : écran d’accès identique au pixel près, sans ascenseur du navigateur',Buffer.compare(a,b2)===0&&!s.includes('navigateur'),s);await p.ctx.close();}
+  await vb.close();}
+ {const q=await wopen(wb,{base:BASE,mobile:true,sw:false});await sleep(1500);await q.evaluate(()=>{const H=document.documentElement;H.classList.remove('cj-land');H.classList.add('cj-locked');const g=document.getElementById('gate');g.style.display='';});await sleep(500);
+  const a=await q.screenshot();const r=await q.evaluate(()=>({ov:getComputedStyle(document.documentElement).overflowY,g:getComputedStyle(document.getElementById('gate')).display,gt:Math.round(document.querySelector('#gate .g-card').getBoundingClientRect().top)}));
+  await q.evaluate(()=>{const s=document.createElement('style');s.textContent='html.cj-locked,html:has(>body>#cjLock){overflow-x:clip!important;overflow-y:visible!important}';document.head.appendChild(s);});await sleep(300);const b2=await q.screenshot();fs.writeFileSync('/tmp/tz-a.png',a);fs.writeFileSync('/tmp/tz-b.png',b2);
+  const px=require('child_process').execSync("python3 -c \"from PIL import Image,ImageChops;a=Image.open('/tmp/tz-a.png').convert('RGB');b=Image.open('/tmp/tz-b.png').convert('RGB');d=ImageChops.difference(a,b).convert('L').point(lambda v:255 if v else 0);print(sum(1 for v in d.getdata() if v))\"").toString().trim();
+  check('WebKit iPhone : écran d’accès affiché, page derrière bloquée, rendu (zones sûres comprises) identique (≤ 9 pixels d’écran, coin du canevas)',r.ov==='hidden'&&r.g!=='none'&&+px<=9,[r,px]);await q.ctx.close();}
  await b.close();await wb.close();console.log(pass+'/'+(pass+fail)+' passed');process.exit(fail?1:0);})().catch(e=>{console.log('FAIL - exception '+e.stack);process.exit(1);});

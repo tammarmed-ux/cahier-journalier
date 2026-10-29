@@ -9,6 +9,20 @@ const IDX=[["{k:'nav',hid:1,l:","{k:'nav',l:"],["\n/* 1.29.2 (x) : « Test navet
  ["'+TESTV.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]","'+TESTS.map(function(t){return '<option value=\"'+t.k+'\"'+(TI.map[j]"],["(Taille, Poids, VMA,","(Taille, Poids, Navette, VMA,"],
  ["  TESTV.forEach(function(t){var v=phys(s,t.k);","  TESTS.forEach(function(t){var v=phys(s,t.k);"],["TESTS:TESTS,TESTV:TESTV,","TESTS:TESTS,"],
  ["(«\\u00a0VMA\\u00a0»)","(«\\u00a0navette\\u00a0», «\\u00a0palier\\u00a0», «\\u00a0VMA\\u00a0»)"],["'cahier-v29-2z'","'cahier-v29-2w'"],['<div class="csvline" hidden>','<div class="csvline">']];
+/* 2z : une seule barre de défilement sur l’écran d’accès (CSS ajouté après la règle html,body overflow-x) */
+IDX.unshift(["html.cj-locked,html:has(>body>#cjLock){overflow:hidden}",""],["/* 1.29.2 (d) pas de défilement horizontal ; bloc A compact ; date/heure iOS ; (z) accès/PIN : 1 ascenseur */","/* 1.29.2 (d) : jamais de défilement horizontal de la page (seule la grille défile, dans son cadre) ; groupes compacts dans le bloc A ; champs date/heure iOS alignés */"]);
+/* 2z (g) : déconnexion / visite hors session → /accueil/ ; ancienne page d’accueil intégrée retirée (texte d’origine relu dans backup-pre-1.29.2z) */
+{const Z0=cp.execSync('git -C '+require('path').join(__dirname,'..')+' show backup-pre-1.29.2z:index.html').toString(),
+ cut=(a,b)=>{const i=Z0.indexOf(a);return Z0.slice(i,Z0.indexOf(b,i));},
+ LAND='<!-- 1.29.2 (z) : ancienne page d’accueil intégrée retirée (remplacée par /accueil/) -->\n<div id="landing" hidden></div>',
+ Z1=require('fs').readFileSync(require('path').join(__dirname,'..','index.html'),'utf8'),
+ ES=(()=>{const i=Z1.indexOf('<script>/* 1.29.2 (z) : hors session');return Z1.slice(i,Z1.indexOf('</script>',i)+9);})();
+ IDX.unshift([ES,cut('<script>/* page d’accueil publique','<meta name="format-detection"').replace(/\n$/,'')],
+  [LAND,cut('<!-- Page d’accueil publique : HTML statique','\n<!-- Login gate')],
+  ["function toLanding(){if(window.CJAcc)window.CJAcc();}","function toLanding(){H.classList.add('cj-land');var l=document.getElementById('landing');if(l)l.scrollTop=0;}"],
+  ["ui(true);try{sessionStorage.removeItem('cj.login');}catch(e){}setTimeout(function(){if(window.CJAcc)CJAcc();},400);});","ui(true);});"],
+  ["  if(!S.auth1){S.auth1=1;if(!u&&window.CJAcc&&CJAcc(1))return;}   /* 1.29.2 (z) : visite hors session → /accueil/ */\n",""],
+  ["html.cj-sa #gate .g-back{display:none}",""]);}
 const PDF=[["function allTests(){var out=[];(A.TESTV||A.TESTS).forEach(","function allTests(){var out=[];A.TESTS.forEach("],["list.forEach(function(s){(A.TESTV||A.TESTS).forEach(function(t){cells++;","list.forEach(function(s){A.TESTS.forEach(function(t){cells++;"],
  ["endurance\u00a0: VMA (navette)","navette et VMA comptent comme un seul test d’endurance"],["'FC rep.','VMA',","'FC rep.','Palier','VMA',"],
  ["var units=['','','','cm','kg','','cm','cm','bpm','km/h',","var units=['','','','cm','kg','','cm','cm','bpm','','km/h',"],["['dv','dh','fc','vma','v30','soup','mb','eq'].forEach","['dv','dh','fc','nav','vma','v30','soup','mb','eq'].forEach"]];
