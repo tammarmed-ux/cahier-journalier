@@ -378,12 +378,15 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
    1.29.2 (w) : carte compacte sans sous-titre, bouton « Télécharger la version physique (PAPERASSE) ⬇️ » ; PDF vectoriel (texte réel, arabe, photos haute définition).
    Au toucher : jsPDF (même chargement que les autres PDF) puis cj-cahier.js (module à part, jamais au démarrage) ; PDF remis par le chemin habituel (téléchargement, ou feuille Partager sur iPhone).
    Lecture seule (profil lu par pfGet, sans écriture) ; aucune donnée, clé, synchro, export ni import n’est modifié. */
-(function(){var L=document.getElementById('psList'),g=L&&L.querySelector('[data-ps-open="pdf"]');if(!g||document.getElementById('cjcRow'))return;
- var st=document.createElement('style');st.textContent='.cjc-row{cursor:default;align-items:center;min-height:0;padding-top:8px;padding-bottom:9px}.cjc-row:active{background:none}.cjc-row .ps-tx{min-width:0}.cjc-btn{display:block;margin-top:6px;width:100%;max-width:100%;min-height:0;padding:7px 10px;font-size:13px;line-height:1.25;white-space:normal;text-align:center}.cjc-btn:disabled{opacity:.75;cursor:progress}.cjc-btn.cjc-ready{background:#16a34a;border-color:#16a34a;color:#fff}';document.head.appendChild(st);
- var row=document.createElement('div');row.className='ps-row cjc-row';row.id='cjcRow';
- row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger la version physique (PAPERASSE) ⬇️</button></span>';
+(function(){var L=document.getElementById('psList'),g=L&&L.querySelector('[data-ps-open="pdf"]'),V=document.getElementById('view-settings'),pc=V&&V.querySelector(':scope>.card[data-ps="pdf"]');if(!g||!pc||!window.CJPS||document.getElementById('cjcRow'))return;
+ /* 1.29.2 (za) : ligne ordinaire (icône, titre, chevron) ouvrant une sous-page « Mon Cahier Journalier » qui porte le bouton (sur une ligne) ; même gestionnaire, cj-cahier.js toujours chargé au toucher du bouton seulement */
+ var st=document.createElement('style');st.textContent='#cjcCard .cjc-btn{display:block;width:100%;max-width:100%;min-height:44px;padding:9px 6px;font-size:min(14px,3.3vw);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}.cjc-btn:disabled{opacity:.75;cursor:progress}.cjc-btn.cjc-ready{background:#16a34a;border-color:#16a34a;color:#fff}';document.head.appendChild(st);
+ var card=document.createElement('div');card.className='card';card.id='cjcCard';card.innerHTML='<h2>📘 Mon Cahier Journalier</h2><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger la version physique (PAPERASSE) ⬇️</button>';
+ pc.parentNode.insertBefore(card,pc);CJPS.add('cjc',card,'📘','Mon Cahier Journalier');
+ var row=document.createElement('button');row.type='button';row.className='ps-row';row.id='cjcRow';row.setAttribute('data-ps-open','cjc');
+ row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b></span><span class="ps-val"></span><span class="ps-chev" aria-hidden="true">›</span>';
  g.parentNode.insertBefore(row,g);
- var b=row.querySelector('#cjcBtn'),lbl=b.textContent,busy=0;
+ var b=card.querySelector('#cjcBtn'),lbl=b.textContent,busy=0;
  function js(src){return new Promise(function(ok,ko){var el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=function(){el.remove();ko(new Error(src));};document.head.appendChild(el);});}
  function end(){busy=0;b.disabled=false;b.textContent=lbl;}
  /* 1.29.2 (y) : la génération dure souvent plus de 5 s ; passé ce délai le navigateur ne considère plus le téléchargement comme demandé par l’utilisateur
