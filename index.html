@@ -761,7 +761,7 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 .ps-cap{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:16px 8px 6px}
 .ps-grp:last-child{margin-top:18px}
 .ps-card{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
-.ps-row{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:12px;padding:9px 12px 9px 14px;min-height:56px;cursor:pointer;font:inherit;color:var(--ink)}
+.ps-row{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:12px;padding:7px 12px 7px 14px;min-height:48px;cursor:pointer;font:inherit;color:var(--ink)}
 .ps-row+.ps-row{border-top:1px solid var(--line)}
 .ps-row:focus-visible{outline:3px solid var(--acc);outline-offset:-3px;border-radius:12px}
 .ps-row:active{background:var(--pri-soft)}
@@ -772,7 +772,7 @@ html[data-theme="neon"] .ps-ico{background:#1F2430}
 .ps-tx{flex:1;min-width:0;display:flex;flex-direction:column}
 .ps-tx b{font-size:15.5px;font-weight:700;line-height:1.25}
 .ps-tx small{font-size:12.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ps-tx small:empty{display:none}
+.ps-tx small{display:none}/* 2za : sous-titres gris masqués (résumés toujours calculés) */
 .ps-val{font-size:14px;color:var(--muted);white-space:nowrap;max-width:34%;overflow:hidden;text-overflow:ellipsis}
 .ps-chev{color:var(--muted);font-size:22px;font-weight:600;line-height:1}
 .ps-dz b{color:var(--bad)}
@@ -2132,7 +2132,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2z';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2za';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
