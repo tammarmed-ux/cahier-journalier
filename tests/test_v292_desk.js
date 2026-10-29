@@ -153,6 +153,7 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
  /* 8. retour 1280 → 390 px (fenêtre rétrécie) : en-tête et menu du bas rétablis, page identique à une page ouverte en 390 px (Absences / Note procéd. : identique à 2w rétréci de même) */
  {const N2=await page(8064,{w:1280,h:800,mob:false}),O2=await page(8066,{w:1280,h:800,mob:false});const res=[];
   for(const t of TABS){for(const p of [N2,O2]){await p.setViewport({width:1280,height:800});await sleep(300);await tab(p,t);await sleep(700);await p.setViewport({width:390,height:844});await sleep(900);}
+   await N2.evaluate(()=>{const z=document.getElementById('neut2zb');if(z)z.remove();});/* comparé tel quel à une page 390 px fraîche */
    const a=await shot(N2),F2=await page(8064,{w:390,h:844,mob:false});await tab(F2,t);await sleep(900);const f=await shot(F2);await F2.ctx.close();await NEUT(N2);await sleep(200);const a2=await shot(N2),o=await shot(O2);
    const st=await N2.evaluate(()=>({dk:document.documentElement.classList.contains('cj-dk'),side:getComputedStyle(document.getElementById('dkSide')).display,bar:getComputedStyle(document.getElementById('dkBar')).display,hc:document.querySelectorAll('.dk-hc').length,
      order:[...document.getElementById('homeBody').children].map(e=>e.id||e.className).join(','),hd:Math.round(document.querySelector('header.top').getBoundingClientRect().top),nav:Math.round(innerHeight-document.getElementById('tabs').getBoundingClientRect().bottom)}));
