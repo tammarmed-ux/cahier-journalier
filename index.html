@@ -53,8 +53,11 @@
  }
 }
 </script>
-<script>/* page d’accueil publique : masquée d’emblée si un compte autorisé est déjà mémorisé sur cet appareil (cahier.authOk), comme avant */
-(function(){try{var a=JSON.parse(localStorage.getItem('cahier.authOk')||'null');if(a&&a.uid&&a.ok!==false)document.documentElement.classList.remove('cj-land');}catch(e){}})();</script>
+<script>/* 1.29.2 (z) : hors session, la page d’accueil est /accueil/ (en ligne, dans le navigateur) ; app installée, hors ligne ou après « Se connecter » (#connexion) : écran de connexion */
+(function(){var H=document.documentElement,L=location,W=window,sa=false,lg=false;try{sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(sa)H.classList.add('cj-sa');
+if(/^#connexion/.test(L.hash)){sessionStorage.setItem('cj.login','1');history.replaceState(null,'',L.pathname+L.search);}lg=!!sessionStorage.getItem('cj.login');}catch(e){}
+W.CJAcc=function(boot){if(sa||!navigator.onLine||(boot&&lg)||/\.github\.io$/i.test(L.hostname)||/(movetest|emu)=1/.test(L.search))return false;L[boot?'replace':'assign']('accueil/');return true;};
+try{var a=JSON.parse(localStorage.getItem('cahier.authOk')||'null');if(!(a&&a.uid&&a.ok!==false)&&W.CJAcc(1))return;}catch(e){}H.classList.remove('cj-land');})();</script>
 <meta name="format-detection" content="telephone=no">
 <style>
 :root{
@@ -898,7 +901,7 @@ td.clsc{white-space:nowrap}
 #gate .g-sub svg{width:15px;height:15px}
 #gate .g-ver{text-align:center;font-size:12.5px;opacity:.75;margin:14px 0 0;letter-spacing:.3px}
 #gate .g-back{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px auto 0;min-height:44px;padding:8px 14px;background:none;border:0;color:#fff;font:inherit;font-size:14px;font-weight:600;opacity:.85;cursor:pointer;border-radius:10px}
-#gate .g-back:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.45)}
+html.cj-sa #gate .g-back{display:none}#gate .g-back:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 #gate .g-card{background:#fff;color:var(--ink);border-radius:22px;width:100%;padding:22px 20px 20px;box-shadow:0 18px 50px rgba(0,0,30,.38)}
 #gate .g-card h2{margin:0 0 2px;font-size:21px;color:var(--ink);letter-spacing:-.2px}
 #gate .g-lead{margin:0 0 6px;font-size:13.5px;color:var(--muted)}
@@ -1433,73 +1436,8 @@ html[data-theme="neon"] #splash,html[data-theme="neon"] .ln-hero,html[data-theme
   <div class="sp-ver">v1.29.2</div></div>
   <div class="sp-skip sp-box">Touchez pour passer</div>
 </div>
-<!-- Page d’accueil publique : HTML statique (indexable). Visible seulement sans session mémorisée (html.cj-land) ; l’application reste masquée (html.cj-locked) -->
-<div id="landing">
-  <header class="ln-hero">
-    <div class="ln-in">
-      <nav class="ln-nav" aria-label="Navigation principale">
-        <a class="ln-brand" href="https://cahier-eps-ma.web.app/"><svg class="t3m" aria-hidden="true" viewBox="0 0 100 100" width="36" height="36"><use href="#t3mk"/></svg><svg class="wm" role="img" aria-label="TATABO3" width="148" height="27"><use href="#t3wm" width="100%" height="100%"/></svg></a>
-        <button type="button" class="btn on-dark sm" data-ln="login">Se connecter</button>
-      </nav>
-      <div class="ln-grid">
-        <div>
-          <p class="ln-kicker">TATABO3 · cahier journalier · professeurs d’EPS · Maroc</p>
-          <h1 class="ln-h1">Le cahier journalier du professeur d’EPS, <b>dans votre poche</b></h1>
-          <p class="ln-lead">Faites l’appel en quelques touches, suivez les absences et les tenues, et obtenez vos bilans de classe en PDF ou en Excel. Sur iPhone, Android ou ordinateur, même sans connexion.</p>
-          <div class="ln-cta">
-            <button type="button" class="btn acc lg" id="lnLogin" data-ln="login"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Se connecter</button>
-            <a class="btn on-dark lg" id="lnFeat" href="#fonctions" data-ln="feat"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>Voir les fonctions</a>
-          </div>
-          <ul class="ln-chips"><li>iPhone, Android et ordinateur</li><li>Fonctionne hors ligne</li><li>Gratuit, sur invitation</li></ul>
-        </div>
-        <div class="ln-art"><svg class="t3m" role="img" aria-label="Logo TATABO3 : T3 et traînées de vitesse" viewBox="0 0 100 100" width="250" height="250"><use href="#t3mk"/></svg></div>
-      </div>
-    </div>
-  </header>
-  <section class="ln-sec" id="fonctions" aria-labelledby="lnFTitle">
-    <div class="ln-in">
-      <h2 id="lnFTitle">Ce que fait l’application</h2>
-      <p class="ln-sub">Tout le suivi de vos classes au même endroit, ainsi que les groupes de travail et les tests physiques.</p>
-      <div class="ln-cards">
-        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="m9 15.5 2 2 4-4"/></svg></div><h3>Appel et absences</h3><p>Faites l’appel classe par classe, une touche par élève : absent, sans tenue, malade, retard, absence justifiée. Les élèves dispensés apparaissent en gris.</p></article>
-        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div><h3>Bilan de la classe</h3><p>Par cycle, par semestre ou sur l’année, pour une classe ou toutes les classes : séances, absences, retards, note comportementale et alertes.</p></article>
-        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-5M15 17v-2"/></svg></div><h3>PDF A4 avec graphiques</h3><p>Bilans et fiches prêts à imprimer, avec les graphiques de présence en vert et rouge. Les noms en arabe s’affichent correctement.</p></article>
-        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></svg></div><h3>Excel et CSV</h3><p>Exportez le registre, le bilan annuel, la liste des élèves et le détail des absences en CSV, à ouvrir dans Excel.</p></article>
-        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></div><h3>Import Massar</h3><p>Importez vos listes d’élèves depuis les fichiers Massar (Excel) ou par copier-coller, avec les codes Massar.</p></article>
-        <article class="ln-card"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 0 0 4.5 13.5 3.5 3.5 0 0 0 7 19z"/><path d="m9.5 14.5 2 2 3.5-3.5"/></svg></div><h3>Hors ligne et synchronisé</h3><p>L’application fonctionne sans connexion. Vos données se synchronisent avec votre compte : le même cahier sur iPhone, Android et ordinateur.</p></article>
-      </div>
-    </div>
-  </section>
-  <section class="ln-sec ln-trust" aria-labelledby="lnTTitle">
-    <div class="ln-in">
-      <h2 id="lnTTitle">Accès et sauvegarde de vos données</h2>
-      <p class="ln-sub">Un outil simple, réservé aux enseignants invités.</p>
-      <div class="ln-cards">
-        <div class="ln-t"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div><h3>Accès sur invitation</h3><p>Pas d’inscription publique : votre compte est créé par l’administrateur, qui vous transmet vos identifiants.</p></div></div>
-        <div class="ln-t"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><div><h3>Données liées à votre compte</h3><p>Votre cahier est enregistré sur votre appareil et synchronisé avec votre compte personnel.</p></div></div>
-        <div class="ln-t"><div class="ln-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/></svg></div><div><h3>Sauvegarde JSON</h3><p>Téléchargez à tout moment une copie complète de votre cahier (fichier JSON) et restaurez-la si besoin.</p></div></div>
-      </div>
-    </div>
-  </section>
-  <section class="ln-sec" aria-labelledby="lnSTitle">
-    <div class="ln-in">
-      <h2 id="lnSTitle">Pour commencer</h2>
-      <ol class="ln-steps">
-        <li><span>1</span><div>L’administrateur vous invite : vous recevez votre adresse e-mail de connexion et un mot de passe.</div></li>
-        <li><span>2</span><div>Connectez-vous avec cet e-mail et ce mot de passe, ou avec Google si c’est votre adresse Gmail qui a été invitée.</div></li>
-        <li><span>3</span><div>Sur iPhone, ajoutez l’application à l’écran d’accueil (Safari › Partager › Sur l’écran d’accueil) pour l’ouvrir comme une application.</div></li>
-      </ol>
-      <div class="ln-end"><button type="button" class="btn lg" data-ln="login"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Se connecter</button></div>
-    </div>
-  </section>
-  <footer class="ln-foot">
-    <div class="ln-in">
-      <span class="ln-brand"><svg class="t3m" aria-hidden="true" viewBox="0 0 100 100" width="28" height="28"><use href="#t3mk"/></svg><svg class="wm" role="img" aria-label="TATABO3" width="121" height="22"><use href="#t3wm" width="100%" height="100%"/></svg></span>
-      <span>TATABO3 · cahier journalier digital · <span id="lnVer">Version 1.29.2</span></span>
-      <a href="https://cahier-eps-ma.web.app/">cahier-eps-ma.web.app</a>
-    </div>
-  </footer>
-</div>
+<!-- 1.29.2 (z) : ancienne page d’accueil intégrée retirée (remplacée par /accueil/) -->
+<div id="landing" hidden></div>
 <!-- Login gate: the app stays hidden (html.cj-locked) until an authorized account is signed in -->
 <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gTitle">
   <div class="g-wrap">
@@ -4671,6 +4609,7 @@ function memberRef(email){return S.sdk.F.doc(S.db,'members',lc(email));}
 function profileRef(uid){return S.sdk.F.doc(S.db,'profiles',uid);}
 /* ---- auth ---- */
 function onUser(u){
+  if(!S.auth1){S.auth1=1;if(!u&&window.CJAcc&&CJAcc(1))return;}   /* 1.29.2 (z) : visite hors session → /accueil/ */
   if(u)document.documentElement.classList.remove('cj-land');   /* session Firebase présente : écran de connexion/vérification, pas la page d’accueil */
   S.user=u||null;S.err='';S.info='';S.pwOpen=false;S.pwMsg='';S.pwErr='';S.offline=false;
   if(APP.viewing())APP.exitView();
@@ -4753,7 +4692,7 @@ function emailAction(kind){
 function signOut(){
   if(!S.sdk)return;
   if(allowed()&&M.dirty&&navigator.onLine&&!confirm('Des modifications ne sont pas encore envoyées en ligne. Se déconnecter quand même\u00a0? (Elles restent sur cet appareil.)'))return;
-  S.sdk.U.signOut(S.auth).then(function(){S.info='Vous êtes déconnecté. Vos données restent sur cet appareil.';ui(true);});
+  S.sdk.U.signOut(S.auth).then(function(){S.info='Vous êtes déconnecté. Vos données restent sur cet appareil.';ui(true);try{sessionStorage.removeItem('cj.login');}catch(e){}setTimeout(function(){if(window.CJAcc)CJAcc();},400);});
 }
 function setBusy(b){S.busy=b;ui(true);}
 /* moderator with an e-mail/password account: the address must be verified */
@@ -5304,7 +5243,7 @@ window.CJIntro={show:function(){afterSplash(show);},onSignIn:maybeShow,skipSplas
 var H=document.documentElement;
 function toLogin(){H.classList.remove('cj-land');try{window.CJIntro&&window.CJIntro.skipSplash();}catch(e){}var g=document.getElementById('gate');if(g)g.scrollTop=0;
   setTimeout(function(){var e=document.getElementById('gEmail');if(e&&!e.value&&window.matchMedia&&matchMedia('(pointer:fine)').matches)try{e.focus({preventScroll:true});}catch(x){}},60);}
-function toLanding(){H.classList.add('cj-land');var l=document.getElementById('landing');if(l)l.scrollTop=0;}
+function toLanding(){if(window.CJAcc)window.CJAcc();}
 document.addEventListener('click',function(e){
   var t=e.target.closest&&e.target.closest('[data-ln],#gBack');if(!t)return;
   if(t.id==='gBack'){e.preventDefault();toLanding();return;}

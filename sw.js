@@ -88,7 +88,11 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;
   /* 1.29.2 (r) : page publique autonome /accueil/ (site vitrine) — ni servie ni mise en cache par l’application (réseau direct, budget du cache inchangé) */
   const SCOPE = new URL(self.registration.scope).pathname;
-  if (url.pathname === SCOPE + 'accueil' || url.pathname.startsWith(SCOPE + 'accueil/')) return;
+  /* 1.29.2 (z) : hors ligne, l’ouverture de /accueil/ renvoie vers l’écran de connexion de l’application (jamais de page d’erreur) */
+  if (url.pathname === SCOPE + 'accueil' || url.pathname.startsWith(SCOPE + 'accueil/')) {
+    if (req.mode === 'navigate') event.respondWith(fetch(req).catch(() => Response.redirect(SCOPE + '#connexion', 302)));
+    return;
+  }
   /* 1.29.1 : ouverture de l’application (navigation) — réseau d’abord, au plus ~3 s, sinon la copie locale (hors ligne ou réseau lent) */
   if (req.mode === 'navigate') {
     event.respondWith(new Promise(resolve => {
