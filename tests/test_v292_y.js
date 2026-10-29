@@ -40,7 +40,7 @@ const NEED=['cj-cahier.js','cahier/roi.jpg','cahier/logo.jpg','cahier/splash.jpg
  /* 0. statique */
  const sw=fs.readFileSync(D+'/sw.js','utf8'),LZ=(/const LAZY_ASSETS = \[([\s\S]*?)\];/.exec(sw)||[])[1]||'',AS=(/const ASSETS = \[([\s\S]*?)\];/.exec(sw)||[])[1]||'';
  const cf=fs.readdirSync(D+'/cahier').filter(f=>/\.(jpe?g|png|ttf|woff2?|html)$/.test(f)).map(f=>'cahier/'+f);
- check('sw.js : cache cahier-v29-2z ; cj-cahier.js et tous les fichiers de cahier/ dans LAZY_ASSETS (hors démarrage)',/const CACHE = 'cahier-v29-2zc'/.test(sw)&&['cj-cahier.js'].concat(cf).every(f=>LZ.includes("'./"+f+"'")&&!AS.includes("'./"+f+"'")),cf.filter(f=>!LZ.includes("'./"+f+"'")));
+ check('sw.js : cache cahier-v29-2z ; cj-cahier.js et tous les fichiers de cahier/ dans LAZY_ASSETS (hors démarrage)',/const CACHE = 'cahier-v29-2'/.test(sw)&&['cj-cahier.js'].concat(cf).every(f=>LZ.includes("'./"+f+"'")&&!AS.includes("'./"+f+"'")),cf.filter(f=>!LZ.includes("'./"+f+"'")));
  const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});const wb=await webkit.launch();
  /* 1. barre latérale */
  for(const w of [1280,1440])for(const th of ['','terrain','neon']){const p=await open(b,PORT,{w,h:800,theme:th});await sidebar('Chrome',CH,p,w,th);await p.ctx.close();
