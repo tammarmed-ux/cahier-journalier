@@ -80,9 +80,9 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
  check('desk.js : CSS sous @media (min-width:1024px), éléments ajoutés masqués hors de cette largeur, seule clé ajoutée tatabo3.desk.mini',(()=>{const t=fs.readFileSync(D+'/desk.js','utf8');return /@media\s*\(min-width:1024px\)/.test(t)&&!/@media\s*\(max-width/.test(t)&&/#dkSide,#dkBar\{display:none\}@media \(min-width:1024px\)/.test(t)&&[...t.matchAll(/localStorage\.(?:set|get|remove)Item\(([^,)]+)/g)].every(m=>m[1]==='MK')&&/MK='tatabo3\.desk\.mini'/.test(t);})());
  /* 1. téléphone 390 px : identique au pixel près, desk.js jamais chargé */
  for(const th of ['','terrain','neon']){const O=await page(8066,{w:390,h:844,theme:th}),N=await page(8064,{w:390,h:844,theme:th});let same=0,dk=0;const hd=[];
-  for(const t of TABS){await tab(O,t);await tab(N,t);await sleep(800);hd.push(await N.evaluate(()=>document.getElementById('hdrSub').textContent));await NEUT(N);if(await shot(O)===await shot(N))same++;}
+  for(const t of TABS){await tab(O,t);await tab(N,t);await sleep(800);hd.push(await N.evaluate(()=>document.getElementById('hdrSub').textContent));await NEUT(N);if(t!=='settings'&&await shot(O)===await shot(N))same++;}
   dk=await N.evaluate(()=>document.documentElement.classList.contains('cj-dk')||!!document.getElementById('deskCss')||[...document.scripts].some(s=>/desk\.js/.test(s.src)));
-  check('390 px thème '+(th||'actuel')+' : en-tête « E. Tammar Mohamed - Lycée qualifiant Baja », 6 pages identiques à 2w au pixel près (boutons CSV 2x retirés pour comparer) ; desk.js non chargé, aucune erreur',hd.every(h=>h==='E. Tammar Mohamed - Lycée qualifiant Baja')&&same===6&&!dk&&!O.errs.length&&!N.errs.length,[hd[0],same,dk,O.errs,N.errs]);
+  check('390 px thème '+(th||'actuel')+' : en-tête « E. Tammar Mohamed - Lycée qualifiant Baja », 5 pages identiques à 2w au pixel près (boutons CSV 2x retirés ; Paramètres exclu : changé exprès en 2za, vérifié par test_v292_za) ; desk.js non chargé, aucune erreur',hd.every(h=>h==='E. Tammar Mohamed - Lycée qualifiant Baja')&&same===5&&!dk&&!O.errs.length&&!N.errs.length,[hd[0],same,dk,O.errs,N.errs]);
   await O.ctx.close();await N.ctx.close();}
  /* 2. 1440 px : mise en page ordinateur sur toutes les pages */
  const N=await page(8064);const lay=[];
@@ -147,8 +147,8 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
    return {full:a.width>c.width-30,centre:Math.abs((b.left+b.right)/2-(c.left+c.right)/2)<3,border:s.borderTopWidth,txt:bt.textContent};});
   check('1280 px Élèves : « Voir tout » sur toute la largeur, centré, sans cadre',!!v&&v.full&&v.centre&&v.border==='0px'&&/Voir tout/.test(v.txt),v);await P.ctx.close();}
  /* 4. repli : desk.js indisponible -> écran d’avant */
- const F=await page(8064,{block:/desk\.js/}),OB=await page(8066,{block:/desk\.js/});let fs0=0;for(const t of TABS){await tab(OB,t);await tab(F,t);await sleep(800);await NEUT(F);if(await shot(OB)===await shot(F))fs0++;}
- check('repli : sans desk.js, les 6 pages à 1440 px identiques à 2w, sans erreur',fs0===6&&!F.errs.length&&!(await F.evaluate(()=>document.documentElement.classList.contains('cj-dk'))),[fs0,F.errs]);
+ const F=await page(8064,{block:/desk\.js/}),OB=await page(8066,{block:/desk\.js/});let fs0=0;for(const t of TABS){await tab(OB,t);await tab(F,t);await sleep(800);await NEUT(F);if(t!=='settings'&&await shot(OB)===await shot(F))fs0++;}
+ check('repli : sans desk.js, les 5 pages à 1440 px identiques à 2w (Paramètres changé exprès en 2za), sans erreur',fs0===5&&!F.errs.length&&!(await F.evaluate(()=>document.documentElement.classList.contains('cj-dk'))),[fs0,F.errs]);
  await F.ctx.close();await OB.ctx.close();
  /* 8. retour 1280 → 390 px (fenêtre rétrécie) : en-tête et menu du bas rétablis, page identique à une page ouverte en 390 px (Absences / Note procéd. : identique à 2w rétréci de même) */
  {const N2=await page(8064,{w:1280,h:800,mob:false}),O2=await page(8066,{w:1280,h:800,mob:false});const res=[];
@@ -159,7 +159,7 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
    res.push({t,fresh:a===f,base:a2===o,...st});}
   const ord=await O2.evaluate(()=>[...document.getElementById('homeBody').children].map(e=>e.id||e.className).join(','));
   check('1280 → 390 px : barre latérale et barre de titre masquées, en-tête en haut et menu en bas, Accueil dans l’ordre d’origine, pages identiques à une page 390 px (Absences / Note procéd. identiques à 2w rétréci)',
-   res.every(r=>r.side==='none'&&r.bar==='none'&&r.hc===0&&r.order===ord&&r.hd===0&&r.nav===0&&r.base&&(['attendance','proc'].includes(r.t)||r.fresh))&&!N2.errs.length,res.map(r=>[r.t,r.fresh,r.base,r.side,r.hc,r.hd,r.nav]));
+   res.every(r=>r.side==='none'&&r.bar==='none'&&r.hc===0&&r.order===ord&&r.hd===0&&r.nav===0&&(r.base||r.t==='settings')&&(['attendance','proc'].includes(r.t)||r.fresh))&&!N2.errs.length,res.map(r=>[r.t,r.fresh,r.base,r.side,r.hc,r.hd,r.nav]));
   await N2.ctx.close();await O2.ctx.close();}
  /* 9. « Test navette (palier) » masqué (même rôle que la VMA) : valeurs enregistrées conservées, VMA inchangée, indice physique inchangé */
  {const o=JSON.parse(LYC),c0=o.classes[0];let i=0;o.students.filter(s=>s.classId===c0.id).forEach(s=>{s.phys=Object.assign({},s.phys,{nav:5+(i%8)*0.5,vma:9+(i%6)*0.5});i++;});const DAT=JSON.stringify(o);
