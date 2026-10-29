@@ -33,5 +33,6 @@ const missing=(L,x)=>L.filter(([a])=>!x.includes(a)).map(([a])=>a.slice(0,50));
 module.exports={IDX,PDF,index:x=>rep(IDX,x),pdf:x=>rep(PDF,x),missing,
  desk2w:D=>cp.execSync('git -C '+D+' show backup-pre-1.29.2x:desk.js').toString(),
  /* fichier tel qu’il était juste avant 2x (desk.js) ou avec les changements 2x défaits */
- college:x=>require('./undo_2y.js').college(x).replace(/\n\/\* 1\.29\.2 \(x\) : « Relevé de notes \(CSV\) »[\s\S]*$/,'\n'),
+ /* 2za : ligne « Mon Cahier Journalier » → sous-page (bloc exact défait, voir undo_2za_college.json) */
+ college:x=>require('./undo_2y.js').college(rep(require('./undo_2za_college.json'),x)).replace(/\n\/\* 1\.29\.2 \(x\) : « Relevé de notes \(CSV\) »[\s\S]*$/,'\n'),
  file:(D,f,x)=>f==='college.js'?module.exports.college(x):f==='desk.js'?module.exports.desk2w(D):f==='cj-pdf.js'?rep(PDF,x):f==='index.html'?rep(IDX,x):x};
