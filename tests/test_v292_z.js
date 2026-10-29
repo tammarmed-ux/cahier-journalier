@@ -18,7 +18,9 @@ const BTN=()=>{const b=document.querySelector('#dkSide .dk-col'),s=b&&b.querySel
   stroke:cs&&cs.stroke,color:cs&&cs.color,aria:b.getAttribute('aria-label'),title:b.title,exp:b.getAttribute('aria-expanded'),bw:Math.round(r.width),bh:Math.round(r.height),hit:!!t&&(t===b||b.contains(t)),cx:r.left+r.width/2,cy:r.top+r.height/2};};
 const okExp=s=>!s.mini&&s.w===248&&s.svg&&s.rect&&s.divider&&!s.arrow&&s.ico==='panel-left'&&s.aria==='Réduire la barre'&&s.title==='Réduire la barre'&&s.exp==='true';
 const okMini=s=>s.mini&&s.w===76&&s.svg&&s.rect&&s.divider&&s.arrow&&s.ico==='panel-left-open'&&s.aria==='Agrandir la barre'&&s.title==='Agrandir la barre'&&s.exp==='false'&&s.key==='1';
-const common=s=>s.txt===''&&s.bw===32&&s.bh===32&&s.hit&&/rgb\(255, 255, 255\)/.test(s.color)&&(s.stroke==='rgb(255, 255, 255)'||s.stroke==='currentcolor'||s.stroke==='currentColor');
+/* 2zc : trait = couleur du texte de la barre (blanc ; Néon sport #F5F7FA) */
+const INK=/rgb\((255, 255, 255|245, 247, 250)\)/;
+const common=s=>s.txt===''&&s.bw===32&&s.bh===32&&s.hit&&INK.test(s.color)&&(INK.test(s.stroke)||s.stroke==='currentcolor'||s.stroke==='currentColor');
 const NAV=()=>{const n=document.getElementById('tabs'),cs=getComputedStyle(n);return{mini:document.documentElement.classList.contains('dk-mini'),ch:n.clientHeight,sh:n.scrollHeight,sbw:n.offsetWidth-n.clientWidth,sw:cs.scrollbarWidth,
  last:Math.round(n.querySelector('button[data-tab=settings]').getBoundingClientRect().bottom),nb:Math.round(n.getBoundingClientRect().bottom),
  extra:[...document.querySelectorAll('#dkSide, #dkSide *, header.top, header.top *, main, main>.view')].filter(e=>{const c=getComputedStyle(e).overflowY;return e.id!=='tabs'&&(c==='auto'||c==='scroll')&&e.scrollHeight>e.clientHeight+1&&e.getBoundingClientRect().left<300}).map(e=>e.tagName+'#'+e.id)};};
@@ -33,7 +35,7 @@ const NAV=()=>{const n=document.getElementById('tabs'),cs=getComputedStyle(n);re
   const s0=await p.evaluate(BTN);if(OUT&&eng==='Chrome'&&!th)await p.screenshot({path:OUT+'/sidebar-agrandie-1280.png',clip:{x:0,y:0,width:320,height:800}});
   await click();await sleep(500);const s1=await p.evaluate(BTN);if(OUT&&eng==='Chrome'&&!th)await p.screenshot({path:OUT+'/sidebar-reduite-1280.png',clip:{x:0,y:0,width:200,height:800}});
   await click();await sleep(500);const s2=await p.evaluate(BTN);
-  check(eng+' 1280 px thème '+(th||'actuel')+' : icône SVG barre latérale (agrandie : panel-left « Réduire la barre » ; réduite : panel-left-open « Agrandir la barre »), trait blanc, 32 px, sans chevrons, bascule au vrai clic aller-retour',
+  check(eng+' 1280 px thème '+(th||'actuel')+' : icône SVG barre latérale (agrandie : panel-left « Réduire la barre » ; réduite : panel-left-open « Agrandir la barre »), trait blanc (Néon : #F5F7FA), 32 px, sans chevrons, bascule au vrai clic aller-retour',
    okExp(s0)&&common(s0)&&okMini(s1)&&common(s1)&&okExp(s2)&&common(s2)&&s2.key==='0'&&!p.errs.length,[s0,s1,s2,p.errs]);
   await p.ctx.close();}
  /* 2. menu sans ascenseur visible, tient sans défiler (fenêtre utile du navigateur sous Windows) */
