@@ -29,11 +29,13 @@ IDX.unshift(["\nheader.top .h-ver,#dkSide .h-ver{display:none!important}header.t
 const PDF=[["function allTests(){var out=[];(A.TESTV||A.TESTS).forEach(","function allTests(){var out=[];A.TESTS.forEach("],["list.forEach(function(s){(A.TESTV||A.TESTS).forEach(function(t){cells++;","list.forEach(function(s){A.TESTS.forEach(function(t){cells++;"],
  ["endurance\u00a0: VMA (navette)","navette et VMA comptent comme un seul test d’endurance"],["'FC rep.','VMA',","'FC rep.','Palier','VMA',"],
  ["var units=['','','','cm','kg','','cm','cm','bpm','km/h',","var units=['','','','cm','kg','','cm','cm','bpm','','km/h',"],["['dv','dh','fc','vma','v30','soup','mb','eq'].forEach","['dv','dh','fc','nav','vma','v30','soup','mb','eq'].forEach"]];
+/* 1.29.2a : raison affichée dans le message d’échec du cahier (college.js) */
+const C2A=[["  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}var why=String(e&&e.message||e||'').replace(/\\s+/g,' ').slice(0,140);/* 1.29.2a : la raison s’affiche (capture d’écran utile) */\n   toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.')+(why?' ('+why+')':''));});});", "  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.'));});});"]];
 const rep=(L,x)=>L.reduce((t,[a,b])=>t.split(a).join(b),x);
 const missing=(L,x)=>L.filter(([a])=>!x.includes(a)).map(([a])=>a.slice(0,50));
 module.exports={IDX,PDF,index:x=>rep(IDX,x),pdf:x=>rep(PDF,x),missing,
  desk2w:D=>cp.execSync('git -C '+D+' show backup-pre-1.29.2x:desk.js').toString(),
  /* fichier tel qu’il était juste avant 2x (desk.js) ou avec les changements 2x défaits */
  /* 2za : ligne « Mon Cahier Journalier » → sous-page (bloc exact défait, voir undo_2za_college.json) */
- college:x=>require('./undo_2y.js').college(rep(require('./undo_2za_college.json'),x)).replace(/\n\/\* 1\.29\.2 \(x\) : « Relevé de notes \(CSV\) »[\s\S]*$/,'\n'),
+ college:x=>require('./undo_2y.js').college(rep(require('./undo_2za_college.json'),rep(C2A,x))).replace(/\n\/\* 1\.29\.2 \(x\) : « Relevé de notes \(CSV\) »[\s\S]*$/,'\n'),
  file:(D,f,x)=>f==='college.js'?module.exports.college(x):f==='desk.js'?module.exports.desk2w(D):f==='cj-pdf.js'?rep(PDF,x):f==='index.html'?rep(IDX,x):x};

@@ -399,7 +399,8 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
   P.lib().then(function(){return window.CJCahier?0:js('cj-cahier.js');}).then(function(){var p=null;try{p=pfGet().p;}catch(x){}
    return CJCahier.make({pf:p,onProgress:function(i,n){b.textContent='Génération… page '+i+'/'+n;}});})
   .then(function(r){var ua=navigator.userActivation;if(r&&r.blob&&!IOS&&!(ua&&ua.isActive)){ready(r);return;}end();if(r&&r.blob){P.deliver(r.blob,r.name);}else if(r&&r.printed)toast2('Choisissez « Enregistrer en PDF » dans la fenêtre d’impression');})
-  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.'));});});
+  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}var why=String(e&&e.message||e||'').replace(/\s+/g,' ').slice(0,140);/* 1.29.2a : la raison s’affiche (capture d’écran utile) */
+   toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.')+(why?' ('+why+')':''));});});
 })();
 })();
 /* 1.29.2 (p) : barre d’onglets et bouton + épinglés sans position:fixed sur mobile.
