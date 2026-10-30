@@ -74,7 +74,7 @@ const G=p=>p.evaluate(()=>{const d=CJR.db(),o=[];d.classes.forEach(c=>d.periods.
  check('budget de démarrage ≤ 737 280 o et sans hausse ('+bN+' o ; 2w : '+bO+' o)',bN<=bO&&bN<=737280,[bN,bO]);
  const idxN=fs.readFileSync(D+'/index.html','utf8'),idxO=fs.readFileSync(B+'/index.html','utf8');
  const undo=X.index(idxN);
- check('index.html : seuls la version (cahier-v29-2z) et le masquage de « Test navette (palier) » changent',undo===idxO&&/var APP_VER='cahier-v29-2'/.test(idxN)&&/const CACHE = 'cahier-v29-2'/.test(fs.readFileSync(D+'/sw.js','utf8')),X.missing(X.IDX,idxN));
+ check('index.html : seuls la version (cahier-v29-2z) et le masquage de « Test navette (palier) » changent',undo===idxO&&/var APP_VER='cahier-v29-2a-test'/.test(idxN)&&/const CACHE = 'cahier-v29-2a-test'/.test(fs.readFileSync(D+'/sw.js','utf8')),X.missing(X.IDX,idxN));
  check('college.js : seul le bloc « Relevé de notes (CSV) » ajouté en fin de fichier',X.college(fs.readFileSync(D+'/college.js','utf8'))===fs.readFileSync(B+'/college.js','utf8'));
  check('college.js charge desk.js seulement si (min-width:1024px)',/matchMedia\('\(min-width:1024px\)'\)/.test(fs.readFileSync(D+'/college.js','utf8'))&&/s\.src='desk\.js'/.test(fs.readFileSync(D+'/college.js','utf8')));
  check('desk.js : CSS sous @media (min-width:1024px), éléments ajoutés masqués hors de cette largeur, seule clé ajoutée tatabo3.desk.mini',(()=>{const t=fs.readFileSync(D+'/desk.js','utf8');return /@media\s*\(min-width:1024px\)/.test(t)&&!/@media\s*\(max-width/.test(t)&&/#dkSide,#dkBar\{display:none\}@media \(min-width:1024px\)/.test(t)&&[...t.matchAll(/localStorage\.(?:set|get|remove)Item\(([^,)]+)/g)].every(m=>m[1]==='MK')&&/MK='tatabo3\.desk\.mini'/.test(t);})());
