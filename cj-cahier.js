@@ -678,9 +678,9 @@ function Painter(doc,win,FR,stats){
   if(fit==='cover'||fit==='contain'||fit==='scale-down'||fit==='none'){let k=fit==='cover'?Math.max(cw/nw,chh/nh):fit==='none'?1:Math.min(cw/nw,chh/nh);if(fit==='scale-down')k=Math.min(1,k);dw=nw*k;dh=nh*k;}
   const op=(s.objectPosition||'50% 50%').split(' ').map((v,i)=>/%$/.test(v)?parseFloat(v)/100*((i?chh-dh:cw-dw)):pxv(v));
   const dx=cx+op[0],dy=cy+(op[1]==null?(chh-dh)/2:op[1]);
-  const d=IMG.get(src)||imgData(el,src);
+  let d=IMG.get(src);if(!d){try{d=imgData(el,src);}catch(e){if(el.hasAttribute('data-must'))throw e;return;}}
   apply(chainSelf(el));doc.saveGraphicsState();reset();path(rrSeg(cx,cy,cw,chh,shrinkR(pb.R,pt,pr,pbm,pl)));doc.clip();doc.discardPath();
-  doc.addImage(d.data,d.fmt,dx*PX,dy*PX,dw*PX,dh*PX,d.alias,'NONE');doc.restoreGraphicsState();reset();stats.images++;}
+  try{doc.addImage(d.data,d.fmt,dx*PX,dy*PX,dw*PX,dh*PX,d.alias,'NONE');stats.images++;}catch(e){if(el.hasAttribute('data-must')){doc.restoreGraphicsState();throw e;}stats.skip=(stats.skip||0)+1;}doc.restoreGraphicsState();reset();}
  function imgData(el,src){let d;const m=/^data:image\/(jpeg|jpg|png);base64,/i.exec(src);
   if(m)d={data:src,fmt:/png/i.test(m[1])?'PNG':'JPEG'};
   else{const cv=document.createElement('canvas');cv.width=el.naturalWidth;cv.height=el.naturalHeight;const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);c.drawImage(el,0,0);d={data:cv.toDataURL('image/jpeg',0.92),fmt:'JPEG'};cv.width=cv.height=0;}
@@ -769,8 +769,9 @@ const PainterImgCache=new Map();
 
 /* ---------- fichiers (cache hors ligne du service worker) ---------- */
 const REQ={logo:'Logo du Ministère de l’Éducation nationale',king:'Portrait officiel de S.M. le Roi',splash:'Illustration de couverture',cover:'Modèle de couverture'};
-function need(k,url){return fetch(url).then(r=>{if(!r.ok)throw new Error(String(r.status));return r;}).catch(e=>{throw new Error((REQ[k]||'Fichier')+' introuvable ('+url+') : le cahier n’a pas été créé. Reconnectez-vous une fois à Internet puis réessayez.');});}
-function asData(k,url,mime){return need(k,url).then(r=>r.blob()).then(b=>new Promise((res,rej)=>{if(!b.size)return rej(new Error((REQ[k]||url)+' vide'));const f=new FileReader();f.onload=()=>res(String(f.result).replace(/^data:[^;,]*/,'data:'+mime));f.onerror=()=>rej(f.error);f.readAsDataURL(b);}));}
+/* 1.29.2a : 2e essai directement sur le réseau (adresse unique → jamais la copie hors ligne) si la copie locale manque ou est illisible */
+function need(k,url){const get=u=>fetch(u,u===url?undefined:{cache:'reload'}).then(r=>{if(!r.ok)throw new Error(String(r.status));return r;});return get(url).catch(()=>get(url+(url.indexOf('?')<0?'?':'&')+'r='+Date.now())).catch(e=>{throw new Error((REQ[k]||'Fichier')+' introuvable ('+url+') : le cahier n’a pas été créé. Reconnectez-vous une fois à Internet puis réessayez.');});}
+function asData(k,url,mime){return need(k,url).then(r=>r.blob()).then(b=>b.size?b:need(k,url+'?r='+Date.now()).then(r=>r.blob())).then(b=>new Promise((res,rej)=>{if(!b.size)return rej(new Error((REQ[k]||url)+' vide'));const f=new FileReader();f.onload=()=>res(String(f.result).replace(/^data:[^;,]*/,'data:'+mime));f.onerror=()=>rej(f.error);f.readAsDataURL(b);}));}
 let ASP=null;
 const FACES=[['Poppins','cahier/poppins-400.ttf',400,400,0],['Poppins','cahier/poppins-400i.ttf',400,400,1],['Poppins','cahier/poppins-500.ttf',500,500,0],['Poppins','cahier/poppins-600.ttf',600,600,0],
  ['Poppins','cahier/poppins-700.ttf',700,700,0],['Poppins','cahier/poppins-800.ttf',800,800,0],['Poppins','cahier/poppins-800i.ttf',800,800,1],['Poppins','cahier/poppins-900.ttf',900,900,0],['Poppins','cahier/poppins-900i.ttf',900,900,1],
@@ -809,17 +810,22 @@ const tick=()=>new Promise(r=>setTimeout(r,0));
 const FIX='html{-webkit-text-size-adjust:100%;text-size-adjust:100%}html,body{margin:0;padding:0;background:#fff}.cjk-nob::before{content:none!important}.cjk-noa::after{content:none!important}';
 function frame(css){return new Promise((res,rej)=>{const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');f.tabIndex=-1;
  f.style.cssText='position:fixed;left:-12000px;top:0;width:800px;height:1200px;border:0;pointer-events:none';
- const to=setTimeout(()=>rej(new Error('Mise en page impossible')),20000);
+ const to=setTimeout(()=>rej(new Error('Mise en page impossible (délai dépassé)')),60000);
  f.onload=()=>{clearTimeout(to);res(f);};f.srcdoc='<!doctype html><html lang="fr"><head><meta charset="utf-8"><style>'+css+'\n'+FIX+'</style></head><body></body></html>';document.body.appendChild(f);});}
 async function fontsReady(f,faces){const d=f.contentDocument;
- await Promise.all(faces.map(x=>d.fonts.load((x.it?'italic ':'')+x.w0+' 16px "'+x.fam+'"',x.fam==='Poppins'?'Aa':'\u0627\u0628')));await d.fonts.ready;
- const bad=[];d.fonts.forEach(ff=>{if(ff.status!=='loaded')bad.push(ff.family+' '+ff.weight);});if(bad.length)throw new Error('Polices non chargées : '+bad.join(', '));}
+ await Promise.all(faces.map(x=>d.fonts.load((x.it?'italic ':'')+x.w0+' 16px "'+x.fam+'"',x.fam==='Poppins'?'Aa':'\u0627\u0628').catch(()=>null)));await d.fonts.ready;
+ let bad=[];d.fonts.forEach(ff=>{if(ff.status!=='loaded')bad.push(ff);});
+ /* 1.29.2a : police non chargée depuis son adresse blob: (extension, réglage du navigateur…) → même fichier ajouté depuis ses octets */
+ if(bad.length){const FF=f.contentWindow.FontFace;await Promise.all(faces.map(x=>{if(!bad.some(ff=>ff.family.replace(/["']/g,'')===x.fam&&String(ff.style)===(x.it?'italic':'normal')&&String(ff.weight).split(' ')[0]===String(x.w0)))return 0;
+   const n=new FF(x.fam,x.ab.slice(0),{weight:x.w0===x.w1?String(x.w0):x.w0+' '+x.w1,style:x.it?'italic':'normal'});d.fonts.add(n);return n.load().catch(()=>{});}));await d.fonts.ready;
+  const miss=faces.filter(x=>!Array.from(d.fonts).some(ff=>ff.status==='loaded'&&ff.family.replace(/["']/g,'')===x.fam&&String(ff.style)===(x.it?'italic':'normal')&&String(ff.weight).split(' ')[0]===String(x.w0)));
+  if(miss.length)throw new Error('Polices non chargées : '+miss.map(x=>x.fam+' '+x.w0).join(', '));}}
 /* images obligatoires : page → [sélecteur, nom] */
 const MUST={cover:[['.logo img','logo'],['.illu img','splash']],king:[['img','king']],back:[['.lg img','logo']]};
 async function layout(f,pg){const d=f.contentDocument;d.body.innerHTML=pg.h;const root=d.body.firstElementChild;
  const im=Array.from(d.images);await Promise.all(im.map(i=>(i.complete&&i.naturalWidth?Promise.resolve():new Promise(r=>{i.onload=i.onerror=r;})).then(()=>i.decode?i.decode().catch(()=>{}):0)));
  (MUST[pg.id]||[]).forEach(([sel,k])=>{const i=root.querySelector(sel);const r=i&&i.getBoundingClientRect();
-  if(!i||!i.naturalWidth||!r||r.width<1||r.height<1)throw new Error((REQ[k]||k)+' non affiché (page '+pg.id+') : le cahier n’a pas été créé.');});
+  if(!i||!i.naturalWidth||!r||r.width<1||r.height<1)throw new Error((REQ[k]||k)+' non affiché (page '+pg.id+') : le cahier n’a pas été créé.');i.setAttribute('data-must','1');});
  im.forEach(i=>{if(!i.naturalWidth)i.style.visibility='hidden';});
  return root;}
 
