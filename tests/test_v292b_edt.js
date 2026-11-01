@@ -13,6 +13,8 @@ const canon=o=>Array.isArray(o)?o.map(canon):(o&&typeof o==='object'?Object.keys
 const diffN=(a,b)=>Object.keys(a).filter(k=>a[k]!==b[k]).length;
 (async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 try{
+ {const sw=fs.readFileSync(NEW+'/sw.js','utf8'),A0=sw.slice(sw.indexOf('const ASSETS'),sw.indexOf('const LAZY_ASSETS')),LZ=sw.slice(sw.indexOf('const LAZY_ASSETS'));
+  check('cj-edt.js : chargé à la demande (LAZY_ASSETS, pas au démarrage), en-tête no-cache',!/cj-edt/.test(A0)&&/'\.\/cj-edt\.js'/.test(LZ)&&/"\/cj-edt\.js"/.test(fs.readFileSync(NEW+'/firebase.json','utf8')));}
  /* 1. Sans historique : calcul identique à 1.29.2a, sur les deux exports réels (toutes les colonnes de toutes les classes/cycles) */
  for(const [nm,raw] of [['export 30/10',A_RAW],['export 01/11 (après changement)',B_RAW]]){
   const po=await open(b,PO,{w:1280,h:720,data:raw,now:'2026-11-01T22:30:00'}),pn=await open(b,PN,{w:1280,h:720,data:raw,now:'2026-11-01T22:30:00'});

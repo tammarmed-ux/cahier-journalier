@@ -29,6 +29,7 @@ const LAZY_ASSETS = [
   './college.js',   /* 1.29.2 (j) : mode Collège, chargé après le démarrage */
   './desk.js',      /* 1.29.2 (s) : mise en page ordinateur (≥ 1024 px), chargée par college.js */
   './cj-cahier.js', /* 1.29.2 (v) : « Mon Cahier Journalier » (chargé au toucher du bouton) + ses fichiers */
+  './cj-edt.js',    /* 1.29.2b : versions de l’emploi du temps (fenêtres chargées à la demande) */
   './cahier/cover.html','./cahier/logo.jpg','./cahier/roi.jpg','./cahier/splash.jpg',
   './cahier/poppins-400.ttf','./cahier/poppins-400i.ttf','./cahier/poppins-500.ttf','./cahier/poppins-600.ttf','./cahier/poppins-700.ttf','./cahier/poppins-800.ttf','./cahier/poppins-800i.ttf','./cahier/poppins-900.ttf','./cahier/poppins-900i.ttf',
   './cj-pdf.js',
