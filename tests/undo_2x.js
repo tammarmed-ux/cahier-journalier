@@ -31,6 +31,8 @@ const PDF=[["function allTests(){var out=[];(A.TESTV||A.TESTS).forEach(","functi
  ["var units=['','','','cm','kg','','cm','cm','bpm','km/h',","var units=['','','','cm','kg','','cm','cm','bpm','','km/h',"],["['dv','dh','fc','vma','v30','soup','mb','eq'].forEach","['dv','dh','fc','nav','vma','v30','soup','mb','eq'].forEach"]];
 /* 1.29.2a : raison affichée dans le message d’échec du cahier (college.js) */
 const C2A=[["  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}var why=String(e&&e.message||e||'').replace(/\\s+/g,' ').slice(0,140);/* 1.29.2a : la raison s’affiche (capture d’écran utile) */\n   toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.')+(why?' ('+why+')':''));});});", "  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.'));});});"]];
+/* 1.29.2b : versions de l’emploi du temps (index.html) — blocs exacts défaits (voir undo_2b_index.json) ; le cache 2b-test → 2w est dans IDX */
+IDX.unshift(...require('./undo_2b_index.json'));
 const rep=(L,x)=>L.reduce((t,[a,b])=>t.split(a).join(b),x);
 const missing=(L,x)=>L.filter(([a])=>!x.includes(a)).map(([a])=>a.slice(0,50));
 module.exports={IDX,PDF,index:x=>rep(IDX,x),pdf:x=>rep(PDF,x),missing,
