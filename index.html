@@ -2090,7 +2090,8 @@ function normalize(d){
     if(Array.isArray(dc.holidays))b.cal.holidays=dc.holidays.filter(function(h){return h&&isoOk(h.from);}).map(function(h,i){var o={id:String(h.id||('h'+i+uid())),from:h.from,to:isoOk(h.to)&&h.to>h.from?h.to:'',label:String(h.label||'').slice(0,80),approx:!!h.approx,off:!!h.off&&!h.approx},tm=/^([01]\d|2[0-3]):[0-5]\d$/;/* 1.29.2 (c) : heures facultatives (champs ajoutés, absents = toute la journée) */if(tm.test(h.startTime||'')&&tm.test(h.endTime||'')&&h.startTime<h.endTime){o.startTime=h.startTime;o.endTime=h.endTime;}return o;});
     var ob=parseFloat(dc.oblig);if(ob>0&&ob<=60)b.cal.oblig=ob;var pw=parseInt(dc.perWeek,10);if(pw>=1&&pw<=10)b.cal.perWeek=pw;['dayMin','dayMax','friMax'].forEach(function(k){var v=parseFloat(dc[k]);if(v>=0&&v<=12)b.cal[k]=v;});
     if(Array.isArray(dc.tt))b.cal.tt=dc.tt.filter(function(t){return t&&(t.type==='as'||ids[t.classId])&&+t.day>=1&&+t.day<=6&&/^\d\d:\d\d$/.test(t.start)&&/^\d\d:\d\d$/.test(t.end);}).map(function(t,i){var as=t.type==='as';return {id:String(t.id||('t'+i+uid())),type:as?'as':'class',day:+t.day,start:t.start,end:t.end,classId:as?'':String(t.classId),room:String(t.room||'').slice(0,40)};});
-    if(!dc.asInit&&!b.cal.tt.some(function(t){return t.type==='as';}))b.cal.tt.push(defAS());}
+    if(!dc.asInit&&!b.cal.tt.some(function(t){return t.type==='as';}))b.cal.tt.push(defAS());
+    ttPrevNorm(dc,b.cal,ids);}   /* 1.29.2b : versions de l’emploi du temps (champ additif) */
   var spp=parseInt(d.spp,10);if(spp>0&&spp<=30)b.spp=spp;
   b.students=d.students.filter(function(s){return s&&s.id&&typeof s.name==='string'&&ids[s.classId];}).map(function(s){
     var o={id:String(s.id),classId:String(s.classId),name:String(s.name),dob:String(s.dob||''),sid:String(s.sid||''),parent:String(s.parent||''),phone:String(s.phone||''),notes:String(s.notes||''),created:s.created||Date.now()};
@@ -2214,7 +2215,7 @@ function roGuard(){clearTimeout(saveT);saveT=null;if(CAL)CAL.mx=null,CAL.cols=nu
   clearTimeout(roT);roT=setTimeout(function(){if(!VIEW)return;var ui=DB.ui;DB=normalize(JSON.parse(VIEW.json));DB.ui=ui;fixUi();render();toast('Lecture seule\u00a0: modification annulée (rien n’est enregistré)');},0);
   return true;}
 function fixUi(){if(DB.ui.cls&&!DB.classes.some(function(c){return c.id===DB.ui.cls;}))DB.ui.cls='';if(DB.ui.per>=DB.periods.length)DB.ui.per=0;}
-function persistNow(){physReset();if(VIEW)return roGuard();clearTimeout(saveT);saveT=null;if(CAL)CAL.mx=null,CAL.cols=null,CAL.auto={};if(FALLBACK&&!DB.students.length&&!Object.keys(DB.sessions).length)return false;   /* données locales illisibles : ne rien écrire tant que rien n’est saisi (copie brute conservée) */
+function persistNow(){physReset();if(VIEW)return roGuard();ttMirror();clearTimeout(saveT);saveT=null;if(CAL)CAL.mx=null,CAL.cols=null,CAL.auto={};if(FALLBACK&&!DB.students.length&&!Object.keys(DB.sessions).length)return false;   /* données locales illisibles : ne rien écrire tant que rien n’est saisi (copie brute conservée) */
   snapDaily();   /* photo de l’état précédent (une fois par jour, si les données ont changé) avant d’écrire */
   var js=JSON.stringify(DB),done=false;for(var tr=0;tr<12&&!done;tr++){try{localStorage.setItem(KEY,js);done=true;}catch(e){if(!snapFree())break;}}
   if(done){if(FALLBACK&&(DB.students.length||Object.keys(DB.sessions).length))FALLBACK=false;if(!SYNC_QUIET){try{window.dispatchEvent(new Event('cj:saved'));}catch(e){}}return true;}
@@ -3419,6 +3420,22 @@ function service(){var cm=0,am=0,cnt={};DB.cal.tt.forEach(function(t){var m=tmin
   for(var d=1;d<=6;d++){if(!dm[d])continue;if(d===5&&dm[d]>fx)dw.push(TX.friMaxW(fmtH(dm[d]),fmtH(fx),da[5]?fmtH(da[5]):''));else if(d!==5&&dm[d]>mx)dw.push(TX.dayMaxW(TX.days[d],fmtH(dm[d]),fmtH(mx)));if(dm[d]<mn)dw.push(TX.dayMinW(TX.days[d],fmtH(dm[d]),fmtH(mn)));}
   DB.cal.tt.forEach(function(t){if(isAS(t)||!cls(t.classId))return;DB.cal.tt.forEach(function(a){if(isAS(a)&&a.day===t.day&&t.start<a.end&&a.start<t.end)dw.push(TX.asOverlapW(TX.days[t.day],clsName(t.classId),t.start+'–'+t.end));});});
   return {cm:cm,am:am,tot:cm+am,warn:warn,dm:dm,da:da,dw:dw,ob:Math.round(DB.cal.oblig*60)};}
+/* 1.29.2b : VERSIONS DE L’EMPLOI DU TEMPS — champ additif DB.cal.ttPrev = [{until:'AAAA-MM-JJ', tt:[créneaux], at}] trié par date.
+   Chaque version s’applique aux dates < until (et ≥ until de la précédente) ; DB.cal.tt reste l’emploi du temps ACTUEL (lu tel quel par les anciennes versions).
+   Sans ttPrev (ou vide) : calcul strictement identique à avant. Les séances restent enregistrées sous la même clé classe|cycle|index — rien n’est réécrit. */
+var TTP_MIRROR='cahier.ttPrev.mirror';
+function ttSlotNorm(list,ids){return (Array.isArray(list)?list:[]).filter(function(t){return t&&(t.type==='as'||ids[t.classId])&&+t.day>=1&&+t.day<=6&&/^\d\d:\d\d$/.test(t.start)&&/^\d\d:\d\d$/.test(t.end);}).map(function(t,i){var as=t.type==='as';return {id:String(t.id||('t'+i)),type:as?'as':'class',day:+t.day,start:t.start,end:t.end,classId:as?'':String(t.classId),room:String(t.room||'').slice(0,40)};});}
+function ttPrevList(v,ids){var o={};(Array.isArray(v)?v:[]).forEach(function(x){if(x&&isoOk(x.until)&&Array.isArray(x.tt))o[x.until]={until:x.until,tt:ttSlotNorm(x.tt,ids),at:+x.at||0};});return Object.keys(o).sort().map(function(k){return o[k];});}
+function ttPrevNorm(dc,bc,ids){
+  if(Object.prototype.hasOwnProperty.call(dc,'ttPrev')){bc.ttPrev=ttPrevList(dc.ttPrev,ids);return;}
+  /* champ absent : données jamais versionnées OU champ retiré par une ancienne version de l’application synchronisée → copie locale (même classes) */
+  try{var m=JSON.parse(localStorage.getItem(TTP_MIRROR)||'null');if(!m||!Array.isArray(m.v)||!m.v.length||!Array.isArray(m.ids))return;
+    if(!m.ids.every(function(id){return ids[id];}))return;var v=ttPrevList(m.v,ids);if(v.length){bc.ttPrev=v;TTP_HEALED=true;}}catch(e){}}
+var TTP_HEALED;   /* (sans initialisation : load() s’exécute avant cette ligne) */
+function ttMirror(){try{if(DB&&DB.cal&&Array.isArray(DB.cal.ttPrev)){var ids={};DB.cal.ttPrev.forEach(function(v){v.tt.forEach(function(t){if(t.classId)ids[t.classId]=1;});});localStorage.setItem(TTP_MIRROR,JSON.stringify({ids:Object.keys(ids),v:DB.cal.ttPrev}));}}catch(e){}}
+function ttVers(){var P=DB.cal.ttPrev;return Array.isArray(P)?P:[];}
+function ttAt(d){var P=ttVers();if(d)for(var i=0;i<P.length;i++)if(d<P[i].until)return P[i].tt;return DB.cal.tt;}
+function ttFrom(){var P=ttVers();return P.length?P[P.length-1].until:'';}
 function slotsOf(cid){return DB.cal.tt.filter(function(t){return t.classId===cid;}).sort(byStart);}
 function hasSlots(cid){return DB.cal.tt.some(function(t){return t.classId===cid;});}
 /* grid columns of a class/cycle: every timetable slot between the cycle's start and end, holidays included
@@ -3427,8 +3444,8 @@ function hasSlots(cid){return DB.cal.tt.some(function(t){return t.classId===cid;
 function maxRecIdx(){var C=cal();if(C.mx)return C.mx;var mx={};Object.keys(DB.sessions).forEach(function(k){var i=k.lastIndexOf('|'),b=k.slice(0,i),s=+k.slice(i+1);if(!(mx[b]>=s))mx[b]=s;});return (C.mx=mx);}
 function colsOf(cid,p){
   var C=cal();C.cols=C.cols||{};var key=cid+'|'+p;if(C.cols[key])return C.cols[key];
-  var c=C.cycles[p],out=[],sl=slotsOf(cid),k=0;
-  if(c&&!c.bad&&sl.length){for(var dd=c.start,g=0;dd<=c.end&&g<400;dd=addDays(dd,1),g++){var w=wday(dd);sl.forEach(function(t){if(t.day!==w)return;var h=holAt(dd,t);if(h)out.push({hol:h,date:dd,slot:t});else out.push({s:k++,date:dd,slot:t});});}}
+  var c=C.cycles[p],out=[],sl=slotsOf(cid),k=0,PV=ttVers(),VS=PV.map(function(v){return v.tt.filter(function(t){return t.classId===cid;}).sort(byStart);}),has=sl.length||VS.some(function(x){return x.length;});   /* 1.29.2b : créneaux de la version en vigueur à chaque date */
+  if(c&&!c.bad&&has){for(var dd=c.start,g=0;dd<=c.end&&g<400;dd=addDays(dd,1),g++){var w=wday(dd),L=sl;if(PV.length)for(var vi=0;vi<PV.length;vi++)if(dd<PV[vi].until){L=VS[vi];break;}L.forEach(function(t){if(t.day!==w)return;var h=holAt(dd,t);if(h)out.push({hol:h,date:dd,slot:t});else out.push({s:k++,date:dd,slot:t});});}}
   else for(;k<DB.spp;k++)out.push({s:k,date:''});
   var mx=maxRecIdx()[key];if(mx!=null)while(k<=mx)out.push({s:k++,date:''});
   out.n=k;return (C.cols[key]=out);
@@ -3478,7 +3495,7 @@ function occurrences(from,to){
   var C=cal(),out=[];
   for(var d=from,n=0;d<=to&&n<120;d=addDays(d,1),n++){
     if(C.H[d]||!isoOk(DB.cal.start)||d<DB.cal.start)continue;var w=wday(d);
-    DB.cal.tt.filter(function(t){return t.day===w&&(isAS(t)||cls(t.classId))&&!holAt(d,t);}).sort(byStart).forEach(function(t){
+    ttAt(d).filter(function(t){return t.day===w&&(isAS(t)||cls(t.classId))&&!holAt(d,t);}).sort(byStart).forEach(function(t){
       if(isAS(t)){out.push({date:d,slot:t,cyc:-2,s:-1});return;}
       var c=cycleAt(d),si=-1;if(c){var ad=autoDates(t.classId,c.i);for(var k=0;k<ad.length;k++)if(ad[k].date===d&&ad[k].slot.id===t.id){si=k;break;}}
       out.push({date:d,slot:t,cyc:c?c.i:-1,s:si});
