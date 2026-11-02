@@ -281,9 +281,9 @@ function maybeAsk(){if(MODE!=='plain'||readMeta()||!subtle)return;var tries=0;va
 function renderCard(){var c=document.getElementById('secCard');if(!c)return;var m=readMeta(),on=MODE==='open'&&m;
   var hh='<h2>🔒 Sécurité de cet appareil</h2>';
   if(!on){hh+='<p class="small muted" style="margin-top:0">Code d’accès\u00a0: <b>désactivé</b>. Les données de ce téléphone sont enregistrées en clair dans le navigateur.</p>'+
-    '<p class="small muted">Activez un code de 6 chiffres (ou plus)\u00a0: les données locales (élèves, codes Massar, notes, photos, sauvegardes de sécurité) seront chiffrées en AES-256 et le code sera demandé à chaque ouverture.</p>'+
+    '<p class="small muted">Activez un code de 6 chiffres (ou plus)\u00a0: les données locales (élèves, codes Massar, notes, photos, sauvegardes de sécurité) seront chiffrées et le code sera demandé à chaque ouverture.</p>'+
     (subtle?'<div class="actions"><button class="btn" id="secOn">🔒 Activer le code d’accès</button></div>':'<p class="small">Ce navigateur ne permet pas le chiffrement.</p>');}
-  else{hh+='<p class="small" style="margin-top:0">Code d’accès\u00a0: <span class="ok">activé</span> · données locales chiffrées (AES-256-GCM\u00a0; clé protégée par votre code, PBKDF2-SHA-256 '+(m.it/1000|0)+' 000 itérations).</p>'+
+  else{hh+='<p class="small" style="margin-top:0">Code d’accès\u00a0: <span class="ok">activé</span> · données locales chiffrées (clé protégée par votre code).</p>'+
     '<div class="row"><label for="secAl" class="small">Verrouiller après</label><select id="secAl">'+[[0,'immédiatement'],[1,'1 min en arrière-plan'],[5,'5 min en arrière-plan'],[15,'15 min en arrière-plan'],[30,'30 min en arrière-plan'],[60,'1 h en arrière-plan']].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===(m.al==null?5:m.al)?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select></div>'+
     '<div class="actions"><button class="btn" id="secLock">🔒 Verrouiller maintenant</button><button class="btn sec" id="secPin">Changer le code</button>'+
     '<button class="btn sec hidden" id="secBio">'+(m.bio?'Désactiver Face ID':'Activer Face ID')+'</button><button class="btn sec" id="secOff">Désactiver le chiffrement</button></div>'+
@@ -309,7 +309,7 @@ function renderCard(){var c=document.getElementById('secCard');if(!c)return;var 
       if(mm.bio){delete mm.bio;writeMeta(mm);renderCard();return;}
       pinForm({len:mm.len||PIN_MIN,title:'Entrez votre code pour activer Face ID',cancel:true}).then(function(p){if(p==null){closeOverlay();return;}busy('Face ID…');
         bioEnroll(p).then(function(){closeOverlay();renderCard();CJApp.toast('Face ID activé');},function(e){closeOverlay();renderCard();
-          var t=document.getElementById('secBioInfo');if(t)t.textContent=e&&e.message==='bad'?'Code incorrect.':'Face ID ne peut pas protéger la clé sur cet appareil (extension WebAuthn PRF non prise en charge)\u00a0: code uniquement.';});});});});}
+          var t=document.getElementById('secBioInfo');if(t)t.textContent=e&&e.message==='bad'?'Code incorrect.':'Face ID ne peut pas protéger la clé sur cet appareil\u00a0: code uniquement.';});});});});}
 function ask2(title){return pinForm({free:true,title:title,cancel:true}).then(function(a){if(a==null)return null;return pinForm({free:true,title:'Confirmez le nouveau code',cancel:true}).then(function(b){
   if(b==null)return null;if(a!==b){alert('Les deux codes ne correspondent pas.');return ask2(title);}return a;});});}
 function afterRelease(){renderCard();var tries=0;var iv=setInterval(function(){if(document.getElementById('secCard')){renderCard();clearInterval(iv);}else if(++tries>20)clearInterval(iv);},250);maybeAsk();}
@@ -318,6 +318,6 @@ window.CJCrypto={mode:function(){return MODE;},meta:readMeta,isProt:isProt,isEnv
   phSeal:phSeal,phOpen:phOpen,snapSeal:snapSeal,snapOpen:snapOpen,enable:enable,disable:disable,changePin:changePin,unlock:function(pin){return tryPin(pin).then(openApp).then(closeOverlay);},
   wipeLocal:wipeLocal,setup:setupFlow,render:renderCard,iterations:ITER,compress:HAS_Z,
   bench:function(it){var s=rnd(16),t0=performance.now();return kek('123456',s,it||ITER).then(function(k){return wrapRaw(k,rnd(32),'x');}).then(function(){return Math.round(performance.now()-t0);});}};
-if(MODE==='locked'){if(!subtle){overlay(HEAD+'<p class="s">Ce navigateur ne permet pas d’ouvrir le cahier chiffré (WebCrypto indisponible).</p>');}else lockScreen();}
+if(MODE==='locked'){if(!subtle){overlay(HEAD+'<p class="s">Ce navigateur ne permet pas d’ouvrir le cahier chiffré.</p>');}else lockScreen();}
 else{if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',afterRelease);else setTimeout(afterRelease,0);}
 })();

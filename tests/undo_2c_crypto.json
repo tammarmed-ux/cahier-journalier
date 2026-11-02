@@ -1,0 +1,18 @@
+[
+[
+"seront chiffrées et le code",
+"seront chiffrées en AES-256 et le code"
+],
+[
+"données locales chiffrées (clé protégée par votre code).</p>",
+"données locales chiffrées (AES-256-GCM\\u00a0; clé protégée par votre code, PBKDF2-SHA-256 '+(m.it/1000|0)+' 000 itérations).</p>"
+],
+[
+"Face ID ne peut pas protéger la clé sur cet appareil\\u00a0: code uniquement.",
+"Face ID ne peut pas protéger la clé sur cet appareil (extension WebAuthn PRF non prise en charge)\\u00a0: code uniquement."
+],
+[
+"le cahier chiffré.</p>",
+"le cahier chiffré (WebCrypto indisponible).</p>"
+]
+]
