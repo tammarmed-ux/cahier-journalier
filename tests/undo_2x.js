@@ -33,6 +33,8 @@ const PDF=[["function allTests(){var out=[];(A.TESTV||A.TESTS).forEach(","functi
 const C2A=[["  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}var why=String(e&&e.message||e||'').replace(/\\s+/g,' ').slice(0,140);/* 1.29.2a : la raison s’affiche (capture d’écran utile) */\n   toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.')+(why?' ('+why+')':''));});});", "  .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.'));});});"]];
 /* 1.29.2b : versions de l’emploi du temps (index.html) — blocs exacts défaits (voir undo_2b_index.json) ; le cache 2b-test → 2w est dans IDX */
 IDX.unshift(...require('./undo_2b_index.json'));
+/* 1.29.2c : résumé de Rapports masqué à l’écran */
+IDX.unshift([" hidden></p><!-- 1.29.2c : résumé masqué à l’écran (texte toujours calculé ; PDF/CSV inchangés) -->","></p>"]);
 /* 1.29.2c : suffixe de niveau retiré des sélecteurs de classe (college.js, CX.opt) */
 const C2C=[["CX.opt=function(){return '';};   /* 1.29.2c : plus de « · 1BAC / · 2BAC / · TC » après le nom dans les sélecteurs de classe (affichage seulement ; levelOf et barèmes inchangés) */","CX.opt=function(c,sel){return sel&&/^(attClass|procClass|stuClassFilter)$/.test(sel.id)?' · '+(R.levelOf(c.name)||'Niveau ?'):'';};"]];
 const rep=(L,x)=>L.reduce((t,[a,b])=>t.split(a).join(b),x);
