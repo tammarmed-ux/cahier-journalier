@@ -310,9 +310,13 @@ table.grid th.t.raw{color:#667085;font-weight:600}table.grid td.t.raw.nosex inpu
 .stbtns button[data-v=K].on{background:#faf5ff;border-color:#9333ea;color:#9333ea}
 .stbtns button[data-v=J].on{background:#e8f1fb;border-color:#2563a8;color:#2563a8}
 .chip.mchip{background:#f3e8ff;color:#7e22ce}.chip.schip{background:#dff5f2;color:#0f766e}
-#repTable td.ptsc{white-space:nowrap;line-height:1.2}
+#repTable{table-layout:fixed}#repTable caption{text-align:start;padding:2px 2px 6px}#repTable th,#repTable td{padding:7px 2px;white-space:normal}#repTable th:first-child,#repTable td:first-child{min-width:0;overflow-wrap:anywhere;padding-inline-start:6px}
+#repTable .c2{width:60px}#repTable .c3{width:40px}#repTable .c4{width:44px}#repTable .c5{width:82px}.rp-n{font-weight:700;line-height:1.25}.rp-m{display:block;font-size:11px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+.rp-s{display:inline-flex;align-items:center;min-height:32px;margin:0 6px 6px 0;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:none;color:inherit;font:inherit;font-size:13px;font-weight:650;cursor:pointer}.rp-s.on{background:var(--ink);border-color:var(--ink);color:var(--card,#fff)}
+.rp-b{height:4px;border-radius:3px;background:var(--line);margin:3px 4px 0;overflow:hidden}.rp-b i{display:block;height:100%;background:var(--acc)}td.capc .rp-b i{background:var(--bad)}.rp-u{display:inline-block;min-width:24px;border-radius:7px;padding:1px 5px;font-weight:800}.rp-u.on{background:var(--bad-soft);color:var(--bad)}
+.rp-o{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}.rp-o span{font-size:11px;font-weight:700;border-radius:6px;padding:1px 4px;background:var(--line);white-space:nowrap}.rp-o .rc{background:var(--bad-soft);color:var(--bad)}.rp-o .z{background:none;color:var(--muted)}.rp-u.z{color:var(--muted);font-weight:600}
+@media(min-width:1024px){#repTable .c1{width:36%}#repTable .c2{width:100px}#repTable .c3,#repTable .c4{width:64px}#repTable .c5{width:auto}#repTable td,#repTable th{padding:9px 8px}.rp-o{justify-content:flex-start}.rp-o span{font-size:12px;padding:2px 7px}}
 #repTable td.capc{background:var(--bad-soft)!important;color:var(--bad);font-weight:700}
-#repTable td.ptsc small{font-weight:600;font-size:11px}
 .capin{flex:0 0 72px!important;width:72px;padding:8px!important;text-align:center}
 .clsrow.hascap{border-bottom:0;padding-bottom:2px}
 .capline{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:2px 0 10px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}
@@ -3227,20 +3231,23 @@ function renderReports(){
     var va=/^p\d/.test(key)?a.y.per[+key.slice(1)].ded:a.st[key],vb=/^p\d/.test(key)?b.y.per[+key.slice(1)].ded:b.st[key];
     return (vb-va)*repSort.dir||cmpStu(a.s,b.s);
   });
-  function H(k,l,t){return '<th data-sort="'+k+'" style="cursor:pointer"'+(t?' title="'+esc(t)+'"':'')+'>'+l+(repSort.k===k?(repSort.dir===1?' ▾':' ▴'):'')+'</th>';}
+  function H(k,l,t){return '<th'+(k?' data-sort="'+k+'" style="cursor:pointer"':'')+(t?' title="'+esc(t)+'"':'')+'>'+l+(k&&repSort.k===k?(repSort.dir===1?' ▾':' ▴'):'')+'</th>';}
+  function B(k,l){var o=repSort.k===k;return '<button type="button" class="rp-s'+(o?' on':'')+'" data-sort="'+k+'" aria-pressed="'+o+'">'+l+(o?(repSort.dir===1?' ▾':' ▴'):'')+'</button>';}
+  function O(n,l,t,c){return n?'<span'+(c?' class="'+c+'"':'')+' title="'+esc(t)+'">'+l+' '+n+'</span>':'';}
   function C(n,b){return '<td class="'+(n?(b||''):'z')+'">'+n+'</td>';}
-  var h='<thead><tr>'+H('name','Élève')+(all?H('cls','Classe'):'')+H('ded',year?(sem?'Points retirés (semestre)':'Points retirés (année)'):'Points retirés','Limité par la note comportementale du cycle');
-  if(year)scy.forEach(function(i){h+=H('p'+i,TX.cyc+(i+1),cycleLabel(i)+' – points retirés');});
-  h+=H('A','Abs.')+H('U','Non just.')+H('S',CODE_TXT.S,'Sans tenue')+H('M','M','Malade non justifié')+H('L','Retards')+H('K',CODE_TXT.K,'Malade justifié')+H('J','Just.')+'</tr></thead><tbody>';
+  var cap=!all&&!year?capInfo(d.cid).v:0;
+  var h='<caption>'+B('name','Élève')+(all?B('cls','Classe'):'')+B('ded','Points')+B('U','NJ')+B('A','Abs.')+'</caption><colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup><thead><tr>'+H('name','Élève')+H('ded','Pts'+(cap?' /'+fmtNum(cap):''),year?(sem?'Points retirés (semestre)':'Points retirés (année)'):'Points retirés – limité par la note comportementale du cycle')+H('A','Abs.','Absences')+H('U','NJ','Non justifiées')+H('','Autres','Sans tenue, malade, retards, justifiées'+(year?', points par cycle':'')+' (seulement si ≠ 0)')+'</tr></thead><tbody>';
   var flagged=0,capN=0;
-  d.rows.forEach(function(r){var f=year?scopeCycles(d.scope).some(function(q){return perStat(r.s.classId,r.s.id,q).U>=th;}):r.st.U>=th;if(f)flagged++;
-    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><b>'+esc(r.s.name)+'</b>'+(f?' <span class="chip bad">⚠</span>':'')+((year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope))?' <span class="chip dchip" title="Dispensé – '+esc(dspShort(dspOf(r.s)))+'">🩺</span>':'')+(r.s.sid?'<small class="sc" dir="ltr">'+esc(r.s.sid)+'</small>':'')+'</td>'+(all?'<td class="clsc"><b>'+esc(clsName(r.s.classId))+'</b></td>':'');
-    if(year){h+='<td class="ptsc'+(r.y.ded?'':' z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';(sem?r.st.per:r.y.per).forEach(function(st){h+='<td class="'+(st.ded?(st.capped?'capc':''):'z')+'">'+fmtPts(st.ded)+'</td>';});}
-    else{if(r.st.capped)capN++;h+='<td class="ptsc'+(r.st.capped?' capc':'')+(r.st.ded?'':' z')+'"><b>'+fmtPts(r.st.ded)+'</b> / '+fmtNum(r.st.cap)+(r.st.raw>r.st.cap?'<br><small>limité à la note comportementale ('+fmtPts(r.st.raw)+')</small>':(r.st.capped?'<br><small>note comportementale atteinte</small>':''))+'</td>';}
-    h+=C(r.st.A)+C(r.st.U)+C(r.st.S)+C(r.st.M)+C(r.st.L)+C(r.st.K)+C(r.st.J)+'</tr>';});
-  if(!d.rows.length)h+='<tr><td colspan="17" class="empty">Aucun élève dans cette sélection.</td></tr>';
+  d.rows.forEach(function(r){var f=year?scopeCycles(d.scope).some(function(q){return perStat(r.s.classId,r.s.id,q).U>=th;}):r.st.U>=th,st=r.st,o='',m=[r.s.sid,all?clsName(r.s.classId):''].filter(Boolean).join(' · ');if(f)flagged++;
+    h+='<tr data-id="'+esc(r.s.id)+'" class="'+(f?'flag':'')+'"><td dir="auto"><span class="rp-n">'+esc(r.s.name)+'</span>'+(f?' <span class="chip bad">⚠</span>':'')+((year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope))?' <span class="chip dchip" title="Dispensé – '+esc(dspShort(dspOf(r.s)))+'">🩺</span>':'')+(m?'<small class="rp-m" dir="ltr">'+esc(m)+'</small>':'')+'</td>';
+    if(year){h+='<td class="'+(r.y.ded?'':'z')+'"><b>'+fmtPts(r.y.ded)+'</b></td>';(sem?st.per:r.y.per).forEach(function(q,k){o+=O(q.ded?fmtPts(q.ded):0,TX.cyc+(scy[k]+1),cycleLabel(scy[k])+' – points retirés',q.capped?'rc':'');});}
+    else{if(st.capped)capN++;h+='<td class="'+(st.capped?'capc':'')+(st.ded?'':' z')+'" title="'+fmtPts(st.ded)+' / '+fmtNum(st.cap)+'"><b>'+fmtPts(st.ded)+'</b><div class="rp-b"><i style="width:'+Math.min(100,Math.round(st.ded/(st.cap||1)*100))+'%"></i></div></td>';
+      if(st.capped)o+='<span class="rc" title="'+(st.raw>st.cap?'Limité à la note comportementale ('+fmtPts(st.raw)+')':'Note comportementale atteinte')+'">max'+(st.raw>st.cap?' ('+fmtPts(st.raw)+')':'')+'</span>';}
+    o+=O(st.S,CODE_TXT.S,'Sans tenue')+O(st.M,'M','Malade non justifié')+O(st.L,CODE_TXT.L,'Retards')+O(st.K,CODE_TXT.K,'Malade justifié')+O(st.J,CODE_TXT.J,'Justifiées');
+    h+=C(st.A)+'<td><span class="rp-u'+(st.U?' on':' z')+'">'+st.U+'</span></td><td><div class="rp-o">'+(o||'<span class="z">—</span>')+'</div></td></tr>';});
+  if(!d.rows.length)h+='<tr><td colspan="5" class="empty">Aucun élève dans cette sélection.</td></tr>';
   $('repTable').innerHTML=h+'</tbody>';
-  $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus sur un cycle (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées sur un cycle. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.';
+  $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus sur un cycle (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées sur un cycle. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.<br><b>Pts</b> points retirés'+(year?'':' (barre = part de la note comportementale)')+' · <b>Abs.</b> absences · <b>NJ</b> non justifiées · <b>Autres</b> (seulement si ≠ 0) : ST sans tenue · M malade non justifié · R retards · MJ malade justifié · AJ justifiées'+(year?' · C1… points retirés par cycle':' · max note comportementale atteinte')+'.';
   if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' à la note comportementale maximale.</b>';
   var dspN=d.rows.filter(function(r){return year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope);}).length;
   if(dspN)$('repLegend').innerHTML+='<br><span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';
@@ -3257,7 +3264,7 @@ function renderReports(){
 $('repClass').addEventListener('change',renderReports);
 $('repScope').addEventListener('change',renderReports);
 $('repTable').addEventListener('click',function(e){
-  var h=e.target.closest('th[data-sort]');
+  var h=e.target.closest('[data-sort]');
   if(h){var k=h.dataset.sort;if(repSort.k===k)repSort.dir*=-1;else{repSort.k=k;repSort.dir=1;}renderReports();return;}
   var tr=e.target.closest('tr[data-id]');if(tr)openDetail(tr.dataset.id);
 });
