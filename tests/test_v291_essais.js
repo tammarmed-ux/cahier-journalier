@@ -13,9 +13,9 @@ const SIZES={TCS30:30,'1BAC40':40,'2BAC44':44,'2BAC45':45};
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,protocolTimeout:600000,args:['--no-sandbox','--disable-dev-shm-usage']});
 const p=await b.newPage();await p.emulateTimezone('Etc/GMT-1');await p.setViewport({width:390,height:844});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));
-await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
-const open=async()=>{await p.goto('http://localhost:'+PORT+'/',{waitUntil:'networkidle2'});await p.evaluate(()=>{window.CJIntro&&CJIntro.skipSplash&&CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked','cj-land');const g=document.getElementById('gate');if(g)g.style.display='none';});await sleep(400);};
-await open();
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem('cahier.school','lycee');localStorage.setItem('cahier.onboardingDone','1');localStorage.setItem('cahier.cryptoLater',String(Date.now()));}catch(e){}});
+const open=async()=>{await p.goto('http://localhost:'+PORT+'/?emu=1',{waitUntil:'networkidle2'});await p.evaluate(()=>{window.CJIntro&&CJIntro.skipSplash&&CJIntro.skipSplash();document.documentElement.classList.remove('cj-locked','cj-land');const g=document.getElementById('gate');if(g)g.style.display='none';});await sleep(400);};
+await open();await p.waitForFunction(K=>!!localStorage.getItem(K),{timeout:15000},KEY).catch(async()=>{await open();});   /* 1.29.2 : premier lancement plus long (choix du cycle d’enseignement) */
 await p.evaluate((KEY,SIZES)=>{const d=JSON.parse(localStorage.getItem(KEY));let seed=4242;const R=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646;};const pick=a=>a[Math.floor(R()*a.length)];
   const FN_F=['Salma','Imane','Hajar','Aya','Khadija','Meryem','Fatima-Zahra','Hiba','Oumaima','Nour','Chaïmae','Inès','Rania','Ghita','Sara'],FN_G=['Youssef','Mohamed','Amine','Hamza','Anas','Othmane','Ilyas','Zakaria','Ayoub','Mehdi','Achraf','Réda','Saâd','Omar','Adam'];
   const LN=['EL AMRANI','BENALI','TAZI','ALAOUI','IDRISSI','BENNANI','CHRAÏBI','EL FASSI','BERRADA','LAHLOU','OUAZZANI','NACIRI','SQALLI','KETTANI','BENJELLOUN','ZNIBER'];
@@ -51,7 +51,7 @@ await p.evaluate(()=>document.querySelector('#tabs button[data-tab="proc"]').cli
 const selCls=async cid=>{await p.evaluate(cid=>{const s=document.querySelector('#view-proc select');if(s){s.value=cid;s.dispatchEvent(new Event('change'));}window.CJR.db().ui.cls=cid;},cid);await sleep(200);};
 await p.evaluate(()=>{const A=window.CJR;A.db().ui.cls='k2';A.db().ui.per=0;});await p.evaluate(()=>{document.querySelector('#tabs button[data-tab="home"]').click();document.querySelector('#tabs button[data-tab="proc"]').click();});await sleep(500);
 const btn=await p.evaluate(()=>{const b=document.querySelector('[data-essdl]');if(!b)return null;const r=b.getBoundingClientRect(),th=b.closest('th');return {w:Math.round(r.width),h:Math.round(r.height),al:b.getAttribute('aria-label'),th:th?th.textContent.trim():'',n:document.querySelectorAll('[data-essdl]').length,x:r.left,y:r.top};});
-check('bouton à côté de « Essai 1 » (un seul), aria-label « Télécharger tous les essais », zone de toucher ≥ 44 px',!!btn&&btn.n===1&&/^Essai 1/.test(btn.th)&&btn.al==='Télécharger tous les essais'&&btn.w>=44&&btn.h>=44,JSON.stringify(btn));
+check('1.29.2c : bouton dans l’en-tête « Élève » (un seul, plus petit : 32 px), aria-label « Télécharger tous les essais »',!!btn&&btn.n===1&&/^Élève/.test(btn.th)&&btn.al==='Télécharger tous les essais'&&btn.w>=32&&btn.h>=32,JSON.stringify(btn));
 fs.mkdirSync('/workspace/backups/v1.29.2-preview',{recursive:true});
 await p.evaluate(()=>{const b=document.querySelector('[data-essdl]');b.scrollIntoView({block:'center'});const sc=b.closest('.tablewrap,.gridwrap')||b.closest('table').parentElement;if(sc)sc.scrollLeft=0;window.scrollBy(0,-120);});await sleep(400);
 const bb=await p.evaluate(()=>{const r=document.querySelector('[data-essdl]').closest('th').getBoundingClientRect();return {y:Math.max(0,r.top-150)};});

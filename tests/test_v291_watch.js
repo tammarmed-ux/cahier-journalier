@@ -38,19 +38,13 @@ const K0=await p.evaluate(()=>Object.keys(localStorage).sort().join());
 await home();let w=await W();
 check('carte fermée par défaut : en-tête titre + badge + chevron, liste masquée',!w.open&&w.aria==='false'&&w.hidden&&!w.vis&&w.chev&&w.chip==='2',JSON.stringify(w));
 check('règle par cycle : 2 élèves (5 non just. dans C2 ; note comp. C1) — pas 6 sur l’année en 3 + 3',w.chip==='2'&&w.tile==='2',w.chip+' '+w.tile);
-await p.click('#watchTog');await sleep(200);w=await W();
-check('toucher l’en-tête : la carte s’ouvre (aria-expanded, cj.ui.watchOpen = 1)',w.open&&w.aria==='true'&&!w.hidden&&w.vis&&w.ls==='1',JSON.stringify(w));
-check('badges : « note comp. C1 » et « 5 non just. C2 » ; élèves à 3 + 3 et 4 absents',JSON.stringify(w.items)===JSON.stringify(['s2:note comp. C1','s1:5 non just. C2']),JSON.stringify(w.items));
+/* 1.29.2c (t304u) : la carte « Élèves à surveiller » n’est plus affichée sur l’Accueil (écran seulement) ; calcul et contenu conservés dans le DOM */
+const hid=await p.evaluate(()=>{const c=document.getElementById('homeWatch');return {disp:getComputedStyle(c).display,h:c.getBoundingClientRect().height,txt:/Élèves à surveiller/.test(document.getElementById('homeBody').innerText)};});
+check('1.29.2c : carte masquée à l’écran (display none, aucun texte visible)',hid.disp==='none'&&hid.h===0&&!hid.txt,JSON.stringify(hid));
+check('badges toujours calculés : « note comp. C1 » et « 5 non just. C2 » ; élèves à 3 + 3 et 4 absents',JSON.stringify(w.items)===JSON.stringify(['s2:note comp. C1','s1:5 non just. C2']),JSON.stringify(w.items));
 check('description : « …ou au moins 5 absences non justifiées dans le cycle en cours. »',w.note==='Note comportementale atteinte dans un cycle, ou au moins 5 absences non justifiées dans le cycle en cours.',w.note);
-if(process.env.SHOTS){await p.evaluate(()=>{const c=document.getElementById('homeWatch');window.scrollTo(0,c.getBoundingClientRect().top+scrollY-110);});await sleep(200);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/surveiller-ouvert.png'});}
-await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);await home();w=await W();
-check('état ouvert conservé après rechargement',w.open&&!w.hidden);
-await p.click('#watchTog');await sleep(200);w=await W();
-check('re-toucher : refermée (cj.ui.watchOpen = 0)',!w.open&&w.hidden&&w.ls==='0'&&w.aria==='false');
-if(process.env.SHOTS){await p.evaluate(()=>{const c=document.getElementById('homeWatch');window.scrollTo(0,c.getBoundingClientRect().top+scrollY-300);});await sleep(200);await p.screenshot({path:'/workspace/backups/v1.29.2-preview/surveiller-ferme.png'});}
-await p.evaluate(()=>window.scrollTo(0,0));await p.evaluate(()=>document.querySelector('[data-qa="watch"]').click());await sleep(500);w=await W();
-check('mini-indicateur « alertes » : ouvre la carte',w.open&&!w.hidden);
-const tb=await p.evaluate(()=>{const b=document.getElementById('watchTog').getBoundingClientRect();return Math.round(b.height);});check('en-tête : cible ≥ 44 px',tb>=44,tb);
+await p.evaluate(()=>window.scrollTo(0,0));await p.evaluate(()=>document.querySelector('[data-qa="watch"]').click());await sleep(500);
+check('mini-indicateur « alertes » : ouvre Rapports (la carte n’est plus affichée)',await p.evaluate(()=>document.getElementById('view-reports').classList.contains('active')||!!document.getElementById('view-reports').offsetParent));
 // 6 dans un cycle → 1 badge par cycle
 await p.evaluate(K=>{const d=JSON.parse(localStorage.getItem(K)),c=d.classes.find(x=>x.name==='2BACSP4');d.sessions[c.id+'|0|5'].marks.s3={s:'A',j:false,r:''};localStorage.setItem(K,JSON.stringify(d));},KEY);
 await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);await home();w=await W();
@@ -60,8 +54,8 @@ await p.reload({waitUntil:'networkidle2'});await unlock();await sleep(300);await
 check('cycle en cours = C1 : s3 (5 dans C1) en alerte, s1 (5 dans C2) non',w.items.includes('s3:5 non just. C1')&&!w.items.some(x=>x.startsWith('s1')),JSON.stringify(w.items));
 const DATA1=await p.evaluate(K=>{const d=JSON.parse(localStorage.getItem(K));return JSON.stringify([d.students,d.settings,d.classes]);},KEY);   /* (dates de cycles modifiées par le test : cal hors comparaison) */
 check('données inchangées (élèves, réglages, classes)',DATA1===JSON.stringify(JSON.parse(DATA0).filter((x,i)=>i!==1)));
-const K1=await p.evaluate(()=>Object.keys(localStorage).sort());check('une seule nouvelle clé, d’affichage : cj.ui.watchOpen',K1.filter(k=>!K0.split(',').includes(k)).every(k=>k==='cj.ui.watchOpen'||/^classRegister\.v2\.snapm?\.\d+$|^cahier\.snapDay$/.test(k)),JSON.stringify(K1.filter(k=>!K0.split(',').includes(k))));
-for(const T of ['terrain','neon']){await p.evaluate(T=>document.documentElement.setAttribute('data-theme',T),T);await sleep(100);
+const K1=await p.evaluate(()=>Object.keys(localStorage).sort());check('aucune nouvelle clé hors affichage (cj.ui.watchOpen)',K1.filter(k=>!K0.split(',').includes(k)).every(k=>k==='cj.ui.watchOpen'||/^classRegister\.v2\.snapm?\.\d+$|^cahier\.snapDay$/.test(k)),JSON.stringify(K1.filter(k=>!K0.split(',').includes(k))));
+for(const T of []){   /* 1.29.2c : carte masquée, contraste sans objet */await p.evaluate(T=>document.documentElement.setAttribute('data-theme',T),T);await sleep(100);
   const c=await p.evaluate(()=>{function L(c){const m=c.match(/[\d.]+/g).map(Number);const a=m.slice(0,3).map(x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4});return .2126*a[0]+.7152*a[1]+.0722*a[2];}
     function bg(e){while(e){const c=getComputedStyle(e).backgroundColor,m=c.match(/[\d.]+/g);if(m&&(m.length<4||+m[3]>.9))return c;e=e.parentElement;}return 'rgb(255,255,255)';}
     const e=document.querySelector('#homeWatch .wt-t'),r=(a,b)=>(Math.max(a,b)+.05)/(Math.min(a,b)+.05);return r(L(getComputedStyle(e).color),L(bg(e)));});
