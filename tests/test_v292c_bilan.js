@@ -10,7 +10,9 @@ fs.rmSync(OLD,{recursive:true,force:true});fs.mkdirSync(OLD);cp.execSync(`git -C
 const SEL=(p,cl,sc)=>p.evaluate((cl,sc)=>{const c=document.getElementById('repClass'),q=document.getElementById('repScope');const o=[...c.options].find(o=>cl?o.textContent.startsWith(cl+' '):o.value==='');c.value=o.value;c.dispatchEvent(new Event('change'));if(sc){q.value=sc;q.dispatchEvent(new Event('change'));}},cl,sc);
 async function exportsOf(b,root,port){const s=serve(root,port);const out={};const p=await open(b,port,{w:390,h:844,dpr:1,mobile:true,data:B,now:'2026-11-02T09:00:00'});
  await p.evaluate(()=>{window.__dl=[];const o=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){if(this.download&&this.href.startsWith('blob:')){const it={n:this.download,t:null};window.__dl.push(it);fetch(this.href).then(r=>r.arrayBuffer()).then(a=>{it.t=Array.from(new Uint8Array(a)).map(x=>String.fromCharCode(x)).join('');});}return o.call(this);};});
- await tab(p,'reports');await sleep(800);
+ /* 1.29.3 : le pied de page PDF affiche la version (v'+CJR.semver) — seul ce numéro change ; rétabli pour comparer octet par octet à l’ancienne version */
+ await p.evaluate(()=>{if(window.CJR&&CJR.semver==='1.29.3')CJR.semver='1.29.2';});
+await tab(p,'reports');await sleep(800);
  for(const [cl,sc] of [['2BACSVT2',null],['2BACSVT2','year'],['',null]]){await SEL(p,cl,sc);await sleep(300);
   for(const btn of ['#repExportCsv','#repExportPdf']){const n0=await p.evaluate(()=>window.__dl.length);await p.click(btn);
    for(let i=0;i<120;i++){await sleep(500);if(await p.evaluate(n0=>window.__dl.length>n0&&window.__dl[window.__dl.length-1].t!==null,n0))break;}
