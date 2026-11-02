@@ -505,3 +505,32 @@ go();if(mq.addEventListener)mq.addEventListener('change',go);else if(mq.addListe
  if(MQM){if(MQM.addEventListener)MQM.addEventListener('change',place);else if(MQM.addListener)MQM.addListener(place);}
  document.addEventListener('click',function(e){if(e.target.closest('[data-csvrel]'))csv(R.db().ui.cls);});
 })();
+/* 1.29.2c : Espace modérateur — « 🗑 Supprimer l’accès » (remplace « 🔗 Lier au compte » sur chaque ligne ; « Lier » reste possible par le bandeau « Lier les invitations »).
+   Supprime UNIQUEMENT la fiche d’accès members/{e-mail} (suppression déjà permise au modérateur par firestore.rules) : la personne n’a plus d’accès (synchro refusée),
+   elle disparaît de la liste. NON touchés : son compte de connexion, son cahier en ligne users/{uid}, son profil profiles/{uid}, ses données sur son appareil, vos données.
+   Avant la suppression : copie de la fiche téléchargée (acces-supprime_….json) + gardée sur cet appareil (clé additive « tatabo3.mod.removed », 20 dernières) ;
+   si la copie échoue, rien n’est supprimé. Rétablir : « Créer un accès » (même nom, même e-mail) → « Autoriser ce compte existant » → « Lier ». */
+(function(){
+ var RK='tatabo3.mod.removed';
+ window.CJModRm=function(id){
+  var Y=window.CJSync,S=Y&&Y.state,A=window.CJApp;if(!S||!A||S.role!=='mod'||!S.sdk||!S.user||S.mod.busy)return;
+  var m=(S.mod.list||[]).filter(function(x){return x.id===id;})[0];if(!m||String(id).toLowerCase()===String(S.user.email||'').toLowerCase())return;
+  if(!confirm('🗑 Supprimer l’accès de\u00a0:\n'+(m.name||'(sans nom)')+'\n'+m.email+'\n\n'+
+   '• Cette personne ne pourra plus se connecter à la synchronisation\u00a0: son accès est retiré et elle disparaît de cette liste.\n'+
+   '• Ses données (classes, élèves, notes) ne sont PAS effacées\u00a0: elles restent en ligne et sur son appareil.\n'+
+   '• Une copie de sécurité de l’accès est téléchargée d’abord (pour le rétablir).\n\nConfirmer la suppression\u00a0?'))return;
+  var F=S.sdk.F,ref=F.doc(S.db,'members',id),p=m.p;S.mod.busy=true;
+  F.getDocFromServer(ref).then(function(d){
+   if(!d.exists()){var e=new Error('none');e.code='cj/none';throw e;}
+   var x=d.data(),o={};Object.keys(x).forEach(function(k){var v=x[k];o[k]=v&&v.toMillis?v.toMillis():v;});
+   var bk={type:'tatabo3-acces-supprime',v:1,savedAt:new Date().toISOString(),by:String(S.user.email||''),path:'members/'+id,data:o,
+    profil:p?{uid:p.uid||'',classes:p.classCount||0,eleves:p.studentCount||0}:null,
+    restaurer:'Paramètres › Espace modérateur › Créer un accès (même nom, même e-mail) puis « Autoriser ce compte existant » et « Lier ».'};
+   var L=[];try{L=JSON.parse(localStorage.getItem(RK)||'[]')||[];}catch(e){L=[];}
+   L.unshift(bk);localStorage.setItem(RK,JSON.stringify(L.slice(0,20)));
+   A.download('acces-supprime_'+id.replace(/[^\w.@-]+/g,'_')+'_'+bk.savedAt.slice(0,10)+'.json',JSON.stringify(bk,null,2));
+   return F.deleteDoc(ref);
+  }).then(function(){A.toast('Accès supprimé · copie de sécurité téléchargée');},function(e){A.toast(e&&e.code==='cj/none'?'Accès déjà supprimé':'Suppression impossible\u00a0: '+((e&&(e.code||e.message))||'erreur')+' (rien n’a été supprimé)');})
+   .then(function(){S.mod.busy=false;if(Y.modLoad)Y.modLoad();});
+ };
+})();

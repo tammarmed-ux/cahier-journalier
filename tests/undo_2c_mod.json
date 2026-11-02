@@ -1,0 +1,14 @@
+[
+[
+"window.CJSync={log:LOG,state:S,meta:function(){return M;},syncNow:syncNow,modLoad:modLoad};",
+"window.CJSync={log:LOG,state:S,meta:function(){return M;},syncNow:syncNow};"
+],
+[
+"else if(t.dataset.mact==='remove'){if(window.CJModRm)CJModRm(id);}else if(t.dataset.mact==='link')modLink(id,t.dataset.uid);",
+"else if(t.dataset.mact==='link')modLink(id,t.dataset.uid);"
+],
+[
+"(m.uid?'<button class=\"btn sec\" data-mact=\"unlink\">Délier</button>':'')+'<button class=\"btn danger\" data-mact=\"remove\">🗑 Supprimer l’accès</button>'+",
+"(m.uid?'<button class=\"btn sec\" data-mact=\"unlink\">Délier</button>':(m.cands||[]).map(function(c,i){var l=c.lastSyncAt||tsMs(c.lastSeen);return '<button class=\"btn sec\" data-mact=\"link\" data-uid=\"'+esc(c.uid)+'\">🔗 Lier'+(m.cands.length>1?' au compte '+(i+1)+(l?' ('+esc(whenStr(l))+')':''):' au compte')+'</button>';}).join(''))+"
+]
+]

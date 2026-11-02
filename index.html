@@ -595,6 +595,7 @@ nav.tabs button{flex:1 1 0!important;min-width:0!important;width:0;padding-left:
 table.grid th .essdl{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:2px auto -6px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 table.grid th .essdl .ti{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#2F6FBF,#0A3768);color:#fff;box-shadow:0 2px 6px -2px rgba(11,58,110,.55)}
 table.grid th .essdl svg{width:17px;height:17px}
+table.grid th.nm .essdl{display:inline-flex;width:32px;height:32px;margin:-6px 0 -6px 4px;vertical-align:middle}table.grid th.nm .essdl .ti{width:22px;height:22px;border-radius:7px}table.grid th.nm .essdl svg{width:14px;height:14px}
 table.grid th .essdl:focus-visible .ti{outline:2px solid #E75C04;outline-offset:2px}table.grid th .essdl:active .ti{transform:scale(.94)}
 @media (prefers-reduced-motion:reduce){.qa,.hh-go,.hh-tile{transition:none}.qa:active,.hh-go:active,.hh-tile:active,.qa:hover{transform:none}}
 table.cmp{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -810,7 +811,7 @@ html[data-theme="neon"] .tw-chip.today:not(.sel){background:var(--card);border-c
 html[data-theme="neon"] #ttCard .tw-now,html[data-theme="neon"] .tw-nowln span{background:#C6FF00;color:#0A0A12}html[data-theme="neon"] .tw-nowln{border-top-color:#C6FF00}html[data-theme="neon"] #ttCard .tw-slot.cur .tw-card{border-color:#C6FF00;box-shadow:0 0 0 2px #C6FF00}
 html[data-theme="neon"] .tw-dot{box-shadow:0 0 0 3px var(--card)}
 /* 1.29.1 (-q) : carte « Élèves à surveiller » repliable */
-#homeWatch .wt-h{margin:0}#homeWatch .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:10px}
+#homeWatch{display:none!important}#homeWatch .wt-h{margin:0}#homeWatch .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:10px}
 #homeWatch .wt-h button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}#homeWatch .wt-t{display:flex;align-items:center;gap:8px}
 #homeWatch .wt-c{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#homeWatch.open .wt-c{transform:rotate(180deg)}#homeWatch.open #watchBody{margin-top:8px}
 /* 1.29.1 (-o) : sports collectifs — cases à toucher et pavé N1…N4 */
@@ -1414,7 +1415,7 @@ td.c{position:relative}td.c .bhb{position:absolute;top:2px;right:2px;font-size:8
 .pk-V{--k:#DC2626}.pk-B{--k:#16A34A}
 html[data-theme="neon"] .bh-btn.bh-V{color:#FF6B6B}html[data-theme="neon"] .bh-btn.bh-B{color:#4ADE80}html[data-theme="neon"] .bhc .bh-V{color:#FF6B6B}html[data-theme="neon"] .bhc .bh-B{color:#4ADE80}
 /* 1.29.2 (a) : bloc Absences compact */
-#attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}
+#attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}#attEval.pqA .pq-badge,#procEval.pqA .pq-badge{display:none}#attEval.pqA .pq-chip{flex:1 1 auto;max-width:none}#attEval .att-ib span{font-size:17px;line-height:1}
 .abs-r2{display:flex;align-items:center;gap:6px;margin-top:6px;min-width:0;font-size:12.5px;color:var(--muted)}#attInfo{flex:1 1 auto;min-width:0}
 .abs-r2 .grpbox{display:flex;align-items:center;gap:6px;margin:0;padding:0;border:0;background:none;flex:none}.abs-r2 .grpbox.hidden{display:none}
 .abs-r2 .grp-c{min-height:36px;padding:4px 10px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:650;color:var(--ink);background:var(--card);border:1px solid var(--line);white-space:nowrap}
@@ -1505,7 +1506,7 @@ html[data-theme="neon"] #splash,html[data-theme="neon"] .ln-hero,html[data-theme
     <!-- 1.28.0 (-i) : bascule « Absences | Notes /20 » retirée (demande du propriétaire) — seul l’affichage Notes /20 reste ; les absences/retards/maladies restent enregistrés (Comport., Année, fiche, Rapports, PDF, CSV, alertes) -->
     <div class="evalbar hidden" id="attEval"></div>
     <template id="attLegTpl"><div class="legend2"><span><span class="lg P">P</span>Présent</span><span><span class="lg A">A</span>Absent</span><span><span class="lg S">ST</span>Sans tenue</span><span><span class="lg M">M</span>Malade non just.</span><span><span class="lg L">R</span>Retard</span><span><span class="lg K">MJ</span>Malade just.</span><span><span class="lg J">AJ</span>Abs. justifiée</span><span><span class="lg D">🩺</span>Dispensé</span></div></template>
-    <div class="abs-r2" id="attR2"><span id="attInfo"></span><div class="grpbox hidden" id="attGrp"></div><button type="button" class="pq-ib pq-i" id="attInfoBtn" data-pq-open="attSheet" aria-label="Barème et légende" aria-haspopup="dialog" aria-expanded="false">ⓘ</button></div>
+    <div class="abs-r2" id="attR2"><span id="attInfo" hidden></span><div class="grpbox hidden" id="attGrp"></div></div>
   </div>
   <div class="card gridcard" id="attCard"><div class="gridwrap" id="gridWrap"></div></div>
   <p class="small muted bh-leg" style="margin:0 4px 4px"><span class="bhb bh-V">Av</span> Avertissement · <span class="bhb bh-B">Bn</span> Bonus (appui long ou mode Détail sur une case) — note comportementale entre 0 et le maximum</p>
@@ -2687,7 +2688,7 @@ function footVal(r){if(!r)return '';var n=0;for(var k in r.marks)if(r.marks[k].s
 function procCount(cid,p){var sp=gradeSpec(cid,p);return sp.proc.length+(rawOn(cid,p)?ntrOf(cid,p):0)+1;}
 function sumCount(cid,p){return ATT_VIEW==='notes'?gradeSpec(cid,p).cols.length+2:4;}
 function procHead(cid,p){var sp=gradeSpec(cid,p),raw=rawOn(cid,p),h='';sp.proc.forEach(function(c){if(raw&&c.k==='g1'){var ev0=evtOf(cid,p),E0=OPA&&OPA.events[ev0],n=ntrOf(cid,p);
-    for(var q=0;q<n;q++)h+='<th class="t raw" title="'+esc('Essai '+(q+1)+(E0?' – '+athEvtL(ev0)+'\u00a0: '+athHint(ev0):'')+' · le meilleur essai donne la note Produit')+'">Essai '+(q+1)+'<small>'+esc(E0?(E0.u==='mn'?'mn.ss':E0.u):'')+'</small>'+(q===0?'<button type="button" class="essdl" data-essdl aria-label="Télécharger tous les essais" title="Télécharger tous les essais (PDF ou CSV)"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19.5h14"/></svg></span></button>':'')+'</th>';}
+    for(var q=0;q<n;q++)h+='<th class="t raw" title="'+esc('Essai '+(q+1)+(E0?' – '+athEvtL(ev0)+'\u00a0: '+athHint(ev0):'')+' · le meilleur essai donne la note Produit')+'">Essai '+(q+1)+'<small>'+esc(E0?(E0.u==='mn'?'mn.ss':E0.u):'')+'</small>'+'</th>';}
     h+='<th class="t g" title="'+esc(c.t)+' (sur '+fmtNum(c.max)+')'+(raw&&c.k==='g1'?' – calculé d’après le meilleur essai (barème '+OPV(sp.lv)+'), modifiable à la main':'')+'">'+esc(raw?c.l:c.lf)+'<small>/'+fmtNum(c.max)+'</small></th>';});   /* avec les essais : libellés courts (Perf.) pour tenir sur iPhone */
   return h+'<th class="t sub" title="Note procédurale = '+esc(sp.proc.map(function(c){return c.lf;}).join(' + '))+' (sur '+fmtNum(sp.procMax)+')">Procéd.<small>/'+fmtNum(sp.procMax)+'</small></th>';}
 function sumHead(cid,p){if(ATT_VIEW!=='notes')return '<th class="t" title="Absences du cycle">Abs.</th><th class="t" title="Retards du cycle">R</th><th class="t" title="Absences justifiées du cycle">AJ</th><th class="t pts" title="Points retirés sur le cycle (limités par la note comportementale)">Pts</th>';
@@ -2740,7 +2741,7 @@ function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;document.querySe
   el.innerHTML='<b class="pq-ttl">Barème '+esc(sp.lv)+(sp.lvKnown?'':' (niveau non reconnu)')+'</b>'+
     '<div class="pq-row"><span class="pq-chip"><select id="attAps" aria-label="APS du cycle">'+APS_KEYS.map(function(k){return '<option value="'+k+'"'+(k===sp.aps?' selected':'')+'>'+esc(APS[k].l)+'</option>';}).join('')+'</select></span>'+
     '<span class="pq-badge" title="'+full+'">'+sp.cols.map(function(c){return '/'+fmtNum(c.max);}).join(' + ')+' + /'+fmtNum(sp.comp)+' = '+fmtNum(sp.total)+'</span>'+
-    '<button type="button" class="btn sec pq-ib" id="attGradesPdf" title="Relevé de notes" aria-label="Relevé de notes"><span aria-hidden="true">📄</span><span class="pq-sr">Relevé de notes</span></button></div>'+
+    '<button type="button" class="btn sec pq-ib" id="attGradesPdf" title="Relevé de notes" aria-label="Relevé de notes"><span aria-hidden="true">📄</span><span class="pq-sr">Relevé de notes</span></button><button type="button" class="btn sec pq-ib att-ib" id="attInfoBtn" data-pq-open="attSheet" title="Barème et légende" aria-label="Barème et légende" aria-haspopup="dialog" aria-expanded="false"><span aria-hidden="true">ⓘ</span></button></div>'+
     '<div class="pq-sheet" id="attSheet" role="dialog" aria-modal="true" aria-labelledby="attSheetT" hidden><div class="pq-bd" data-pq-close="1"></div><div class="pq-pan"><div class="pq-grab" aria-hidden="true"></div>'+
       '<div class="pq-hd"><b id="attSheetT">Barème et légende</b><button type="button" class="pq-x" data-pq-close="1" aria-label="Fermer">✕</button></div>'+
       '<div class="pq-sub">Barème '+esc(sp.lv)+' · '+esc(APS[sp.aps]?APS[sp.aps].l:'')+'</div>'+apsNoteHtml(cid,p)+
@@ -2778,7 +2779,7 @@ function renderProcGrid(){
   var cid=DB.ui.cls,p=DB.ui.per,list=cid?studentsIn(cid):[],w=$('procWrap');
   if(!cid){w.innerHTML='<div class="empty"><b>Aucune classe</b>Ajoutez une classe dans Paramètres.</div>';return;}
   if(!list.length){w.innerHTML='<div class="empty"><b>Aucun élève dans '+esc(clsName(cid))+'</b>Ajoutez-les dans l’onglet Élèves.</div>';return;}
-  var h='<table class="grid gv gp pg"><thead><tr><th class="nm">Élève</th>'+procHead(cid,p)+'</tr></thead><tbody>';
+  var ph=procHead(cid,p),h='<table class="grid gv gp pg"><thead><tr><th class="nm">Élève'+(ph.indexOf('class="t raw"')>=0?'<button type="button" class="essdl" data-essdl aria-label="Télécharger tous les essais" title="Télécharger tous les essais (PDF ou CSV)"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19.5h14"/></svg></span></button>':'')+'</th>'+ph+'</tr></thead><tbody>';
   list.forEach(function(st,i){h+='<tr data-sid="'+esc(st.id)+'"><th class="nm" dir="auto" title="'+esc(st.name)+'"><span class="n">'+(i+1)+'</span>'+(dspInCycle(st,p)?'<span class="dspb" title="Dispensé – '+esc(dspShort(dspOf(st)))+'">🩺</span>':'')+esc(st.name)+(st.sid?'<small class="sc" dir="ltr">'+esc(st.sid)+'</small>':'')+'</th>'+procCells(cid,st.id,p)+'</tr>';});
   h+='</tbody><tfoot><tr><th class="nm" title="Moyennes de la classe">Moyenne</th>'+procFoot(cid,p,list)+'</tr></tfoot></table>';
   w.innerHTML=h;
@@ -3490,7 +3491,7 @@ function cycleInfoHtml(cid,p){
   if(c&&!c.bad)h+=' <span class="muted">· '+TX.cycRange(dmy(c.start),dmy(c.end))+'</span>';else h+='<div class="warnline">'+esc(TX.cycBad(p+1))+'</div>';
   if(!cid)return h;
   if(!hasSlots(cid))h+='<div class="warnline">'+esc(TX.noSlot)+'</div>';
-  else{var hc=colsOf(cid,p).filter(function(x){return x.hol;}).length;if(hc)h+=' <span class="muted">· '+esc(TX.holCols(hc))+'</span>';}
+  else{var hc=colsOf(cid,p).filter(function(x){return x.hol;}).length;if(hc)h+=' <span class="muted cyc-hol" hidden>· '+esc(TX.holCols(hc))+'</span>';}
   return h;
 }
 function fmtRange(h){return (h.to&&h.to!==h.from?dmy(h.from)+' → '+dmy(h.to):dmy(h.from))+(holTimed(h)?' · '+h.startTime+'–'+h.endTime:'');}
@@ -3731,7 +3732,7 @@ $('homeBody').addEventListener('click',function(e){var b=e.target.closest('[data
   else if(q==='reports')showTab('reports');
   else if(q==='students')showTab('students');
   else if(q==='backup'){$('bkExport').click();renderHome();}
-  else if(q==='today')go('homeToday');else if(q==='rate')go('homeCmp');else if(q==='watch'){if(!watchOpen())watchSet(true);go('homeWatch');}
+  else if(q==='today')go('homeToday');else if(q==='rate')go('homeCmp');else if(q==='watch')showTab('reports');
 });
 setInterval(function(){var c=$('homeClock');if(c&&current==='home')c.textContent=hClock();},15000);
 $('homeBody').addEventListener('change',function(e){
@@ -5063,7 +5064,7 @@ function drawMod(){
       (p?('Dernière synchro\u00a0: '+(last?whenStr(last):'—')+' · '+p.classCount+' classe'+(p.classCount>1?'s':'')+' · '+p.studentCount+' élève'+(p.studentCount>1?'s':'')):(m.uid?'Jamais connecté':'Pas encore connecté (compte existant)'))+'</span>'+
       '<br><span class="small mlink '+(m.uid?'on':'no')+'">'+(m.uid?'🔗 Invitation liée à son compte':(m.cands&&m.cands.length?'⚠ Invitation non liée'+(m.cands.length>1?' · '+m.cands.length+' comptes avec cette adresse':''):'Invitation non liée · à lier après sa première synchro'))+'</span>'+
       '<div class="actions"><button class="btn sec" data-mact="view"'+((m.uid||m.vuid)?'':' disabled')+'>👁 Voir son cahier</button>'+
-      (m.uid?'<button class="btn sec" data-mact="unlink">Délier</button>':(m.cands||[]).map(function(c,i){var l=c.lastSyncAt||tsMs(c.lastSeen);return '<button class="btn sec" data-mact="link" data-uid="'+esc(c.uid)+'">🔗 Lier'+(m.cands.length>1?' au compte '+(i+1)+(l?' ('+esc(whenStr(l))+')':''):' au compte')+'</button>';}).join(''))+
+      (m.uid?'<button class="btn sec" data-mact="unlink">Délier</button>':'')+'<button class="btn danger" data-mact="remove">🗑 Supprimer l’accès</button>'+
       '<button class="btn '+(act?'danger':'sec')+'" data-mact="toggle">'+(act?'Désactiver':'Réactiver')+'</button>'+
       '<button class="btn sec" data-mact="reset">Réinitialiser le mot de passe</button></div></div>';
   });
@@ -5162,7 +5163,7 @@ document.addEventListener('click',function(e){
     else if(t.id==='mdDone'){S.mod.cred=null;ui(true);}
     else if(t.dataset.mact){var row=t.closest('[data-mid]');if(!row)return;var id=row.dataset.mid;
       if(t.dataset.mact==='view')modView(id);else if(t.dataset.mact==='toggle')modToggle(id);else if(t.dataset.mact==='reset')modReset(id);
-      else if(t.dataset.mact==='link')modLink(id,t.dataset.uid);else if(t.dataset.mact==='unlink')modUnlink(id);}
+      else if(t.dataset.mact==='remove'){if(window.CJModRm)CJModRm(id);}else if(t.dataset.mact==='link')modLink(id,t.dataset.uid);else if(t.dataset.mact==='unlink')modUnlink(id);}
     return;
   }
   if(t.closest('#gate')){
@@ -5214,7 +5215,7 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)kick
 window.addEventListener('pagehide',function(){if(M.dirty&&S.user&&S.ready&&allowed()&&!APP.viewing())pushNow();});
 ui();
 loadSdk().catch(function(){});
-window.CJSync={log:LOG,state:S,meta:function(){return M;},syncNow:syncNow};
+window.CJSync={log:LOG,state:S,meta:function(){return M;},syncNow:syncNow,modLoad:modLoad};
 })();
 </script><script>CJBoot.go('cjA2')</script>
 <script type="text/x-cj-app" id="cjA3">

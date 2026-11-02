@@ -1,0 +1,38 @@
+[
+[
+"table.grid th .essdl svg{width:17px;height:17px}\ntable.grid th.nm .essdl{display:inline-flex;width:32px;height:32px;margin:-6px 0 -6px 4px;vertical-align:middle}table.grid th.nm .essdl .ti{width:22px;height:22px;border-radius:7px}table.grid th.nm .essdl svg{width:14px;height:14px}",
+"table.grid th .essdl svg{width:17px;height:17px}"
+],
+[
+"var ph=procHead(cid,p),h='<table class=\"grid gv gp pg\"><thead><tr><th class=\"nm\">Élève'+(ph.indexOf('class=\"t raw\"')>=0?'<button type=\"button\" class=\"essdl\" data-essdl aria-label=\"Télécharger tous les essais\" title=\"Télécharger tous les essais (PDF ou CSV)\"><span class=\"ti\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4v11\"/><path d=\"m7.5 11 4.5 4.5 4.5-4.5\"/><path d=\"M5 19.5h14\"/></svg></span></button>':'')+'</th>'+ph+'</tr></thead><tbody>';",
+"var h='<table class=\"grid gv gp pg\"><thead><tr><th class=\"nm\">Élève</th>'+procHead(cid,p)+'</tr></thead><tbody>';"
+],
+[
+"+'</th>';}\n    h+='<th class=\"t g\"",
+"+(q===0?'<button type=\"button\" class=\"essdl\" data-essdl aria-label=\"Télécharger tous les essais\" title=\"Télécharger tous les essais (PDF ou CSV)\"><span class=\"ti\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4v11\"/><path d=\"m7.5 11 4.5 4.5 4.5-4.5\"/><path d=\"M5 19.5h14\"/></svg></span></button>':'')+'</th>';}\n    h+='<th class=\"t g\""
+],
+[
+"  else{var hc=colsOf(cid,p).filter(function(x){return x.hol;}).length;if(hc)h+=' <span class=\"muted cyc-hol\" hidden>· '+esc(TX.holCols(hc))+'</span>';}\n",
+"  else{var hc=colsOf(cid,p).filter(function(x){return x.hol;}).length;if(hc)h+=' <span class=\"muted\">· '+esc(TX.holCols(hc))+'</span>';}\n"
+],
+[
+"#attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}#attEval.pqA .pq-badge,#procEval.pqA .pq-badge{display:none}#attEval.pqA .pq-chip{flex:1 1 auto;max-width:none}#attEval .att-ib span{font-size:17px;line-height:1}",
+"#attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}"
+],
+[
+"<span class=\"pq-sr\">Relevé de notes</span></button><button type=\"button\" class=\"btn sec pq-ib att-ib\" id=\"attInfoBtn\" data-pq-open=\"attSheet\" title=\"Barème et légende\" aria-label=\"Barème et légende\" aria-haspopup=\"dialog\" aria-expanded=\"false\"><span aria-hidden=\"true\">ⓘ</span></button></div>'+\n    '<div class=\"pq-sheet\" id=\"attSheet\"",
+"<span class=\"pq-sr\">Relevé de notes</span></button></div>'+\n    '<div class=\"pq-sheet\" id=\"attSheet\""
+],
+[
+"<div class=\"abs-r2\" id=\"attR2\"><span id=\"attInfo\" hidden></span><div class=\"grpbox hidden\" id=\"attGrp\"></div></div>",
+"<div class=\"abs-r2\" id=\"attR2\"><span id=\"attInfo\"></span><div class=\"grpbox hidden\" id=\"attGrp\"></div><button type=\"button\" class=\"pq-ib pq-i\" id=\"attInfoBtn\" data-pq-open=\"attSheet\" aria-label=\"Barème et légende\" aria-haspopup=\"dialog\" aria-expanded=\"false\">ⓘ</button></div>"
+],
+[
+"#homeWatch{display:none!important}#homeWatch .wt-h{margin:0}",
+"#homeWatch .wt-h{margin:0}"
+],
+[
+"else if(q==='watch')showTab('reports');",
+"else if(q==='watch'){if(!watchOpen())watchSet(true);go('homeWatch');}"
+]
+]
