@@ -223,6 +223,9 @@ a.tel{color:var(--pri);font-weight:600;text-decoration:none}
 .pchips::-webkit-scrollbar{display:none}
 .pchip{flex:0 0 auto;border:1px solid var(--pri-line);background:#fff;color:var(--pri);border-radius:999px;padding:8px 14px;min-height:40px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;white-space:nowrap}
 .pchip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.pchips .cyt{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;min-height:48px;padding:5px 12px 9px;border-radius:14px;border-color:var(--line);background:var(--card);color:var(--ink);line-height:1.15}.cyt:after{content:"";position:absolute;left:10px;right:10px;bottom:4px;height:3px;border-radius:3px;background:var(--c)}.pc-t{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:750}.pc-i .act-pi{width:16px;height:16px}.pc-s{font-size:10.5px;color:var(--muted)}.cur .pc-s,.cy-l1>b{color:color-mix(in srgb,var(--c) 80%,var(--ink))}.cur .pc-s:before{content:"● "}.done .pc-s:before{content:"✓ "}.pchips .pchip.cyt.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--ink);box-shadow:inset 0 0 0 1px var(--c)}.cyt.on:after{height:4px}
+.cy-l1{display:flex;align-items:center;gap:6px;white-space:nowrap}.cy-l1>b{overflow:hidden;text-overflow:ellipsis}.cy-l1>.muted{flex:none}.pc-tag{flex:none;font-size:11px;font-weight:750;color:var(--card);background:var(--c);border-radius:9px;padding:2px 8px}
+@media (max-width:599px){.cy-l1{font-size:13px;gap:5px}.pc-tag{font-size:0;width:9px;height:9px;padding:0}.cy-y{display:none}}
 .seg{display:inline-flex;border:1px solid var(--pri-line);border-radius:10px;overflow:hidden}
 .seg button{border:0;background:#fff;color:var(--pri);font:inherit;font-size:13.5px;font-weight:650;padding:7px 12px;min-height:38px;cursor:pointer}
 .seg button.on{background:var(--pri);color:#fff}
@@ -2100,7 +2103,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2c-test3';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2c-test4';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -2607,7 +2610,7 @@ function renderAttendance(){
   var cid=curCls(),p=Math.min(DB.ui.per,DB.periods.length-1);DB.ui.per=p;
   classOptions($('attClass'),cid);
   document.querySelectorAll('#view-attendance .seg:not(.vseg) button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===DB.ui.mode);});
-  $('attPeriods').innerHTML=DB.periods.map(function(n,i){return '<button class="pchip'+(i===p?' on':'')+'" data-p="'+i+'" role="tab" aria-selected="'+(i===p)+'">'+esc(cycleName(i))+'</button>';}).join('');
+  $('attPeriods').innerHTML=DB.periods.map(function(n,i){return cycTile(i,p);}).join('');
   $('attCycle').innerHTML=cycleInfoHtml(cid,p);
   renderGrpBox();renderEvalBar(cid,p);
   var on=$('attPeriods').querySelector('.on');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
@@ -2729,7 +2732,7 @@ function renderProcBar(cid,p){var el=$('procEval');if(!el)return;if(!cid||!count
 function renderProc(){
   var cid=curCls(),p=Math.min(DB.ui.per,DB.periods.length-1);DB.ui.per=p;
   classOptions($('procClass'),cid);
-  $('procPeriods').innerHTML=DB.periods.map(function(n,i){return '<button class="pchip'+(i===p?' on':'')+'" data-p="'+i+'" role="tab" aria-selected="'+(i===p)+'">'+esc(cycleName(i))+'</button>';}).join('');
+  $('procPeriods').innerHTML=DB.periods.map(function(n,i){return cycTile(i,p);}).join('');
   $('procCycle').innerHTML=cycleInfoHtml(cid,p);
   renderProcBar(cid,p);
   var on=$('procPeriods').querySelector('.on');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
@@ -3449,9 +3452,13 @@ function sessHead(s){
   var cid=DB.ui.cls,p=DB.ui.per,r=rec(cid,p,s),d=sessDate(cid,p,s),man=isManual(cid,p,s);
   return {cls:(r?'effectuée':'')+(man?' man':''),html:'S'+sessNo(cid,p,s)+'<small>'+(d?shortDate(d):(r?'✓':'–'))+'</small>',title:man?TX.manTitle:''};
 }
+/* 1.29.2c C : affichage seul */
+function cycSt(i){var c=cal().cycles[i],t=todayStr();return !c||c.bad||!c.start?'':c.end&&t>c.end?'done':t>=c.start?'cur':'next';}
+function dmyS(s){var p=s.split('-');return p[2]+'/'+p[1]+'<span class="cy-y">/'+p[0]+'</span>';}
+function cycTile(i,p){var s=cycSt(i);return '<button class="pchip cyt '+s+(i===p?' on':'')+'" style="--c:var(--cy'+i%6+')" data-p="'+i+'" role="tab" aria-selected="'+(i===p)+'"><span class="pc-t"><span class="pc-i">'+cycEmoji(i)+'</span>'+esc(cycleName(i))+'</span><span class="pc-s">'+({cur:'En cours',done:'Terminé',next:'À venir'}[s]||'')+'</span></button>';}
 function cycleInfoHtml(cid,p){
-  var c=cal().cycles[p],ad=autoDates(cid,p),h='<b>'+esc(cycleLabel(p))+'</b>';
-  if(c&&!c.bad)h+=' <span class="muted">· '+TX.cycRange(dmy(c.start),dmy(c.end))+'</span>';else h+='<div class="warnline">'+esc(TX.cycBad(p+1))+'</div>';
+  var c=cal().cycles[p],ad=autoDates(cid,p),h='<span class="cy-l1" style="--c:var(--cy'+p%6+')"><span class="pc-i">'+cycEmoji(p)+'</span><b>'+esc(cycleLabel(p))+'</b>'+(cycSt(p)==='cur'?'<span class="pc-tag" title="En cours">En cours</span>':'');
+  if(c&&!c.bad)h+=' <span class="muted">· '+TX.cycRange(dmyS(c.start),dmyS(c.end))+'</span></span>';else h+='</span><div class="warnline">'+esc(TX.cycBad(p+1))+'</div>';
   if(!cid)return h;
   if(!hasSlots(cid))h+='<div class="warnline">'+esc(TX.noSlot)+'</div>';
   else{var hc=colsOf(cid,p).filter(function(x){return x.hol;}).length;if(hc)h+=' <span class="muted cyc-hol" hidden>· '+esc(TX.holCols(hc))+'</span>';}
