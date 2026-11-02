@@ -39,20 +39,20 @@ await p.evaluate(s=>window.CJApp.applyJSON(s),fs.readFileSync(DATA,'utf8'));awai
 const L0=await logical(p);const D0=JSON.parse(L0.ls[KEY]);let c=await cks(p);
 check('1.29.1 (production actuelle) : '+D0.classes.length+' classes, '+D0.students.length+' élèves, cache '+c.join(','),(await sem(p))==='1.29.1'&&c.includes('cahier-v29-1')&&D0.students.length>300);
 const extra=await p.evaluate(()=>{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);o[k]=localStorage.getItem(k);}return o;});
-ROOT=RNEW;await p.reload({waitUntil:'domcontentloaded'});let ok=false;for(let i=0;i<60&&!ok;i++){await sleep(250);c=await cks(p);ok=c.includes('cahier-v29-2c-test4');}
-check('mise à jour détectée : cache cahier-v29-2 installé',ok,c.join(','));
+ROOT=RNEW;await p.reload({waitUntil:'domcontentloaded'});let ok=false;for(let i=0;i<60&&!ok;i++){await sleep(250);c=await cks(p);ok=c.includes('cahier-v29-3');}
+check('mise à jour détectée : cache cahier-v29-3 installé',ok,c.join(','));
 await sleep(1500);await p.reload({waitUntil:'domcontentloaded'});await opened(p);await p.waitForFunction(()=>window.CJR&&window.CJR.photoAll,{timeout:30000});
 const L1=await logical(p);c=await cks(p);
-check('après mise à jour : version 1.29.2, contrôlée par le service worker',(await sem(p))==='1.29.2'&&await p.evaluate(()=>!!navigator.serviceWorker.controller),await sem(p));
+check('après mise à jour : version 1.29.3, contrôlée par le service worker',(await sem(p))==='1.29.3'&&await p.evaluate(()=>!!navigator.serviceWorker.controller),await sem(p));
 check('classRegister.v2 identique octet pour octet',L1.ls[KEY]===L0.ls[KEY]);
 const dif=await p.evaluate(ex=>Object.keys(ex).filter(k=>!/^classRegister\.v2\.snap|^cahier\.(appVersion|snapDay|cryptoLater)$/.test(k)).filter(k=>localStorage.getItem(k)!==ex[k]).map(k=>k+'='+String(ex[k]).slice(0,60)+' → '+String(localStorage.getItem(k)).slice(0,60)),extra);
 check('toutes les clés localStorage de 1.29.1 conservées à l’identique (hors horodatages techniques)',dif.length===0,dif.join(' | '));
 check('photos et sauvegardes IndexedDB conservées',same(L1.ph,L0.ph)&&Object.keys(L0.snd).every(k=>same(L1.snd[k],L0.snd[k])));
 const snaps=await p.evaluate(()=>window.CJApp&&window.CJApp.snapList?window.CJApp.snapList().map(s=>s.label||s.l||''):Object.keys(localStorage).filter(k=>k.indexOf('classRegister.v2.snapm.')===0).map(k=>localStorage.getItem(k)));
 check('sauvegarde automatique « Avant mise à jour » créée',JSON.stringify(snaps).includes('Avant mise à jour'),JSON.stringify(snaps).slice(0,200));
-check('ancien cache cahier-v29-1 supprimé, seul cahier-v29-2 reste',!c.includes('cahier-v29-1')&&c.includes('cahier-v29-2c-test4'),c.join(','));
+check('ancien cache cahier-v29-1 supprimé, seul cahier-v29-3 reste',!c.includes('cahier-v29-1')&&c.includes('cahier-v29-3'),c.join(','));
 const vl=await p.evaluate(()=>{const e=document.getElementById('verLine');return e?e.textContent:'';});
-check('Paramètres : « Version 1.29.2 »',vl.trim()==='Version 1.29.2',vl);
+check('Paramètres : « Version 1.29.3 »',vl.trim()==='Version 1.29.3',vl);
 check('aucune erreur JavaScript',ERR.length===0,ERR.join(' | '));
 }catch(e){check('exception',false,e.stack);}
 await b.close();srv.close();const n=results.filter(x=>x).length;console.log(n+'/'+results.length+' PASS');process.exit(n===results.length?0:1);})();
