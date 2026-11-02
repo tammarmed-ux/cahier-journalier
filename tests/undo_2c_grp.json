@@ -1,0 +1,26 @@
+[
+[
+".abs-r2 .grpbox.hidden{display:none}#attR2[hidden]{display:none}#attEval .pq-row.pq-g{flex-wrap:wrap}#attEval.pqA .pq-row .pq-chip{flex:1 1 60px;max-width:220px;min-width:0}#attEval .pq-row #attGrp{display:contents}#attEval .pq-row #attGrp.hidden{display:none!important}#attEval .grp-c{flex:none;min-height:36px;padding:4px 10px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:650;color:var(--ink);background:var(--card);border:1px solid var(--line);white-space:nowrap;margin:0}#attEval .pq-row .pq-ib{margin-left:0}#attEval .pq-row #attGradesPdf{margin-left:auto}#attEval .pq-g::after{content:'';order:8;flex-basis:100%}#attEval .grp-sw{order:9;font-size:12px;white-space:nowrap}#attEval .gstrip{order:10;flex:1 1 0;min-width:0;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding:1px 0 3px}",
+".abs-r2 .grpbox.hidden{display:none}"
+],
+[
+"#procEval #procGradesPdf,#procEval [data-csvrel],#procEval .pq-row+.pq-row{display:none!important}#attEval.pqA .pq-chip{max-width:44%}",
+"#attEval.pqA .pq-chip{max-width:44%}"
+],
+[
+"title=\"Groupes\\u00a0: aucun · Créer les groupes (conseillé après le cycle 1)\" aria-label=\"Groupes\\u00a0: aucun · Créer\">👥 <b>Créer</b></button>';return;}",
+"title=\"Créer les groupes (conseillé après le cycle 1)\">👥 Groupes\\u00a0: aucun · <b>Créer</b></button>';return;}"
+],
+[
+"var g=grpOf(c);box.classList.toggle('has-g',!!g);box.parentNode.classList.toggle('pq-g',!!g);",
+"var g=grpOf(c);box.classList.toggle('has-g',!!g);"
+],
+[
+"function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;var gb=$('attGrp'),r2=$('attR2');if(gb&&r2&&gb.parentNode!==r2){r2.appendChild(gb);r2.hidden=false;}",
+"function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;"
+],
+[
+"'<span class=\"scale\">'+full+' · Évaluation '+OPV(sp.lv)+'</span>'+(tpl?tpl.innerHTML:'')+'</div></div>';\n  var pr=el.querySelector('.pq-row');if(gb&&r2&&pr){pr.insertBefore(gb,pr.children[1]);pr.classList.toggle('pq-g',gb.classList.contains('has-g'));r2.hidden=true;}}",
+"'<span class=\"scale\">'+full+' · Évaluation '+OPV(sp.lv)+'</span>'+(tpl?tpl.innerHTML:'')+'</div></div>';}"
+]
+]

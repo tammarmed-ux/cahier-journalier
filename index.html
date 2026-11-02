@@ -1374,9 +1374,9 @@ td.c{position:relative}td.c .bhb{position:absolute;top:2px;right:2px;font-size:8
 .pk-V{--k:#DC2626}.pk-B{--k:#16A34A}
 html[data-theme="neon"] .bh-btn.bh-V{color:#FF6B6B}html[data-theme="neon"] .bh-btn.bh-B{color:#4ADE80}html[data-theme="neon"] .bhc .bh-V{color:#FF6B6B}html[data-theme="neon"] .bhc .bh-B{color:#4ADE80}
 /* 1.29.2 (a) : bloc Absences compact */
-#attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}#attEval.pqA .pq-badge,#procEval.pqA .pq-badge{display:none}#attEval.pqA .pq-chip{flex:1 1 auto;max-width:none}#attEval .att-ib span{font-size:17px;line-height:1}
+#procEval #procGradesPdf,#procEval [data-csvrel],#procEval .pq-row+.pq-row{display:none!important}#attEval.pqA .pq-chip{max-width:44%}#attEval.pqA .pq-badge{flex:0 1 auto}#attEval.pqA .pq-badge,#procEval.pqA .pq-badge{display:none}#attEval.pqA .pq-chip{flex:1 1 auto;max-width:none}#attEval .att-ib span{font-size:17px;line-height:1}
 .abs-r2{display:flex;align-items:center;gap:6px;margin-top:6px;min-width:0;font-size:12.5px;color:var(--muted)}#attInfo{flex:1 1 auto;min-width:0}
-.abs-r2 .grpbox{display:flex;align-items:center;gap:6px;margin:0;padding:0;border:0;background:none;flex:none}.abs-r2 .grpbox.hidden{display:none}
+.abs-r2 .grpbox{display:flex;align-items:center;gap:6px;margin:0;padding:0;border:0;background:none;flex:none}.abs-r2 .grpbox.hidden{display:none}#attR2[hidden]{display:none}#attEval .pq-row.pq-g{flex-wrap:wrap}#attEval.pqA .pq-row .pq-chip{flex:1 1 60px;max-width:220px;min-width:0}#attEval .pq-row #attGrp{display:contents}#attEval .pq-row #attGrp.hidden{display:none!important}#attEval .grp-c{flex:none;min-height:36px;padding:4px 10px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:650;color:var(--ink);background:var(--card);border:1px solid var(--line);white-space:nowrap;margin:0}#attEval .pq-row .pq-ib{margin-left:0}#attEval .pq-row #attGradesPdf{margin-left:auto}#attEval .pq-g::after{content:'';order:8;flex-basis:100%}#attEval .grp-sw{order:9;font-size:12px;white-space:nowrap}#attEval .gstrip{order:10;flex:1 1 0;min-width:0;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding:1px 0 3px}
 .abs-r2 .grp-c{min-height:36px;padding:4px 10px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:650;color:var(--ink);background:var(--card);border:1px solid var(--line);white-space:nowrap}
 .abs-r2 .grp-sw{font-size:12px;white-space:nowrap}.abs-r2 .pq-i{flex:none;border:1px solid var(--line);background:var(--card);color:var(--pri);font-size:17px;border-radius:50%;width:32px;min-width:32px;height:32px;padding:0;cursor:pointer}
 html[data-theme="neon"] .abs-r2 .pq-i{color:#00E5FF}
@@ -2691,7 +2691,7 @@ function totalsHtml(cid,sid,p){
   return t(st.A,st.U>=th?' bad':'')+t(st.L)+t(st.J)+'<td class="t pts'+(st.ded?'':' z')+(st.capped?' cap':'')+'" title="'+fmtPts(st.raw)+' / '+fmtNum(st.cap)+'">'+fmtPts(st.ded)+'</td>'+yrCell(y,th);
 }
 function yrCell(y,th){return '<td class="t yr'+(y.A?'':' z')+'" title="'+y.U+' non justifiée'+(y.U>1?'s':'')+'">'+y.A+(y.U&&y.U!==y.A?'<small style="font-weight:500"> ('+y.U+')</small>':'')+'</td>';}
-function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;document.querySelectorAll('#attView button').forEach(function(b){b.classList.toggle('on',b.dataset.v===ATT_VIEW);});
+function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;var gb=$('attGrp'),r2=$('attR2');if(gb&&r2&&gb.parentNode!==r2){r2.appendChild(gb);r2.hidden=false;}document.querySelectorAll('#attView button').forEach(function(b){b.classList.toggle('on',b.dataset.v===ATT_VIEW);});
   if(ATT_VIEW==='abs'||!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
   var sp=gradeSpec(cid,p);el.classList.remove('hidden');
   /* 1.29.2 (a) : bloc Absences compact (proposition A) — mêmes sélecteur/bouton/identifiants ; barème complet + légende dans la feuille ⓘ ; affichage seulement */
@@ -2704,7 +2704,8 @@ function renderEvalBar(cid,p){var el=$('attEval');if(!el)return;document.querySe
     '<div class="pq-sheet" id="attSheet" role="dialog" aria-modal="true" aria-labelledby="attSheetT" hidden><div class="pq-bd" data-pq-close="1"></div><div class="pq-pan"><div class="pq-grab" aria-hidden="true"></div>'+
       '<div class="pq-hd"><b id="attSheetT">Barème et légende</b><button type="button" class="pq-x" data-pq-close="1" aria-label="Fermer">✕</button></div>'+
       '<div class="pq-sub">Barème '+esc(sp.lv)+' · '+esc(APS[sp.aps]?APS[sp.aps].l:'')+'</div>'+apsNoteHtml(cid,p)+
-      '<span class="scale">'+full+' · Évaluation '+OPV(sp.lv)+'</span>'+(tpl?tpl.innerHTML:'')+'</div></div>';}
+      '<span class="scale">'+full+' · Évaluation '+OPV(sp.lv)+'</span>'+(tpl?tpl.innerHTML:'')+'</div></div>';
+  var pr=el.querySelector('.pq-row');if(gb&&r2&&pr){pr.insertBefore(gb,pr.children[1]);pr.classList.toggle('pq-g',gb.classList.contains('has-g'));r2.hidden=true;}}
 function renderProcBar(cid,p){var el=$('procEval');if(!el)return;if(!cid||!countIn(cid)){el.classList.add('hidden');el.innerHTML='';return;}
   /* 1.29.1 (-x) : carte compacte (proposition A) — mêmes sélecteurs/identifiants, explication dans une feuille (ⓘ) ; affichage seulement */
   var sp=gradeSpec(cid,p),ev=sp.aps==='athle'?evtOf(cid,p):'';el.classList.add('pqA');
@@ -3181,9 +3182,9 @@ $('grpBody').addEventListener('change',function(e){var t=e.target,c=cls(grpCid),
   if(t.dataset.gname!=null){var v2=t.value.trim().replace(/\s+/g,' ').slice(0,30);g.names[+t.dataset.gname]=v2||('Groupe '+(+t.dataset.gname+1));persistNow();grpChanged();return;}
   if(t.dataset.mv){var k=parseInt(t.value,10);if(g.lock)return;if(k>=0)g.of[t.dataset.mv]=k;else delete g.of[t.dataset.mv];g.at=Date.now();persistNow();grpChanged();}
 });
-function renderGrpBox(){var box=$('attGrp'),cid=DB.ui.cls,c=cls(cid);if(!box)return;if(!c||!countIn(cid)){box.classList.add('hidden');return;}box.classList.remove('hidden');var g=grpOf(c);box.classList.toggle('has-g',!!g);
+function renderGrpBox(){var box=$('attGrp'),cid=DB.ui.cls,c=cls(cid);if(!box)return;if(!c||!countIn(cid)){box.classList.add('hidden');return;}box.classList.remove('hidden');var g=grpOf(c);box.classList.toggle('has-g',!!g);box.parentNode.classList.toggle('pq-g',!!g);
   /* 1.29.2 (a) : bouton Groupes compact (même parcours data-grp="open") */
-  if(!g){box.innerHTML='<button type="button" class="chip grp-c" data-grp="open" title="Créer les groupes (conseillé après le cycle 1)">👥 Groupes\u00a0: aucun · <b>Créer</b></button>';return;}
+  if(!g){box.innerHTML='<button type="button" class="chip grp-c" data-grp="open" title="Groupes\u00a0: aucun · Créer les groupes (conseillé après le cycle 1)" aria-label="Groupes\u00a0: aucun · Créer">👥 <b>Créer</b></button>';return;}
   var m=grpMembers(cid);
   box.innerHTML='<button type="button" class="chip grp-c" data-grp="open" title="Gérer les groupes">👥 '+m.groups.length+' groupe'+(m.groups.length>1?'s':'')+(g.lock?' 🔒':'')+'</button><label class="switch grp-sw"><input type="checkbox" id="attGrpOn"'+(DB.ui.grp?' checked':'')+'> Par groupe</label><div class="gchips gstrip">'+m.groups.map(function(a,i){var st=grpStats(a,10);return '<span class="gchip gc-s" style="--gc:'+GRP_COL[i]+';--gs:'+GRP_SOFT[i]+'" title="'+esc(grpName(g,i)+' · '+st.n+(st.f||st.m?' · '+st.f+'F/'+st.m+'G':''))+'">G'+(i+1)+' · '+st.n+'</span>';}).join('')+(m.none.length?'<span class="gchip gc-s" style="--gc:#667085;--gs:#f2f4f7" title="Sans groupe">? · '+m.none.length+'</span>':'')+'</div>';}
 $('attGrp').addEventListener('click',function(e){if(e.target.closest('[data-grp="open"]'))openGroups(DB.ui.cls);});

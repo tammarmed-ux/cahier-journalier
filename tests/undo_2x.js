@@ -40,6 +40,7 @@ IDX.unshift(...require('./undo_2c_index.json'));
 IDX.unshift(...require('./undo_2c_mod.json'));   /* 1.29.2c : « Supprimer l’accès » (modérateur) */
 IDX.unshift(...require('./undo_2c_bilan.json'));   /* 1.29.2c : Rapports › Bilan en grille compacte (proposition A) */
 IDX.unshift(...require('./undo_2c_cssnotes.json'));   /* 1.29.2c : notes CSS déplacées dans docs/ (budget) */
+IDX.unshift(...require('./undo_2c_grp.json'));   /* 1.29.2c : pastille Groupes dans la rangée grise (Absences) ; Note procéd. réduite aux sélecteurs */
 /* 1.29.2c : suffixe de niveau retiré des sélecteurs de classe (college.js, CX.opt) */
 const C2C=[["CX.opt=function(){return '';};   /* 1.29.2c : plus de « · 1BAC / · 2BAC / · TC » après le nom dans les sélecteurs de classe (affichage seulement ; levelOf et barèmes inchangés) */","CX.opt=function(c,sel){return sel&&/^(attClass|procClass|stuClassFilter)$/.test(sel.id)?' · '+(R.levelOf(c.name)||'Niveau ?'):'';};"],[require('fs').readFileSync(__dirname+'/undo_2c_mod_college.txt','utf8'),'']];
 const rep=(L,x)=>L.reduce((t,[a,b])=>t.split(a).join(b),x);
