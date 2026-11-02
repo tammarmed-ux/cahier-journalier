@@ -2100,7 +2100,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2c-test2';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2c-test3';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}
@@ -3248,10 +3248,10 @@ function renderReports(){
     h+=C(st.A)+'<td><span class="rp-u'+(st.U?' on':' z')+'">'+st.U+'</span></td><td><div class="rp-o">'+(o||'<span class="z">—</span>')+'</div></td></tr>';});
   if(!d.rows.length)h+='<tr><td colspan="5" class="empty">Aucun élève dans cette sélection.</td></tr>';
   $('repTable').innerHTML=h+'</tbody>';
-  $('repLegend').innerHTML=(flagged?'<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus sur un cycle (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées sur un cycle. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.<br><b>Pts</b> points retirés'+(year?'':' (barre = part de la note comportementale)')+' · <b>Abs.</b> absences · <b>NJ</b> non justifiées · <b>Autres</b> (seulement si ≠ 0) : ST sans tenue · M malade non justifié · R retards · MJ malade justifié · AJ justifiées'+(year?' · C1… points retirés par cycle':' · max note comportementale atteinte')+'.';
-  if(capN)$('repLegend').innerHTML+='<br><b style="color:var(--bad)">'+plural(capN,'élève')+' à la note comportementale maximale.</b>';
+  var lg=[];if(flagged)lg.push('<b style="color:var(--bad)">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus sur un cycle (surligné'+(flagged>1?'s':'')+').');   /* 1.29.2c (t307u) : message « Aucun élève… », aide « Touchez… » et légende retirés de l’écran ; alertes réelles gardées */
+  if(capN)lg.push('<b style="color:var(--bad)">'+plural(capN,'élève')+' à la note comportementale maximale.</b>');
   var dspN=d.rows.filter(function(r){return year?dspInScope(r.s,d.scope):dspInCycle(r.s,+d.scope);}).length;
-  if(dspN)$('repLegend').innerHTML+='<br><span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';
+  if(dspN)lg.push('<span class="chip dchip">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.');$('repLegend').innerHTML=lg.join('<br>');$('repLegend').classList.toggle('hidden',!lg.length);
   if(!all&&cl[0])$('repInfo').textContent+=' · note comportementale\u00a0: '+capTxt(cl[0].id);
   else if(cl.length){var cg=[],cgk={};cl.forEach(function(c){var i=capInfo(c.id),k=fmtNum(i.v)+' pts'+(i.man?' (personnalisée)':i.lv?' ('+i.lv+')':'');if(!cgk[k]){cgk[k]={k:k,v:i.v,n:[]};cg.push(cgk[k]);}cgk[k].n.push(c.name);});
     cg.sort(function(a,b){return b.v-a.v;});$('repInfo').textContent+=' · note comportementale par cycle\u00a0: '+cg.map(function(g){return g.k+'\u00a0: '+g.n.join(', ');}).join(' · ');}

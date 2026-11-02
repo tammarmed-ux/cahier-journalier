@@ -1,0 +1,14 @@
+[
+[
+"  var lg=[];if(flagged)lg.push('<b style=\"color:var(--bad)\">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus sur un cycle (surligné'+(flagged>1?'s':'')+').');   /* 1.29.2c (t307u) : message « Aucun élève… », aide « Touchez… » et légende retirés de l’écran ; alertes réelles gardées */",
+"  $('repLegend').innerHTML=(flagged?'<b style=\"color:var(--bad)\">'+plural(flagged,'élève')+'</b> avec '+th+' absences non justifiées ou plus sur un cycle (surligné'+(flagged>1?'s':'')+'). ':'Aucun élève n’atteint '+th+' absences non justifiées sur un cycle. ')+'Touchez une ligne pour le bilan annuel · touchez un en-tête pour trier.<br><b>Pts</b> points retirés'+(year?'':' (barre = part de la note comportementale)')+' · <b>Abs.</b> absences · <b>NJ</b> non justifiées · <b>Autres</b> (seulement si ≠ 0) : ST sans tenue · M malade non justifié · R retards · MJ malade justifié · AJ justifiées'+(year?' · C1… points retirés par cycle':' · max note comportementale atteinte')+'.';"
+],
+[
+"  if(capN)lg.push('<b style=\"color:var(--bad)\">'+plural(capN,'élève')+' à la note comportementale maximale.</b>');",
+"  if(capN)$('repLegend').innerHTML+='<br><b style=\"color:var(--bad)\">'+plural(capN,'élève')+' à la note comportementale maximale.</b>';"
+],
+[
+"  if(dspN)lg.push('<span class=\"chip dchip\">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.');$('repLegend').innerHTML=lg.join('<br>');$('repLegend').classList.toggle('hidden',!lg.length);",
+"  if(dspN)$('repLegend').innerHTML+='<br><span class=\"chip dchip\">🩺</span> '+(dspN>1?dspN+' élèves dispensés':'1 élève dispensé')+' de sport.';"
+]
+]
