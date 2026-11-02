@@ -70,7 +70,6 @@ try{var a=JSON.parse(localStorage.getItem('cahier.authOk')||'null');if(!(a&&a.ui
   --radius:14px;--shadow:0 1px 2px rgba(16,24,40,.06),0 2px 8px rgba(16,24,40,.05);
 }
 *{box-sizing:border-box}
-/* ===== Police arabe (choix dans Paramètres) : uniquement les caractères arabes (unicode-range), chargée à la demande ===== */
 @font-face{font-family:"CJ-noto";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/NotoSansArabic-Regular.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
 @font-face{font-family:"CJ-noto";font-weight:700;font-style:normal;font-display:swap;src:url(vendor/NotoSansArabic-Bold.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
 @font-face{font-family:"CJ-amiri";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/Amiri-Regular.ttf) format("truetype");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}
@@ -91,19 +90,15 @@ header.top .h-txt{flex:1 1 auto;min-width:0;line-height:1.2;display:flex;align-i
 header.top .h-ver{font-size:11.5px;font-weight:700;letter-spacing:.3px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);white-space:nowrap}
 header.top .h-ttl b{color:#FFB37A;font-weight:800}
 header.top .h-ver,#dkSide .h-ver{display:none!important}header.top .h-title+.sub{margin-top:6px}/* 2zb : numéro de version retiré de l’en-tête (toujours dans Paramètres › À propos) */
-/* 1.29.1 (-i) : logo TATABO3 adapté au thème — Actuel : orange/blanc/marine ; Vert terrain : jaune/blanc/vert ; Néon sport : citron/blanc/noir (icône installée inchangée : 07·2 orange) */
 :root{--wmA:#E75C04;--wmI:#FFFFFF;--wmD:#0A3768;--mkB:#E75C04;--mkT:#FFFFFF;--mkL:#0A3768}
 html[data-theme="terrain"]{--wmA:#FCD34D;--wmI:#FFFFFF;--wmD:#0F4A27;--mkB:#FCD34D;--mkT:#0F4A27;--mkL:#1F8A4C}
 html[data-theme="neon"]{--wmA:#C6FF00;--wmI:#FFFFFF;--wmD:#0A0A12;--mkB:#14141F;--mkT:#C6FF00;--mkL:#00E5FF}
 svg.wm{aspect-ratio:718.9/131.1;overflow:visible;flex:0 0 auto}.h-ttl svg.wm{width:132px}.ln-brand svg.wm{width:148px}.ln-foot .ln-brand svg.wm{width:121px}#gate .g-brand svg.wm{width:197px}#splash .sp-name svg.wm{width:263px}svg.t3m{display:block;flex:0 0 auto;overflow:hidden}
-/* 1.29.1 (-j) : coins de l’icône — fond (tracé arrondi, sans rx), contour et halo partagent le même rayon 22 % partout (splash, en-tête, connexion, accueil, écran du code) ; aucun coin carré, y compris Safari iOS */
 html svg.t3m{border-radius:22%!important;overflow:hidden;background:transparent!important;-webkit-mask-image:none}
-/* 1.29.1 (-k) : plus aucune ombre « boîte » (box-shadow) sur l’icône : contour dessiné dans le SVG (même tracé arrondi), ombre et halo en filter:drop-shadow (suivent la forme arrondie, aussi sur Safari/WebKit) */
 :root{--mkR:rgba(255,255,255,.32);--mkRw:3px;--mkSh:drop-shadow(0 4px 10px rgba(0,0,20,.35))}
 html[data-theme="terrain"]{--mkR:rgba(255,255,255,.45);--mkSh:drop-shadow(0 4px 10px rgba(0,25,10,.4))}
 html[data-theme="neon"]{--mkR:#00E5FF;--mkRw:4px;--mkSh:drop-shadow(0 0 7px rgba(0,229,255,.6)) drop-shadow(0 6px 14px rgba(0,0,0,.55))}
 html svg.t3m,html #splash .sp-logo,html #gate .g-logo,html body header.top .h-logo,html #cjLock svg.t3m{box-shadow:none!important;filter:var(--mkSh)}
-/* splash : l’enveloppe .sp-ic porte l’animation et l’ombre/halo (drop-shadow) ; l’icône est découpée au même rayon (clip-path), sans transformation propre (calque WebKit/iOS) */
 html #splash .sp-ic{display:block;width:clamp(150px,42vw,190px);margin:0 auto;border-radius:22%;background:transparent;box-shadow:none;filter:var(--mkSh);-webkit-filter:var(--mkSh);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}
 html #splash .sp-ic .sp-logo{width:100%;height:auto;margin:0;opacity:1;transform:none;animation:none;filter:none!important;-webkit-filter:none!important;clip-path:inset(0 round 22%);-webkit-clip-path:inset(0 round 22%)}
 @media (prefers-reduced-motion:reduce){html #splash .sp-ic{transform:none;animation:spFade .3s ease-out forwards}}
@@ -111,7 +106,6 @@ html #splash .sp-ic .sp-logo{width:100%;height:auto;margin:0;opacity:1;transform
 .ln-brand svg.t3m{width:36px;height:36px;border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}.ln-foot .ln-brand svg.t3m{width:28px;height:28px;border-radius:7px}
 .ln-art svg.t3m{width:108px;height:108px;border-radius:26px;box-shadow:0 20px 50px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.2)}
 @media (min-width:860px){.ln-art svg.t3m{width:250px;height:250px;border-radius:56px}}
-/* 1.29.1 (-h) : nom TATABO3 — mot-symbole vectoriel (Mix C pour fonds marine) */
 .wm{display:block;width:auto;max-width:100%}.h-ttl .wm{height:24px}.ln-brand .wm{height:27px;width:auto;border-radius:0;box-shadow:none}.ln-foot .ln-brand .wm{height:22px}#gate .g-brand .wm{height:36px;margin:0 auto}#splash .sp-name .wm{height:48px;margin:0 auto}
 @media (min-width:480px){header.top .sub{padding-left:44px}}
 header.top .sub{font-size:12.5px;opacity:.85}
@@ -132,7 +126,6 @@ label.f{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-w
 input[type=text],input[type=tel],input[type=date],input[type=number],input[type=search],input[type=email],input[type=password],select,textarea{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid #cfd6e0;border-radius:10px;background:#fff;color:var(--ink);min-height:46px}
 textarea{min-height:80px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-offset:0;border-color:var(--pri-2)}
-/* ===== Système de boutons (depuis 1.24.0) : primaire, secondaire, fantôme, danger, accent ; cibles tactiles ≥ 44 px ===== */
 .btn{--b-bg:var(--pri);--b-fg:#fff;--b-bd:transparent;--b-bg-h:var(--pri-d);font:inherit;font-size:15px;font-weight:650;letter-spacing:.1px;border:1px solid var(--b-bd);border-radius:var(--btn-r);padding:11px 16px;min-height:var(--btn-h);cursor:pointer;background:var(--b-bg);color:var(--b-fg);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-shadow:0 1px 2px rgba(16,24,40,.08);transition:background-color .15s,border-color .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 @media (hover:hover){.btn:hover{background:var(--b-bg-h)}}
 .btn:active{transform:translateY(1px);filter:brightness(.95)}
@@ -160,7 +153,6 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-o
 .chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.ok{background:var(--ok-soft);color:var(--ok)}
 .fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:30px;box-shadow:0 6px 16px rgba(11,58,110,.35);cursor:pointer}
 @media(min-width:900px){.fab{bottom:28px}}
-/* attendance */
 .att{border-bottom:1px solid var(--line);padding:6px 0}
 .att:last-child{border-bottom:0}
 .att-main{display:flex;align-items:center;gap:10px;min-height:60px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;padding:4px 2px;border-radius:10px}
@@ -184,7 +176,6 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-o
 .savebar .state{flex:1;font-size:13.5px;color:var(--muted)}
 .savebar .state.dirty{color:var(--warn);font-weight:650}
 .savebar .state.saved{color:var(--ok);font-weight:650}
-/* tables */
 .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
@@ -204,7 +195,6 @@ td.z{color:#b0b8c4}
 .hist li{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
 .hist li .d{flex:0 0 auto;font-weight:600;min-width:118px}
 .hist li .r{flex:1;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis}
-/* modal */
 .modal{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center}
 .modal.open{display:flex}
 .sheet{background:#fff;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));animation:up .18s ease-out}
@@ -229,7 +219,6 @@ td.z{color:#b0b8c4}
 a.tel{color:var(--pri);font-weight:600;text-decoration:none}
 .legend{font-size:12.5px;color:var(--muted);margin-top:8px}
 .hidden{display:none!important}
-/* ---- v2: register grid ---- */
 .pchips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;margin-top:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .pchips::-webkit-scrollbar{display:none}
 .pchip{flex:0 0 auto;border:1px solid var(--pri-line);background:#fff;color:var(--pri);border-radius:999px;padding:8px 14px;min-height:40px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;white-space:nowrap}
@@ -279,7 +268,6 @@ table.grid tfoot .nm{z-index:4;background:#f1f4f8}
 .preview{background:#f8fafc;border:1px dashed #cfd6e0;border-radius:10px;padding:10px;font-size:13.5px;margin-top:10px;white-space:pre-wrap;max-height:160px;overflow:auto}
 .alert-list li{display:flex;gap:10px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line);cursor:pointer}
 .alert-list li:last-child{border-bottom:0}
-/* 1.29.2 : alertes compactes, comme « Élèves à surveiller » */
 #repAlerts .wt-h{margin:0}#repAlerts .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:8px}
 #repAlerts .wt-h button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}#repAlerts .wt-t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 #repAlerts .wt-c{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#repAlerts.open .wt-c{transform:rotate(180deg)}#repAlerts.open #alertBody{margin-top:6px}
@@ -336,7 +324,6 @@ table.grid th.t.raw{color:#667085;font-weight:600}table.grid td.t.raw.nosex inpu
 .capline .capold{flex:1 1 100%;color:var(--warn)}
 .clshead{font-size:12px;color:var(--muted);font-weight:650;border-bottom:1px solid var(--line)}
 table.grid td.c.K{background:#faf5ff;color:#9333ea}
-/* Dispensé (exempted from sport): purple cell struck by a vertical line; marks stay visible on top */
 table.grid td.c.dsp{background:var(--dsp);color:var(--dsp-ink)}
 table.grid td.c.dsp.nh,table.grid td.c.dsp.P{color:rgba(31,41,55,.55)}
 table.grid td.c.dsp.A{box-shadow:inset 0 0 0 3px var(--bad),inset 0 0 0 5px #fff}table.grid td.c.dsp.J{box-shadow:inset 0 0 0 3px #2563a8,inset 0 0 0 5px #fff}
@@ -350,13 +337,10 @@ table.grid th.nm .dspb{font-size:12px;margin-right:2px}
 #dspBtns .btn.vio{background:var(--dsp-d)}
 body.cj-ro #detDsp{display:none!important}
 .lg.K{background:#faf5ff;color:#9333ea}.chip.kchip{background:#faf5ff;color:#9333ea}
-/* v5: cycles, timetable, home */
 nav.tabs button{font-size:11.5px;padding:8px 2px 10px;min-width:0;letter-spacing:-.1px;white-space:nowrap}
 nav.tabs button svg{width:23px;height:23px}
-/* 1.28 : 6 onglets (Note procéd. entre Absences et Rapports) — largeur selon le libellé, texte réduit sur téléphone : rien n’est coupé à 375 px (ni à 320 px) */
 nav.tabs button{flex:1 1 auto}
 @media (max-width:420px){nav.tabs button{font-size:10.5px;letter-spacing:-.25px;padding:8px 1px 10px}nav.tabs button svg{width:22px;height:22px}}
-/* 1.29.0 (-f) : barre d’onglets style C (choix du propriétaire) — tuiles arrondies en dégradé bleu (logo B), onglet actif = tuile orange avec ombre douce et libellé orange ; icônes centrées sur les libellés ; affichage seul */
 nav.tabs{background:#fff;padding-top:4px;padding-bottom:max(4px,env(safe-area-inset-bottom))}
 nav.tabs button{justify-content:flex-start;align-items:center;text-align:center;gap:4px;min-height:62px;color:#0A3768;font-weight:500}
 nav.tabs button .ti{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#2F6FBF,#0A3768);color:#fff;flex:none;transition:transform .15s,box-shadow .15s}
@@ -394,11 +378,9 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 #homeStats .s4 .stat{padding:8px 4px}
 #homeStats .stat b{font-size:22px}
 #homeStats .stat span{font-size:12px}
-/* ===== 1.28.0 : photo de l’élève (fiche : en face de Classe / Code / Sexe / Naissance ; liste : avatar rond) ===== */
 .idcard{display:flex;align-items:flex-start;gap:12px}
 .idcard .kv{flex:1;min-width:0}
 .kv.kv2:empty{display:none}
-/* ===== 1.28.0 : tableau de service modernisé (purement visuel : mêmes créneaux, même formulaire, mêmes calculs) ===== */
 #ttCard .tw-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 #ttCard .tw-h h2{flex:1;margin:0}
 .tw-add{flex:0 0 auto;min-height:44px;border:0;border-radius:999px;padding:0 16px 0 12px;font:inherit;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(135deg,#D85603,#B54703);box-shadow:0 6px 14px -6px rgba(181,71,3,.7);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
@@ -467,7 +449,6 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 .phc-wrap:after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.65);pointer-events:none}
 #phZoom{width:100%;accent-color:var(--pri);min-height:44px}
 @media (prefers-reduced-motion:reduce){.phbox{transition:none}.phbox:active{transform:none}}
-/* ===== 1.28.0 : Accueil modernisé (purement visuel : mêmes données, mêmes écrans) ===== */
 #homeBody .card{border-radius:18px}
 .hhero{position:relative;overflow:hidden;color:#fff;background:radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad);border-radius:22px;padding:18px 16px 16px;margin:0 0 12px;box-shadow:0 10px 26px -12px rgba(11,58,110,.55),0 2px 6px rgba(11,58,110,.18)}
 .hhero:after{content:"";position:absolute;right:-46px;bottom:-60px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.10),rgba(255,255,255,0) 70%);pointer-events:none}
@@ -509,9 +490,7 @@ table.grid thead th.man small{color:var(--warn);font-style:italic;text-decoratio
 #homeToday .occ-t{background:#fff;border:1px solid var(--pri-line);border-radius:11px;padding:5px 0;color:var(--pri)}
 #homeToday .occ li.occ-as .occ-t{border-color:#f2d7a6;color:var(--acc-d)}
 #homeStats .stat{border:0;background:linear-gradient(180deg,#F7F9FC,#EEF2F8);border-radius:14px}
-/* ===== 1.28.0 (-l) : trombinoscope (Élèves › Trombinoscope) ===== */
 .trb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1F5FA8,#0B3A6E);border-color:transparent;color:#fff;border-radius:999px;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}
-/* 1.29.2 : couleur du bouton Trombinoscope selon le thème — Actuel bleu d’origine, Vert terrain jaune TATABO3, Néon citron */
 html[data-theme="terrain"] .trb-btn{background:#FCD34D;color:#1A1A1A;border-color:transparent;box-shadow:0 6px 14px -8px rgba(120,90,0,.6)}html[data-theme="terrain"] .trb-btn:hover{background:#FBBF24}
 html[data-theme="neon"] .trb-btn{background:#C6FF00;color:#0A0A12;border-color:transparent;box-shadow:0 0 0 1px rgba(198,255,0,.5),0 0 18px rgba(198,255,0,.35)}html[data-theme="neon"] .trb-btn:hover{background:#D4FF3D}
 .trb-btn svg{width:19px;height:19px}
@@ -527,7 +506,6 @@ html[data-theme="neon"] .trb-btn{background:#C6FF00;color:#0A0A12;border-color:t
 .trb-ic i{display:block;border-radius:2px}
 .trb-ic.big{grid-template-rows:none;grid-template-columns:1fr 1fr;gap:3px}.trb-ic.big i{background:#fff;border:1.5px solid #1c7ed6;border-radius:4px}
 @media (prefers-reduced-motion:reduce){.trb-opt{transition:none}}
-/* ===== 1.28.0 (-k) : Statistiques globales modernisées + évolution semaine précédente → semaine en cours (affichage seulement) ===== */
 #homeStats .hs-cap{margin:-4px 0 10px;line-height:1.35}
 .hs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 @media(min-width:560px){.hs-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -552,7 +530,6 @@ html[data-theme="neon"] .trb-btn{background:#C6FF00;color:#0A0A12;border-color:t
 .hs.k-A,.hs.k-U{--c:#C2262E;--s:#FDEBEC}.hs.k-S{--c:#0F766E;--s:#E3F4F1}.hs.k-M{--c:#7E22CE;--s:#F3E8FF}.hs.k-L{--c:#B86E00;--s:#FFF3DC}.hs.k-K{--c:#9333EA;--s:#FAF5FF}.hs.k-held{--c:#0B3A6E;--s:#E8EFF8}
 @keyframes hsGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @media (prefers-reduced-motion:reduce){.hs-bars rect{animation:none}}
-/* 1.29.0 (-g) : Accueil compact sur téléphone (demande du propriétaire) — les 6 boutons d’accès rapide visibles sans défiler (iPhone 390×844, SE 375×667, Safari ≈ 664 px utiles, PWA) ; mêmes contenus, texte ≥ 11 px ; CSS seul */
 @media (max-width:559px){
 header.top{padding-top:max(8px,env(safe-area-inset-top));padding-bottom:8px}
 header.top .sub{font-size:12px;line-height:1.25}
@@ -576,22 +553,17 @@ nav.tabs button{min-height:56px;padding-top:5px;padding-bottom:5px;gap:3px}
 nav.tabs button .ti{width:32px!important;height:32px!important;border-radius:10px}
 nav.tabs button .ti svg{width:20px!important;height:20px!important}
 }
-/* 1.29.0 (-h) : barre d’onglets — 6 colonnes de même largeur (icônes à égale distance, barre centrée) ; le libellé ne pousse plus la mise en page (10–11 px, 2 lignes au besoin) ; CSS seul */
 nav.tabs{justify-content:center}
 nav.tabs button{flex:1 1 0!important;min-width:0!important;width:0;padding-left:1px!important;padding-right:1px!important;white-space:normal!important;line-height:1.1;text-align:center;overflow:hidden}
 @media (max-width:420px){nav.tabs button{font-size:10px!important;letter-spacing:-.3px!important}}
 @media (max-width:350px){nav.tabs button{padding-left:0!important;padding-right:0!important;letter-spacing:-.4px!important}}
 @media (min-width:421px) and (max-width:559px){nav.tabs button{font-size:11px!important;letter-spacing:-.2px!important}}
-/* 1.29.0 (-i) : tuile « Relevé de notes » — icône bleue comme les autres tuiles secondaires (demande du propriétaire) ; « Faire l’appel » reste orange */
 .qa.acc .qi{background:linear-gradient(135deg,#1F5FA8,#0B3A6E);box-shadow:0 4px 10px -4px rgba(11,58,110,.6)}
-/* 1.29.0 (-i) : motif 3 « marquages de terrain » (choix du propriétaire) derrière la carte de bienvenue — traits blancs à faible opacité ; image en ligne, affichage seul */
 .hhero{background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22340%22 viewBox=%220 0 400 340%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cg fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.12%22 stroke-width=%221.7%22%3E%3Crect x=%228%22 y=%228%22 width=%22384%22 height=%22324%22 rx=%224%22/%3E%3Cpath d=%22M200 8v324%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%2246%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%223%22 fill=%22%23fff%22 fill-opacity=%22.14%22/%3E%3Cpath d=%22M392 108h-58v124h58%22/%3E%3Cpath d=%22M392 140h-24v60h24%22/%3E%3Cpath d=%22M334 140a30 30 0 0 0 0 60%22/%3E%3Ccircle cx=%22378%22 cy=%22170%22 r=%225%22/%3E%3Cpath d=%22M8 50h70a120 120 0 0 1 0 240H8%22/%3E%3Cpath d=%22M8 122h56v96H8%22/%3E%3Ccircle cx=%2264%22 cy=%22170%22 r=%2222%22 stroke-dasharray=%225 6%22/%3E%3C/g%3E%3C/svg%3E") center / cover no-repeat,radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad)}
-/* 1.29.1 : bandeau de mise à jour */
 #updBar{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:80;display:none;align-items:center;justify-content:space-between;gap:10px;background:#0A3768;color:#fff;border-radius:14px;padding:10px 10px 10px 14px;font-size:14px;font-weight:600;box-shadow:0 8px 22px -8px rgba(7,42,80,.6)}
 #updBar.on{display:flex}
 #updBar button{min-height:44px;border:0;border-radius:11px;padding:0 14px;font:inherit;font-weight:700;color:#fff;background:linear-gradient(135deg,#FF8A3D,#E75C04);cursor:pointer;white-space:nowrap}
 @media(min-width:900px){#updBar{left:auto;right:20px;bottom:20px;max-width:420px}}
-/* 1.29.1 (-b) : bouton « Télécharger tous les essais » (style C : tuile bleue, zone de toucher 44 px) */
 table.grid th .essdl{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:2px auto -6px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 table.grid th .essdl .ti{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#2F6FBF,#0A3768);color:#fff;box-shadow:0 2px 6px -2px rgba(11,58,110,.55)}
 table.grid th .essdl svg{width:17px;height:17px}
@@ -644,7 +616,6 @@ input[type=time]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border
 .slot b,.slot span,.slot small{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .slot b{font-size:12px}.slot span{font-size:12.5px}.slot small{font-size:10.5px}
 .wk-row{min-height:40px}
-/* v7: import, ajouter, reminder */
 .bulkseg{display:flex;margin:4px 0 2px}.bulkseg button{flex:1}
 .filelist{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
 .preview .imp{white-space:normal;font-family:inherit}
@@ -692,7 +663,6 @@ table.grid td.holc .holv{display:inline-block;writing-mode:vertical-rl;transform
 table.grid td.holf{background:#eef0f3}
 table.grid th.holh,table.grid td.holc{min-width:42px}
 td.bad-t{color:var(--bad);font-weight:700}
-/* sync */
 header.top{padding-right:112px}
 .syncpill{position:absolute;right:12px;top:max(12px,env(safe-area-inset-top));display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;max-width:100px;white-space:nowrap}
 .syncpill .dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1;flex:0 0 auto}
@@ -722,7 +692,6 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 #modCard textarea{width:100%;min-height:150px;font:inherit;font-size:14px;margin-top:6px}
 #modCard .serr{color:var(--bad);font-weight:600}
 
-/* ===== Splash (every launch) ===== */
 #splash{position:fixed;inset:0;z-index:1000;background-color:#0B3A6E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:44px 44px,cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;cursor:pointer;transition:opacity .4s ease;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}
 #splash.out{opacity:0;pointer-events:none}
 #splash .sp-logo{display:block;margin:0 auto;width:clamp(150px,42vw,190px);height:auto;aspect-ratio:1;border-radius:22%;box-shadow:0 14px 40px rgba(0,0,20,.45),0 0 0 1px rgba(255,255,255,.22);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}
@@ -740,9 +709,7 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
   #splash{transition:opacity .25s}
 }
 @keyframes spFade{to{opacity:1}}
-/* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */
 #landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}
-/* 1.29.1 (-s) : formulaire « Ajouter un créneau » replié par défaut et compact ; champ Fin (iOS) ne déborde plus */
 #ttForm{padding:6px 10px;margin-top:10px}#ttForm h3{margin:0}#ttForm h3:before{width:28px;height:28px;flex-basis:28px}
 #ttTog{all:unset;box-sizing:border-box;flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;cursor:pointer;font:inherit;font-weight:700;font-size:15.5px;color:var(--ink);border-radius:10px}
 #ttTog:focus-visible{outline:3px solid var(--acc);outline-offset:2px}.tt-chev{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#ttTog[aria-expanded="true"] .tt-chev{transform:rotate(180deg)}
@@ -752,7 +719,6 @@ body.cj-ro #snapCard,body.cj-ro #syncCard,body.cj-ro #modCard,body.cj-ro #addStu
 #ttForm select,#ttForm input{width:100%;min-width:0;max-width:100%;box-sizing:border-box;min-height:44px;height:44px;padding:8px 10px;font-size:16px;border-radius:10px}
 #ttForm input[type=time]{-webkit-appearance:none;appearance:none;display:block;text-align:left;line-height:26px}#ttForm input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
 #ttForm .actions{margin-top:8px;gap:8px}#ttForm .actions .btn{min-height:44px;padding-top:8px;padding-bottom:8px}
-/* 1.29.1 (-u) : Paramètres façon réglages iOS (liste groupée + sous-pages) — affichage seulement */
 #view-settings>.card[data-ps]{display:none}
 #view-settings.ps-sub>.card[data-ps].ps-on{display:block}
 #view-settings.ps-sub>.card[data-ps].ps-on.hidden{display:none}
@@ -783,7 +749,6 @@ html[data-theme="neon"] .ps-dz b{color:#FF8A8A}
 .ps-back{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;min-height:44px;padding:0 8px 0 4px;font:inherit;font-size:16px;font-weight:700;color:var(--pri);cursor:pointer;border-radius:10px}
 .ps-back:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 html[data-theme="neon"] .ps-back{color:#C6FF00}
-/* 1.29.1 (-r) : tableau de service — variante B (onglets de jours + frise verticale), purement visuel */
 .tw-chip{position:relative;padding-bottom:8px}.tw-chip.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.sel span{color:rgba(255,255,255,.9)}
 .tw-chip.today:not(.sel){background:#fff;color:var(--ink);border:2px solid var(--acc-d);box-shadow:none}.tw-chip.today:not(.sel) span{color:var(--muted)}
 .tw-dots{display:flex;gap:3px;justify-content:center;min-height:6px;margin-top:3px}.tw-dots i{width:6px;height:6px;border-radius:50%;background:var(--c)}.tw-chip.sel .tw-dots i{box-shadow:0 0 0 1.5px #fff}
@@ -810,11 +775,9 @@ html[data-theme="neon"] #ttCard{--on:#0A0A12}html[data-theme="neon"] .tw-chip.se
 html[data-theme="neon"] .tw-chip.today:not(.sel){background:var(--card);border-color:#C6FF00}html[data-theme="neon"] .tw-card{background:var(--card);border-color:#2A2F3C}
 html[data-theme="neon"] #ttCard .tw-now,html[data-theme="neon"] .tw-nowln span{background:#C6FF00;color:#0A0A12}html[data-theme="neon"] .tw-nowln{border-top-color:#C6FF00}html[data-theme="neon"] #ttCard .tw-slot.cur .tw-card{border-color:#C6FF00;box-shadow:0 0 0 2px #C6FF00}
 html[data-theme="neon"] .tw-dot{box-shadow:0 0 0 3px var(--card)}
-/* 1.29.1 (-q) : carte « Élèves à surveiller » repliable */
 #homeWatch{display:none!important}#homeWatch .wt-h{margin:0}#homeWatch .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:10px}
 #homeWatch .wt-h button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}#homeWatch .wt-t{display:flex;align-items:center;gap:8px}
 #homeWatch .wt-c{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#homeWatch.open .wt-c{transform:rotate(180deg)}#homeWatch.open #watchBody{margin-top:8px}
-/* 1.29.1 (-o) : sports collectifs — cases à toucher et pavé N1…N4 */
 #procWrap td.g.scg{padding:2px}#procWrap .scb{font:inherit;width:100%;min-width:52px;min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;padding:3px 4px}
 #procWrap .scb small{font-size:11px;font-weight:700;color:var(--muted);margin-top:1px;white-space:nowrap}#procWrap .scb.e{color:var(--muted);font-weight:600}
 .scpad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 4px}.scpad .h{text-align:center;font-weight:800;font-size:15px;color:var(--pri)}
@@ -824,7 +787,6 @@ html[data-theme="neon"] .tw-dot{box-shadow:0 0 0 3px var(--card)}
 .scmatch{margin-top:12px}.scmt{font-weight:700;margin-bottom:8px}.scm{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 html[data-theme="neon"] .scsheet{background:#14161C}html[data-theme="neon"] .scpad button,html[data-theme="neon"] .scm button,html[data-theme="neon"] #procWrap .scb{background:#1B1E27}
 .scfree{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;color:var(--muted)}.scfree input{width:84px;min-height:40px;font:inherit;font-weight:700;text-align:center;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink)}
-/* 1.29.1 (-p) : couleurs des niveaux (variante B) — N1 rouge, N2 orange, N3 vert-citron, N4 vert : en-tête plein (texte blanc), bordure et valeur colorées ; grille : barre colorée à gauche ; note sans code : neutre */
 :root{--lv1:#B91C1C;--lv2:#C2410C;--lv3:#4D7C0F;--lv4:#15803D;--lv1h:#B91C1C;--lv2h:#C2410C;--lv3h:#4D7C0F;--lv4h:#15803D;--lv1b:#DC2626;--lv2b:#EA580C;--lv3b:#84CC16;--lv4b:#22C55E}
 html[data-theme="neon"]{--lv1:#FF8A8A;--lv2:#FFB15C;--lv3:#D4FF3A;--lv4:#4BE38F;--lv1h:#C62828;--lv2h:#C2410C;--lv3h:#4D7C0F;--lv4h:#15803D;--lv1b:#FF5C5C;--lv2b:#FF9F3A;--lv3b:#C6FF00;--lv4b:#2ED47A}
 .scpad .h{border-radius:8px;padding:4px 0;color:#fff}.scpad .h.l1{background:var(--lv1h)}.scpad .h.l2{background:var(--lv2h)}.scpad .h.l3{background:var(--lv3h)}.scpad .h.l4{background:var(--lv4h)}
@@ -833,7 +795,6 @@ html[data-theme="neon"]{--lv1:#FF8A8A;--lv2:#FFB15C;--lv3:#D4FF3A;--lv4:#4BE38F;
 .scpad button.on{box-shadow:none;outline:3px solid var(--ink);outline-offset:2px}
 #procWrap .scb.l1{border-left:5px solid var(--lv1b)}#procWrap .scb.l2{border-left:5px solid var(--lv2b)}#procWrap .scb.l3{border-left:5px solid var(--lv3b)}#procWrap .scb.l4{border-left:5px solid var(--lv4b)}
 .sccalc{margin-top:12px;font-size:14px;line-height:1.45;color:var(--ink)}.sccalc b{color:var(--pri)}
-/* 1.29.1 (-n) : icônes de la page d’accueil toutes de la même couleur par thème (Actuel : bleu-gris #0B3A6E sur tuile #E8EFF8 ; Vert terrain : vert sur tuile vert pâle ; Néon : cyan sur tuile cyan translucide) */
 :root{--ln-ic-bg:#E8EFF8;--ln-ic-fg:#0B3A6E}html[data-theme="terrain"]{--ln-ic-bg:#E3F1E7;--ln-ic-fg:#1C6B3A}html[data-theme="neon"]{--ln-ic-bg:rgba(0,229,255,.13);--ln-ic-fg:#00E5FF}
 #landing .ln-ic,#landing .ln-card:nth-child(3n+2) .ln-ic,#landing .ln-t .ln-ic{background:var(--ln-ic-bg);color:var(--ln-ic-fg)}
 html[data-theme="neon"] .ln-hero,html[data-theme="neon"] #gate{background-color:#0A0A12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),radial-gradient(90% 60% at 100% 0%,rgba(0,229,255,.22),transparent 60%),radial-gradient(80% 55% at 0% 100%,rgba(198,255,0,.14),transparent 60%),linear-gradient(#0A0A12,#0A0A12);background-size:44px 44px,cover,cover,cover}
@@ -856,7 +817,6 @@ html[data-theme="terrain"] .ln-hero,html[data-theme="terrain"] #gate{background-
 html[data-theme="terrain"] .ln-kicker{color:#FDE68A}html[data-theme="terrain"] .ln-brand b,html[data-theme="terrain"] .ln-h1 b,html[data-theme="terrain"] .ln-foot b{color:#FCD34D}html[data-theme="terrain"] .ln-lead{color:#fff}
 html[data-theme="terrain"] #gate .lnk{color:#166534}
 html[data-theme="neon"] .ln-foot{background:#06060C;border-top:1px solid #2C2F3A}html[data-theme="neon"] .ln-foot a{color:#00E5FF}html[data-theme="terrain"] .ln-foot{background:#0F3A22}
-/* 1.29.1 (-i) : intro (splash) selon le thème — fond, motif, icône, mot-symbole et version lisibles (AA) ; thème lu avant le premier affichage (script de tête) */
 html #splash .sp-name{animation-name:spFade}html #splash .sp-ver{animation-name:spFade;color:var(--sp-ver,#fff);opacity:0}
 html[data-theme="terrain"]{--sp-ver:#FFFFFF}html[data-theme="neon"]{--sp-ver:#C6FF00}
 html[data-theme="terrain"] #splash{background-color:#14532D;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),linear-gradient(160deg,#1C6B3A 0%,#0F4A27 100%)}
@@ -864,7 +824,6 @@ html[data-theme="terrain"] #splash .sp-logo{box-shadow:0 14px 40px rgba(0,25,10,
 html[data-theme="neon"] #splash{background-color:#0A0A12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),radial-gradient(90% 60% at 100% 0%,rgba(0,229,255,.22),transparent 60%),radial-gradient(80% 55% at 0% 100%,rgba(198,255,0,.14),transparent 60%),linear-gradient(#0A0A12,#0A0A12);background-size:44px 44px,cover,cover,cover}
 html[data-theme="neon"] #splash .sp-logo{box-shadow:0 0 0 2px #00E5FF,0 0 30px rgba(0,229,255,.45),0 14px 40px rgba(0,0,0,.6)}
 html[data-theme="terrain"] #splash video,html[data-theme="terrain"] #splash{color:#fff}html[data-theme="neon"] #splash video{background:#0A0A12}html[data-theme="terrain"] #splash video{background:#14532D}
-/* ===== Onboarding (first use) ===== */
 #onb{position:fixed;inset:0;z-index:900;background-color:#0B3A6E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:44px 44px,cover;display:flex;flex-direction:column;color:#fff;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:onbIn .35s ease-out}
 #onb.out{opacity:0;transition:opacity .3s}
 @keyframes onbIn{from{opacity:0}to{opacity:1}}
@@ -886,7 +845,6 @@ html[data-theme="terrain"] #splash video,html[data-theme="terrain"] #splash{colo
 #onb .onb-next{background:#fff;color:var(--pri);border:0;border-radius:12px;font:inherit;font-size:16px;font-weight:700;padding:12px 22px;min-height:48px;min-width:132px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,30,.25)}
 body.cj-ro #onbCard{display:none!important}
 
-/* ===== Login gate (mandatory sign-in) ===== */
 html.cj-locked body{overflow:hidden}
 html.cj-locked header.top,html.cj-locked main,html.cj-locked nav.tabs,html.cj-locked .fab,html.cj-locked #roBar,html.cj-locked .modal,html.cj-locked #toast,html.cj-locked #onb{visibility:hidden!important}
 #gate{position:fixed;inset:0;z-index:950;display:none;overflow-y:auto;background-color:#0B3A6E;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E"),var(--grad);background-size:44px 44px,cover;color:#fff;padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
@@ -921,7 +879,6 @@ html.cj-sa #gate .g-back{display:none}#gate .g-back:focus-visible{outline:none;b
 #gate .g-load{display:flex;align-items:center;gap:12px;justify-content:center;padding:14px 0;color:#344054;font-weight:600}
 #gate .spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--pri-soft);border-top-color:var(--pri);animation:gspin .8s linear infinite}
 @media (max-height:640px){#gate .g-logo{width:64px;height:64px;border-radius:16px}#gate .g-brand{font-size:22px}}
-/* ===== Page d’accueil publique (avant connexion ; HTML statique indexable) ===== */
 #landing{display:none}
 html.cj-locked.cj-land #landing{display:block;position:fixed;inset:0;z-index:960;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);color:var(--ink);scroll-behavior:smooth}
 html.cj-locked.cj-land #gate{display:none}
@@ -971,7 +928,6 @@ html.cj-locked.cj-land #gate{display:none}
 .ln-foot a{color:#fff;font-weight:600;display:inline-flex;align-items:center;min-height:44px}
 .ln-foot .ln-brand{font-size:16px}.ln-foot .ln-brand img{width:28px;height:28px;border-radius:7px}
 @keyframes gspin{to{transform:rotate(360deg)}}
-/* ---- v16: exports PDF + groupes de travail ---- */
 .gbadge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:5px;color:#fff;font-size:10.5px;font-weight:800;margin-inline-end:4px;vertical-align:1px;padding:0 3px;line-height:1}
 table.grid tr.ghead th.nm{background:var(--gs);color:var(--gc);font-weight:800;font-size:12.5px;box-shadow:inset 5px 0 0 var(--gc);cursor:default;white-space:normal;line-height:1.15;padding:5px 6px 5px 10px;border-top:2px solid var(--gc)}
 table.grid tr.ghead th.nm small{display:block;font-weight:650;font-size:10.5px;color:var(--ink);opacity:.75}
@@ -987,7 +943,6 @@ table.grid tr.ghead td{background:var(--gs);border-top:2px solid var(--gc);heigh
 .switch input{width:20px;height:20px;accent-color:var(--pri);margin:0}
 .btn.sm{min-height:36px;padding:6px 12px;font-size:13.5px}
 @media (pointer:coarse){.btn.sm,.snaprow .btn,#roBar .btn,#modCard .mrow .btn{min-height:44px}.btn.ic{min-height:44px;min-width:44px}}
-/* zone dangereuse : visuellement distincte (fonctionnement inchangé) */
 .card.danger-zone{border:1.5px solid #f3b4ba;background:linear-gradient(0deg,#fff 0%,#fff 55%,#fff5f6 100%);box-shadow:0 1px 2px rgba(198,47,58,.08)}
 .card.danger-zone h2{color:var(--bad);display:flex;align-items:center;gap:8px}
 .card.danger-zone h2 svg{width:20px;height:20px}
@@ -2141,7 +2096,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.2';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
-var APP_VER='cahier-v29-2c-test';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-2c-test2';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}

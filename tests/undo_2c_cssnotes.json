@@ -1,0 +1,182 @@
+[
+[
+"*{box-sizing:border-box}\n@font-face{font-family:\"CJ-noto\";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/NotoSansArabic-Regular.ttf) format(\"truetype\");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}",
+"*{box-sizing:border-box}\n/* ===== Police arabe (choix dans Paramètres) : uniquement les caractères arabes (unicode-range), chargée à la demande ===== */\n@font-face{font-family:\"CJ-noto\";font-weight:400;font-style:normal;font-display:swap;src:url(vendor/NotoSansArabic-Regular.ttf) format(\"truetype\");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200D,U+FB50-FDFF,U+FE70-FEFF}"
+],
+[
+"header.top .h-ver,#dkSide .h-ver{display:none!important}header.top .h-title+.sub{margin-top:6px}/* 2zb : numéro de version retiré de l’en-tête (toujours dans Paramètres › À propos) */\n:root{--wmA:#E75C04;--wmI:#FFFFFF;--wmD:#0A3768;--mkB:#E75C04;--mkT:#FFFFFF;--mkL:#0A3768}",
+"header.top .h-ver,#dkSide .h-ver{display:none!important}header.top .h-title+.sub{margin-top:6px}/* 2zb : numéro de version retiré de l’en-tête (toujours dans Paramètres › À propos) */\n/* 1.29.1 (-i) : logo TATABO3 adapté au thème — Actuel : orange/blanc/marine ; Vert terrain : jaune/blanc/vert ; Néon sport : citron/blanc/noir (icône installée inchangée : 07·2 orange) */\n:root{--wmA:#E75C04;--wmI:#FFFFFF;--wmD:#0A3768;--mkB:#E75C04;--mkT:#FFFFFF;--mkL:#0A3768}"
+],
+[
+"svg.wm{aspect-ratio:718.9/131.1;overflow:visible;flex:0 0 auto}.h-ttl svg.wm{width:132px}.ln-brand svg.wm{width:148px}.ln-foot .ln-brand svg.wm{width:121px}#gate .g-brand svg.wm{width:197px}#splash .sp-name svg.wm{width:263px}svg.t3m{display:block;flex:0 0 auto;overflow:hidden}\nhtml svg.t3m{border-radius:22%!important;overflow:hidden;background:transparent!important;-webkit-mask-image:none}",
+"svg.wm{aspect-ratio:718.9/131.1;overflow:visible;flex:0 0 auto}.h-ttl svg.wm{width:132px}.ln-brand svg.wm{width:148px}.ln-foot .ln-brand svg.wm{width:121px}#gate .g-brand svg.wm{width:197px}#splash .sp-name svg.wm{width:263px}svg.t3m{display:block;flex:0 0 auto;overflow:hidden}\n/* 1.29.1 (-j) : coins de l’icône — fond (tracé arrondi, sans rx), contour et halo partagent le même rayon 22 % partout (splash, en-tête, connexion, accueil, écran du code) ; aucun coin carré, y compris Safari iOS */\nhtml svg.t3m{border-radius:22%!important;overflow:hidden;background:transparent!important;-webkit-mask-image:none}"
+],
+[
+"html svg.t3m{border-radius:22%!important;overflow:hidden;background:transparent!important;-webkit-mask-image:none}\n:root{--mkR:rgba(255,255,255,.32);--mkRw:3px;--mkSh:drop-shadow(0 4px 10px rgba(0,0,20,.35))}",
+"html svg.t3m{border-radius:22%!important;overflow:hidden;background:transparent!important;-webkit-mask-image:none}\n/* 1.29.1 (-k) : plus aucune ombre « boîte » (box-shadow) sur l’icône : contour dessiné dans le SVG (même tracé arrondi), ombre et halo en filter:drop-shadow (suivent la forme arrondie, aussi sur Safari/WebKit) */\n:root{--mkR:rgba(255,255,255,.32);--mkRw:3px;--mkSh:drop-shadow(0 4px 10px rgba(0,0,20,.35))}"
+],
+[
+"html svg.t3m,html #splash .sp-logo,html #gate .g-logo,html body header.top .h-logo,html #cjLock svg.t3m{box-shadow:none!important;filter:var(--mkSh)}\nhtml #splash .sp-ic{display:block;width:clamp(150px,42vw,190px);margin:0 auto;border-radius:22%;background:transparent;box-shadow:none;filter:var(--mkSh);-webkit-filter:var(--mkSh);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}",
+"html svg.t3m,html #splash .sp-logo,html #gate .g-logo,html body header.top .h-logo,html #cjLock svg.t3m{box-shadow:none!important;filter:var(--mkSh)}\n/* splash : l’enveloppe .sp-ic porte l’animation et l’ombre/halo (drop-shadow) ; l’icône est découpée au même rayon (clip-path), sans transformation propre (calque WebKit/iOS) */\nhtml #splash .sp-ic{display:block;width:clamp(150px,42vw,190px);margin:0 auto;border-radius:22%;background:transparent;box-shadow:none;filter:var(--mkSh);-webkit-filter:var(--mkSh);opacity:0;transform:scale(.6);animation:spLogo .75s cubic-bezier(.2,.9,.3,1.25) .1s forwards}"
+],
+[
+"@media (min-width:860px){.ln-art svg.t3m{width:250px;height:250px;border-radius:56px}}\n.wm{display:block;width:auto;max-width:100%}.h-ttl .wm{height:24px}.ln-brand .wm{height:27px;width:auto;border-radius:0;box-shadow:none}.ln-foot .ln-brand .wm{height:22px}#gate .g-brand .wm{height:36px;margin:0 auto}#splash .sp-name .wm{height:48px;margin:0 auto}",
+"@media (min-width:860px){.ln-art svg.t3m{width:250px;height:250px;border-radius:56px}}\n/* 1.29.1 (-h) : nom TATABO3 — mot-symbole vectoriel (Mix C pour fonds marine) */\n.wm{display:block;width:auto;max-width:100%}.h-ttl .wm{height:24px}.ln-brand .wm{height:27px;width:auto;border-radius:0;box-shadow:none}.ln-foot .ln-brand .wm{height:22px}#gate .g-brand .wm{height:36px;margin:0 auto}#splash .sp-name .wm{height:48px;margin:0 auto}"
+],
+[
+"input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-offset:0;border-color:var(--pri-2)}\n.btn{--b-bg:var(--pri);--b-fg:#fff;--b-bd:transparent;--b-bg-h:var(--pri-d);font:inherit;font-size:15px;font-weight:650;letter-spacing:.1px;border:1px solid var(--b-bd);border-radius:var(--btn-r);padding:11px 16px;min-height:var(--btn-h);cursor:pointer;background:var(--b-bg);color:var(--b-fg);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-shadow:0 1px 2px rgba(16,24,40,.08);transition:background-color .15s,border-color .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}",
+"input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-offset:0;border-color:var(--pri-2)}\n/* ===== Système de boutons (depuis 1.24.0) : primaire, secondaire, fantôme, danger, accent ; cibles tactiles ≥ 44 px ===== */\n.btn{--b-bg:var(--pri);--b-fg:#fff;--b-bd:transparent;--b-bg-h:var(--pri-d);font:inherit;font-size:15px;font-weight:650;letter-spacing:.1px;border:1px solid var(--b-bd);border-radius:var(--btn-r);padding:11px 16px;min-height:var(--btn-h);cursor:pointer;background:var(--b-bg);color:var(--b-fg);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-shadow:0 1px 2px rgba(16,24,40,.08);transition:background-color .15s,border-color .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}"
+],
+[
+"@media(min-width:900px){.fab{bottom:28px}}\n.att{border-bottom:1px solid var(--line);padding:6px 0}",
+"@media(min-width:900px){.fab{bottom:28px}}\n/* attendance */\n.att{border-bottom:1px solid var(--line);padding:6px 0}"
+],
+[
+".savebar .state.saved{color:var(--ok);font-weight:650}\n.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}",
+".savebar .state.saved{color:var(--ok);font-weight:650}\n/* tables */\n.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}"
+],
+[
+".hist li .r{flex:1;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis}\n.modal{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center}",
+".hist li .r{flex:1;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis}\n/* modal */\n.modal{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center}"
+],
+[
+".hidden{display:none!important}\n.pchips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;margin-top:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}",
+".hidden{display:none!important}\n/* ---- v2: register grid ---- */\n.pchips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;margin-top:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}"
+],
+[
+".alert-list li:last-child{border-bottom:0}\n#repAlerts .wt-h{margin:0}#repAlerts .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:8px}",
+".alert-list li:last-child{border-bottom:0}\n/* 1.29.2 : alertes compactes, comme « Élèves à surveiller » */\n#repAlerts .wt-h{margin:0}#repAlerts .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:8px}"
+],
+[
+"table.grid td.c.K{background:#faf5ff;color:#9333ea}\ntable.grid td.c.dsp{background:var(--dsp);color:var(--dsp-ink)}",
+"table.grid td.c.K{background:#faf5ff;color:#9333ea}\n/* Dispensé (exempted from sport): purple cell struck by a vertical line; marks stay visible on top */\ntable.grid td.c.dsp{background:var(--dsp);color:var(--dsp-ink)}"
+],
+[
+".lg.K{background:#faf5ff;color:#9333ea}.chip.kchip{background:#faf5ff;color:#9333ea}\nnav.tabs button{font-size:11.5px;padding:8px 2px 10px;min-width:0;letter-spacing:-.1px;white-space:nowrap}",
+".lg.K{background:#faf5ff;color:#9333ea}.chip.kchip{background:#faf5ff;color:#9333ea}\n/* v5: cycles, timetable, home */\nnav.tabs button{font-size:11.5px;padding:8px 2px 10px;min-width:0;letter-spacing:-.1px;white-space:nowrap}"
+],
+[
+"nav.tabs button svg{width:23px;height:23px}\nnav.tabs button{flex:1 1 auto}",
+"nav.tabs button svg{width:23px;height:23px}\n/* 1.28 : 6 onglets (Note procéd. entre Absences et Rapports) — largeur selon le libellé, texte réduit sur téléphone : rien n’est coupé à 375 px (ni à 320 px) */\nnav.tabs button{flex:1 1 auto}"
+],
+[
+"@media (max-width:420px){nav.tabs button{font-size:10.5px;letter-spacing:-.25px;padding:8px 1px 10px}nav.tabs button svg{width:22px;height:22px}}\nnav.tabs{background:#fff;padding-top:4px;padding-bottom:max(4px,env(safe-area-inset-bottom))}",
+"@media (max-width:420px){nav.tabs button{font-size:10.5px;letter-spacing:-.25px;padding:8px 1px 10px}nav.tabs button svg{width:22px;height:22px}}\n/* 1.29.0 (-f) : barre d’onglets style C (choix du propriétaire) — tuiles arrondies en dégradé bleu (logo B), onglet actif = tuile orange avec ombre douce et libellé orange ; icônes centrées sur les libellés ; affichage seul */\nnav.tabs{background:#fff;padding-top:4px;padding-bottom:max(4px,env(safe-area-inset-bottom))}"
+],
+[
+"#homeStats .stat span{font-size:12px}\n.idcard{display:flex;align-items:flex-start;gap:12px}",
+"#homeStats .stat span{font-size:12px}\n/* ===== 1.28.0 : photo de l’élève (fiche : en face de Classe / Code / Sexe / Naissance ; liste : avatar rond) ===== */\n.idcard{display:flex;align-items:flex-start;gap:12px}"
+],
+[
+".kv.kv2:empty{display:none}\n#ttCard .tw-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}",
+".kv.kv2:empty{display:none}\n/* ===== 1.28.0 : tableau de service modernisé (purement visuel : mêmes créneaux, même formulaire, mêmes calculs) ===== */\n#ttCard .tw-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}"
+],
+[
+"@media (prefers-reduced-motion:reduce){.phbox{transition:none}.phbox:active{transform:none}}\n#homeBody .card{border-radius:18px}",
+"@media (prefers-reduced-motion:reduce){.phbox{transition:none}.phbox:active{transform:none}}\n/* ===== 1.28.0 : Accueil modernisé (purement visuel : mêmes données, mêmes écrans) ===== */\n#homeBody .card{border-radius:18px}"
+],
+[
+"#homeStats .stat{border:0;background:linear-gradient(180deg,#F7F9FC,#EEF2F8);border-radius:14px}\n.trb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1F5FA8,#0B3A6E);border-color:transparent;color:#fff;border-radius:999px;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}",
+"#homeStats .stat{border:0;background:linear-gradient(180deg,#F7F9FC,#EEF2F8);border-radius:14px}\n/* ===== 1.28.0 (-l) : trombinoscope (Élèves › Trombinoscope) ===== */\n.trb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1F5FA8,#0B3A6E);border-color:transparent;color:#fff;border-radius:999px;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}"
+],
+[
+".trb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1F5FA8,#0B3A6E);border-color:transparent;color:#fff;border-radius:999px;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}\nhtml[data-theme=\"terrain\"] .trb-btn{background:#FCD34D;color:#1A1A1A;border-color:transparent;box-shadow:0 6px 14px -8px rgba(120,90,0,.6)}html[data-theme=\"terrain\"] .trb-btn:hover{background:#FBBF24}",
+".trb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#1F5FA8,#0B3A6E);border-color:transparent;color:#fff;border-radius:999px;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}\n/* 1.29.2 : couleur du bouton Trombinoscope selon le thème — Actuel bleu d’origine, Vert terrain jaune TATABO3, Néon citron */\nhtml[data-theme=\"terrain\"] .trb-btn{background:#FCD34D;color:#1A1A1A;border-color:transparent;box-shadow:0 6px 14px -8px rgba(120,90,0,.6)}html[data-theme=\"terrain\"] .trb-btn:hover{background:#FBBF24}"
+],
+[
+"@media (prefers-reduced-motion:reduce){.trb-opt{transition:none}}\n#homeStats .hs-cap{margin:-4px 0 10px;line-height:1.35}",
+"@media (prefers-reduced-motion:reduce){.trb-opt{transition:none}}\n/* ===== 1.28.0 (-k) : Statistiques globales modernisées + évolution semaine précédente → semaine en cours (affichage seulement) ===== */\n#homeStats .hs-cap{margin:-4px 0 10px;line-height:1.35}"
+],
+[
+"@media (prefers-reduced-motion:reduce){.hs-bars rect{animation:none}}\n@media (max-width:559px){",
+"@media (prefers-reduced-motion:reduce){.hs-bars rect{animation:none}}\n/* 1.29.0 (-g) : Accueil compact sur téléphone (demande du propriétaire) — les 6 boutons d’accès rapide visibles sans défiler (iPhone 390×844, SE 375×667, Safari ≈ 664 px utiles, PWA) ; mêmes contenus, texte ≥ 11 px ; CSS seul */\n@media (max-width:559px){"
+],
+[
+"}\nnav.tabs{justify-content:center}",
+"}\n/* 1.29.0 (-h) : barre d’onglets — 6 colonnes de même largeur (icônes à égale distance, barre centrée) ; le libellé ne pousse plus la mise en page (10–11 px, 2 lignes au besoin) ; CSS seul */\nnav.tabs{justify-content:center}"
+],
+[
+"@media (min-width:421px) and (max-width:559px){nav.tabs button{font-size:11px!important;letter-spacing:-.2px!important}}\n.qa.acc .qi{background:linear-gradient(135deg,#1F5FA8,#0B3A6E);box-shadow:0 4px 10px -4px rgba(11,58,110,.6)}",
+"@media (min-width:421px) and (max-width:559px){nav.tabs button{font-size:11px!important;letter-spacing:-.2px!important}}\n/* 1.29.0 (-i) : tuile « Relevé de notes » — icône bleue comme les autres tuiles secondaires (demande du propriétaire) ; « Faire l’appel » reste orange */\n.qa.acc .qi{background:linear-gradient(135deg,#1F5FA8,#0B3A6E);box-shadow:0 4px 10px -4px rgba(11,58,110,.6)}"
+],
+[
+".qa.acc .qi{background:linear-gradient(135deg,#1F5FA8,#0B3A6E);box-shadow:0 4px 10px -4px rgba(11,58,110,.6)}\n.hhero{background:url(\"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22340%22 viewBox=%220 0 400 340%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cg fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.12%22 stroke-width=%221.7%22%3E%3Crect x=%228%22 y=%228%22 width=%22384%22 height=%22324%22 rx=%224%22/%3E%3Cpath d=%22M200 8v324%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%2246%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%223%22 fill=%22%23fff%22 fill-opacity=%22.14%22/%3E%3Cpath d=%22M392 108h-58v124h58%22/%3E%3Cpath d=%22M392 140h-24v60h24%22/%3E%3Cpath d=%22M334 140a30 30 0 0 0 0 60%22/%3E%3Ccircle cx=%22378%22 cy=%22170%22 r=%225%22/%3E%3Cpath d=%22M8 50h70a120 120 0 0 1 0 240H8%22/%3E%3Cpath d=%22M8 122h56v96H8%22/%3E%3Ccircle cx=%2264%22 cy=%22170%22 r=%2222%22 stroke-dasharray=%225 6%22/%3E%3C/g%3E%3C/svg%3E\") center / cover no-repeat,radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad)}",
+".qa.acc .qi{background:linear-gradient(135deg,#1F5FA8,#0B3A6E);box-shadow:0 4px 10px -4px rgba(11,58,110,.6)}\n/* 1.29.0 (-i) : motif 3 « marquages de terrain » (choix du propriétaire) derrière la carte de bienvenue — traits blancs à faible opacité ; image en ligne, affichage seul */\n.hhero{background:url(\"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22340%22 viewBox=%220 0 400 340%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cg fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.12%22 stroke-width=%221.7%22%3E%3Crect x=%228%22 y=%228%22 width=%22384%22 height=%22324%22 rx=%224%22/%3E%3Cpath d=%22M200 8v324%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%2246%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%223%22 fill=%22%23fff%22 fill-opacity=%22.14%22/%3E%3Cpath d=%22M392 108h-58v124h58%22/%3E%3Cpath d=%22M392 140h-24v60h24%22/%3E%3Cpath d=%22M334 140a30 30 0 0 0 0 60%22/%3E%3Ccircle cx=%22378%22 cy=%22170%22 r=%225%22/%3E%3Cpath d=%22M8 50h70a120 120 0 0 1 0 240H8%22/%3E%3Cpath d=%22M8 122h56v96H8%22/%3E%3Ccircle cx=%2264%22 cy=%22170%22 r=%2222%22 stroke-dasharray=%225 6%22/%3E%3C/g%3E%3C/svg%3E\") center / cover no-repeat,radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad)}"
+],
+[
+".hhero{background:url(\"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22340%22 viewBox=%220 0 400 340%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cg fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.12%22 stroke-width=%221.7%22%3E%3Crect x=%228%22 y=%228%22 width=%22384%22 height=%22324%22 rx=%224%22/%3E%3Cpath d=%22M200 8v324%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%2246%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%223%22 fill=%22%23fff%22 fill-opacity=%22.14%22/%3E%3Cpath d=%22M392 108h-58v124h58%22/%3E%3Cpath d=%22M392 140h-24v60h24%22/%3E%3Cpath d=%22M334 140a30 30 0 0 0 0 60%22/%3E%3Ccircle cx=%22378%22 cy=%22170%22 r=%225%22/%3E%3Cpath d=%22M8 50h70a120 120 0 0 1 0 240H8%22/%3E%3Cpath d=%22M8 122h56v96H8%22/%3E%3Ccircle cx=%2264%22 cy=%22170%22 r=%2222%22 stroke-dasharray=%225 6%22/%3E%3C/g%3E%3C/svg%3E\") center / cover no-repeat,radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad)}\n#updBar{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:80;display:none;align-items:center;justify-content:space-between;gap:10px;background:#0A3768;color:#fff;border-radius:14px;padding:10px 10px 10px 14px;font-size:14px;font-weight:600;box-shadow:0 8px 22px -8px rgba(7,42,80,.6)}",
+".hhero{background:url(\"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22340%22 viewBox=%220 0 400 340%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cg fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.12%22 stroke-width=%221.7%22%3E%3Crect x=%228%22 y=%228%22 width=%22384%22 height=%22324%22 rx=%224%22/%3E%3Cpath d=%22M200 8v324%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%2246%22/%3E%3Ccircle cx=%22200%22 cy=%22170%22 r=%223%22 fill=%22%23fff%22 fill-opacity=%22.14%22/%3E%3Cpath d=%22M392 108h-58v124h58%22/%3E%3Cpath d=%22M392 140h-24v60h24%22/%3E%3Cpath d=%22M334 140a30 30 0 0 0 0 60%22/%3E%3Ccircle cx=%22378%22 cy=%22170%22 r=%225%22/%3E%3Cpath d=%22M8 50h70a120 120 0 0 1 0 240H8%22/%3E%3Cpath d=%22M8 122h56v96H8%22/%3E%3Ccircle cx=%2264%22 cy=%22170%22 r=%2222%22 stroke-dasharray=%225 6%22/%3E%3C/g%3E%3C/svg%3E\") center / cover no-repeat,radial-gradient(120% 90% at 100% 0%,rgba(232,93,4,.38) 0%,rgba(232,93,4,0) 55%),var(--grad)}\n/* 1.29.1 : bandeau de mise à jour */\n#updBar{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:80;display:none;align-items:center;justify-content:space-between;gap:10px;background:#0A3768;color:#fff;border-radius:14px;padding:10px 10px 10px 14px;font-size:14px;font-weight:600;box-shadow:0 8px 22px -8px rgba(7,42,80,.6)}"
+],
+[
+"@media(min-width:900px){#updBar{left:auto;right:20px;bottom:20px;max-width:420px}}\ntable.grid th .essdl{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:2px auto -6px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}",
+"@media(min-width:900px){#updBar{left:auto;right:20px;bottom:20px;max-width:420px}}\n/* 1.29.1 (-b) : bouton « Télécharger tous les essais » (style C : tuile bleue, zone de toucher 44 px) */\ntable.grid th .essdl{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:2px auto -6px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}"
+],
+[
+".wk-row{min-height:40px}\n.bulkseg{display:flex;margin:4px 0 2px}.bulkseg button{flex:1}",
+".wk-row{min-height:40px}\n/* v7: import, ajouter, reminder */\n.bulkseg{display:flex;margin:4px 0 2px}.bulkseg button{flex:1}"
+],
+[
+"td.bad-t{color:var(--bad);font-weight:700}\nheader.top{padding-right:112px}",
+"td.bad-t{color:var(--bad);font-weight:700}\n/* sync */\nheader.top{padding-right:112px}"
+],
+[
+"\n#splash{position:fixed;inset:0;z-index:1000;background-color:#0B3A6E;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E\"),var(--grad);background-size:44px 44px,cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;cursor:pointer;transition:opacity .4s ease;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}",
+"\n/* ===== Splash (every launch) ===== */\n#splash{position:fixed;inset:0;z-index:1000;background-color:#0B3A6E;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E\"),var(--grad);background-size:44px 44px,cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;cursor:pointer;transition:opacity .4s ease;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}"
+],
+[
+"@keyframes spFade{to{opacity:1}}\n#landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}",
+"@keyframes spFade{to{opacity:1}}\n/* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */\n#landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}"
+],
+[
+"#landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}\n#ttForm{padding:6px 10px;margin-top:10px}#ttForm h3{margin:0}#ttForm h3:before{width:28px;height:28px;flex-basis:28px}",
+"#landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--b-bg-h:#A84303}\n/* 1.29.1 (-s) : formulaire « Ajouter un créneau » replié par défaut et compact ; champ Fin (iOS) ne déborde plus */\n#ttForm{padding:6px 10px;margin-top:10px}#ttForm h3{margin:0}#ttForm h3:before{width:28px;height:28px;flex-basis:28px}"
+],
+[
+"#ttForm .actions{margin-top:8px;gap:8px}#ttForm .actions .btn{min-height:44px;padding-top:8px;padding-bottom:8px}\n#view-settings>.card[data-ps]{display:none}",
+"#ttForm .actions{margin-top:8px;gap:8px}#ttForm .actions .btn{min-height:44px;padding-top:8px;padding-bottom:8px}\n/* 1.29.1 (-u) : Paramètres façon réglages iOS (liste groupée + sous-pages) — affichage seulement */\n#view-settings>.card[data-ps]{display:none}"
+],
+[
+"html[data-theme=\"neon\"] .ps-back{color:#C6FF00}\n.tw-chip{position:relative;padding-bottom:8px}.tw-chip.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.sel span{color:rgba(255,255,255,.9)}",
+"html[data-theme=\"neon\"] .ps-back{color:#C6FF00}\n/* 1.29.1 (-r) : tableau de service — variante B (onglets de jours + frise verticale), purement visuel */\n.tw-chip{position:relative;padding-bottom:8px}.tw-chip.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 14px -8px rgba(11,58,110,.7)}.tw-chip.sel span{color:rgba(255,255,255,.9)}"
+],
+[
+"html[data-theme=\"neon\"] .tw-dot{box-shadow:0 0 0 3px var(--card)}\n#homeWatch{display:none!important}#homeWatch .wt-h{margin:0}#homeWatch .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:10px}",
+"html[data-theme=\"neon\"] .tw-dot{box-shadow:0 0 0 3px var(--card)}\n/* 1.29.1 (-q) : carte « Élèves à surveiller » repliable */\n#homeWatch{display:none!important}#homeWatch .wt-h{margin:0}#homeWatch .wt-h button{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;cursor:pointer;min-height:44px;font:inherit;color:inherit;border-radius:10px}"
+],
+[
+"#homeWatch .wt-c{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#homeWatch.open .wt-c{transform:rotate(180deg)}#homeWatch.open #watchBody{margin-top:8px}\n#procWrap td.g.scg{padding:2px}#procWrap .scb{font:inherit;width:100%;min-width:52px;min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;padding:3px 4px}",
+"#homeWatch .wt-c{width:22px;height:22px;flex:none;color:var(--muted);transition:transform .2s}#homeWatch.open .wt-c{transform:rotate(180deg)}#homeWatch.open #watchBody{margin-top:8px}\n/* 1.29.1 (-o) : sports collectifs — cases à toucher et pavé N1…N4 */\n#procWrap td.g.scg{padding:2px}#procWrap .scb{font:inherit;width:100%;min-width:52px;min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;padding:3px 4px}"
+],
+[
+".scfree{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;color:var(--muted)}.scfree input{width:84px;min-height:40px;font:inherit;font-weight:700;text-align:center;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink)}\n:root{--lv1:#B91C1C;--lv2:#C2410C;--lv3:#4D7C0F;--lv4:#15803D;--lv1h:#B91C1C;--lv2h:#C2410C;--lv3h:#4D7C0F;--lv4h:#15803D;--lv1b:#DC2626;--lv2b:#EA580C;--lv3b:#84CC16;--lv4b:#22C55E}",
+".scfree{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;color:var(--muted)}.scfree input{width:84px;min-height:40px;font:inherit;font-weight:700;text-align:center;border:1px solid var(--line);border-radius:10px;background:var(--card,#fff);color:var(--ink)}\n/* 1.29.1 (-p) : couleurs des niveaux (variante B) — N1 rouge, N2 orange, N3 vert-citron, N4 vert : en-tête plein (texte blanc), bordure et valeur colorées ; grille : barre colorée à gauche ; note sans code : neutre */\n:root{--lv1:#B91C1C;--lv2:#C2410C;--lv3:#4D7C0F;--lv4:#15803D;--lv1h:#B91C1C;--lv2h:#C2410C;--lv3h:#4D7C0F;--lv4h:#15803D;--lv1b:#DC2626;--lv2b:#EA580C;--lv3b:#84CC16;--lv4b:#22C55E}"
+],
+[
+".sccalc{margin-top:12px;font-size:14px;line-height:1.45;color:var(--ink)}.sccalc b{color:var(--pri)}\n:root{--ln-ic-bg:#E8EFF8;--ln-ic-fg:#0B3A6E}html[data-theme=\"terrain\"]{--ln-ic-bg:#E3F1E7;--ln-ic-fg:#1C6B3A}html[data-theme=\"neon\"]{--ln-ic-bg:rgba(0,229,255,.13);--ln-ic-fg:#00E5FF}",
+".sccalc{margin-top:12px;font-size:14px;line-height:1.45;color:var(--ink)}.sccalc b{color:var(--pri)}\n/* 1.29.1 (-n) : icônes de la page d’accueil toutes de la même couleur par thème (Actuel : bleu-gris #0B3A6E sur tuile #E8EFF8 ; Vert terrain : vert sur tuile vert pâle ; Néon : cyan sur tuile cyan translucide) */\n:root{--ln-ic-bg:#E8EFF8;--ln-ic-fg:#0B3A6E}html[data-theme=\"terrain\"]{--ln-ic-bg:#E3F1E7;--ln-ic-fg:#1C6B3A}html[data-theme=\"neon\"]{--ln-ic-bg:rgba(0,229,255,.13);--ln-ic-fg:#00E5FF}"
+],
+[
+"html[data-theme=\"neon\"] .ln-foot{background:#06060C;border-top:1px solid #2C2F3A}html[data-theme=\"neon\"] .ln-foot a{color:#00E5FF}html[data-theme=\"terrain\"] .ln-foot{background:#0F3A22}\nhtml #splash .sp-name{animation-name:spFade}html #splash .sp-ver{animation-name:spFade;color:var(--sp-ver,#fff);opacity:0}",
+"html[data-theme=\"neon\"] .ln-foot{background:#06060C;border-top:1px solid #2C2F3A}html[data-theme=\"neon\"] .ln-foot a{color:#00E5FF}html[data-theme=\"terrain\"] .ln-foot{background:#0F3A22}\n/* 1.29.1 (-i) : intro (splash) selon le thème — fond, motif, icône, mot-symbole et version lisibles (AA) ; thème lu avant le premier affichage (script de tête) */\nhtml #splash .sp-name{animation-name:spFade}html #splash .sp-ver{animation-name:spFade;color:var(--sp-ver,#fff);opacity:0}"
+],
+[
+"html[data-theme=\"terrain\"] #splash video,html[data-theme=\"terrain\"] #splash{color:#fff}html[data-theme=\"neon\"] #splash video{background:#0A0A12}html[data-theme=\"terrain\"] #splash video{background:#14532D}\n#onb{position:fixed;inset:0;z-index:900;background-color:#0B3A6E;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E\"),var(--grad);background-size:44px 44px,cover;display:flex;flex-direction:column;color:#fff;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:onbIn .35s ease-out}",
+"html[data-theme=\"terrain\"] #splash video,html[data-theme=\"terrain\"] #splash{color:#fff}html[data-theme=\"neon\"] #splash video{background:#0A0A12}html[data-theme=\"terrain\"] #splash video{background:#14532D}\n/* ===== Onboarding (first use) ===== */\n#onb{position:fixed;inset:0;z-index:900;background-color:#0B3A6E;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M28 28H32A8 8 0 0 0 32 12H28V8A8 8 0 0 0 12 8V12H8A8 8 0 0 0 8 28H12V32A8 8 0 0 0 28 32Z' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.3'/%3E%3C/svg%3E\"),var(--grad);background-size:44px 44px,cover;display:flex;flex-direction:column;color:#fff;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:onbIn .35s ease-out}"
+],
+[
+"\nhtml.cj-locked body{overflow:hidden}",
+"\n/* ===== Login gate (mandatory sign-in) ===== */\nhtml.cj-locked body{overflow:hidden}"
+],
+[
+"@media (max-height:640px){#gate .g-logo{width:64px;height:64px;border-radius:16px}#gate .g-brand{font-size:22px}}\n#landing{display:none}",
+"@media (max-height:640px){#gate .g-logo{width:64px;height:64px;border-radius:16px}#gate .g-brand{font-size:22px}}\n/* ===== Page d’accueil publique (avant connexion ; HTML statique indexable) ===== */\n#landing{display:none}"
+],
+[
+"@keyframes gspin{to{transform:rotate(360deg)}}\n.gbadge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:5px;color:#fff;font-size:10.5px;font-weight:800;margin-inline-end:4px;vertical-align:1px;padding:0 3px;line-height:1}",
+"@keyframes gspin{to{transform:rotate(360deg)}}\n/* ---- v16: exports PDF + groupes de travail ---- */\n.gbadge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:5px;color:#fff;font-size:10.5px;font-weight:800;margin-inline-end:4px;vertical-align:1px;padding:0 3px;line-height:1}"
+],
+[
+"@media (pointer:coarse){.btn.sm,.snaprow .btn,#roBar .btn,#modCard .mrow .btn{min-height:44px}.btn.ic{min-height:44px;min-width:44px}}\n.card.danger-zone{border:1.5px solid #f3b4ba;background:linear-gradient(0deg,#fff 0%,#fff 55%,#fff5f6 100%);box-shadow:0 1px 2px rgba(198,47,58,.08)}",
+"@media (pointer:coarse){.btn.sm,.snaprow .btn,#roBar .btn,#modCard .mrow .btn{min-height:44px}.btn.ic{min-height:44px;min-width:44px}}\n/* zone dangereuse : visuellement distincte (fonctionnement inchangé) */\n.card.danger-zone{border:1.5px solid #f3b4ba;background:linear-gradient(0deg,#fff 0%,#fff 55%,#fff5f6 100%);box-shadow:0 1px 2px rgba(198,47,58,.08)}"
+]
+]

@@ -1,0 +1,49 @@
+# Notes CSS retirées de index.html (1.29.2c)
+
+Commentaires de conception déplacés ici pour tenir le budget de démarrage (aucune règle CSS modifiée).
+
+- l.73 (avant `@font-face{font-family:"CJ-noto";font-weight:400;f`) : /* ===== Police arabe (choix dans Paramètres) : uniquement les caractères arabes (unicode-range), chargée à la demande ===== */
+- l.94 (avant `:root{--wmA:#E75C04;--wmI:#FFFFFF;--wmD:#0A3768;--`) : /* 1.29.1 (-i) : logo TATABO3 adapté au thème — Actuel : orange/blanc/marine ; Vert terrain : jaune/blanc/vert ; Néon sport : citron/blanc/noir (icône installée inchangée : 07·2 orange) */
+- l.99 (avant `html svg.t3m{border-radius:22%!important;overflow:`) : /* 1.29.1 (-j) : coins de l’icône — fond (tracé arrondi, sans rx), contour et halo partagent le même rayon 22 % partout (splash, en-tête, connexion, accueil, écran du code) ; aucun coin carré, y compris Safari iOS */
+- l.101 (avant `:root{--mkR:rgba(255,255,255,.32);--mkRw:3px;--mkS`) : /* 1.29.1 (-k) : plus aucune ombre « boîte » (box-shadow) sur l’icône : contour dessiné dans le SVG (même tracé arrondi), ombre et halo en filter:drop-shadow (suivent la forme arrondie, aussi sur Safari/WebKit) */
+- l.106 (avant `html #splash .sp-ic{display:block;width:clamp(150p`) : /* splash : l’enveloppe .sp-ic porte l’animation et l’ombre/halo (drop-shadow) ; l’icône est découpée au même rayon (clip-path), sans transformation propre (calque WebKit/iOS) */
+- l.114 (avant `.wm{display:block;width:auto;max-width:100%}.h-ttl`) : /* 1.29.1 (-h) : nom TATABO3 — mot-symbole vectoriel (Mix C pour fonds marine) */
+- l.135 (avant `.btn{--b-bg:var(--pri);--b-fg:#fff;--b-bd:transpar`) : /* ===== Système de boutons (depuis 1.24.0) : primaire, secondaire, fantôme, danger, accent ; cibles tactiles ≥ 44 px ===== */
+- l.163 (avant `.att{border-bottom:1px solid var(--line);padding:6`) : /* attendance */
+- l.187 (avant `.tablewrap{overflow-x:auto;-webkit-overflow-scroll`) : /* tables */
+- l.207 (avant `.modal{position:fixed;inset:0;z-index:50;backgroun`) : /* modal */
+- l.232 (avant `.pchips{display:flex;gap:6px;overflow-x:auto;paddi`) : /* ---- v2: register grid ---- */
+- l.282 (avant `#repAlerts .wt-h{margin:0}#repAlerts .wt-h button{`) : /* 1.29.2 : alertes compactes, comme « Élèves à surveiller » */
+- l.339 (avant `table.grid td.c.dsp{background:var(--dsp);color:va`) : /* Dispensé (exempted from sport): purple cell struck by a vertical line; marks stay visible on top */
+- l.353 (avant `nav.tabs button{font-size:11.5px;padding:8px 2px 1`) : /* v5: cycles, timetable, home */
+- l.356 (avant `nav.tabs button{flex:1 1 auto}`) : /* 1.28 : 6 onglets (Note procéd. entre Absences et Rapports) — largeur selon le libellé, texte réduit sur téléphone : rien n’est coupé à 375 px (ni à 320 px) */
+- l.359 (avant `nav.tabs{background:#fff;padding-top:4px;padding-b`) : /* 1.29.0 (-f) : barre d’onglets style C (choix du propriétaire) — tuiles arrondies en dégradé bleu (logo B), onglet actif = tuile orange avec ombre douce et libellé orange ; icônes centrées sur les libellés ; affichage seul */
+- l.397 (avant `.idcard{display:flex;align-items:flex-start;gap:12`) : /* ===== 1.28.0 : photo de l’élève (fiche : en face de Classe / Code / Sexe / Naissance ; liste : avatar rond) ===== */
+- l.401 (avant `#ttCard .tw-h{display:flex;align-items:center;gap:`) : /* ===== 1.28.0 : tableau de service modernisé (purement visuel : mêmes créneaux, même formulaire, mêmes calculs) ===== */
+- l.470 (avant `#homeBody .card{border-radius:18px}`) : /* ===== 1.28.0 : Accueil modernisé (purement visuel : mêmes données, mêmes écrans) ===== */
+- l.512 (avant `.trb-btn{display:inline-flex;align-items:center;ju`) : /* ===== 1.28.0 (-l) : trombinoscope (Élèves › Trombinoscope) ===== */
+- l.514 (avant `html[data-theme="terrain"] .trb-btn{background:#FC`) : /* 1.29.2 : couleur du bouton Trombinoscope selon le thème — Actuel bleu d’origine, Vert terrain jaune TATABO3, Néon citron */
+- l.530 (avant `#homeStats .hs-cap{margin:-4px 0 10px;line-height:`) : /* ===== 1.28.0 (-k) : Statistiques globales modernisées + évolution semaine précédente → semaine en cours (affichage seulement) ===== */
+- l.555 (avant `@media (max-width:559px){`) : /* 1.29.0 (-g) : Accueil compact sur téléphone (demande du propriétaire) — les 6 boutons d’accès rapide visibles sans défiler (iPhone 390×844, SE 375×667, Safari ≈ 664 px utiles, PWA) ; mêmes contenus, texte ≥ 11 px ; CSS seul */
+- l.579 (avant `nav.tabs{justify-content:center}`) : /* 1.29.0 (-h) : barre d’onglets — 6 colonnes de même largeur (icônes à égale distance, barre centrée) ; le libellé ne pousse plus la mise en page (10–11 px, 2 lignes au besoin) ; CSS seul */
+- l.585 (avant `.qa.acc .qi{background:linear-gradient(135deg,#1F5`) : /* 1.29.0 (-i) : tuile « Relevé de notes » — icône bleue comme les autres tuiles secondaires (demande du propriétaire) ; « Faire l’appel » reste orange */
+- l.587 (avant `.hhero{background:url("data:image/svg+xml,%3Csvg x`) : /* 1.29.0 (-i) : motif 3 « marquages de terrain » (choix du propriétaire) derrière la carte de bienvenue — traits blancs à faible opacité ; image en ligne, affichage seul */
+- l.589 (avant `#updBar{position:fixed;left:12px;right:12px;bottom`) : /* 1.29.1 : bandeau de mise à jour */
+- l.594 (avant `table.grid th .essdl{display:flex;align-items:cent`) : /* 1.29.1 (-b) : bouton « Télécharger tous les essais » (style C : tuile bleue, zone de toucher 44 px) */
+- l.647 (avant `.bulkseg{display:flex;margin:4px 0 2px}.bulkseg bu`) : /* v7: import, ajouter, reminder */
+- l.695 (avant `header.top{padding-right:112px}`) : /* sync */
+- l.725 (avant `#splash{position:fixed;inset:0;z-index:1000;backgr`) : /* ===== Splash (every launch) ===== */
+- l.743 (avant `#landing .btn.acc{--b-bg:#C24E03;--b-bd:#C24E03;--`) : /* 1.29.1 (-l) : page d’accueil publique et connexion accordées au thème (fonds comme l’intro), cartes sombres en Néon, contrastes AA — CSS seul */
+- l.745 (avant `#ttForm{padding:6px 10px;margin-top:10px}#ttForm h`) : /* 1.29.1 (-s) : formulaire « Ajouter un créneau » replié par défaut et compact ; champ Fin (iOS) ne déborde plus */
+- l.755 (avant `#view-settings>.card[data-ps]{display:none}`) : /* 1.29.1 (-u) : Paramètres façon réglages iOS (liste groupée + sous-pages) — affichage seulement */
+- l.786 (avant `.tw-chip{position:relative;padding-bottom:8px}.tw-`) : /* 1.29.1 (-r) : tableau de service — variante B (onglets de jours + frise verticale), purement visuel */
+- l.813 (avant `#homeWatch{display:none!important}#homeWatch .wt-h`) : /* 1.29.1 (-q) : carte « Élèves à surveiller » repliable */
+- l.817 (avant `#procWrap td.g.scg{padding:2px}#procWrap .scb{font`) : /* 1.29.1 (-o) : sports collectifs — cases à toucher et pavé N1…N4 */
+- l.827 (avant `:root{--lv1:#B91C1C;--lv2:#C2410C;--lv3:#4D7C0F;--`) : /* 1.29.1 (-p) : couleurs des niveaux (variante B) — N1 rouge, N2 orange, N3 vert-citron, N4 vert : en-tête plein (texte blanc), bordure et valeur colorées ; grille : barre colorée à gauche ; note sans code : neutre */
+- l.836 (avant `:root{--ln-ic-bg:#E8EFF8;--ln-ic-fg:#0B3A6E}html[d`) : /* 1.29.1 (-n) : icônes de la page d’accueil toutes de la même couleur par thème (Actuel : bleu-gris #0B3A6E sur tuile #E8EFF8 ; Vert terrain : vert sur tuile vert pâle ; Néon : cyan sur tuile cyan translucide) */
+- l.859 (avant `html #splash .sp-name{animation-name:spFade}html #`) : /* 1.29.1 (-i) : intro (splash) selon le thème — fond, motif, icône, mot-symbole et version lisibles (AA) ; thème lu avant le premier affichage (script de tête) */
+- l.867 (avant `#onb{position:fixed;inset:0;z-index:900;background`) : /* ===== Onboarding (first use) ===== */
+- l.889 (avant `html.cj-locked body{overflow:hidden}`) : /* ===== Login gate (mandatory sign-in) ===== */
+- l.924 (avant `#landing{display:none}`) : /* ===== Page d’accueil publique (avant connexion ; HTML statique indexable) ===== */
+- l.974 (avant `.gbadge{display:inline-flex;align-items:center;jus`) : /* ---- v16: exports PDF + groupes de travail ---- */
+- l.990 (avant `.card.danger-zone{border:1.5px solid #f3b4ba;backg`) : /* zone dangereuse : visuellement distincte (fonctionnement inchangé) */
