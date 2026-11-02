@@ -13,19 +13,20 @@ const geo=(p,id)=>p.evaluate(id=>{const s=document.getElementById(id),pn=s.query
 (async()=>{const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 try{
  for(const [w,h] of [[1024,700],[1280,720],[1366,768],[1440,900]]){const p=await open(b,PORT,{w,h});await prepProc(p);
-  check(w+' px : barre Note procédurale avec « 3 essais » et ⓘ',await p.$('#procNtr')&&await p.$eval('#procNtr',s=>s.value)==='3'&&await p.$('#procInfo'));
-  await p.click('#procInfo');await sleep(400);let g=await geo(p,'procSheet');
-  check(w+' px : ⓘ ouvre la feuille « Comment est calculée la note ? » sur tout l’écran (fond assombri cliquable)',!g.hidden&&g.sw===g.vw&&g.sh===g.vh&&g.bdTop,JSON.stringify([g.sw,g.sh]));
+  /* 1.29.2c : rangée Note procéd. réduite aux sélecteurs (ⓘ, 📄, ⬇, « OP 2007 · niveau » retirés de l’écran) — la feuille ⓘ est vérifiée sur Absences */
+  check(w+' px : barre Note procédurale avec « 3 essais », sans ⓘ / 📄 / ⬇ visibles',await p.$('#procNtr')&&await p.$eval('#procNtr',s=>s.value)==='3'&&await p.evaluate(()=>['procInfo','procGradesPdf'].every(i=>{const e=document.getElementById(i);return !e||!e.offsetParent;})&&![...document.querySelectorAll('#procEval [data-csvrel],#procEval .pq-op')].some(e=>e.offsetParent)));
+  await tab(p,'attendance');await sleep(600);await p.click('#attInfoBtn');await sleep(400);let g=await geo(p,'attSheet');
+  check(w+' px : ⓘ (Absences) ouvre la feuille « Barème et légende » sur tout l’écran (fond assombri cliquable)',!g.hidden&&g.sw===g.vw&&g.sh===g.vh&&g.bdTop,JSON.stringify([g.sw,g.sh]));
   check(w+' px : panneau centré, large (≥ 600 px), entièrement visible, titre lisible au premier plan',g.w>=Math.min(600,g.vw-64)&&Math.abs(g.l+g.w/2-g.vw/2)<2&&g.t>=0&&g.t+g.h<=g.vh&&g.tOk&&g.tw>150&&g.txt>120,JSON.stringify(g));
-  await p.keyboard.press('Escape');await sleep(250);check(w+' px : Échap ferme la feuille',await p.$eval('#procSheet',s=>s.hidden));
-  await p.click('#procInfo');await sleep(300);await p.mouse.click(10,g.vh-10);await sleep(250);check(w+' px : clic sur le fond ferme la feuille',await p.$eval('#procSheet',s=>s.hidden));
+  await p.keyboard.press('Escape');await sleep(250);check(w+' px : Échap ferme la feuille',await p.$eval('#attSheet',s=>s.hidden));
+  await p.click('#attInfoBtn');await sleep(300);await p.mouse.click(10,g.vh-10);await sleep(250);check(w+' px : clic sur le fond ferme la feuille',await p.$eval('#attSheet',s=>s.hidden));
   if(w===1280){await tab(p,'attendance');await sleep(600);const bt=await p.$('#attInfoBtn');if(bt&&await p.evaluate(e=>!!e.offsetParent,bt)){await bt.click();await sleep(300);g=await geo(p,'attSheet');
     check('1280 px : ⓘ Absences — même panneau centré lisible',!g.hidden&&g.w>=600&&Math.abs(g.l+g.w/2-g.vw/2)<2&&g.tOk,JSON.stringify(g));await p.keyboard.press('Escape');await sleep(200);}
    else check('1280 px : ⓘ Absences présent',false);}
   check(w+' px : aucune erreur JavaScript',p.errs.length===0,p.errs.join('|'));await p.ctx.close();}
  /* mobile : feuille du bas pleine largeur, comme 1.29.2 */
- const p=await open(b,PORT,{w:390,h:844,dpr:2});await prepProc(p);await p.click('#procInfo');await sleep(400);const g=await geo(p,'procSheet');
- check('390 px (mobile) : feuille du bas inchangée (pleine largeur, collée en bas, poignée visible)',!g.hidden&&g.l===0&&g.w===390&&Math.abs(g.t+g.h-844)<1&&g.tOk&&await p.$eval('#procSheet .pq-grab',e=>getComputedStyle(e).display!=='none'),JSON.stringify(g));
+ const p=await open(b,PORT,{w:390,h:844,dpr:2});await prepProc(p);await tab(p,'attendance');await sleep(600);await p.click('#attInfoBtn');await sleep(400);const g=await geo(p,'attSheet');
+ check('390 px (mobile) : feuille du bas inchangée (pleine largeur, collée en bas, poignée visible)',!g.hidden&&g.l===0&&g.w===390&&Math.abs(g.t+g.h-844)<1&&g.tOk&&await p.$eval('#attSheet .pq-grab',e=>getComputedStyle(e).display!=='none'),JSON.stringify(g));
  check('390 px : desk.js non appliqué',await p.evaluate(()=>!document.documentElement.classList.contains('cj-dk')));
  check('390 px : aucune erreur JavaScript',p.errs.length===0,p.errs.join('|'));await p.ctx.close();
 }catch(e){check('exception',false,e.stack);}

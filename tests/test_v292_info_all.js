@@ -8,7 +8,7 @@ const ps=k=>async p=>{await tab(p,'settings');await sleep(400);await p.evaluate(
 const SPOTS=[
  ['Accueil › Calendrier des cycles',async p=>{await tab(p,'home');await sleep(500);},'#view-home [data-pq-open="calSheet"]','calSheet'],
  ['Absences › barème et légende',async p=>{await tab(p,'attendance');await sleep(600);},'#attInfoBtn','attSheet'],
- ['Note procédurale',async p=>{await tab(p,'proc');await sleep(600);},'#procInfo','procSheet'],
+ /* 1.29.2c : ⓘ de la Note procédurale retiré de l’écran (rangée réduite aux sélecteurs) */
  ['Paramètres › Classes',ps('cls'),'#view-settings [data-pq-open="clsSheet"]','clsSheet'],
  ['Paramètres › Points retirés',ps('pts'),'#view-settings [data-pq-open="ptsSheet"]','ptsSheet'],
  ['Paramètres › Répartition cyclique',ps('annee'),'#view-settings [data-pq-open="cycSheet"]','cycSheet'],

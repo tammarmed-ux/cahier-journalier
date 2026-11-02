@@ -77,8 +77,10 @@ const NEED=['cj-cahier.js','cahier/roi.jpg','cahier/logo.jpg','cahier/splash.jpg
  /* 3. téléphone, Note procéd. */
  for(const w of [360,390,430]){const p=await open(b,PORT,{w,h:844,mobile:false});await tab(p,'proc');await sleep(800);
   const x=await p.evaluate(()=>{const e=document.getElementById('procEval'),R=e.querySelectorAll('.pq-row'),c=e.querySelectorAll('[data-csvrel]');return {r1:[...R[0].children].map(k=>k.id||k.className),r2last:R[1].lastElementChild.hasAttribute('data-csvrel'),n:c.length,cw:Math.round(c[0].getBoundingClientRect().width),of:[...R].some(r=>r.scrollWidth>r.clientWidth+1),sw:document.documentElement.scrollWidth>innerWidth};});
-  check(w+' px Note procéd. : 1re ligne sans icône CSV (APS, épreuve, essais, PDF comme en 2w), icône CSV 32 px en fin de 2e ligne, sans débordement',x.n===1&&x.r2last&&x.cw===32&&!x.r1.some(k=>/csv/i.test(k))&&x.r1[x.r1.length-1]==='procGradesPdf'&&!x.of&&!x.sw,x);
+  /* 1.29.2c : 📄 / ⬇ / ⓘ / 2e ligne retirés de l’écran Note procéd. (relevé PDF/CSV dans Rapports) — éléments toujours présents, masqués */
+  x.vis=await p.evaluate(()=>[...document.querySelectorAll('#procEval .pq-row>*')].filter(e=>e.offsetParent).map(e=>e.id||e.className));
+  check(w+' px Note procéd. : une seule ligne visible (sélecteurs seulement : pas de 📄, ⬇, ⓘ), sans débordement',x.n===1&&x.cw===0&&x.vis.every(k=>/pq-chip/.test(k))&&!x.of&&!x.sw,x);
   if(w===390){await p.evaluate(()=>document.getElementById('procEval').scrollIntoView());await sleep(200);const el=await p.$('#procEval .pqA')||await p.$('#procEval');await el.screenshot({path:'/tmp/t2y-proc-390.png'});}
-  await p.setViewport({width:1280,height:800});await sleep(900);const d=await p.evaluate(()=>{const c=document.querySelector('#procEval [data-csvrel]'),pd=document.getElementById('procGradesPdf');return !!c&&pd.nextElementSibling===c&&!c.classList.contains('pq-csvm');});
-  if(w===390)check('390 → 1280 px : icône CSV revenue à côté du relevé PDF',d);await p.ctx.close();}
+  await p.setViewport({width:1280,height:800});await sleep(900);const d=await p.evaluate(()=>{const c=document.querySelector('#procEval [data-csvrel]'),pd=document.getElementById('procGradesPdf');return !!c&&!c.offsetParent&&!pd.offsetParent;});
+  if(w===390)check('390 → 1280 px : Note procéd. — 📄 / ⬇ restent masqués (relevé dans Rapports)',d);await p.ctx.close();}
  await b.close();await wb.close();console.log(pass+'/'+(pass+fail)+' passed');process.exit(fail?1:0);})().catch(e=>{console.log('FAIL - exception '+e.stack);process.exit(1);});
