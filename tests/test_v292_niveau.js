@@ -27,7 +27,7 @@ const GRADES=()=>{const R=CJR,d=R.db(),o={};d.classes.forEach(c=>d.periods.forEa
  check('Paramètres › Classes : pastille de niveau sur chaque carte (1AC/2AC/3AC), « Niveau ? » pour « Groupe A »',cards.length===9&&cards.includes('1AC1=1AC')&&cards.includes('2AC2=2AC')&&cards.includes('3AC2=3AC')&&cards.includes('Groupe A=Niveau ?!')&&cards.filter(x=>x.endsWith('!')).length===1,cards);
  await p.evaluate(async()=>{for(const t of ['attendance','proc','students']){document.querySelector('#tabs button[data-tab="'+t+'"]').click();await new Promise(r=>setTimeout(r,150));}});
  const opts=await p.evaluate(()=>['attClass','procClass','stuClassFilter'].map(id=>[...document.getElementById(id).options].map(o=>o.textContent)));
- check('sélecteurs de classe (Notes /20, Note procéd., Élèves) : « 1AC1 (40) · 1AC », « Groupe A (…) · Niveau ? »',opts.every(L=>L.some(t=>/^1AC1 \(\d+\) · 1AC$/.test(t))&&L.some(t=>/^Groupe A \(\d+\) · Niveau \?$/.test(t))),opts);
+ check('sélecteurs de classe (Notes /20, Note procéd., Élèves) : « 1AC1 (40) », « Groupe A (…) » sans suffixe de niveau (1.29.2c)',opts.every(L=>L.some(t=>/^1AC1 \(\d+\)$/.test(t))&&L.some(t=>/^Groupe A \(\d+\)$/.test(t))&&!L.some(t=>/ · /.test(t))),opts);
  const oth=await p.evaluate(()=>[...document.getElementById('repClass').options].map(o=>o.textContent).concat([...document.getElementById('expClass').options].map(o=>o.textContent)).filter(t=>/ · /.test(t)));
  check('autres listes de classes (Rapports, exports) : libellés inchangés',oth.length===0,oth);
  const a1=await att(p,'Groupe A');
