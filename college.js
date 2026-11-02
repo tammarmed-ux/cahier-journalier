@@ -237,7 +237,7 @@ document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.c
    Lycée : calcul inchangé (barème 2BAC par défaut, comme avant), signalé par la même pastille. */
 var LVS={college:['1AC','2AC','3AC'],lycee:['TC','1BAC','2BAC']};
 CX.unk=function(cid){if(!isC())return false;var c=R.cls(cid);return !!c&&!R.levelOf(c.name);};
-CX.opt=function(c,sel){return sel&&/^(attClass|procClass|stuClassFilter)$/.test(sel.id)?' · '+(R.levelOf(c.name)||'Niveau ?'):'';};
+CX.opt=function(){return '';};   /* 1.29.2c : plus de « · 1BAC / · 2BAC / · TC » après le nom dans les sélecteurs de classe (affichage seulement ; levelOf et barèmes inchangés) */
 css+='#clsManage .clb-p.cx-lvb{font-weight:750;background:color-mix(in srgb,var(--cx-a) 12%,var(--card));border-color:color-mix(in srgb,var(--cx-a) 35%,transparent);color:var(--ink)}'+
  'html[data-theme="neon"] #clsManage .clb-p.cx-lvb{background:#232A12;border-color:#5C7A00;color:#E8FF9E}'+
  '#clsManage .clb-p.cx-lvq,.cx-lvw{background:#FFF3DC;border:1px solid #F2C46B;color:#7A4A00}html[data-theme="neon"] #clsManage .clb-p.cx-lvq,html[data-theme="neon"] .cx-lvw{background:#3A2E10;border-color:#8A6A12;color:#FBCB4B}'+
