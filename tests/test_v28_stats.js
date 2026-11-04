@@ -46,7 +46,7 @@ const exp=await p.evaluate(W=>{const A=window.CJR,d=A.db();const z=()=>({A:0,J:0
     const o=dt>=W.pfrom&&dt<=W.pto?pr:dt>=W.from&&dt<=W.T?cu:null;if(!o)return;o.held++;
     d.students.filter(x=>x.classId===cid).forEach(x=>{const m=r.marks[x.id];if(!m)return;if(m.s==='L')o.L++;else if(m.s==='M'){m.j?o.K++:o.M++;}else if(m.s==='ST')o.S++;else{o.A++;m.j?o.J++:o.U++;}});});
   return {pr,cu};},W);
-const T=await p.evaluate(()=>[...document.querySelectorAll('#homeStats .hs')].map(x=>{const e=x.querySelector('.hs-ev');return {k:x.dataset.k||'',l:x.querySelector('.hs-l').textContent,v:x.querySelector('.hs-v').textContent,dir:e&&e.dataset.dir,pv:e&&e.dataset.prev,cu:e&&e.dataset.cur,cl:e&&[...e.classList].filter(c=>c!=='hs-ev').join(),b:e&&(e.querySelector('.hs-b')||{}).textContent,sr:e&&(e.querySelector('.sr')||{}).textContent};}));
+const T=await p.evaluate(()=>[...document.querySelectorAll('#homeStats .hs')].map(x=>{const e=x.querySelector('.hs-ev');return {k:x.dataset.k||'',l:x.title||x.querySelector('.hs-l').textContent,   /* 1.29.3f : libellé complet en title (affichage court « Absences A + AJ ») */v:x.querySelector('.hs-v').textContent,dir:e&&e.dataset.dir,pv:e&&e.dataset.prev,cu:e&&e.dataset.cur,cl:e&&[...e.classList].filter(c=>c!=='hs-ev').join(),b:e&&(e.querySelector('.hs-b')||{}).textContent,sr:e&&(e.querySelector('.sr')||{}).textContent};}));
 const by=Object.fromEntries(T.filter(x=>x.k).map(x=>[x.k,x]));
 check('9 tuiles : Élèves, Classes, Séances, Absences (A + AJ), Non justifiées, ST, M, R, MJ — plus de « Justifiées (AJ) »',T.map(x=>x.l).join('|')==='Élèves|Classes|Séances effectuées|Absences (A\u00a0+\u00a0AJ)|Non justifiées (A)|Sans tenue (ST)|Malade (M)|Retards (R)|Malade just. (MJ)'&&!T.some(x=>/^Justifiées/.test(x.l)),T.map(x=>x.l).join('|'));
 const tot=await p.evaluate(()=>{const A=window.CJR,d=A.db(),t={A:0,U:0,L:0,M:0,K:0,S:0};d.students.forEach(s=>{const y=A.yearStat(s.classId,s.id);Object.keys(t).forEach(k=>t[k]+=y[k]);});return t;});
@@ -63,7 +63,7 @@ check('légende « Évolution… » retirée (1.29.2), tuiles d’évolution con
 const L=await p.evaluate(()=>({sw:document.documentElement.scrollWidth,ov:[...document.querySelectorAll('#homeStats .hs, #homeStats .hs-b')].filter(e=>{const r=e.getBoundingClientRect();return r.right>375.5||r.left<-0.5;}).length,clip:[...document.querySelectorAll('#homeStats .hs-b, #homeStats .hs-vs')].filter(e=>e.scrollWidth>e.clientWidth+1).length}));
 check('375 px : rien ne déborde',L.sw<=375&&L.ov===0&&L.clip===0,JSON.stringify(L));
 await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);await sleep(100);
-const an=await p.evaluate(()=>getComputedStyle(document.querySelector('#homeStats .hs-bars rect')).animationName);check('mouvement réduit : pas d’animation des barres',an==='none',an);
+const an=await p.evaluate(()=>document.querySelectorAll('#homeStats svg').length);check('1.29.3f : mini-graphiques retirés (rien à animer en mouvement réduit)',an===0,an);
 await p.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'no-preference'}]);
 // pas de comparaison si l’une des deux périodes est vide
 await p.evaluate((KEY,W)=>{const A=window.CJR,raw=JSON.parse(localStorage.getItem(KEY));Object.keys(raw.sessions).forEach(k=>{const [cid,p,s]=k.split('|'),col=A.colsOf(cid,+p).find(c=>c.s===+s&&!c.hol);if(col&&col.date>=W.from)delete raw.sessions[k];});localStorage.setItem(KEY,JSON.stringify(raw));},KEY,W);
