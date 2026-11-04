@@ -148,7 +148,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-o
 .avatar{flex:0 0 42px;height:42px;border-radius:50%;background:var(--pri-soft);color:var(--pri);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
 .stu .info{flex:1;min-width:0}
 .stu .name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stu .meta{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stu .meta{font-size:13px;color:var(--muted)}
 .chip{display:inline-block;font-size:12px;font-weight:650;padding:3px 8px;border-radius:999px;background:var(--pri-soft);color:var(--pri);white-space:nowrap}
 .chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.ok{background:var(--ok-soft);color:var(--ok)}
 .fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:30px;box-shadow:0 6px 16px rgba(11,58,110,.35);cursor:pointer}
@@ -2102,7 +2102,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
 /* ===== Sauvegardes de sécurité locales (instantanés de classRegister.v2, jamais modifié par ce code) =====
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
-var APP_SEMVER='1.29.3';                        /* version affichée : 1.<version>.<correctif> ; la version suivante sera 1.30.0 */
+var APP_SEMVER='1.29.3';/* 1.<version>.<correctif> */
 var APP_VER='cahier-v29-3';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
@@ -2456,7 +2456,7 @@ function renderStudents(){
   var html='',lim=(!q&&!stuAll&&list.length>STU_LIM)?STU_LIM:list.length;
   for(var i=0;i<lim;i++){var s=list[i],y=yearStat(s.classId,s.id);
     var chip=(dspActive(s)?'<span class="chip dchip" title="Dispensé de sport – '+esc(dspShort(dspOf(s)))+'">🩺 Dispensé</span> ':'')+(y.A?'<span class="chip '+(cyU(s.classId,s.id)>=th?'bad':'warn')+'" title="Absences cette année">'+y.A+' abs.</span>':'');
-    html+='<li class="stu" data-id="'+esc(s.id)+'"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><div class="info"><div class="name" dir="auto">'+(isBroken(s)?'<span class="brk">⚠ '+esc(TX.noName)+'</span> ':'')+esc(s.name)+'</div><div class="meta"><span class="chip">'+esc(clsName(s.classId))+'</span> '+(s.sid?'<span dir="auto">#'+esc(s.sid)+'</span> ':'')+(s.parent?'· <span dir="auto">'+esc(s.parent)+'</span>':'')+'</div></div>'+chip+'</li>';}
+    html+='<li class="stu" data-id="'+esc(s.id)+'"><div class="avatar" dir="auto">'+esc(initials(s.name))+'</div><div class="info"><div class="name" dir="auto">'+(isBroken(s)?'<span class="brk">⚠ '+esc(TX.noName)+'</span> ':'')+esc(s.name)+'</div><div class="meta"><span class="chip">'+esc(clsName(s.classId))+'</span> '+(isoOk(s.dob)?dmy(s.dob)+' · ':'')+(s.sid?'<span dir="auto">#'+esc(s.sid)+'</span> ':'')+(s.parent?'· <span dir="auto">'+esc(s.parent)+'</span>':'')+'</div></div>'+chip+'</li>';}
   /* 1.29.2 (g) : affichage limité aux 30 premiers (affichage seulement ; recherche, comptes et exports portent sur toute la liste) */
   if(!q&&list.length>STU_LIM)html+='<li class="stu-more"><button type="button" class="btn sec stu-more-btn" id="stuMore" aria-expanded="'+(stuAll?'true':'false')+'">'+(stuAll?'Réduire':'Voir tout ('+list.length+')')+'</button></li>';
   $('stuList').innerHTML=html;
