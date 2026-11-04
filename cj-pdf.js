@@ -601,6 +601,7 @@ var PHOTOS={};
 function loadPhotos(){return (A.photoAll?A.photoAll():Promise.resolve({})).then(function(o){PHOTOS=o||{};return PHOTOS;}).catch(function(){PHOTOS={};return PHOTOS;});}
 function ageAt(dob,ref){if(!/^\d{4}-\d\d-\d\d$/.test(dob||''))return null;var y=+ref.slice(0,4)-+dob.slice(0,4);if(ref.slice(5)<dob.slice(5))y--;return y>=0&&y<100?y:null;}
 function ageTxt(s){var a=ageAt(s.dob,A.todayStr());return a==null?'âge —':a+' ans';}
+function dobTxt(s){var d=s.dob||'';return /^\d{4}-\d\d-\d\d$/.test(d)?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'';}   /* 1.29.3d : date de naissance (affichage seul) */
 function dmyT(){var t=A.todayStr();return t.slice(8,10)+'/'+t.slice(5,7)+'/'+t.slice(0,4);}
 function silhouette(d,x,y,w,h){d.setFillColor(236,239,244);d.rect(x,y,w,h,'F');d.setFillColor(193,200,211);d.circle(x+w/2,y+h*0.39,w*0.19,'F');d.ellipse(x+w/2,y+h*1.03,w*0.37,h*0.35,'F');}
 function photo(d,s,x,y,w,h,r,bc){var src=PHOTOS[s.id];d.saveGraphicsState();
@@ -624,7 +625,7 @@ function trMeta(cid,mode){var c=A.cls(cid),n=A.countIn(cid),g=A.grpOf(cid),by=mo
    si l’ensemble dépasse d’un peu la page, les cartes sont légèrement réduites (jusqu’à −15 %) pour tenir sur une seule page */
 function trombiPage(d,y,sets){var mx=0;sets.forEach(function(st){mx=Math.max(mx,st.list.length);});
   var cols=mx<=8?8:Math.min(10,mx),gap=cols>=10?1.4:1.6,cw=(W-2*M-4-gap*(cols-1))/cols,HB=8.6,BG=3.2;
-  function geo(k){var pw=Math.min(16.5,cw-2.2)*k;return {pw:pw,ch:pw+14};}
+  function geo(k){var pw=Math.min(16.5,cw-2.2)*k;return {pw:pw,ch:pw+16};}
   function total(g){var t=0;sets.forEach(function(st){t+=HB+Math.ceil(st.list.length/cols)*(g.ch+gap)+BG;});return t;}
   var g=geo(1),avail=H-BOT-y,tt=total(g);if(tt>avail){var k=Math.max(0.85,(avail-sets.length*(HB+BG))/(tt-sets.length*(HB+BG)));if(total(geo(k))<=avail)g=geo(k);}
   var pw=g.pw,ch=g.ch,fs=cw>18?5.7:5.2;
@@ -633,6 +634,7 @@ function trombiPage(d,y,sets){var mx=0;sets.forEach(function(st){mx=Math.max(mx,
     T(d,set.title+(cont?' (suite)':''),M+3,yy+5,{bold:1,size:10,color:WHITE,maxW:90});T(d,pl(set.list.length,'élève')+' · '+fg(set.list),W-M-3,yy+5,{size:8,color:WHITE,align:'right',maxW:90});}
   function card(set,s,x,yy){d.setFillColor(255,255,255);d.roundedRect(x,yy,cw,ch,1.5,1.5,'F');
     photo(d,s,x+(cw-pw)/2,yy+1.2,pw,pw,pw/2,set.col);lines(d,nameLines(d,s,cw-1.6,fs),x+cw/2,yy+pw+3.9,fs,2.25,INK);
+    var dn=dobTxt(s);if(dn)T(d,dn,x+cw/2,yy+ch-6.1,{size:4.9,color:MUTED,align:'center',maxW:cw-1.4});
     if(s.sid)T(d,s.sid,x+cw/2,yy+ch-3.7,{size:4.9,color:MUTED,align:'center',maxW:cw-1.4});T(d,ageTxt(s),x+cw/2,yy+ch-1.1,{size:5.4,bold:1,color:set.col,align:'center'});}
   sets.forEach(function(set){var rows=[];for(var k=0;k<set.list.length;k+=cols)rows.push(set.list.slice(k,k+cols));if(!rows.length)rows.push([]);
     var r=0,cont=false;while(r<rows.length){var fit=Math.floor((H-BOT-y-HB-1.5+gap)/(ch+gap));if(fit<1){d.addPage();y=TOP+1;continue;}
@@ -643,11 +645,11 @@ function trombiPage(d,y,sets){var mx=0;sets.forEach(function(st){mx=Math.max(mx,
 function trombiGroupPages(d,y,sets,cname){sets.forEach(function(set,si){if(si){d.addPage();y=TOP+1;}
   d.setFillColor.apply(d,set.col);d.roundedRect(M,y,W-2*M,16,3,3,'F');T(d,set.title,M+6,y+10.6,{bold:1,size:20,color:WHITE,maxW:70});
   T(d,cname+' · '+pl(set.list.length,'élève')+' · '+fg(set.list),W-M-5,y+10,{size:10,color:WHITE,align:'right',maxW:100});y+=21;
-  var n=set.list.length,cols=n<=8?4:n<=12?4:5,gap=cols===5?3:4,cw=(W-2*M-gap*(cols-1))/cols,pw=Math.min(34,cw-8),ch=pw+28;
+  var n=set.list.length,cols=n<=8?4:n<=12?4:5,gap=cols===5?3:4,cw=(W-2*M-gap*(cols-1))/cols,pw=Math.min(34,cw-8),ch=pw+32;
   set.list.forEach(function(s,k){var c=k%cols;if(c===0&&k>0)y+=ch+gap;if(y+ch>H-BOT){d.addPage();y=TOP+1;T(d,set.title+' (suite)',M,y+3,{bold:1,size:11,color:set.col});y+=8;}
     var x=M+c*(cw+gap);d.setFillColor(255,255,255);d.setDrawColor.apply(d,set.col);d.setLineWidth(0.6);d.roundedRect(x,y,cw,ch,3,3,'FD');
     photo(d,s,x+(cw-pw)/2,y+4,pw,pw,3);lines(d,nameLines(d,s,cw-4,Math.min(9.4,cw>30?9.4:8)),x+cw/2,y+pw+9.5,Math.min(9.4,cw>30?9.4:8),3.6,INK);
-    T(d,ageTxt(s),x+cw/2,y+ch-7,{size:9,bold:1,color:set.col,align:'center'});if(s.sid)T(d,s.sid,x+cw/2,y+ch-3,{size:7,color:MUTED,align:'center'});});
+    T(d,ageTxt(s),x+cw/2,y+ch-11,{size:9,bold:1,color:set.col,align:'center'});var dn=dobTxt(s);if(dn)T(d,dn,x+cw/2,y+ch-7,{size:8,color:MUTED,align:'center'});if(s.sid)T(d,s.sid,x+cw/2,y+ch-3,{size:7,color:MUTED,align:'center'});});
   y+=ch+4;});return y;}
 function trombi(o){var cid=o.cid;if(!cid||!A.cls(cid))throw U('Choisissez une classe.');if(!A.countIn(cid))throw U('Aucun élève dans cette classe.');
   var mode=o.mode==='group'?'group':'page',m=trMeta(cid,mode),d=newDoc(m),y=titleBlock(d,m),sets=trSets(cid);

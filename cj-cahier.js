@@ -151,6 +151,7 @@ const THEMES={
   .tb{grid-template-columns:repeat(6,1fr);gap:2.4mm}.tb .s{height:30.5mm;display:flex;flex-direction:column;align-items:center;border-color:#D7DFEA;border-radius:2.5mm;border-bottom:.8mm solid #E85D04}
   .pg .tb .id{margin-top:auto;padding-top:1.8mm;font-size:6.3pt;color:#8A94A6;letter-spacing:.02em;font-family:'Poppins'}
   .tb .av{flex:none;width:15mm;height:15mm;font-size:13pt;font-family:'Cairo','NaskhAr'}
+  .pg .tb .s.d .av{width:13.5mm;height:13.5mm}.pg .tb .dob{margin-top:auto;padding-top:.6mm;font-size:6.3pt;line-height:1.15;color:#5B6576;font-family:'Poppins'}.pg .tb .dob+.id{margin-top:0;padding-top:.2mm;line-height:1.15}  /* 1.29.3d : date de naissance (affichage seul) */
   .pg .tb .nm{font-size:7.8pt;font-family:'Cairo','Poppins';white-space:normal;height:auto;max-height:6.8mm;width:100%;line-height:1.1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:clip}
   table.t td.nm{font-family:'Cairo','Poppins'}
   .note{background:#EEF3FA;border-left:1.6mm solid #E85D04}
@@ -358,7 +359,7 @@ function repart(k,n){const C=D.cycles,a=new Date(D.year[0]),z=new Date(D.year[1]
  <div class="leg"><span><b style="background:repeating-linear-gradient(135deg,#d9dde4 0 1.2mm,#eef0f3 1.2mm 2.4mm)">&nbsp;</b> vacances</span><span>10 séances par cycle · ${D.classes.length} classes</span></div>`;
  return frame(k,'Répartition cyclique','Programme annuel · 6 cycles · '+YEAR,pic('Course de vitesse'),body,n);}
 function trombi(k,c,n){const COLS=['#1971C2','#E8590C','#0CA678','#7048E8','#D6336C','#1098AD'];
- const body=`<div class="tb">${c.students.map((s,i)=>`<div class="s"><span class="no">${i+1}</span>${okPh(PHOTOS[s.id])?`<div class="av ph"><img alt="" src="${PHOTOS[s.id]}"></div>`:`<div class="av" style="background:${s.sex==='F'?'#D6336C':'#1971C2'}">${esc(ini(s.name))}</div>`}<div class="nm" dir="auto">${esc(s.name)}</div><div class="id">${esc(s.sid)}</div></div>`).join('')}</div>`;
+ const body=`<div class="tb">${c.students.map((s,i)=>`<div class="s${/^\d{4}-\d\d-\d\d$/.test(s.dob||'')?' d':''}"><span class="no">${i+1}</span>${okPh(PHOTOS[s.id])?`<div class="av ph"><img alt="" src="${PHOTOS[s.id]}"></div>`:`<div class="av" style="background:${s.sex==='F'?'#D6336C':'#1971C2'}">${esc(ini(s.name))}</div>`}<div class="nm" dir="auto">${esc(s.name)}</div>${/^\d{4}-\d\d-\d\d$/.test(s.dob||'')?`<div class="dob">${dmy(s.dob)}</div>`:''}<div class="id">${esc(s.sid)}</div></div>`).join('')}</div>`;
  const f=c.students.filter(s=>s.sex==='F').length;
  return frame(k,'Trombinoscope · '+esc(c.name),`${c.students.length} élèves · ${f} filles · ${c.students.length-f} garçons`,'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.3c2.6-.4 4.8 1.4 5.5 4.7"/></svg>',body,n);}
 function clsTitle(k,c){const f=c.students.filter(s=>s.sex==='F').length;
