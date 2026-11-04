@@ -11,7 +11,7 @@ const canon=x=>Array.isArray(x)?x.map(canon):x&&typeof x==='object'?Object.keys(
   await p.evaluate(s=>window.CJApp.applyJSON(s),RAW);await sleep(1500);
   const sem=await p.evaluate(()=>CJR.semver);const OUT=JSON.parse(await p.evaluate(()=>CJApp.getJSON()));
   const a=canon(strip(IN)),o=canon(strip(OUT));const dk=Object.keys(a).filter(k=>JSON.stringify(a[k])!==JSON.stringify(o[k]));
-  check(w+' px : version '+sem+' ; import puis export JSON : '+OUT.classes.length+' classes, '+OUT.students.length+' élèves, '+Object.keys(OUT.sessions).length+' clés de séances, données identiques à l’export (hors ui/lastBackup)',sem==='1.29.3'&&dk.length===0&&OUT.classes.length===10&&OUT.students.length===351,dk);
+  check(w+' px : version '+sem+' ; import puis export JSON : '+OUT.classes.length+' classes, '+OUT.students.length+' élèves, '+Object.keys(OUT.sessions).length+' clés de séances, données identiques à l’export (hors ui/lastBackup)',sem===(process.env.SEM||'1.29.4')&&dk.length===0&&OUT.classes.length===10&&OUT.students.length===IN.students.length,dk);
   const bad=[];for(const c of IN.classes){const n=IN.students.filter(x=>x.classId===c.id).length;
    for(const t of ['attendance','proc']){await tab(p,t);await sleep(300);const pr=t==='attendance'?'att':'proc';
     await p.evaluate((pr,id)=>{const e=document.getElementById(pr+'Class');e.value=id;e.dispatchEvent(new Event('change',{bubbles:true}));},pr,c.id);await sleep(500);
