@@ -7,6 +7,7 @@
 <!-- Page publique autonome (1.29.2 r) : aucun lien avec les données de l’application, non mise en cache par le service worker de l’app. -->
 <link rel="icon" href="assets/t3-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/devices.css">
 <link rel="preload" href="assets/fonts/poppins-800.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="assets/app-appel-desk.webp?v=c20261104b" fetchpriority="high"><link rel="preload" as="image" href="assets/app-home-mob.webp?v=20261109" fetchpriority="high">
 <style>
 @font-face{font-family:Inter;src:url(assets/fonts/inter-var.woff2) format("woff2");font-weight:400 700;font-display:swap}
 @font-face{font-family:Poppins;src:url(assets/fonts/poppins-600.woff2) format("woff2");font-weight:600;font-display:swap}
@@ -128,8 +129,8 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
   <div class="badges"><span><i data-i="lock"></i>Accès sur invitation</span><span><i data-i="wifioff"></i>Mode hors ligne</span><span><i data-i="device"></i>Compatible mobile et ordinateur</span></div>
  </div>
  <div class="devs">
-  <div class="laptop"><div class="lid"><img src="assets/app-appel-desk.webp?v=c20261104b" alt="Registre d’appel de TATABO3 sur ordinateur"></div><div class="base"></div></div>
-  <div class="phone"><img src="assets/app-home-mob.webp" alt="Accueil de TATABO3 sur téléphone"></div>
+  <div class="laptop"><div class="lid"><img src="assets/app-appel-desk.webp?v=c20261104b" alt="Registre d’appel de TATABO3 sur ordinateur" fetchpriority="high" decoding="async"></div><div class="base"></div></div>
+  <div class="phone"><img src="assets/app-home-mob.webp?v=20261109" alt="Accueil de TATABO3 sur téléphone" fetchpriority="high" decoding="async"></div>
   <div class="hand">Simple,<br>rapide,<br>efficace !</div>
  </div>
 </div></section>
@@ -147,8 +148,8 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
 
 <section class="how" id="etapes"><div class="w">
  <div class="devs2">
-  <div class="laptop"><div class="lid"><img src="assets/app-bilans-desk.webp" alt="Bilan de classe"></div><div class="base"></div></div>
-  <div class="phone"><img src="assets/app-appel-mob.webp?v=c20261104b" alt="Appel sur téléphone"></div>
+  <div class="laptop"><div class="lid"><img src="assets/app-bilans-desk.webp?v=20261109" alt="Bilan de classe" loading="lazy" decoding="async" fetchpriority="low"></div><div class="base"></div></div>
+  <div class="phone"><img src="assets/app-appel-mob.webp?v=c20261104b" alt="Appel sur téléphone" loading="lazy" decoding="async" fetchpriority="low"></div>
   <div class="pill"><i data-i="check"></i>Simple d’utilisation</div>
  </div>
  <div><div class="eyb">En 3 étapes</div><h2>Comment ça marche ?</h2>
@@ -182,7 +183,7 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
 </div></section>
 
 <section class="fin" id="contact"><span id="demander-une-invitation"></span><span id="mentions-legales"></span><div class="w">
- <div class="art"><img src="assets/eps-terrain-4k.webp?v=20261106" alt="Enseignant d’EPS utilisant TATABO3 sur le terrain, avec ses élèves"></div>
+ <div class="art"><img src="assets/eps-terrain-1200.webp?v=20261109" srcset="assets/eps-terrain-800.webp?v=20261109 800w, assets/eps-terrain-1200.webp?v=20261109 1200w, assets/eps-terrain-1600.webp?v=20261109 1600w, assets/eps-terrain-1920.webp?v=20261109 1920w" sizes="(max-width: 900px) 100vw, 642px" width="1600" height="900" alt="Enseignant d’EPS utilisant TATABO3 sur le terrain, avec ses élèves" loading="lazy" decoding="async" fetchpriority="low"></div>
  <div><div class="eyb">Prêt à simplifier votre cahier journalier ?</div><h2>Rejoignez TATABO3 et découvrez une autre façon de gérer vos classes d’EPS.</h2><a class="btn or" href="https://wa.me/212691679101?text=Bonjour%2C%20je%20suis%20enseignant%28e%29%20d%27EPS%20et%20je%20souhaite%20demander%20un%20acc%C3%A8s%20%C3%A0%20l%27application%20TATABO3%20pour%20l%27utiliser%20avec%20mes%20classes.%0ANom%20et%20pr%C3%A9nom%20%3A%0A%C3%89tablissement%20%3A%0AVille%20%3A%0AMerci%20d%27avance%20pour%20votre%20retour." target="_blank" rel="noopener" title="Demander une invitation sur WhatsApp"><i data-i="mail"></i>Demander une invitation <i data-i="arrow"></i></a></div>
  <ul><li><i data-i="check"></i>Accès sur invitation</li><li><i data-i="check"></i>Compatible mobile et ordinateur</li><li><i data-i="check"></i>Mode hors ligne</li></ul>
  <div class="hand">L’EPS<br>plus simple !</div>
