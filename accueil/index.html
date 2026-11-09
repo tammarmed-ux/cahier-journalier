@@ -7,6 +7,7 @@
 <!-- Page publique autonome (1.29.2 r) : aucun lien avec les données de l’application, non mise en cache par le service worker de l’app. -->
 <link rel="icon" href="assets/t3-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/devices.css">
 <link rel="preload" href="assets/fonts/poppins-800.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="assets/app-appel-desk.webp?v=c20261104b" fetchpriority="high"><link rel="preload" as="image" href="assets/app-home-mob.webp?v=20261109" fetchpriority="high">
 <style>
 @font-face{font-family:Inter;src:url(assets/fonts/inter-var.woff2) format("woff2");font-weight:400 700;font-display:swap}
 @font-face{font-family:Poppins;src:url(assets/fonts/poppins-600.woff2) format("woff2");font-weight:600;font-display:swap}
@@ -69,8 +70,9 @@ summary .ic{color:var(--mut);transition:.2s}details[open] summary .ic{transform:
 .tc .who{display:flex;gap:12px;align-items:center;margin-top:14px}.tc .av{width:42px;height:42px;border-radius:50%;background:#e4eaf2;display:grid;place-items:center;color:#8a9bb0;font-weight:700}
 .tc q{color:#7b8a9c;font-style:italic}.tc small{color:#8a9bb0}
 .fin{background:linear-gradient(100deg,var(--navy2) 0,var(--navy) 55%,#0d4581);color:#fff;padding:0;overflow:hidden}
-.fin .w{display:grid;grid-template-columns:.9fr 1.2fr .8fr;gap:36px;align-items:center;min-height:300px;position:relative}
-.fin .art{align-self:stretch;margin-left:-32px;position:relative}
+.fin .w{display:grid;grid-template-columns:1.15fr 1fr;gap:36px;align-items:center;min-height:300px;position:relative}
+.fin .art{aspect-ratio:16/9;align-self:center;margin-left:-32px;position:relative;overflow:hidden}
+.fin .art img{width:100%;height:100%;object-fit:cover;object-position:70% 45%;display:block}
 .fin h2{font-size:30px;margin:8px 0 22px}.fin .eyb{justify-content:flex-start;color:var(--or2)}
 .fin ul{list-style:none;padding:0 0 0 26px;margin:0;border-left:1px solid rgba(255,255,255,.2)}.fin li{display:flex;gap:10px;align-items:center;margin:12px 0;font-size:15px}.fin li .ic{background:#fff;color:var(--navy);border-radius:50%;padding:3px;font-size:20px}
 .fin .hand{position:absolute;right:30px;bottom:22px;top:auto;color:#fff}
@@ -91,7 +93,8 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
  .more{margin-top:clamp(14px,3vh,30px)}
  .how h2{margin-bottom:clamp(14px,3.4vh,30px)}.step{margin-bottom:clamp(12px,3vh,28px)}
  .faqh{margin-bottom:clamp(14px,3vh,26px)}.faqh h2{font-size:clamp(26px,4.6vh,34px)}
- .fin{padding:0}.fin .w{flex:1}
+ .fin{padding:0}.fin .w{flex:1;align-content:center;grid-template-areas:"photo copy" "photo list"}
+ .fin .art{grid-area:photo}.fin .w>div:nth-child(2){grid-area:copy}.fin ul{grid-area:list;align-self:start}
 }
 @media (max-width:900px){
  .w{padding:0 20px}.nav ul,.nav .act{display:none}.nav .burger{display:block;margin-left:auto}.nav .w{height:64px;flex-wrap:wrap}
@@ -106,7 +109,7 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
  .how .w{grid-template-columns:1fr;gap:56px}.how .devs2{order:2}
  .faqh{display:block}.faqh .btn{margin-top:14px}.faq{grid-template-columns:1fr}
  .tg{grid-template-columns:1fr}
- .fin .w{grid-template-columns:1fr;gap:20px;padding-bottom:36px}.fin .art{margin:0 -20px;height:200px}.fin ul{border:0;padding:0}.fin .hand{display:none}
+ .fin .w{grid-template-columns:1fr;grid-template-areas:none;gap:20px;padding-bottom:36px}.fin .art,.fin .w>div:nth-child(2),.fin ul{grid-area:auto}.fin .art{aspect-ratio:16/9;height:auto;margin:0 -20px}.fin ul{border:0;padding:0}.fin .hand{display:none}
  .fin .btn{width:100%;justify-content:center}
 }
 .badges{display:grid;grid-template-rows:auto auto;grid-auto-flow:column;justify-content:start;gap:10px 24px}@media(max-width:700px){.badges{grid-auto-flow:row;grid-template-rows:none}}</style></head><body>
@@ -126,8 +129,8 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
   <div class="badges"><span><i data-i="lock"></i>Accès sur invitation</span><span><i data-i="wifioff"></i>Mode hors ligne</span><span><i data-i="device"></i>Compatible mobile et ordinateur</span></div>
  </div>
  <div class="devs">
-  <div class="laptop"><div class="lid"><img src="assets/app-appel-desk.webp?v=c20261104b" alt="Registre d’appel de TATABO3 sur ordinateur"></div><div class="base"></div></div>
-  <div class="phone"><img src="assets/app-home-mob.webp" alt="Accueil de TATABO3 sur téléphone"></div>
+  <div class="laptop"><div class="lid"><img src="assets/app-appel-desk.webp?v=c20261104b" alt="Registre d’appel de TATABO3 sur ordinateur" fetchpriority="high" decoding="async"></div><div class="base"></div></div>
+  <div class="phone"><img src="assets/app-home-mob.webp?v=20261109" alt="Accueil de TATABO3 sur téléphone" fetchpriority="high" decoding="async"></div>
   <div class="hand">Simple,<br>rapide,<br>efficace !</div>
  </div>
 </div></section>
@@ -145,8 +148,8 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
 
 <section class="how" id="etapes"><div class="w">
  <div class="devs2">
-  <div class="laptop"><div class="lid"><img src="assets/app-bilans-desk.webp" alt="Bilan de classe"></div><div class="base"></div></div>
-  <div class="phone"><img src="assets/app-appel-mob.webp?v=c20261104b" alt="Appel sur téléphone"></div>
+  <div class="laptop"><div class="lid"><img src="assets/app-bilans-desk.webp?v=20261109" alt="Bilan de classe" loading="lazy" decoding="async" fetchpriority="low"></div><div class="base"></div></div>
+  <div class="phone"><img src="assets/app-appel-mob.webp?v=c20261104b" alt="Appel sur téléphone" loading="lazy" decoding="async" fetchpriority="low"></div>
   <div class="pill"><i data-i="check"></i>Simple d’utilisation</div>
  </div>
  <div><div class="eyb">En 3 étapes</div><h2>Comment ça marche ?</h2>
@@ -180,7 +183,7 @@ footer{background:#041a33;color:#9fb2c9;font-size:13.5px;padding:22px 0}footer .
 </div></section>
 
 <section class="fin" id="contact"><span id="demander-une-invitation"></span><span id="mentions-legales"></span><div class="w">
- <div class="art"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%"><rect width="400" height="300" fill="#1b6b3a"/><rect y="170" width="400" height="130" fill="#c2572b"/><g stroke="#fff" stroke-width="2" fill="none" opacity=".8"><path d="M0 200h400M0 230h400M0 262h400"/><rect x="40" y="30" width="320" height="120"/><path d="M200 30v120"/><circle cx="200" cy="90" r="26"/></g><g fill="#E75C04"><path d="M90 160h14l6 22H84z"/><path d="M300 160h14l6 22h-26z"/></g><text x="200" y="285" text-anchor="middle" font-family="Caveat" font-size="18" fill="#fff" opacity=".9">illustration — photo EPS réelle à fournir</text></svg></div>
+ <div class="art"><img src="assets/eps-terrain-1200.webp?v=20261109" srcset="assets/eps-terrain-800.webp?v=20261109 800w, assets/eps-terrain-1200.webp?v=20261109 1200w, assets/eps-terrain-1600.webp?v=20261109 1600w, assets/eps-terrain-1920.webp?v=20261109 1920w" sizes="(max-width: 900px) 100vw, 642px" width="1600" height="900" alt="Enseignant d’EPS utilisant TATABO3 sur le terrain, avec ses élèves" loading="lazy" decoding="async" fetchpriority="low"></div>
  <div><div class="eyb">Prêt à simplifier votre cahier journalier ?</div><h2>Rejoignez TATABO3 et découvrez une autre façon de gérer vos classes d’EPS.</h2><a class="btn or" href="https://wa.me/212691679101?text=Bonjour%2C%20je%20suis%20enseignant%28e%29%20d%27EPS%20et%20je%20souhaite%20demander%20un%20acc%C3%A8s%20%C3%A0%20l%27application%20TATABO3%20pour%20l%27utiliser%20avec%20mes%20classes.%0ANom%20et%20pr%C3%A9nom%20%3A%0A%C3%89tablissement%20%3A%0AVille%20%3A%0AMerci%20d%27avance%20pour%20votre%20retour." target="_blank" rel="noopener" title="Demander une invitation sur WhatsApp"><i data-i="mail"></i>Demander une invitation <i data-i="arrow"></i></a></div>
  <ul><li><i data-i="check"></i>Accès sur invitation</li><li><i data-i="check"></i>Compatible mobile et ordinateur</li><li><i data-i="check"></i>Mode hors ligne</li></ul>
  <div class="hand">L’EPS<br>plus simple !</div>
