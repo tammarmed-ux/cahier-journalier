@@ -3,6 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Affichage seulement. iOS (Safari et PWA) laisse souvent l’échelle > 1 après une rotation
+   paysage → portrait : la page reste zoomée (grille coupée) tant qu’on ne pince pas.
+   maximum-scale=1 le temps de la rotation ramène l’échelle à 1, puis le pincement est rendu. */
+(function(){
+  var meta=document.querySelector('meta[name="viewport"]');
+  if(!meta)return;
+  var base=meta.getAttribute('content')||'width=device-width, initial-scale=1, viewport-fit=cover';
+  if(/maximum-scale\s*=/i.test(base))return;
+  var locked=base+', maximum-scale=1', hold=0, rel=0, wide=window.innerWidth>window.innerHeight;
+  function lock(){if(meta.getAttribute('content')!==locked)meta.setAttribute('content',locked);}
+  function unlock(){if(meta.getAttribute('content')!==base)meta.setAttribute('content',base);}
+  function arm(){
+    var x=window.scrollX||0, y=window.scrollY||0;
+    lock();
+    clearTimeout(rel);
+    hold=Date.now()+1200;
+    rel=setTimeout(function(){
+      var vv=window.visualViewport, s=vv&&vv.scale;
+      if(s&&s>1.02){lock();rel=setTimeout(function(){unlock();try{window.scrollTo(x,y);}catch(e){}},450);}
+      else{unlock();try{window.scrollTo(x,y);}catch(e){}}
+    },650);
+  }
+  window.addEventListener('orientationchange',arm);
+  try{if(screen.orientation&&screen.orientation.addEventListener)screen.orientation.addEventListener('change',arm);}catch(e){}
+  window.addEventListener('resize',function(){
+    var now=window.innerWidth>window.innerHeight;
+    if(now!==wide&&navigator.maxTouchPoints>0)arm();
+    wide=now;
+  });
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',function(){
+    if(Date.now()<hold&&window.visualViewport.scale>1.02)lock();
+  });
+})();
+</script>
 <title>TATABO3, cahier journalier EPS — registre d’absences et bilans pour professeurs d’EPS au Maroc</title>
 <meta name="description" content="TATABO3, cahier journalier EPS : appel et absences, bilans de classe, PDF A4 et exports Excel pour les professeurs d’EPS au Maroc. Fonctionne même hors ligne.">
 <link rel="canonical" href="https://cahier-eps-ma.web.app/">
@@ -153,6 +188,17 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri-2);outline-o
 .chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.ok{background:var(--ok-soft);color:var(--ok)}
 .fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:30px;box-shadow:0 6px 16px rgba(11,58,110,.35);cursor:pointer}
 @media(min-width:900px){.fab{bottom:28px}}
+/* Téléphone : le + est dans le flux de #navPin, au-dessus de la barre, écart 18 px.
+   Pas de position:absolute ni de transform : sur iOS le décalage (top / translateY) restait dans la barre
+   et le cercle couvrait Paramètres. Portrait : 18 px du bord droit (encoche nulle). Paysage : safe-area-inset-right. */
+@media (max-width:899px){
+  #navPin{display:flex;flex-direction:column;align-items:flex-end}
+  #navPin>nav.tabs{position:relative;z-index:1;order:2;width:100%;align-self:stretch}
+  #navPin>#addStudentBtn.fab{position:relative;z-index:2;order:1;flex:none;align-self:flex-end;width:58px;height:58px;margin:0 max(18px,calc(env(safe-area-inset-right, 0px) + 14px)) 18px 0;top:auto;right:auto;bottom:auto;left:auto;transform:none}
+}
+@media (min-width:900px) and (max-height:500px) and (pointer:coarse){
+  .fab{right:max(18px,calc(env(safe-area-inset-right, 0px) + 14px));bottom:max(28px,calc(env(safe-area-inset-bottom, 0px) + 16px));z-index:40}
+}
 .att{border-bottom:1px solid var(--line);padding:6px 0}
 .att:last-child{border-bottom:0}
 .att-main{display:flex;align-items:center;gap:10px;min-height:60px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;padding:4px 2px;border-radius:10px}
@@ -230,7 +276,7 @@ a.tel{color:var(--pri);font-weight:600;text-decoration:none}
 .seg button{border:0;background:#fff;color:var(--pri);font:inherit;font-size:13.5px;font-weight:650;padding:7px 12px;min-height:38px;cursor:pointer}
 .seg button.on{background:var(--pri);color:#fff}
 .gridcard{padding:0;overflow:hidden}
-.gridwrap{overflow:auto;max-height:calc(100vh - 250px);max-height:calc(100dvh - 250px);-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.gridwrap{overflow:auto;max-width:100%;max-height:calc(100vh - 250px);max-height:calc(100dvh - 250px);-webkit-overflow-scrolling:touch;overscroll-behavior:contain;contain:inline-size}
 table.grid{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:14px;table-layout:fixed}
 table.grid th,table.grid td{text-transform:none;letter-spacing:0;border-bottom:1px solid var(--line);border-right:1px solid #eef1f5;padding:0;text-align:center;white-space:nowrap}
 table.grid thead th{position:sticky;top:0;z-index:3;background:#f8fafc;height:46px;font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;cursor:pointer}
@@ -2098,7 +2144,7 @@ function normEvals(v,ids){if(!v||typeof v!=='object')return null;var o={},n=0;
    Clés séparées : classRegister.v2.snap.<horodatage> (copie exacte des données) + classRegister.v2.snapm.<horodatage> (méta).
    7 instantanés au maximum ; si le stockage est plein → IndexedDB, sinon le plus ancien est supprimé. */
 var APP_SEMVER='1.29.4';/* 1.<version>.<correctif> */
-var APP_VER='cahier-v29-4';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
+var APP_VER='cahier-v29-4b';                       /* 1.29.0 (chiffrement local) ; = nom du cache de sw.js (cahier-v<version>, + « -<correctif> » si correctif) : change à chaque mise à jour */
 var SNAP_P=KEY+'.snap.',SNAPM_P=KEY+'.snapm.',VKEY='cahier.appVersion',DKEY='cahier.snapDay',SNAP_MAX=7,SNAP_BUDGET=2600000;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function safeJson(s){try{return JSON.parse(s);}catch(e){return null;}}

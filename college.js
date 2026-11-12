@@ -406,12 +406,13 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
 /* 1.29.2 (p) : barre d’onglets et bouton + épinglés sans position:fixed sur mobile.
    iOS 26 (Safari / navigateurs intégrés aux applis) décale les éléments position:fixed pendant le défilement (barre d’adresse qui se replie, clavier) :
    sur mobile, la barre (#tabs) et le bouton + d’Élèves sont placés dans un conteneur #navPin en position:sticky en bas de page
-   (main occupe au moins la hauteur de l’écran) ; le bouton + y est en position:absolute au-dessus de la barre, visible seulement quand Élèves est affiché.
-   #tabs ne contient toujours que ses 6 onglets. Aucun calcul JS de position ; affichage seulement. Sur ordinateur (≥ 900 px) tout reste comme avant. */
+   (main occupe au moins la hauteur de l’écran) ; le bouton + est dans ce conteneur, au-dessus de la barre, visible seulement quand Élèves est affiché.
+   #tabs ne contient toujours que ses 6 onglets. Aucun calcul JS de position ; affichage seulement. Sur ordinateur (≥ 900 px) tout reste comme avant.
+   Le + est dans le flux, au-dessus de la barre (écart 18 px), pas en absolute/transform : sinon il couvre Paramètres. Portrait : 18 px du bord. Paysage : safe-area-inset-right. */
 (function(){var mq=window.matchMedia&&matchMedia('(max-width:899px)'),nav=document.getElementById('tabs'),fab=document.getElementById('addStudentBtn'),vs=document.getElementById('view-students');if(!mq||!nav||!fab||!vs)return;
 var fh=fab.parentNode,fx=fab.nextSibling,nh=nav.parentNode,nx=nav.nextSibling,w=document.createElement('div');w.id='navPin';
-var st=document.createElement('style');st.id='navPinCss';st.textContent='@media (max-width:899px){main{min-height:100vh;box-sizing:border-box;padding-bottom:24px}#navPin{position:sticky;bottom:0;z-index:30}#navPin>nav.tabs{position:relative}'+
- '#navPin>#addStudentBtn{position:absolute;right:18px;bottom:calc(100% + 18px);display:none}#navPin.np-stu>#addStudentBtn{display:block}}';document.head.appendChild(st);
+var st=document.createElement('style');st.id='navPinCss';st.textContent='@media (max-width:899px){main{min-height:100vh;box-sizing:border-box;padding-bottom:24px}#navPin{position:sticky;bottom:0;z-index:30;display:flex;flex-direction:column;align-items:flex-end}#navPin>nav.tabs{position:relative;z-index:1;order:2;width:100%;align-self:stretch}'+
+ '#navPin>#addStudentBtn{position:relative;z-index:2;order:1;flex:none;align-self:flex-end;width:58px;height:58px;margin:0 max(18px,calc(env(safe-area-inset-right,0px) + 14px)) 18px 0;top:auto;right:auto;bottom:auto;left:auto;transform:none;display:none}#navPin.np-stu>#addStudentBtn{display:block}}';document.head.appendChild(st);
 function put(el,par,nxt){if(el.parentNode!==par)par.insertBefore(el,nxt&&nxt.parentNode===par?nxt:null);}
 function place(){if(mq.matches){put(w,nh,nav);w.appendChild(nav);w.appendChild(fab);}else{put(nav,nh,w.parentNode?w:nx);put(fab,fh,fx);if(w.parentNode)w.parentNode.removeChild(w);}}
 function stu(){w.classList.toggle('np-stu',vs.classList.contains('active'));}
