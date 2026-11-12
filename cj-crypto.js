@@ -256,10 +256,8 @@ window.addEventListener('pagehide',function(){if(MODE==='open'){hiddenAt=hiddenA
 /* ---------- première ouverture : proposer le code ---------- */
 var LATER='cahier.cryptoLater';
 function setupFlow(fromSettings){
-  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b></p>'+   /* 1.29.1 (-c) : texte fourni par le propriétaire (affichage seul) */
-    '<p>Choisissez un code de 6 chiffres ou plus.</p>'+
-    '<p>Ce code sera demandé à chaque ouverture de l’application.</p>'+
-    '<p>En cas d’oubli, sélectionnez «\u00a0Code oublié\u00a0?\u00a0». Cela efface la copie locale de cet appareil\u00a0; vous pourrez la récupérer depuis votre compte synchronisé.</p></div>';
+  var intro='<div class="txt"><p><b>Protégez les données de vos élèves.</b></p>'+   /* 1.29.4c : paragraphe d’aide « Ce code sera… synchronisé » retiré (affichage seul) */
+    '<p>Choisissez un code de 6 chiffres ou plus.</p></div>';
   function step1(msg){pinForm({free:true,title:'Choisissez votre code',intro:intro,msg:msg,cancel:true,extra:'<button type="button" class="lk" id="cjDl">Télécharger d’abord une sauvegarde (JSON)</button>',
       wire:function(r){r.querySelector('#cjDl').addEventListener('click',dlBackup);}}).then(function(a){
     if(a==null){if(!fromSettings)try{oSet.call(LS,LATER,String(now()));}catch(e){}closeOverlay();return;}
