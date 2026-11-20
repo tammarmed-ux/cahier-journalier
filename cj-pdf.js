@@ -307,7 +307,7 @@ var GAB={'Produit':'Prod','Perf.':'Perf','Indiv.':'Indv','Coll.':'Coll','Gym.':'
 function gHead(cid,p){var sp=A.gradeSpec(cid,p);return {sp:sp,n:'Note /'+num(sp.total),c:sp.cols.map(function(k){return (GAB[k.l]||k.l)+' /'+num(k.max);}),cp:'Comp /'+num(sp.comp)};}
 function gCells(cid,p,s,sp){var g=A.gradeOf(cid,s.id,p),half=sp.total/2;return {n:g.dsp?C('Disp.',{textColor:DSP_T}):g.total==null?C('—',{textColor:MUTED}):C(num(g.total),{fontStyle:'bold',textColor:g.total<half?ST.A.c:PRI}),
   c:sp.cols.map(function(k){var v=g.vals[k.k];return v==null?C('—',{textColor:[190,196,206]}):C(num(v),{fontStyle:'bold',textColor:v>k.max?ST.A.c:INK});}),
-  cp:C(num(g.comp.v),{fontStyle:'bold',textColor:g.comp.v<g.comp.max?[184,110,0]:INK})};}   /* note comportementale existante (comme le relevé) */
+  cp:g.dsp?C('—',{textColor:[190,196,206]}):C(num(g.comp.v),{fontStyle:'bold',textColor:g.comp.v<g.comp.max?[184,110,0]:INK})};}   /* note comportementale existante (comme le relevé) */
 function studentTable(d,y,list,cid,p,f){
   var DB=A.db(),th=DB.settings.threshold,year=multi(p),g=A.grpOf(cid),cap=A.capOf(cid);
   var GH=year?null:gHead(cid,p);   /* cycle : « Note /20 » après le nom, colonnes A et R retirées, notes Produit/Performance… + Conceptuelle */
@@ -572,7 +572,7 @@ function repGrades(o){var cid=o.cid,p=+o.p||0,c=A.cls(cid);if(!c)throw U('Choisi
 if(v!=null&&v<=k.max)acc[k.k].push(v);var star=raw&&k.k==='g1'&&g.essais.length&&!g.prodAuto&&v!=null;if(star)man++;   /* note Produit tapée à la main malgré des essais */
       row.push(v==null?C('—',{textColor:[190,196,206]}):C(num(v)+(star?' *':''),{fontStyle:'bold',textColor:v>k.max?ST.A.c:INK}));
       });
-    cp.push(g.comp.v);row.push(C(num(g.comp.v),{fontStyle:'bold',textColor:g.comp.v<g.comp.max?[184,110,0]:INK}));return row;});
+    if(!g.dsp)cp.push(g.comp.v);row.push(g.dsp?C('—',{textColor:[190,196,206]}):C(num(g.comp.v),{fontStyle:'bold',textColor:g.comp.v<g.comp.max?[184,110,0]:INK}));return row;});
   function av(a){return a.length?num(r2(a.reduce(function(x,y){return x+y;},0)/a.length)):'—';}
   var foot=['','',C('Moyenne de la classe',{halign:'left'}),avg==null?'—':num(avg)];sp.cols.forEach(function(k){if(raw&&k.k==='g1')foot.push('');foot.push(av(acc[k.k]));});foot.push(av(cp));
   var cols={0:{cellWidth:7},1:{cellWidth:22,fontSize:6.6},2:{cellWidth:raw?40:44}};

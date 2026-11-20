@@ -428,7 +428,7 @@ function extract(pf){const A=window.CJR,Db=A.db(),X=A.cx,C=A.cal();const per=Db.
     marks:list.map(st=>cols.map(x=>{if(x.hol)return '#';const r=A.rec(c.id,p,x.s);return r?A.codeOf(r.marks[st.id]):'';}))};});
   GR[c.name]={cyc:C.cycles.map((cy,p)=>{const sp=A.gradeSpec(c.id,p),cols=A.colsOf(c.id,p);
    return {spec:{total:sp.total,comp:sp.comp,cols:sp.cols.map(k=>({k:k.k,l:k.l,max:k.max}))},
-    rows:list.map(s=>{const q=A.gradeOf(c.id,s.id,p);return {id:s.id,total:q.total,vals:sp.cols.map(k=>q.vals[k.k]==null?null:q.vals[k.k]),comp:q.comp?{v:q.comp.v,max:q.comp.max}:null,dc:!!A.dspInCycle(s,p),da:cols.map(x=>x.hol?0:(A.dspAt(s,c.id,p,x.s)?1:0))};})};})};
+    rows:list.map(s=>{const q=A.gradeOf(c.id,s.id,p);return {id:s.id,total:q.total,vals:sp.cols.map(k=>q.vals[k.k]==null?null:q.vals[k.k]),comp:q.comp&&!q.dsp?{v:q.comp.v,max:q.comp.max}:null,dc:!!A.dspInCycle(s,p),da:cols.map(x=>x.hol?0:(A.dspAt(s,c.id,p,x.s)?1:0))};})};})};
   return {id:c.id,name:c.name,level:A.levelOf(c.name),grp:gm,students:list.map(st=>({id:st.id,name:st.name,sid:st.sid,sex:st.sex,dob:st.dob,disp:!!st.dispense,phys:Object.assign({},st.phys||{}),imc:A.imcOf(st),score:sc[st.id]==null?null:sc[st.id]})),reg};});
  const last=C.cycles[C.cycles.length-1];
  const D={teacher:Db.settings.teacher,profile:pf||Db.settings.profile||null,school:Db.settings.school||'lycee',cycles:cyc,tt,svc,
