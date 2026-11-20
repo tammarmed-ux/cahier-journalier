@@ -9,8 +9,8 @@
       ".git",
       ".git/**",
       "**/.git/**",
-      "**/.*",
-      "**/.*/**",
+      "**/.!(well-known)",
+      "**/.!(well-known)/**",
       "**/node_modules/**",
       "*.md",
       "**/*.md",
@@ -200,6 +200,19 @@
           {
             "key": "Cache-Control",
             "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
           }
         ]
       }

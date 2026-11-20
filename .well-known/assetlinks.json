@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ma.tatabo3.app",
+      "sha256_cert_fingerprints": [
+        "DF:80:21:60:34:99:0D:62:55:38:8C:93:D1:3C:5F:C7:97:2E:09:79:7C:E8:7D:6F:79:B6:35:E6:DC:FF:C3:F1"
+      ]
+    }
+  }
+]
