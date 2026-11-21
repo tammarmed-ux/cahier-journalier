@@ -386,6 +386,38 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
  var row=document.createElement('button');row.type='button';row.className='ps-row';row.id='cjcRow';row.setAttribute('data-ps-open','cjc');
  row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b></span><span class="ps-val"></span><span class="ps-chev" aria-hidden="true">›</span>';
  g.parentNode.insertBefore(row,g);
+ /* 1.29.10 : « Prêt à imprimer ? » (proposition C choisie par le propriétaire) sous le bouton : état des rubriques du cahier + liens « Compléter › » vers les écrans existants.
+    LECTURE SEULE : lu par window.CJR (studentsIn, photoAll, hasPhys, grpOf, gradeOf, cyNow, cal) et pfGet ; rien n’est écrit ; le PDF ne change pas.
+    Recalculé à chaque ouverture de la sous-page. Les liens ne font que naviguer (onglets, sélecteurs et fenêtres existants, comme un toucher de l’utilisateur). */
+ (function(){var st2=document.createElement('style');st2.textContent='#cjcRdy{margin-top:14px}#cjcRdy .rd-h{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 2px 6px}#cjcRdy .rd-n{font-size:13.5px;font-weight:700}#cjcRdy .rd-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 0 4px}#cjcRdy .rd-bar i{display:block;height:100%;background:var(--ok)}#cjcRdy ul{list-style:none;margin:0;padding:0}#cjcRdy li{display:flex;align-items:center;gap:10px;padding:8px 2px;border-top:1px solid var(--line);font-size:14px}#cjcRdy li:first-child{border-top:0}#cjcRdy .rd-s{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex:none}#cjcRdy .rd-s.ok{background:var(--ok-soft);color:var(--ok)}#cjcRdy .rd-s.wa{background:var(--warn-soft);color:var(--warn)}#cjcRdy .rd-t{flex:1;min-width:0}#cjcRdy .rd-t small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#cjcRdy .rd-go{all:unset;cursor:pointer;color:var(--pri-2);font-weight:600;font-size:13.5px;white-space:nowrap;padding:6px 0 6px 6px}#cjcRdy .rd-go b{color:var(--muted);font-size:20px;font-weight:600;margin-left:6px;vertical-align:-2px}#cjcRdy .rd-f{font-size:12.5px;color:var(--muted);margin:6px 2px 0}';document.head.appendChild(st2);
+  var box=document.createElement('div');box.id='cjcRdy';card.appendChild(box);var tgt={};
+  function E(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function draw(ph){var D=R.db(),cs=D.classes||[],cy=R.cyNow(),p=null;try{p=pfGet().p;}catch(x){}p=p||{};
+   var who=[D.settings.teacher||[p.civ,p.pre,p.nom].filter(function(x){return x;}).join(' ')||''],etab=p.etab||D.settings.etab||'';
+   var tt=((D.cal&&D.cal.tt)||[]).length,hol=((D.cal&&D.cal.holidays)||[]).length,stu=0,np=0,nt=0,ng=0,tot=0,done=0;tgt={};
+   cs.forEach(function(c){var l=R.studentsIn(c.id);stu+=l.length;if(R.grpOf(c.id))ng++;else if(l.length&&!tgt.grp)tgt.grp=c.id;
+    l.forEach(function(s){if(ph[s.id])np++;else if(!tgt.ph)tgt.ph=c.id;if(R.hasPhys(s))nt++;else if(!tgt.tst)tgt.tst=c.id;
+     var g=R.gradeOf(c.id,s.id,cy);if(g.dsp)return;tot++;if(g.total!=null)done++;else if(!tgt.nt)tgt.nt=c.id;});});
+   var rows=[['pf','Profil et établissement',who[0]+(etab?' · '+etab:''),!!(who[0]&&etab)],['tt','Tableau de service',tt+' créneau'+(tt>1?'x':''),tt>0],['hol','Vacances et jours fériés',hol+' période'+(hol>1?'s':''),hol>0],
+    ['ph','Photos des élèves',np+' / '+stu,np>=stu],['tst','Tests physiques',nt+' / '+stu+' élèves',nt>=stu],['grp','Groupes de travail',ng+' / '+cs.length+' classes',ng>=cs.length],
+    ['nt','Notes du cycle '+(cy+1),done+' / '+tot+' complètes',tot>0&&done>=tot]];
+   var ok=rows.filter(function(r){return r[3];}).length,h='<div class="rd-h">Prêt à imprimer ?</div><div class="rd-n">'+ok+' / '+rows.length+' rubriques complètes</div><div class="rd-bar"><i style="width:'+Math.round(ok/rows.length*100)+'%"></i></div><ul>';
+   rows.forEach(function(r){h+='<li><span class="rd-s '+(r[3]?'ok':'wa')+'" aria-hidden="true">'+(r[3]?'✓':'!')+'</span><span class="rd-t">'+E(r[1])+'<small>'+E(r[2])+'</small></span>'+(r[3]?'':'<button type="button" class="rd-go" data-rd="'+r[0]+'">Compléter<b aria-hidden="true">›</b></button>')+'</li>';});
+   box.innerHTML=h+'</ul><div class="rd-f">Le cahier se télécharge quand même : une rubrique incomplète laisse des cases vides.</div>';}
+  function refresh(){var p=R.photoAll?R.photoAll():Promise.resolve({});Promise.resolve(p).catch(function(){return {};}).then(function(ph){try{draw(ph||{});}catch(x){box.innerHTML='';}});}
+  function tab(t){var b=document.querySelector('#tabs button[data-tab="'+t+'"]');if(b)b.click();}
+  function pick(id,v){var s=document.getElementById(id);if(s&&v&&s.value!==v&&s.querySelector('option[value="'+v+'"]')){s.value=v;s.dispatchEvent(new Event('change',{bubbles:true}));}}
+  function click(sel){var e=document.querySelector(sel);if(e)e.click();}
+  box.addEventListener('click',function(ev){var b=ev.target.closest('[data-rd]');if(!b)return;var k=b.getAttribute('data-rd');
+   if(k==='pf'){pfEdit();return;}
+   if(k==='hol'){CJPS.open('hol');return;}
+   if(k==='tt'){tab('home');setTimeout(function(){click('#ttCard [data-ttadd]');},60);return;}
+   if(k==='ph'||k==='tst'){tab('students');pick('stuClassFilter',tgt[k]);if(k==='tst')setTimeout(function(){click('#testsBtn');},60);return;}
+   if(k==='grp'){tab('attendance');pick('attClass',tgt.grp);setTimeout(function(){click('#view-attendance [data-grp="open"]');},60);return;}
+   if(k==='nt'){tab('proc');pick('procClass',tgt.nt);setTimeout(function(){click('#procPeriods [data-p="'+R.cyNow()+'"]');},60);}});
+  document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('[data-ps-open="cjc"]'))setTimeout(refresh,0);},true);
+  var o0=CJPS.open;CJPS.open=function(k){var r=o0.apply(this,arguments);if(k==='cjc')setTimeout(refresh,0);return r;};
+  refresh();})();
  var b=card.querySelector('#cjcBtn'),lbl=b.textContent,busy=0;
  function js(src){return new Promise(function(ok,ko){var el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=function(){el.remove();ko(new Error(src));};document.head.appendChild(el);});}
  function end(){busy=0;b.disabled=false;b.textContent=lbl;}
