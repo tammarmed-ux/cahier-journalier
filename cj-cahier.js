@@ -875,14 +875,16 @@ function texteData(sel){const A=window.CJR,Db=A.db(),C=A.cal(),per=Db.periods||[
   groups.forEach(g=>{let t=act,src=act?'cycle':'';
    if(mixed&&(g.aps!==base||(g.aps==='athle'&&g.evt&&guess&&g.evt!==guess))){t=evL(g.evt)||apL(g.aps)||act;src='classe';}
    g.title=t;g.src=src;
-   const rows=g.classes.map(c=>{const cols=A.colsOf(c.id,p),m={};cols.forEach(x=>{if(!x.hol&&x.s!=null)m[x.s]=x;});return {c,n:cols.n||0,m};});
-   const N=rows.reduce((a,r)=>Math.max(a,r.n),0);g.N=N;g.seances=[];
-   /* TO = 1re séance de chaque classe, TB = dernière séance de chaque classe (même si les classes n’ont pas le même nombre de séances), 2…N−1 entre les deux */
-   const one=(r,k)=>{const x=r.m[k];return {name:r.c.name,date:A.sessDate(r.c.id,p,k)||'',held:!!A.rec(r.c.id,p,k),t:x&&x.slot?x.slot.start:'',o:ord[r.c.id]};};
+   /* 1.29.13 (consigne du propriétaire) : 10 séances par cycle et par classe (TO, 2…9, TB), de la 1re à la dernière semaine d’après l’emploi du temps.
+      Vacances : sautées, ni affichées ni comptées. Jour férié, réunion, absence collective… (calendrier de l’app) : séance comptée à sa date,
+      motif (libellé de l’app) écrit dans REMARQUES. Au-delà de 10 créneaux dans le cycle : non imprimés (TB = 10e). Moins de 10 (cycle court) : date vide, remarque « Aucun créneau dans le cycle ». */
+   const NS=10,why=h=>{let l=String(h&&h.label||'').trim();if(l.length>34)l=l.replace(/\s*\([^)]*\)\s*/g,' ').trim();return l||A.holShort(h);};/* libellé de l’app ; précision entre parenthèses retirée s’il est trop long pour la case */
+   const rows=g.classes.map(c=>{const L=A.colsOf(c.id,p).filter(x=>!(x.hol&&A.isVacH(x.hol)));
+    const list=L.slice(0,NS).map(x=>x.hol?{date:x.date||'',held:false,t:x.slot?x.slot.start:'',why:why(x.hol)}:{date:A.sessDate(c.id,p,x.s)||x.date||'',held:!!A.rec(c.id,p,x.s),t:x.slot?x.slot.start:'',why:''});
+    return {c,list,total:L.length};});
+   g.N=NS;g.seances=[];g.count=rows.map(r=>({name:r.c.name,total:r.total,motifs:r.list.filter(x=>x.why).length}));
    const srt=it=>it.sort((a,b)=>(a.date||'9999')<(b.date||'9999')?-1:(a.date||'9999')>(b.date||'9999')?1:a.t<b.t?-1:a.t>b.t?1:a.o-b.o);
-   g.seances.push({k:0,label:'TO',items:srt(rows.map(r=>one(r,0)))});
-   for(let k=1;k<=N-2;k++){const it=rows.filter(r=>k<=r.n-2).map(r=>one(r,k));if(it.length)g.seances.push({k,label:String(k+1),items:srt(it)});}
-   const tb=rows.filter(r=>r.n>=2);if(tb.length)g.seances.push({k:N-1,label:'TB',items:srt(tb.map(r=>one(r,r.n-1)))});
+   for(let k=0;k<NS;k++)g.seances.push({k,label:k===0?'TO':k===NS-1?'TB':String(k+1),items:srt(rows.map(r=>Object.assign({name:r.c.name,o:ord[r.c.id]},r.list[k]||{date:'',held:false,t:'',why:'',miss:1})))});
    g.classes=g.classes.map(c=>c.name);});
   cycles.push({p,name:A.cycleName(p),act,aps:base,start:cy.start||'',end:cy.end||'',emoji:A.actPicto(per[p])||A.actEmoji(per[p],base)||'',groups});});
  return {cycles};}
@@ -890,7 +892,7 @@ const CTX_CSS=`
 .ctx-leg{font-size:7pt;color:#4B5563;margin:0 0 2mm;line-height:1.35}.ctx-leg b{color:#0A3768}.ctx-leg .pl{color:#8A94A6;font-style:italic}
 table.ctx{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7.6pt}
 table.ctx th{background:#0A3768;color:#fff;font-weight:800;font-size:7.4pt;letter-spacing:.3pt;height:7mm;padding:0 1mm;border:.25mm solid #0A3768;text-align:center}
-table.ctx td{border:.25mm solid #C9D3E1;height:5mm;padding:0 1.2mm;line-height:1;vertical-align:middle}
+table.ctx td{border:.25mm solid #C9D3E1;height:var(--rh,5mm);padding:0 1.2mm;line-height:1;vertical-align:middle}
 table.ctx tr.b0 td{border-top:.55mm solid #0A3768}
 table.ctx td.se{text-align:center;background:#EEF3FA;color:#0A3768;font-weight:900;font-size:13pt;padding:0 .5mm}
 table.ctx td.se small{display:block;font-size:5.6pt;font-weight:600;color:#E85D04;margin-top:.8mm;line-height:1.1;letter-spacing:0}
@@ -898,8 +900,8 @@ table.ctx td.cl{font-weight:700;font-size:7.2pt;color:#1C2430;border-left-width:
 table.ctx td.dt{white-space:nowrap;font-size:7pt;text-align:center;color:#8A94A6;font-style:italic}
 table.ctx td.dt.h{color:#0A3768;font-weight:700;font-style:normal}
 table.ctx td.ob{padding:.8mm 3mm;vertical-align:top}
-table.ctx td.ob .ln{border-bottom:.3mm dashed #8FA3BF;height:4.6mm}
-table.ctx td.rm{vertical-align:top}
+table.ctx td.ob .ln{border-bottom:.3mm dashed #8FA3BF;height:calc(var(--rh,5mm) - .4mm)}
+table.ctx td.rm{font-size:6.3pt;line-height:1.05;color:#B4490A;font-weight:600;padding:0 1.2mm;overflow:hidden}table.ctx td.dt.x{color:#B4490A}table.ctx td.rm.ms{color:#8A94A6;font-style:italic;font-weight:400}.ctx-leg .rq{color:#B4490A;font-weight:700}
 .ctx-sig{display:grid;grid-template-columns:1fr 1fr;gap:16mm;margin-top:5mm;padding:0 4mm}
 .ctx-sig div{font-size:9pt;font-weight:800;color:#0A3768;letter-spacing:.4pt;height:19mm;border-bottom:.35mm solid #0A3768;position:relative}
 .ctx-sig div span{position:absolute;left:0;bottom:-4.6mm;font-size:7pt;font-weight:500;color:#6b7280;letter-spacing:0}
@@ -910,24 +912,23 @@ function texteBuild(H,TD){const {T,frame,esc,cc,PF,CIV,TNAME}=H;H.setCur('');let
  const D3=d=>d?d.slice(8,10)+' / '+d.slice(5,7)+' / '+d.slice(0,4):'… / … / ……';
  const DW=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
  const dd=d=>{if(!d)return '';const x=new Date(d+'T12:00:00');return DW[x.getDay()]+' '+d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4);};
- const LEG=`<div class="ctx-leg"><b>TO</b> = test d’observation · <b>TB</b> = test bilan · Classes dans l’ordre de passage de la semaine · <b>Date en gras</b> : séance effectuée (registre de l’application) · <span class="pl">date en gris</span> : date prévue d’après l’emploi du temps (vacances et jours fériés exclus).</div>`;
- const HEAD='<table class="ctx"><colgroup><col style="width:17mm"><col style="width:25mm"><col style="width:26mm"><col><col style="width:38mm"></colgroup><thead><tr><th>SÉANCES</th><th>CLASSE</th><th>DATES</th><th>OBJECTIFS</th><th>REMARQUES</th></tr></thead><tbody>';
+ const LEG=`<div class="ctx-leg"><b>TO</b> = test d’observation · <b>TB</b> = test bilan · 10 séances par cycle, classes dans l’ordre de passage de la semaine · <b>Date en gras</b> : séance effectuée (registre de l’application) · <span class="pl">date en gris</span> : date prévue d’après l’emploi du temps · <span class="rq">Remarque</span> : séance comptée mais non effectuée (jour férié, réunion, absence collective…) · vacances non comptées.</div>`;
+ const HEAD='<table class="ctx"><colgroup><col style="width:17mm"><col style="width:25mm"><col style="width:26mm"><col><col style="width:46mm"></colgroup><thead><tr><th>SÉANCES</th><th>CLASSE</th><th>DATES</th><th>OBJECTIFS</th><th>REMARQUES</th></tr></thead><tbody>';
  const SIG=`<div class="ctx-sig"><div>LE DIRECTEUR<span>(Signature)</span></div><div>L’INSPECTEUR<span>(Signature)</span></div></div><div class="ctx-name">${esc((CIV+' '+TNAME).trim())}</div>`;
- const RH=5.05,CAP=226,SIGH=38;
+ const RH=6,CAP=222,SIGH=38;
  let pi=0;
  TD.cycles.forEach(cy=>{cy.groups.forEach((g,gi)=>{
-  const R=Math.max(6,g.classes.length+2),bh=R*RH+.6;
+  /* 1.29.13 (consigne du propriétaire) : 5 séances par page — page 1 : TO à 5, page 2 : 6 à TB + signatures ; hauteur de ligne réduite si beaucoup de classes */
+  const R=Math.max(6,g.classes.length+2),rh=Math.min(RH,Math.floor((((CAP-SIGH)/5-.6)/R)*100)/100);
   const blocks=g.seances.map(s=>{let h='';for(let r=0;r<R;r++){const it=s.items[r],c=it?cc(it.name)[0]:'#C9D3E1';
-    h+=`<tr${r===0?' class="b0"':''}>${r===0?`<td class="se" rowspan="${R}">${esc(s.label)}${s.label==='TO'?'<small>test d’observation</small>':s.label==='TB'?'<small>test bilan</small>':''}</td>`:''}<td class="cl" style="border-left-color:${c}">${it?esc(it.name):''}</td><td class="dt${it&&it.held?' h':''}">${it?dd(it.date):''}</td>${r===0?`<td class="ob" rowspan="${R}">${'<div class="ln"></div>'.repeat(R)}</td><td class="rm" rowspan="${R}"></td>`:''}</tr>`;}
+    h+=`<tr${r===0?' class="b0"':''}>${r===0?`<td class="se" rowspan="${R}">${esc(s.label)}${s.label==='TO'?'<small>test d’observation</small>':s.label==='TB'?'<small>test bilan</small>':''}</td>`:''}<td class="cl" style="border-left-color:${c}">${it?esc(it.name):''}</td><td class="dt${it&&it.held?' h':''}${it&&it.why?' x':''}">${it?dd(it.date):''}</td>${r===0?`<td class="ob" rowspan="${R}">${'<div class="ln"></div>'.repeat(R)}</td>`:''}<td class="rm${it&&it.miss?' ms':''}">${it&&it.why?esc(it.why):it&&it.miss?'Aucun créneau dans le cycle':''}</td></tr>`;}
    return h;});
   /* pages : blocs entiers, signatures sur la dernière page */
-  const pages=[];let cur=[],used=0;blocks.forEach(b=>{if(cur.length&&used+bh>CAP){pages.push(cur);cur=[];used=0;}cur.push(b);used+=bh;});
-  if(cur.length&&used+SIGH>CAP&&cur.length>1){const last=cur.pop();pages.push(cur);cur=[last];}
-  pages.push(cur);
+  const pages=[];for(let i=0;i<blocks.length;i+=5)pages.push(blocks.slice(i,i+5));
   const act=g.title?esc(g.title.toLocaleUpperCase('fr-FR')):'……………………………';
   const sub=`DU ${D3(cy.start)} AU ${D3(cy.end)} · ${esc(g.level||'')}${g.level?' : ':''}${g.classes.map(esc).join(' · ')}`;
   pages.forEach((bl,j)=>{const last=j===pages.length-1;
-   const body=LEG+HEAD+bl.join('')+'</tbody></table>'+(last?SIG:'');
+   const body=LEG+HEAD.replace('<table class="ctx">','<table class="ctx" style="--rh:'+rh+'mm">')+bl.join('')+'</tbody></table>'+(last?SIG:'');
    let h=frame(T,`CYCLE ${cy.p+1} : ${act}${j?' <small style="font-size:10pt">(suite)</small>':''}`,sub,cy.emoji,body,++n);
    h=h.replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·');add('ctx'+(pi++),h);});});});
  if(!P.length)throw new Error('Aucune classe ni séance à imprimer');
