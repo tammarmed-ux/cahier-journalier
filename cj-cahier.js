@@ -88,7 +88,7 @@ function classLevelSort(list){var nm=function(c){return typeof c==='string'?c:(c
   return list.slice().sort(function(a,b){var x=classKey(nm(a)),y=classKey(nm(b));
     return x.lv-y.lv||(x.fil<y.fil?-1:x.fil>y.fil?1:0)||x.num-y.num||x.raw.localeCompare(y.raw,'fr',{numeric:true});});}
 
-function R3(D,GR,PH,LOGO,KING,FONTCSS){
+function R3(D,GR,PH,LOGO,KING,FONTCSS,ALT){
 let PHOTOS=PH||{};const okPh=d=>typeof d==='string'&&/^data:image\/(jpeg|webp|png);base64,/.test(d);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dmy=d=>d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'';
@@ -411,7 +411,8 @@ function build(){const k='V',T=THEMES[k];let n=0;const P=[];const add=(id,h)=>{P
  D.classes.forEach((c,ci)=>{CUR=c.name;add('cls'+ci,clsTitle(k,c));n++;add('anthro'+ci,anthro(k,c,++n));add('grp'+ci,groups(k,c,++n));for(let p=0;p<6;p++)add('reg'+ci+'_'+p,registre(k,c,p,++n));});
  CUR='';add('back',back(k));
  return {css:baseCss(T),pages:P,PF,CIV,TNAME,YEAR};}
-return build();
+/* 1.29.11 : ALT (cahier de texte) reçoit les mêmes outils de mise en page ; sans ALT, rendu du cahier journalier inchangé */
+return ALT?ALT({T:THEMES.V,frame,baseCss,esc,cc,back,PF,CIV,TNAME,YEAR,setCur:v=>{CUR=v;}}):build();
 }
 
 /* ---------- données : lecture seule depuis l’app (même calcul que les écrans) ---------- */
@@ -854,5 +855,107 @@ async function make(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function()
 function fixOrdering(u){const A=Array.from('/Ordering (Identity-H)').map(c=>c.charCodeAt(0)),B=Array.from('/Ordering (Identity)  ').map(c=>c.charCodeAt(0)),n=A.length;
  for(let i=0;i<=u.length-n;i++){if(u[i]!==47||u[i+1]!==79)continue;let k=2;while(k<n&&u[i+k]===A[k])k++;if(k===n){u.set(B,i);i+=n-1;}}}
 
-window.CJCahier={make,extract,pages:function(pf){const x=extract(pf||null);return Promise.all([photos(),assets()]).then(([PH,AS])=>pagesOf(x.D,x.GR,PH,AS));},render:R3,classLevelSort};
+/* ---------- 1.29.11 : « Cahier de texte » (PDF A4, même style que le cahier journalier : couverture, polices Poppins/Cairo, couleurs, en-têtes).
+   Une page (ou plus) par cycle et par groupe de classes (même niveau, même APS / même épreuve) : SÉANCES | CLASSE | DATES | OBJECTIFS | REMARQUES,
+   un bloc par séance : TO (test d’observation), 2…n−1, TB (test bilan) ; dans chaque bloc les classes dans l’ordre de passage (date puis heure du créneau).
+   LECTURE SEULE (window.CJR) : cycles et dates (cal), activité du cycle (Répartition cyclique) et APS / épreuve par classe (evals, mêmes fonctions que l’app),
+   nombre de séances et dates = colonnes du registre (colsOf / sessDate : date réelle de la séance enregistrée, sinon date prévue par l’emploi du temps,
+   vacances et jours fériés exclus). Aucun objectif n’est stocké par l’app : colonne OBJECTIFS en lignes pointillées, REMARQUES vide.
+   Rien n’est écrit ; le cahier journalier (make) n’est pas modifié. ---------- */
+function texteData(sel){const A=window.CJR,Db=A.db(),C=A.cal(),per=Db.periods||[];
+ const ord={},cls=classLevelSort((Db.classes||[]).map(c=>({id:c.id,name:c.name,level:A.levelOf(c.name)||''})));cls.forEach((c,i)=>{ord[c.id]=i;});
+ const evL=e=>A.OPA&&A.OPA.events&&A.OPA.events[e]?A.OPA.events[e].l:'',apL=a=>A.APS&&A.APS[a]?A.APS[a].l:'';
+ const cycles=[];
+ C.cycles.forEach((cy,p)=>{if(sel&&sel.indexOf(p)<0)return;const act=String(per[p]||'').trim(),base=A.cycAps(p),guess=A.evtGuess?A.evtGuess(act):'';
+  const gm={},groups=[];
+  cls.forEach(c=>{if(!(A.colsOf(c.id,p).n>0))return;/* classe sans séance dans ce cycle (créneaux ajoutés plus tard) : absente de la page */
+   const a=A.apsOf(c.id,p)||'',e=a==='athle'?(A.evtOf(c.id,p)||''):'',key=c.level+'|'+a+'|'+e;
+   let g=gm[key];if(!g){g=gm[key]={level:c.level,aps:a,evt:e,classes:[]};groups.push(g);}g.classes.push(c);});
+  const kinds={};groups.forEach(g=>{kinds[g.aps+'|'+g.evt]=1;});const mixed=Object.keys(kinds).length>1;
+  groups.forEach(g=>{let t=act,src=act?'cycle':'';
+   if(mixed&&(g.aps!==base||(g.aps==='athle'&&g.evt&&guess&&g.evt!==guess))){t=evL(g.evt)||apL(g.aps)||act;src='classe';}
+   g.title=t;g.src=src;
+   const rows=g.classes.map(c=>{const cols=A.colsOf(c.id,p),m={};cols.forEach(x=>{if(!x.hol&&x.s!=null)m[x.s]=x;});return {c,n:cols.n||0,m};});
+   const N=rows.reduce((a,r)=>Math.max(a,r.n),0);g.N=N;g.seances=[];
+   /* TO = 1re séance de chaque classe, TB = dernière séance de chaque classe (même si les classes n’ont pas le même nombre de séances), 2…N−1 entre les deux */
+   const one=(r,k)=>{const x=r.m[k];return {name:r.c.name,date:A.sessDate(r.c.id,p,k)||'',held:!!A.rec(r.c.id,p,k),t:x&&x.slot?x.slot.start:'',o:ord[r.c.id]};};
+   const srt=it=>it.sort((a,b)=>(a.date||'9999')<(b.date||'9999')?-1:(a.date||'9999')>(b.date||'9999')?1:a.t<b.t?-1:a.t>b.t?1:a.o-b.o);
+   g.seances.push({k:0,label:'TO',items:srt(rows.map(r=>one(r,0)))});
+   for(let k=1;k<=N-2;k++){const it=rows.filter(r=>k<=r.n-2).map(r=>one(r,k));if(it.length)g.seances.push({k,label:String(k+1),items:srt(it)});}
+   const tb=rows.filter(r=>r.n>=2);if(tb.length)g.seances.push({k:N-1,label:'TB',items:srt(tb.map(r=>one(r,r.n-1)))});
+   g.classes=g.classes.map(c=>c.name);});
+  cycles.push({p,name:A.cycleName(p),act,aps:base,start:cy.start||'',end:cy.end||'',emoji:A.actPicto(per[p])||A.actEmoji(per[p],base)||'',groups});});
+ return {cycles};}
+const CTX_CSS=`
+.ctx-leg{font-size:7pt;color:#4B5563;margin:0 0 2mm;line-height:1.35}.ctx-leg b{color:#0A3768}.ctx-leg .pl{color:#8A94A6;font-style:italic}
+table.ctx{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7.6pt}
+table.ctx th{background:#0A3768;color:#fff;font-weight:800;font-size:7.4pt;letter-spacing:.3pt;height:7mm;padding:0 1mm;border:.25mm solid #0A3768;text-align:center}
+table.ctx td{border:.25mm solid #C9D3E1;height:5mm;padding:0 1.2mm;line-height:1;vertical-align:middle}
+table.ctx tr.b0 td{border-top:.55mm solid #0A3768}
+table.ctx td.se{text-align:center;background:#EEF3FA;color:#0A3768;font-weight:900;font-size:13pt;padding:0 .5mm}
+table.ctx td.se small{display:block;font-size:5.6pt;font-weight:600;color:#E85D04;margin-top:.8mm;line-height:1.1;letter-spacing:0}
+table.ctx td.cl{font-weight:700;font-size:7.2pt;color:#1C2430;border-left-width:1.1mm;white-space:nowrap;overflow:hidden}
+table.ctx td.dt{white-space:nowrap;font-size:7pt;text-align:center;color:#8A94A6;font-style:italic}
+table.ctx td.dt.h{color:#0A3768;font-weight:700;font-style:normal}
+table.ctx td.ob{padding:.8mm 3mm;vertical-align:top}
+table.ctx td.ob .ln{border-bottom:.3mm dashed #8FA3BF;height:4.6mm}
+table.ctx td.rm{vertical-align:top}
+.ctx-sig{display:grid;grid-template-columns:1fr 1fr;gap:16mm;margin-top:5mm;padding:0 4mm}
+.ctx-sig div{font-size:9pt;font-weight:800;color:#0A3768;letter-spacing:.4pt;height:19mm;border-bottom:.35mm solid #0A3768;position:relative}
+.ctx-sig div span{position:absolute;left:0;bottom:-4.6mm;font-size:7pt;font-weight:500;color:#6b7280;letter-spacing:0}
+.ctx-name{text-align:center;margin-top:7mm;font:italic 600 11pt 'Poppins','Cairo';color:#1F5FA8}
+`;
+function texteBuild(H,TD){const {T,frame,esc,cc,PF,CIV,TNAME}=H;H.setCur('');let n=1;const P=[];
+ const add=(id,h)=>{P.push({id,h:h.replace('<section ','<section data-id="'+id+'" ')});};
+ const D3=d=>d?d.slice(8,10)+' / '+d.slice(5,7)+' / '+d.slice(0,4):'… / … / ……';
+ const DW=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+ const dd=d=>{if(!d)return '';const x=new Date(d+'T12:00:00');return DW[x.getDay()]+' '+d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4);};
+ const LEG=`<div class="ctx-leg"><b>TO</b> = test d’observation · <b>TB</b> = test bilan · Classes dans l’ordre de passage de la semaine · <b>Date en gras</b> : séance effectuée (registre de l’application) · <span class="pl">date en gris</span> : date prévue d’après l’emploi du temps (vacances et jours fériés exclus).</div>`;
+ const HEAD='<table class="ctx"><colgroup><col style="width:17mm"><col style="width:25mm"><col style="width:26mm"><col><col style="width:38mm"></colgroup><thead><tr><th>SÉANCES</th><th>CLASSE</th><th>DATES</th><th>OBJECTIFS</th><th>REMARQUES</th></tr></thead><tbody>';
+ const SIG=`<div class="ctx-sig"><div>LE DIRECTEUR<span>(Signature)</span></div><div>L’INSPECTEUR<span>(Signature)</span></div></div><div class="ctx-name">${esc((CIV+' '+TNAME).trim())}</div>`;
+ const RH=5.05,CAP=226,SIGH=38;
+ let pi=0;
+ TD.cycles.forEach(cy=>{cy.groups.forEach((g,gi)=>{
+  const R=Math.max(6,g.classes.length+2),bh=R*RH+.6;
+  const blocks=g.seances.map(s=>{let h='';for(let r=0;r<R;r++){const it=s.items[r],c=it?cc(it.name)[0]:'#C9D3E1';
+    h+=`<tr${r===0?' class="b0"':''}>${r===0?`<td class="se" rowspan="${R}">${esc(s.label)}${s.label==='TO'?'<small>test d’observation</small>':s.label==='TB'?'<small>test bilan</small>':''}</td>`:''}<td class="cl" style="border-left-color:${c}">${it?esc(it.name):''}</td><td class="dt${it&&it.held?' h':''}">${it?dd(it.date):''}</td>${r===0?`<td class="ob" rowspan="${R}">${'<div class="ln"></div>'.repeat(R)}</td><td class="rm" rowspan="${R}"></td>`:''}</tr>`;}
+   return h;});
+  /* pages : blocs entiers, signatures sur la dernière page */
+  const pages=[];let cur=[],used=0;blocks.forEach(b=>{if(cur.length&&used+bh>CAP){pages.push(cur);cur=[];used=0;}cur.push(b);used+=bh;});
+  if(cur.length&&used+SIGH>CAP&&cur.length>1){const last=cur.pop();pages.push(cur);cur=[last];}
+  pages.push(cur);
+  const act=g.title?esc(g.title.toLocaleUpperCase('fr-FR')):'……………………………';
+  const sub=`DU ${D3(cy.start)} AU ${D3(cy.end)} · ${esc(g.level||'')}${g.level?' : ':''}${g.classes.map(esc).join(' · ')}`;
+  pages.forEach((bl,j)=>{const last=j===pages.length-1;
+   const body=LEG+HEAD+bl.join('')+'</tbody></table>'+(last?SIG:'');
+   let h=frame(T,`CYCLE ${cy.p+1} : ${act}${j?' <small style="font-size:10pt">(suite)</small>':''}`,sub,cy.emoji,body,++n);
+   h=h.replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·');add('ctx'+(pi++),h);});});});
+ if(!P.length)throw new Error('Aucune classe ni séance à imprimer');
+ add('back',H.back('V').replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·'));
+ return {css:H.baseCss(T)+CTX_CSS,pages:P,PF,CIV,TNAME,YEAR:H.YEAR};}
+async function texte(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(){};
+ if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('jsPDF absent');
+ const sel=Array.isArray(o.cycles)&&o.cycles.length?o.cycles:null;
+ const {D,GR}=extract(o.pf||null),TD=texteData(sel);const [PH,AS]=await Promise.all([photos(),assets()]);
+ const R=R3(D,GR,PH,AS.logo,AS.king,AS.fontCss,H=>texteBuild(H,TD));R.D=D;const css=FLATTEN(R.css);
+ const AS2=Object.assign({},AS,{cover:String(AS.cover).replace(/(<span class="c">CAHIER<\/span>)\s*JOURNALIER/,'$1 DE TEXTE')});
+ const pages=[coverPage(AS2,R,PH)].concat(R.pages.map(p=>({id:p.id,h:FLATTEN(p.h),css})));const N=pages.length;prog(0,N);
+ const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true,precision:3,floatPrecision:3});
+ pdf.setProperties({title:'Cahier de texte d’EPS',subject:'Cahier de texte d’EPS',creator:'TATABO3',author:''});
+ const ev=pdf.internal.events,tp=ev.getTopics();Object.keys(tp.preProcessText||{}).forEach(id=>ev.unsubscribe(id));
+ Object.keys(tp.postProcessText||{}).forEach(id=>{if(/isInputVisual/.test(String(tp.postProcessText[id][0])))ev.unsubscribe(id);});
+ AS.faces.forEach(f=>{pdf.addFileToVFS(f.file,binStr(f.ab));pdf.addFont(f.file,f.name,'normal','normal','Identity-H');});
+ const FR=fontReg(AS.faces);PainterImgCache.clear();
+ const stats={shapes:0,texts:0,images:0,raster:0,blur:0,grad:0,bgimg:0,pseudo:0,transforms:0,arMiss:0};
+ let fc=null,fp=null;
+ try{fc=await frame(pages[0].css);fp=await frame(pages[1].css);await fontsReady(fc,AS.faces);await fontsReady(fp,AS.faces);
+  for(let i=0;i<N;i++){const f=i===0?fc:fp;const root=await layout(f,pages[i]);
+   if(i)pdf.addPage('a4','portrait');Painter(pdf,f.contentWindow,FR,stats).page(root);
+   f.contentDocument.body.innerHTML='';pages[i]=null;prog(i+1,N);await tick();}}
+ finally{[fc,fp].forEach(f=>{if(f&&f.parentNode)f.parentNode.removeChild(f);});}
+ const u=new Uint8Array(pdf.output('arraybuffer'));fixOrdering(u);
+ const y=(D.year[0]||'').slice(0,4),name='Cahier-de-texte-EPS'+(y?'-'+y+'-'+(+y+1):'')+(sel&&sel.length===1?'-cycle-'+(sel[0]+1):'')+'.pdf';
+ return {blob:new Blob([u],{type:'application/pdf'}),name,pages:N,ms:Date.now()-t0,stats};}
+
+window.CJCahier={make,texte,texteData,extract,pages:function(pf){const x=extract(pf||null);return Promise.all([photos(),assets()]).then(([PH,AS])=>pagesOf(x.D,x.GR,PH,AS));},render:R3,classLevelSort};
 })();
