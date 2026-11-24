@@ -918,6 +918,23 @@ function texteData(sel){const A=window.CJR,Db=A.db(),C=A.cal(),per=Db.periods||[
   cycles.push({p,name:A.cycleName(p),act,aps:base,start:cy.start||'',end:cy.end||'',emoji:ctxPicto(A,act,base,groups[0]&&groups[0].evt),groups});});
  return {cycles};}
 const CTX_CSS=`
+.mdx{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-top:1mm}
+.mdx h3.sh{margin:0 0 2.4mm;font:800 italic 12.5pt 'Poppins';color:#0A3768;border-bottom:.6mm solid #E85D04;padding-bottom:1mm}
+.mdx h3 b{display:inline-block;margin-left:1.5mm;background:#E85D04;color:#fff;font:800 8pt 'Poppins';padding:.4mm 2mm;border-radius:2mm;font-style:normal;vertical-align:middle}
+.mdx .md{margin-bottom:4mm}
+.mdx h4{margin:0 0 1.4mm;font:800 10pt/1.3 'Poppins';color:#E85D04}
+.mdx .li{display:flex;gap:1.8mm;font:400 9pt/1.42 'Poppins';color:#1C2430;margin-bottom:.9mm}
+.mdx .li i{flex:none;width:1.5mm;height:1.5mm;border-radius:50%;background:#0A3768;margin-top:1.7mm}
+.mdx .oti{background:#EEF3FA;border-left:1.6mm solid #0A3768;border-radius:0 2.5mm 2.5mm 0;padding:2.6mm 3.4mm}
+.mdx .oti h3{margin:0 0 1.4mm;font:800 italic 10.5pt 'Poppins';color:#0A3768}
+.mdx p{margin:0;font:400 9pt/1.45 'Poppins';color:#1C2430}
+.mdx .ot{display:flex;gap:2.6mm;margin-bottom:3.6mm}
+.mdx .ot em{flex:none;width:6.6mm;height:6.6mm;border-radius:50%;background:#E85D04;color:#fff;font:800 normal 9.5pt/6.6mm 'Poppins';text-align:center;box-shadow:0 .6mm 0 #0A3768}
+.mdx .ot h4{margin-top:.8mm}
+.mdx .cg{background:#0A3768;border-radius:3mm;padding:3mm 3.6mm 2mm;margin-top:1mm;box-shadow:0 1mm 0 #E85D04}
+.mdx .cg h3{margin:0 0 2mm;font:800 italic 10.5pt 'Poppins';color:#fff;border-bottom:.5mm solid #E85D04;padding-bottom:1mm}
+.mdx .cg .li{color:#fff}.mdx .cg .li i{background:#E85D04}
+.mref{margin:3mm 0 0;text-align:right;font:700 italic 8pt 'Poppins';color:#667085}
 .ctxCy .big{top:64mm}.ctxCy .big .k{font:900 italic 30pt/1 'Poppins';letter-spacing:.12em;padding-left:.12em}.ctxCy .big h1{font-size:32pt;line-height:1.1}
 .ctxCy .pic{position:absolute;left:50%;top:126mm;width:50mm;height:50mm;margin-left:-25mm;border-radius:50%;background:#0A3768;padding:3mm;box-shadow:0 1.6mm 0 #E85D04}
 .ctxCy .pic .ring{width:100%;height:100%;border-radius:50%;background:#E85D04;display:flex;align-items:center;justify-content:center;color:#fff;border:1.2mm solid #fff}
@@ -947,6 +964,36 @@ table.ctx td.rm{font-size:6.3pt;line-height:1.05;color:#B4490A;font-weight:600;p
 .ctx-sig div span{position:absolute;left:0;bottom:-4.6mm;font-size:7pt;font-weight:500;color:#6b7280;letter-spacing:0}
 .ctx-name{text-align:center;margin-top:7mm;font:italic 600 11pt 'Poppins','Cairo';color:#1F5FA8}
 `;
+/* 1.29.17 (consigne du propriétaire) : 3 fiches « Modules et compétences » (TC, 1BAC, 2BAC), cahier de texte seulement, avant le cycle 1.
+   Texte repris des fiches fournies (réf. : les OP 2007), fautes de frappe évidentes corrigées. Contenu fixe : rien n’est lu ni écrit dans les données. */
+const CTX_MODS=[
+ {lv:'TC',t:'Modules et compétences du TC',s:'Fiche présentative du tronc commun',
+  mods:[['Module 1 : L’équilibre moteur et l’intégration par le sport',['Conserver l’équilibre et la correction des positions de corps dans les activités pratiquées.','Renforcer les conditions physiques générales.','Utilisation de l’espace et du matériel lors des situations d’apprentissage.','Etre discipliné et respecter l’autrui.','L’intégration dans un groupe à partir de la participation aux activités physiques et sportives.']],
+   ['Module 2 : Gestion de l’effort physique',['Gestion des ressources individuelles pour une meilleure réalisation possible.','Proposition d’une stratégie pour la préparation physique des activités physiques et sportives.','Application des principales lois de la sécurité et de la compétition concernant les APS.','Utilisation des informations de l’environnement lors de l’apprentissage.','Avoir des différents rôles et missions à partir de l’organisation de la classe et de l’activité physique et sportive.','Faire montrer toutes les capacités lors de l’expression et de la présentation pendant la compétition avec l’autrui.']]],
+  oti:'L’élève du T.C doit pouvoir maîtriser les composantes du comportement moteur et pouvoir s’adapter aux différentes situations et faire face à ses défis et accepter l’intégration dans le groupe.',
+  otc:[['Gymnastique','L’élève du T.C doit pouvoir présenter un projet individuel ou collectif d’expression motrice sous forme d’enchaînement d’éléments gymniques devant le groupe classe composé de 2A+3B+2C.'],
+   ['Athlétisme','L’élève du T.C doit maîtriser l’organisation de son corps et la gestion de l’effort et l’adéquation de la réalisation d’une façon globale et correcte pour mobiliser un certain niveau d’habileté ou de performance pour réduire le temps ou élargir l’espace.'],
+   ['Sport co de mar/démar','Rechercher le gain de la rencontre par l’utilisation de moyens adaptés pour conserver la balle jusqu’à la zone adverse devant une défense organisée qui cherche à récupérer la balle et défendre sa cible.'],
+   ['Sport co de renvoi','Rechercher le gain de la rencontre par la mise en œuvre d’un jeu basé sur l’organisation collective pour défendre la cible pour faciliter la progression de la balle vers la zone avant et la renvoyer dans la limite de 2 ou 3 touches de balle.']],
+  cg:['Mobilisation des ressources techniques, motrices et sportives acquises pour la résolution des problèmes dans les différentes situations.','Capacité d’analyse, de critique et de questionnement, pour permettre à l’élève de comprendre le domaine des APS.','La mobilisation des habiletés et des capacités personnelles, et leur gestion.','Procéder à une méthodologie qui permet à l’élève de faire la différence entre la théorie et la pratique, et l’intersection entre les deux pour l’atteinte des objectifs.']},
+ {lv:'1BAC',t:'Modules et compétences du 1BAC',s:'Fiche présentative de la 1re année Bac',
+  mods:[['Module 3 : Effort physique et performance sportive',['Utilisation d’une stratégie individuelle lors de l’apprentissage et déterminer sa réaction sur la performance.','Contrôle des émotions et connaitre leurs effets sur le produit.','Etre capable d’évaluer et d’estimer l’effort fourni.','Adapter les positions et les mouvements du corps aux conditions du contexte.','Contrôle des différents rôles à partir de la pratique et de l’organisation dans le groupe.','Dévoiler et accepter les critiques.','Savoir l’influence du comportement individuel sur le produit collectif.']],
+   ['Module 4 : Engagement moteur et efficience sportive',['Apprendre des spécialités et des capacités de contrôle dans des positions complexes.','Savoir des connaissances scientifiques concernant les APS.','Utiliser les lois d’organisation, de sécurité et de compétition dans les activités pratiquées.','Avoir l’audace et la compétence de faire face aux difficultés rencontrées.','Avoir l’esprit de coopération dans le groupe (participation, entraide…).','Préparation et application des projets collectifs.']]],
+  oti:'L’élève de la première année doit pouvoir confronter et analyser différentes situations motrices et améliorer ses réalisations et faire progresser son efficacité motrice et sa performance sportive.',
+  otc:[['Gymnastique','L’élève de 1re année doit pouvoir organiser, présenter et réaliser un projet individuel ou collectif d’expression motrice sous forme d’enchaînement d’éléments gymniques devant le groupe classe composé de : 2B+3C+2D.'],
+   ['Athlétisme','L’élève de 1re année doit maîtriser l’organisation de son corps et la gestion de l’effort et l’adéquation de la réalisation pour mobiliser un certain niveau d’habileté et augmenter l’efficacité de la performance.'],
+   ['Sport co de mar/démar','Rechercher le gain de la rencontre par la mise en œuvre de choix tactiques collectifs, fondés sur la vitesse d’exécution (trouver le moyen d’arriver le plus tôt possible à la cible adverse, entre 2 ou plusieurs joueurs) avec une bonne gestion des ressources devant une défense qui réduit l’espace de jeu.'],
+   ['Sport co de renvoi','Rechercher le gain de la rencontre par la mise en œuvre d’un jeu basé sur l’organisation collective pour récupérer la balle, la faire progresser et la renvoyer dans la limite de 3 touches de balles.']],
+  cg:['Capacité d’utiliser les matériels et les moyens de communication et d’expression (corporelle, mimique) et son application pour l’affirmation de soi dans les différentes situations.','Etre conscient de la communication au sein du groupe, et à l’intérieur d’une activité physique et sportive.','Capacité d’utiliser les outils technologiques, pour permettre l’accès aux connaissances relatives au champ du sport.','L’utilisation des outils et matériels qui permettent de connaître le domaine culturel de l’acte moteur.']},
+ {lv:'2BAC',t:'Modules et compétences du 2BAC',s:'Fiche présentative de la 2e année Bac',
+  mods:[['Module 5 : Prise d’initiative et pratique physique responsable',['Utiliser un projet individuel dans les activités physiques et sportives pratiquées.','Savoir et maîtriser les conditions biologiques, biomécaniques et psychologiques pour exécuter les meilleurs résultats.','Etre indépendant et prendre l’initiative.','Ouverture sur d’autres APS non pratiquées dans l’établissement.','Etre responsable dans le groupe (savoir ses droits et ses devoirs).','Respect des principes d’assiduité lors de la pratique physique et sportive.']],
+   ['Module 6 : Efficacité et créativité motrice et sportive',['L’observation, l’évaluation, la concentration, l’analyse et la prise de décision au bon moment.','Savoir les points forts et les points faibles et essayer de les corriger.','Avoir l’esprit de créativité et d’inventions.','Réalisation de l’efficience sportive.','L’indépendance lors de l’apprentissage pour assurer la continuation de la pratique des APS.','Contrôler les influences du contexte.','Etre capable d’avoir une influence sur le contexte sociale à partir de la pratique des activités sportives.','Exécution des importants rôles selon le niveau des capacités.']]],
+  oti:'L’élève de la 2ème année doit pouvoir analyser différentes situations et interactions motrices et s’intégrer volontairement dans la planification et la réalisation de projets individuels et collectifs.',
+  otc:[['Gymnastique','L’élève de 2e année doit pouvoir concevoir et réaliser et juger un projet individuel ou collectif d’expression motrice sous forme d’enchaînement d’éléments variés en figure et en rythme devant le groupe classe composé de : 2C + 3D + 2E.'],
+   ['Athlétisme','L’élève de 2e année doit maîtriser l’organisation des conditions de défi par l’utilisation de moyens et de méthodes stratégiques pour mobiliser un certain niveau de performance suivant un projet collectif ou individuel.'],
+   ['Sport co de mar/démar','Rechercher le gain de la rencontre par la mise en place d’une attaque basée sur la maîtrise des rôles et l’occupation permanente et raisonnée de l’espace par un projet collectif devant une défense organisée qui cherche à récupérer la balle et défendre sa cible.'],
+   ['Sport co de renvoi','Rechercher le gain de la rencontre par la mise en œuvre d’un jeu basé sur l’organisation collective pour récupérer la balle et la conserver et organiser les conditions adéquates pour marquer des points dans la limite de 3 touches de balle.']],
+  cg:['L’acquisition et le développement des capacités sensorielles, motrices, et professionnelles.','Le développement des comportements relatifs à l’activité physique et sportive, et la capacité à les appliquer dans les différentes activités sportives.','L’acquisition des connaissances relatives au patrimoine culturel (provincial, régional, national), et l’ouverture sur les autres cultures à travers la pratique de l’activité physique et sportive.']}];
 function texteBuild(H,TD){const {T,frame,esc,cc,PF,CIV,TNAME}=H;H.setCur('');let n=1;const P=[];
  const add=(id,h)=>{P.push({id,h:h.replace('<section ','<section data-id="'+id+'" ')});};
  const D3=d=>d?d.slice(8,10)+' / '+d.slice(5,7)+' / '+d.slice(0,4):'… / … / ……';
@@ -960,6 +1007,14 @@ function texteBuild(H,TD){const {T,frame,esc,cc,PF,CIV,TNAME}=H;H.setCur('');let
  /* 1.29.14 : pages 2 à 6 du cahier journalier (mêmes fonctions : S.M. le Roi, informations, tableau de service, vacances, répartition cyclique), pied de page « Cahier de texte » */
  const FT=h=>h.replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·');
  n++;add('king',H.king('V'));add('info',FT(H.info('V',++n)));add('service',FT(H.service('V',++n)));add('vac',FT(H.vacances('V',++n)));add('repart',FT(H.repart('V',++n)));
+ /* 1.29.17 : fiches « Modules et compétences » TC, 1BAC, 2BAC (toujours les 3), avant le cycle 1 */
+ const UL=l=>l.map(x=>`<div class="li"><i></i><span>${esc(x)}</span></div>`).join('');
+ const MPI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>';
+ CTX_MODS.forEach(M=>{const body=`<div class="mdx"><div class="c1"><h3 class="sh">Modules</h3>${M.mods.map(m=>`<div class="md"><h4>${esc(m[0])}</h4>${UL(m[1])}</div>`).join('')}
+  <div class="oti"><h3>Objectif terminal d’intégration <b>OTI</b></h3><p>${esc(M.oti)}</p></div></div>
+  <div class="c2"><h3 class="sh">Objectif terminal du cycle <b>OTC</b></h3>${M.otc.map((o,i)=>`<div class="ot"><em>${i+1}</em><div><h4>${esc(o[0])}</h4><p>${esc(o[1])}</p></div></div>`).join('')}
+  <div class="cg"><h3>Les compétences générales de l’EPS</h3>${UL(M.cg)}</div></div></div><p class="mref">Réf. : les OP 2007</p>`;
+  add('mod'+M.lv,FT(frame(T,esc(M.t),esc(M.s),MPI,body,++n)));});
  /* 1.29.14 : page de présentation avant chaque cycle (même style que la page « Classe » du cahier journalier) */
  const DM=d=>d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'…';
  const cyPage=cy=>{const cl=[],lv=[];cy.groups.forEach(g=>{g.classes.forEach(c=>{if(cl.indexOf(c)<0)cl.push(c);});if(g.level&&lv.indexOf(g.level)<0)lv.push(g.level);});
