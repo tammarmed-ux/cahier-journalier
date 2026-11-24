@@ -381,7 +381,7 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
 (function(){var L=document.getElementById('psList'),g=L&&L.querySelector('[data-ps-open="pdf"]'),V=document.getElementById('view-settings'),pc=V&&V.querySelector(':scope>.card[data-ps="pdf"]');if(!g||!pc||!window.CJPS||document.getElementById('cjcRow'))return;
  /* 1.29.2 (za) : ligne ordinaire (icône, titre, chevron) ouvrant une sous-page « Mon Cahier Journalier » qui porte le bouton (sur une ligne) ; même gestionnaire, cj-cahier.js toujours chargé au toucher du bouton seulement */
  var st=document.createElement('style');st.textContent='#cjcCard .cjc-btn{display:block;width:100%;max-width:100%;min-height:44px;padding:9px 6px;font-size:min(14px,3.3vw);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}.cjc-btn:disabled{opacity:.75;cursor:progress}.cjc-btn.cjc-ready{background:#16a34a;border-color:#16a34a;color:#fff}';document.head.appendChild(st);
- var card=document.createElement('div');card.className='card';card.id='cjcCard';card.innerHTML='<h2>📘 Mes cahiers paperasse</h2><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger le cahier journalier ⬇️</button><button type="button" class="btn cjc-btn" id="ctxBtn" style="margin-top:10px">Télécharger le cahier de texte ⬇️</button>';
+ var card=document.createElement('div');card.className='card';card.id='cjcCard';card.innerHTML='<h2>📘 Mes cahiers paperasse</h2><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger le cahier journalier ⬇️</button><button type="button" class="btn cjc-btn" id="ctxBtn" style="margin-top:10px">Télécharger le cahier de texte ⬇️</button><button type="button" class="btn cjc-btn" id="assBtn" style="margin-top:10px">Télécharger le cahier d’ASS ⬇️</button>';
  pc.parentNode.insertBefore(card,pc);CJPS.add('cjc',card,'📘','Mes cahiers paperasse');
  var row=document.createElement('button');row.type='button';row.className='ps-row';row.id='cjcRow';row.setAttribute('data-ps-open','cjc');
  row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mes cahiers paperasse</b></span><span class="ps-val"></span><span class="ps-chev" aria-hidden="true">›</span>';
@@ -471,6 +471,39 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
   document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&dlg.classList.contains('open'))close();});
   sel.addEventListener('change',function(){if(go._rdy){go._rdy=null;go.classList.remove('cjc-ready');go.textContent=go._lbl;}});
   go.addEventListener('click',function(){var v=sel.value;run(go,v==='all'?null:[+v]);});})();
+/* 1.29.21 : « Cahier d’ASS » (PDF, CJCahier.ass ; contenu fixe cj-ass-data.js). Lecture seule : rien n’est écrit, aucune clé, aucune synchro.
+    Téléphone : 3e bouton de la carte « Mes cahiers paperasse ». Ordinateur : bouton « Cahier d’ASS » sous « Cahier de texte » (#assTab) → fenêtre. */
+ (function(){var IOS2=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  function load(){var P=R.pdf;return P.lib().then(function(){return window.CJCahier&&CJCahier.ass?0:js('cj-cahier.js');}).then(function(){return window.CJAssData?0:js('cj-ass-data.js');});}
+  function run(btn){if(btn._rdy){var x=btn._rdy;btn._rdy=null;btn.classList.remove('cjc-ready');btn.textContent=btn._lbl;R.pdf.deliver(x.blob,x.name);return;}
+   if(btn._busy)return;var P=R.pdf;if(!P){toast2('⚠ Mettez l’application à jour pour créer le cahier d’ASS');return;}
+   btn._lbl=btn._lbl||btn.textContent;btn._busy=1;btn.disabled=true;btn.textContent='Génération… préparation';
+   function end(){btn._busy=0;btn.disabled=false;btn.textContent=btn._lbl;}
+   load().then(function(){var p=null;try{p=pfGet().p;}catch(x){}
+    return CJCahier.ass({pf:p,onProgress:function(i,n){btn.textContent='Génération… page '+i+'/'+n;}});})
+   .then(function(r){var ua=navigator.userActivation;if(r&&r.blob&&!IOS2&&!(ua&&ua.isActive)){btn._busy=0;btn._rdy=r;btn.disabled=false;btn.classList.add('cjc-ready');btn.textContent='⬇️ Enregistrer le cahier d’ASS (PDF · '+Math.max(1,Math.round(r.blob.size/1048576))+' Mo)';toast2('Cahier d’ASS prêt\u00a0: touchez « Enregistrer le cahier d’ASS »');return;}
+    end();if(r&&r.blob)P.deliver(r.blob,r.name);})
+   .catch(function(e){end();try{console.warn('Cahier d’ASS',e);}catch(x){}var why=String(e&&e.message||e||'').replace(/\s+/g,' ').slice(0,140);
+    toast2('⚠ Impossible de créer le cahier d’ASS'+(navigator.onLine===false?' hors ligne\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.')+(why?' ('+why+')':''));});}
+  var ab=card.querySelector('#assBtn');if(ab)ab.addEventListener('click',function(){run(ab);});
+  /* ordinateur */
+  var st4=document.createElement('style');st4.textContent='html:not(.cj-dk) #assTab{display:none!important}#assDlg .ctx-p{font-size:13.5px;color:var(--muted);margin:4px 0 12px;line-height:1.45}#assDlg .ctx-row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}#assDlg .ctx-row .btn{width:auto;min-width:130px}#assDlg .cjc-btn{white-space:nowrap}#assDlg .ass-r{font-size:13px;background:var(--soft,#EEF3FA);border-radius:10px;padding:8px 12px;margin:0}';document.head.appendChild(st4);
+  var ct=document.getElementById('ctxTab');if(!ct)return;
+  var t=document.createElement('button');t.type='button';t.id='assTab';t.setAttribute('aria-label','Cahier d’ASS');t.title='Cahier d’ASS (PDF)';
+  t.innerHTML='<span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 14v4M8 21h8"/></svg></span>Cahier d’ASS';
+  ct.parentNode.insertBefore(t,ct.nextSibling);
+  var dlg=document.createElement('div');dlg.className='modal';dlg.id='assDlg';dlg.setAttribute('role','dialog');dlg.setAttribute('aria-modal','true');dlg.setAttribute('aria-labelledby','assTitle');
+  dlg.innerHTML='<div class="sheet"><div class="sheet-head"><h2 id="assTitle">🏆 Cahier d’ASS</h2><button type="button" class="x" data-ass="x" aria-label="Fermer">×</button></div>'+
+   '<p class="ctx-p">PDF A4, même présentation que le cahier journalier : textes de l’association sportive scolaire, ATD des APSA, statistiques des classes, équipes engagées et séances d’ASS programmées. Les rubriques que l’application ne connaît pas restent à compléter à la main.</p>'+
+   '<p class="ass-r" id="assRule">Séances d’ASS : lycée → vendredis, collège → mercredis et vendredis, hors vacances et jours fériés officiels.</p>'+
+   '<div class="ctx-row"><button type="button" class="btn ghost" data-ass="x">Fermer</button><button type="button" class="btn cjc-btn" id="assGo">Générer le PDF ⬇️</button></div></div>';
+  document.body.appendChild(dlg);var go=dlg.querySelector('#assGo'),ru=dlg.querySelector('#assRule');
+  function rule(){if(!R.pdf)return;load().then(function(){var a=CJCahier.assDates(null);ru.textContent='Séances d’ASS : '+(a.type==='college'?'collège → mercredis et vendredis':'lycée → vendredis')+', hors vacances et jours fériés officiels · '+a.dates.length+' dates cette année.';}).catch(function(){});}
+  function close(){dlg.classList.remove('open');if(!document.querySelector('.modal.open'))document.body.style.overflow='';}
+  t.addEventListener('click',function(ev){ev.stopPropagation();rule();dlg.classList.add('open');document.body.style.overflow='hidden';setTimeout(function(){try{go.focus();}catch(e){}},0);});
+  dlg.addEventListener('click',function(ev){if(ev.target===dlg||ev.target.closest('[data-ass="x"]'))close();});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&dlg.classList.contains('open'))close();});
+  go.addEventListener('click',function(){run(go);});})();
 })();
 })();
 /* 1.29.2 (p) : barre d’onglets et bouton + épinglés sans position:fixed sur mobile.

@@ -88,6 +88,14 @@ function classLevelSort(list){var nm=function(c){return typeof c==='string'?c:(c
   return list.slice().sort(function(a,b){var x=classKey(nm(a)),y=classKey(nm(b));
     return x.lv-y.lv||(x.fil<y.fil?-1:x.fil>y.fil?1:0)||x.num-y.num||x.raw.localeCompare(y.raw,'fr',{numeric:true});});}
 
+/* 1.29.16 (consigne du propriétaire) : le tableau « Vacances et jours fériés » ne montre que les vacances scolaires et les jours fériés officiels
+   (note ministérielle). Filtre d’affichage seul (données, grilles, registre et calcul des séances inchangés) :
+   exclu si indisponibilité (horaire), si le libellé contient un mot de la liste noire (absence, réunion, mauvais temps…) ;
+   gardé ensuite seulement si vacances (classement de l’app) ou libellé d’un jour férié officiel (liste blanche). */
+const HOL_NO=/absence|reunion|mauvais temps|meteo|intemperie|indisponib|greve|formation|examen|conseil|seminaire|sortie|competition|stage|visite|panne|travaux|maladie|conge (de )?maladie/;
+const HOL_OK=/unite|wahda|marche verte|independance|nouvel an|amazigh|yennayer|travail|1er mai|trone|revolution du roi|jeunesse|oued|dahab|\baid\b|moharram|muharram|hegire|mawlid|mouloud|naissance du prophete|ferie/;
+const holOfficial=h=>{if(h.tm)return false;const l=String(h.label||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,' ');
+ if(HOL_NO.test(l))return false;return !!h.vac||HOL_OK.test(l);};
 function R3(D,GR,PH,LOGO,KING,FONTCSS,ALT){
 let PHOTOS=PH||{};const okPh=d=>typeof d==='string'&&/^data:image\/(jpeg|webp|png);base64,/.test(d);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -345,14 +353,6 @@ function service(k,n){const hm=x=>{const[h,m]=String(x).split(':').map(Number);r
  <div class="stats"><div class="card"><b>${(svc.cm||0)/60} h</b><small>enseignement</small></div><div class="card"><b>${(svc.am||0)/60} h</b><small>ASS (sport scolaire)</small></div><div class="card"><b>${(svc.tot||0)/60} h</b><small>total / semaine</small></div><div class="card"><b>${(svc.ob||0)/60} h</b><small>service dû</small></div></div>
  <div class="cleg"><div class="clt">Couleurs des classes</div><div class="clg">${D.classes.map(c=>{const C=cc(c.name),hh=TT.filter(t=>t.cls===c.name).reduce((a,t)=>a+hm(t.end)-hm(t.start),0);return `<span style="background:${C[1]};color:${C[2]};border:.4mm solid ${C[0]};border-left:1.6mm solid ${C[0]}"><b>${esc(c.name)}</b> · ${String(hh).replace('.',',')} h</span>`;}).join('')}<span style="background:#082B53;color:#fff;font-size:7pt;padding-right:.8mm"><b>ASS</b> · Association sportive</span></div></div>`;
  return frame(k,'Tableau de service','Emploi du temps hebdomadaire · '+YEAR,'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',body,n);}
-/* 1.29.16 (consigne du propriétaire) : le tableau « Vacances et jours fériés » ne montre que les vacances scolaires et les jours fériés officiels
-   (note ministérielle). Filtre d’affichage seul (données, grilles, registre et calcul des séances inchangés) :
-   exclu si indisponibilité (horaire), si le libellé contient un mot de la liste noire (absence, réunion, mauvais temps…) ;
-   gardé ensuite seulement si vacances (classement de l’app) ou libellé d’un jour férié officiel (liste blanche). */
-const HOL_NO=/absence|reunion|mauvais temps|meteo|intemperie|indisponib|greve|formation|examen|conseil|seminaire|sortie|competition|stage|visite|panne|travaux|maladie|conge (de )?maladie/;
-const HOL_OK=/unite|wahda|marche verte|independance|nouvel an|amazigh|yennayer|travail|1er mai|trone|revolution du roi|jeunesse|oued|dahab|\baid\b|moharram|muharram|hegire|mawlid|mouloud|naissance du prophete|ferie/;
-const holOfficial=h=>{if(h.tm)return false;const l=String(h.label||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,' ');
- if(HOL_NO.test(l))return false;return !!h.vac||HOL_OK.test(l);};
 function vacances(k,n){const H=D.holidays.filter(holOfficial).sort((a,b)=>a.from<b.from?-1:a.from>b.from?1:0);
  const days=h=>{const a=new Date(h.from),b=new Date(h.to&&h.to>=h.from?h.to:h.from);return Math.round((b-a)/864e5)+1;};
  const kind=h=>h.tm?'t':h.vac?'v':'f';const KL={v:'Vacances',f:'Jour férié',t:'Indisponibilité'},KC={v:'#1098AD',f:'#E8590C',t:'#7048E8'};
@@ -1068,5 +1068,149 @@ async function texte(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(
  const y=(D.year[0]||'').slice(0,4),name='Cahier-de-texte-EPS'+(y?'-'+y+'-'+(+y+1):'')+(sel&&sel.length===1?'-cycle-'+(sel[0]+1):'')+'.pdf';
  return {blob:new Blob([u],{type:'application/pdf'}),name,pages:N,ms:Date.now()-t0,stats};}
 
-window.CJCahier={make,texte,texteData,extract,pages:function(pf){const x=extract(pf||null);return Promise.all([photos(),assets()]).then(([PH,AS])=>pagesOf(x.D,x.GR,PH,AS));},render:R3,classLevelSort};
+/* 1.29.21 (consigne du propriétaire) : « Cahier d’ASS » (Association sportive scolaire), même style que le cahier journalier et le cahier de texte.
+   Lecture seule : rien n’est écrit, aucune clé, aucune synchro. Contenu fixe : cj-ass-data.js (texte du modèle docx fourni) + images cahier/ass/.
+   Dates des séances d’ASS (consigne t404u) : lycée → vendredis ; collège → mercredis et vendredis, sur l’année scolaire de l’app (début du cycle 1
+   → fin du dernier cycle), hors vacances scolaires et jours fériés officiels (même filtre holOfficial que le tableau « Vacances et jours fériés » ; une période sans libellé d’au moins 5 jours compte comme vacances, comme vacW de 1.29.18).
+   Type d’établissement (lecture seule) : réglage existant settings.school, sinon la clé existante cahier.school, sinon le nom de l’établissement
+   (« collège » / « lycée »), sinon le mode collège/lycée de l’app (CJR.cxMode, lycée par défaut). L’emploi du temps des classes n’est pas utilisé. */
+function assDates(pf){const addD=(d,k)=>{const x=new Date(d+'T12:00:00');x.setDate(x.getDate()+k);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};const A=window.CJR,Db=A.db(),st=Db.settings||{},C=A.cal();
+ const P=pf||st.profile||{},tn=String(st.teacher||''),i=tn.search(/\s[–—-]\s/);
+ const etab=String(P.etab||st.etab||(i>=0?tn.slice(i+3):'')).trim();
+ const nm=etab.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ let lo='';try{lo=localStorage.getItem('cahier.school')||'';}catch(e){}
+ let type,src;if(/^(college|lycee)$/.test(st.school||'')){type=st.school;src='réglage de l’application';}
+ else if(/^(college|lycee)$/.test(lo)){type=lo;src='réglage de l’application';}
+ else if(/\bcollege\b/.test(nm)){type='college';src='nom de l’établissement';}else if(/\blycee\b/.test(nm)){type='lycee';src='nom de l’établissement';}
+ else{let m='';try{m=A.cxMode?A.cxMode():'';}catch(e){}type=m==='college'?'college':'lycee';src='mode de l’application';}
+ const days=type==='college'?[3,5]:[5];
+ const cyc=C.cycles||[],y0=cyc[0]&&cyc[0].start||'',y1=cyc.length&&cyc[cyc.length-1].end||'';
+ const hol=((Db.cal&&Db.cal.holidays)||[]).map(h=>({from:h.from,to:h.to||h.from,label:h.label,vac:A.isVacH(h),tm:h.startTime?h.startTime:''})).filter(h=>holOfficial(h)||(!h.tm&&!String(h.label||'').trim()&&h.to>=addD(h.from,4)));
+ const out=[],skip=[];if(!y0||!y1)return {type,src,etab,days,dates:out,skipped:skip,from:y0,to:y1};
+ const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+ for(let d=new Date(y0+'T12:00:00');iso(d)<=y1;d.setDate(d.getDate()+1)){if(days.indexOf(d.getDay())<0)continue;const s=iso(d);
+  const h=hol.find(x=>s>=x.from&&s<=x.to);if(h)skip.push({date:s,label:h.label||''});else out.push({date:s,dow:d.getDay()});}
+ return {type,src,etab,days,dates:out,skipped:skip,from:y0,to:y1};}
+const ASS_CSS=`
+.asf{font:400 9.6pt/1.5 'Poppins';color:#1C2430}
+.asf>*{margin:0}
+.asf p{margin:0 0 1.6mm;text-align:left}
+.asf h2.S{font:800 italic 13pt/1.25 'Poppins';color:#0A3768;border-bottom:.6mm solid #E85D04;padding:2.2mm 0 1mm;margin:1mm 0 2.4mm}
+.asf h3.h{font:800 10.2pt/1.3 'Poppins';color:#E85D04;margin:2.2mm 0 1.2mm}
+.asf .li{display:flex;gap:1.8mm;margin:0 0 .9mm}
+.asf .li i{flex:none;width:1.5mm;height:1.5mm;border-radius:50%;background:#0A3768;margin-top:1.75mm}
+.asf .li.l1{padding-left:4mm}.asf .li.l1 i{background:#E85D04}.asf .li.l2{padding-left:8mm}.asf .li.l2 i{background:#fff;border:.3mm solid #0A3768}
+.asf .im{text-align:center;margin:1.5mm 0 2.5mm}.asf .im img{max-width:100%;max-height:118mm;border:.3mm solid var(--line);border-radius:1.5mm}
+.asf table.at{width:100%;border-collapse:collapse;margin:1mm 0 3mm;font-size:8.4pt;line-height:1.35}
+.asf table.at td{border:.3mm solid #B8C4D6;padding:1.2mm 1.6mm;vertical-align:top}
+.asf table.at tr:first-child td{background:#0A3768;color:#fff;font-weight:700;text-align:center;vertical-align:middle}
+.as-ar{direction:rtl;text-align:right;font-family:'Cairo','NaskhAr';color:#1C2430;margin-top:6mm}
+.as-ar h2{font:700 15pt/1.8 'Cairo','NaskhAr';color:#0A3768;margin:0 0 5mm;padding-bottom:2mm;border-bottom:.6mm solid #E85D04}
+.as-ar p{font:400 13pt/2.05 'Cairo','NaskhAr';margin:0 0 5mm}
+.as-ref{margin-top:8mm;font:italic 400 8pt 'Poppins';color:#6b7280}
+.as-int{font:400 10pt/1.55 'Poppins';color:#1C2430;margin:2mm 0 6mm}
+.as-grid{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+.as-grid .c{display:flex;align-items:center;gap:4mm;border:.4mm solid var(--line);border-left:1.8mm solid #E85D04;border-radius:3mm;padding:4mm 5mm}
+.as-grid .c .pi{flex:none;width:15mm;height:15mm;color:#0A3768}.as-grid .c .pi svg{width:100%;height:100%}
+.as-grid .c b{display:block;font:800 11.5pt 'Poppins';color:#0A3768}.as-grid .c span{font:400 8pt 'Poppins';color:#6b7280}
+table.as{width:100%;border-collapse:collapse;table-layout:fixed}
+table.as th{background:#0A3768;color:#fff;font:700 8.6pt 'Poppins';padding:1.8mm 1.5mm;border:.3mm solid #0A3768;text-align:center}
+table.as td{border:.3mm solid #B8C4D6;font:400 8.6pt 'Poppins';color:#1C2430;padding:0 1.6mm;height:var(--rh,10mm);vertical-align:middle}
+table.as td.n{text-align:center;font-weight:800;color:#E85D04}table.as td.d{font-weight:700;color:#0A3768;white-space:nowrap}
+table.as td.c{text-align:center;font-weight:700}table.as tr.tot td{background:#EEF3FA;font-weight:800;color:#0A3768}
+table.as td.big{vertical-align:top;padding-top:1.4mm}
+table.as .ln{border-bottom:.3mm dashed #8FA3BF;height:7.2mm}
+.as-leg{font:400 8pt/1.4 'Poppins';color:#4b5563;background:#EEF3FA;border-left:1.4mm solid #0A3768;border-radius:0 2mm 2mm 0;padding:1.8mm 3mm;margin-bottom:3mm}
+.as-leg b{color:#0A3768}
+.as-sec{font:800 italic 11.5pt 'Poppins';color:#0A3768;border-bottom:.6mm solid #E85D04;padding-bottom:1mm;margin:5mm 0 2.5mm}
+.as-dl{border-bottom:.3mm dashed #8FA3BF;height:8mm}
+`;
+async function ass(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(){};
+ if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('jsPDF absent');
+ if(!window.CJAssData)throw new Error('Contenu du cahier d’ASS absent');
+ const X=window.CJAssData,A=window.CJR,AD=assDates(o.pf||null);
+ const {D,GR}=extract(o.pf||null);const [PH,AS]=await Promise.all([photos(),assets()]);
+ /* images du modèle (chargées à la demande, mises en cache hors ligne par sw.js) */
+ const IMG={},srcs=[];[X.sport,X.ass].concat(X.apsa.map(a=>a.b)).forEach(L=>L.forEach(b=>{if(b.k==='img'&&srcs.indexOf(b.src)<0)srcs.push(b.src);}));
+ await Promise.all(srcs.map(s=>asData('ass-'+s,'cahier/ass/'+s,'image/jpeg').then(u=>{IMG[s]=u;}).catch(()=>{})));
+ let HH=null;const R=R3(D,GR,PH,AS.logo,AS.king,AS.fontCss,H=>{HH=H;return {css:H.baseCss(H.T)+CTX_CSS+ASS_CSS,pages:[],PF:H.PF,CIV:H.CIV,TNAME:H.TNAME,YEAR:H.YEAR};});
+ R.D=D;const css=FLATTEN(R.css),H=HH,{T,esc}=H;H.setCur('');
+ const FT=h=>h.replace('Cahier journalier d’EPS ·','Cahier d’ASS ·');
+ const AS2=Object.assign({},AS,{cover:String(AS.cover).replace(/(<span class="c">CAHIER<\/span>)\s*JOURNALIER/,'$1 D’ASS').replace(/D'ÉDUCATION PHYSIQUE <b>ET<\/b> SPORTIVE/,'ASSOCIATION SPORTIVE <b>SCOLAIRE</b>')});
+ const pages=[coverPage(AS2,R,PH)];let n=1;
+ const add=(id,h)=>pages.push({id,h:FLATTEN(h.replace('<section ','<section data-id="'+id+'" ')),css});
+ const PI=k=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+k+'</svg>';
+ const PI_BOOK=PI('<path d="M4 4.5h6a2 2 0 0 1 2 2V20a2 2 0 0 0-2-2H4z"/><path d="M20 4.5h-6a2 2 0 0 0-2 2V20a2 2 0 0 1 2-2h6z"/>');
+ const PI_CUP=PI('<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 14v4M8 21h8M9.5 18h5"/>');
+ const PI_CAL=PI('<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M8 13.5h2M14 13.5h2M8 17h2"/>');
+ const PI_TEAM=PI('<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14.5 15.2a4.5 4.5 0 0 1 6 4.3"/>');
+ /* pages du journal utiles : S.M. le Roi, informations */
+ n++;add('king',H.king('V'));add('info',FT(H.info('V',++n)));
+ /* préambule de la loi 30-09 (arabe, RTL) */
+ add('ar',FT(H.frame(T,'Loi n° 30-09','Éducation physique et sports · extrait du préambule',PI_BOOK,`<div class="as-ar" dir="rtl" lang="ar"><h2>${esc(X.ar.t)}</h2>${X.ar.p.map(p=>`<p>${esc(p)}</p>`).join('')}</div><p class="as-ref">Extrait du préambule de la loi n° 30-09 relative à l’éducation physique et aux sports.</p>`,++n)));
+ /* pages de texte : découpage automatique en pages (mesure dans le cadre de rendu) */
+ const blk=b=>b.k==='S'?`<h2 class="S">${esc(b.t)}</h2>`:b.k==='h'?`<h3 class="h">${esc(b.t)}</h3>`:b.k==='p'?`<p>${b.h}</p>`:b.k==='li'?`<div class="li l${Math.min(2,b.lvl||0)}"><i></i><span>${b.h}</span></div>`:
+  b.k==='img'?(IMG[b.src]?`<div class="im"><img src="${IMG[b.src]}" alt=""></div>`:''):b.k==='tbl'?`<table class="at">${b.rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')}</table>`:'';
+ const flows=[];const flow=(id,title,sub,picto,L)=>{flows.push({at:pages.length,id,title,sub,picto,html:L.map(blk).filter(Boolean)});pages.push(null);};
+ flow('sport','Le sport scolaire','Sport scolaire · éducation physique et sportive',PI_BOOK,X.sport);
+ flow('assoc','Association sportive scolaire','L’ASS : rôle, objectifs, activités',PI_CUP,X.ass);
+ const apic=a=>ctxPicto(A,a.act,'','');
+ pages.push({id:'atd',lazy:k=>FT(H.frame(T,'ATD des APSA d’ASS','Analyse et traitement didactique des activités',PI_CUP,`<p class="as-int">Analyse et traitement didactique des activités physiques et sportives pratiquées dans le cadre de l’association sportive scolaire.</p><div class="as-grid">${X.apsa.map(a=>`<div class="c"><span class="pi">${apic(a)}</span><span><b>${esc(a.t)}</b><span>Analyse et traitement didactique</span></span></div>`).join('')}</div>`,k))});
+ X.apsa.forEach(a=>flow('apsa-'+a.id,esc(a.t),'Analyse et traitement didactique',apic(a),a.b));
+ /* pages-tableaux */
+ const YR=H.YEAR,yr=String(YR||'').replace(/\s*[–-]\s*/,'/');
+ const cl=(D.classes||[]).slice();
+ pages.push({id:'stats',lazy:k=>{let tf=0,tg=0,tt=0;const DbC=A.db().classes||[];const rows=cl.map(c=>{const o=DbC.find(x=>x.name===c.name);let S=[];try{S=o?A.studentsIn(o.id)||[]:[];}catch(e){}const f=S.filter(s=>/^f/i.test(s.sex||'')).length,g=S.filter(s=>/^[mg]/i.test(s.sex||'')).length;tf+=f;tg+=g;tt+=S.length;
+   return `<tr><td class="d">${esc(c.name)}</td><td class="c">${esc(c.level||'')}</td><td class="c">${S.length}</td><td class="c">${f||(S.length?'0':'')}</td><td class="c">${g||(S.length?'0':'')}</td><td></td></tr>`;}).join('');
+  const body=`<div class="as-leg">Effectifs des classes du professeur, repris de l’application (lecture seule). La colonne « Licenciés ASS » et les rubriques ci-dessous sont à compléter à la main.</div>
+  <table class="as" style="--rh:7.4mm"><colgroup><col style="width:34mm"><col style="width:24mm"><col><col><col><col style="width:38mm"></colgroup><thead><tr><th>CLASSE</th><th>NIVEAU</th><th>EFFECTIF</th><th>FILLES</th><th>GARÇONS</th><th>LICENCIÉS ASS</th></tr></thead><tbody>${rows}<tr class="tot"><td>Total</td><td class="c">${cl.length} classe${cl.length>1?'s':''}</td><td class="c">${tt}</td><td class="c">${tf}</td><td class="c">${tg}</td><td></td></tr></tbody></table>
+  <div class="as-sec">Équipe pédagogique d’EPS</div>${'<div class="as-dl"></div>'.repeat(3)}<div class="as-sec">Installations et matériel sportifs</div>${'<div class="as-dl"></div>'.repeat(4)}`;
+  return FT(H.frame(T,'Statistiques','Classes et élèves · année scolaire '+esc(YR),PI_TEAM,body,k));}});
+ pages.push({id:'teams',lazy:k=>FT(H.frame(T,'Équipes engagées '+esc(yr),'Association sportive scolaire · à compléter',PI_TEAM,`<table class="as" style="--rh:15.5mm"><colgroup><col style="width:52mm"><col style="width:24mm"><col><col style="width:36mm"></colgroup><thead><tr><th>ENCADREMENT</th><th>SEXE</th><th>ACTIVITÉ</th><th>CATÉGORIE</th></tr></thead><tbody>${'<tr><td></td><td></td><td></td><td></td></tr>'.repeat(14)}</tbody></table>`,k))});
+ pages.push({id:'elite',lazy:k=>FT(H.frame(T,'Activités d’élite en athlétisme','Élèves pratiquants · à compléter',ctxPicto(A,'Course de vitesse','',''),`<table class="as"><colgroup><col style="width:52mm"><col></colgroup><thead><tr><th>ACTIVITÉ</th><th>ÉLÈVES PRATIQUANTS</th></tr></thead><tbody>${['La course en durée','La course de vitesse','Le saut en longueur','Le lancer de poids'].map(a=>`<tr><td class="d" style="vertical-align:middle">${a}</td><td class="big">${'<div class="ln"></div>'.repeat(7)}</td></tr>`).join('')}</tbody></table>`,k))});
+ /* séances d’ASS programmées : dates calculées (règle t404u) */
+ const DW=['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.'],DM=d=>d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
+ const rule=AD.type==='college'?'collège : mercredis et vendredis':'lycée : vendredis';
+ const PER=20,LIST=AD.dates.length?AD.dates:[null];const np=Math.ceil(LIST.length/PER);
+ for(let j=0;j<np;j++){const sl=LIST.slice(j*PER,(j+1)*PER);
+  pages.push({id:'seances'+j,lazy:k=>{const rows=sl.map((x,i)=>x?`<tr><td class="n">${j*PER+i+1}</td><td class="d">${DW[x.dow]} ${DM(x.date)}</td><td></td><td></td><td></td></tr>`:'<tr><td></td><td></td><td></td><td></td><td></td></tr>').join('');
+   const leg=j?'':`<div class="as-leg"><b>Règle</b> — ${esc(rule)} (${esc(AD.src)}), du ${AD.from?DM(AD.from):'…'} au ${AD.to?DM(AD.to):'…'} ; vacances scolaires et jours fériés officiels exclus. <b>${AD.dates.length} dates</b>. Catégorie, APSA et objectif : à compléter.</div>`;
+   return FT(H.frame(T,'Séances d’ASS programmées'+(j?' <small style="font-size:10pt">(suite)</small>':''),esc(AD.etab||'')+(AD.etab?' · ':'')+esc(rule)+' · '+AD.dates.length+' dates',PI_CAL,leg+`<table class="as" style="--rh:${j?10.2:9.6}mm"><colgroup><col style="width:15mm"><col style="width:34mm"><col style="width:30mm"><col style="width:34mm"><col></colgroup><thead><tr><th>SÉANCE</th><th>DATE</th><th>CATÉGORIE</th><th>APSA</th><th>OBJECTIF</th></tr></thead><tbody>${rows}</tbody></table>`,k));}});}
+ pages.push({id:'back',lazy:()=>FT(H.back('V'))});
+ const N0=pages.length;prog(0,N0);
+ const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true,precision:3,floatPrecision:3});
+ pdf.setProperties({title:'Cahier d’ASS',subject:'Cahier d’ASS · Association sportive scolaire',creator:'TATABO3',author:''});
+ const ev=pdf.internal.events,tp=ev.getTopics();Object.keys(tp.preProcessText||{}).forEach(id=>ev.unsubscribe(id));
+ Object.keys(tp.postProcessText||{}).forEach(id=>{if(/isInputVisual/.test(String(tp.postProcessText[id][0])))ev.unsubscribe(id);});
+ AS.faces.forEach(f=>{pdf.addFileToVFS(f.file,binStr(f.ab));pdf.addFont(f.file,f.name,'normal','normal','Identity-H');});
+ const FR=fontReg(AS.faces);PainterImgCache.clear();
+ const stats={shapes:0,texts:0,images:0,raster:0,blur:0,grad:0,bgimg:0,pseudo:0,transforms:0,arMiss:0};
+ let fc=null,fp=null,N=0;
+ try{fc=await frame(pages[0].css);fp=await frame(css);await fontsReady(fc,AS.faces);await fontsReady(fp,AS.faces);
+  /* découpage des pages de texte : blocs entiers, un titre n’est jamais laissé seul en bas de page */
+  const out=[];
+  for(let i=0;i<pages.length;i++){const p=pages[i];
+   if(p!==null){out.push(p);continue;}
+   const F=flows.find(x=>x.at===i);let rest=F.html.slice(),part=0;
+   while(rest.length){const mk=k=>FT(H.frame(T,F.title+(part?' <small style="font-size:10pt">(suite)</small>':''),F.sub,F.picto,'<div class="asf">'+rest.slice(0,k).join('')+'</div>',0));
+    const root=await layout(fp,{id:'m',h:FLATTEN(mk(rest.length))}),box=root.querySelector('.asf'),ft=root.querySelector('.ft');
+    const lim=ft.getBoundingClientRect().top-(4*96/25.4);let k=0;const ch=box.children;
+    while(k<ch.length&&ch[k].getBoundingClientRect().bottom<=lim)k++;
+    while(k>1&&k<ch.length&&/^H[23]$/.test(ch[k-1].tagName))k--;
+    if(k<1)k=1;fp.contentDocument.body.innerHTML='';
+    const take=rest.slice(0,k),pt=part;out.push({id:F.id+'-'+part,lazy:nn=>FT(H.frame(T,F.title+(pt?' <small style="font-size:10pt">(suite)</small>':''),F.sub,F.picto,'<div class="asf">'+take.join('')+'</div>',nn))});
+    rest=rest.slice(k);part++;}}
+  /* numérotation : comme le cahier de texte (couverture et S.M. le Roi sans numéro, informations = p. 3) */
+  let num=1;N=out.length;prog(0,N);
+  for(let i=0;i<N;i++){const p=out[i];num++;let pg=p;
+   if(p.lazy){const h=p.lazy(num);pg={id:p.id,h:FLATTEN(h.replace('<section ','<section data-id="'+p.id+'" ')),css};}
+   const f=i===0?fc:fp;const root=await layout(f,pg);
+   if(i)pdf.addPage('a4','portrait');Painter(pdf,f.contentWindow,FR,stats).page(root);
+   f.contentDocument.body.innerHTML='';out[i]=null;prog(i+1,N);await tick();}}
+ finally{[fc,fp].forEach(f=>{if(f&&f.parentNode)f.parentNode.removeChild(f);});}
+ const u=new Uint8Array(pdf.output('arraybuffer'));fixOrdering(u);
+ const y=(D.year[0]||'').slice(0,4),name='Cahier-ASS'+(y?'-'+y+'-'+(+y+1):'')+'.pdf';
+ return {blob:new Blob([u],{type:'application/pdf'}),name,pages:N,ms:Date.now()-t0,stats,dates:AD};}
+
+window.CJCahier={make,texte,ass,assDates,texteData,extract,pages:function(pf){const x=extract(pf||null);return Promise.all([photos(),assets()]).then(([PH,AS])=>pagesOf(x.D,x.GR,PH,AS));},render:R3,classLevelSort};
 })();

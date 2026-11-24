@@ -1,5 +1,5 @@
 /* TATABO3 (cahier journalier digital) – service worker (hors ligne ; 1.29.1 : ouverture réseau d’abord, 3 s max, sinon copie locale) */
-const CACHE = 'cahier-v29-20';
+const CACHE = 'cahier-v29-21';
 /* 1.29.1 : préchargement réduit à l’essentiel du démarrage (installation rapide, même si iOS coupe l’app tôt) ;
    le reste (PDF, polices, grandes images) est mis en cache juste après l’activation, sans bloquer la mise à jour, et à la demande */
 const ASSETS = [
@@ -32,6 +32,8 @@ const LAZY_ASSETS = [
   './cj-edt.js',    /* 1.29.2b : versions de l’emploi du temps (fenêtres chargées à la demande) */
   './cahier/cover.html','./cahier/logo.jpg','./cahier/roi.jpg','./cahier/splash.jpg',
   './cahier/poppins-400.ttf','./cahier/poppins-400i.ttf','./cahier/poppins-500.ttf','./cahier/poppins-600.ttf','./cahier/poppins-700.ttf','./cahier/poppins-800.ttf','./cahier/poppins-800i.ttf','./cahier/poppins-900.ttf','./cahier/poppins-900i.ttf',
+  './cj-ass-data.js', /* 1.29.21 : « Cahier d’ASS » (contenu fixe du modèle) + images, chargés au toucher du bouton */
+  './cahier/ass/image1.jpg','./cahier/ass/image2.jpg','./cahier/ass/image3.jpg','./cahier/ass/image4.jpg','./cahier/ass/image7.jpg','./cahier/ass/image8.jpg','./cahier/ass/image9.jpg',
   './cj-pdf.js',
   './vendor/jspdf.umd.min.js',
   './vendor/jspdf.plugin.autotable.min.js',
