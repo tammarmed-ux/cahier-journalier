@@ -1097,6 +1097,10 @@ const ASS_CSS=`
 .asf p{margin:0 0 1.6mm;text-align:left}
 .asf h2.S{font:800 italic 13pt/1.25 'Poppins';color:#0A3768;border-bottom:.6mm solid #E85D04;padding:2.2mm 0 1mm;margin:1mm 0 2.4mm}
 .asf h3.h{font:800 10.2pt/1.3 'Poppins';color:#E85D04;margin:2.2mm 0 1.2mm}
+/* 1.29.25 (t409u) : sous-titre (bleu marine) et sous-sous-titre (bleu marine italique), sous le titre orange */
+.asf h4.n{font:800 9.8pt/1.3 'Poppins';color:#0A3768;margin:1.8mm 0 1mm}
+.asf h5.m{font:700 italic 9.4pt/1.3 'Poppins';color:#0A3768;margin:1.4mm 0 .8mm;padding-left:2mm;border-left:.6mm solid #E85D04}
+.asf .li.dash i{width:2mm;height:.35mm;border-radius:0;background:#1C2430;margin-top:2.35mm}
 .asf .li{display:flex;gap:1.8mm;margin:0 0 .9mm}
 .asf .li i{flex:none;width:1.5mm;height:1.5mm;border-radius:50%;background:#0A3768;margin-top:1.75mm}
 .asf .li.l1{padding-left:4mm}.asf .li.l1 i{background:#E85D04}.asf .li.l2{padding-left:8mm}.asf .li.l2 i{background:#fff;border:.3mm solid #0A3768}
@@ -1175,7 +1179,7 @@ async function ass(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(){
  const tbl=(t,rows,cont,off)=>`<div class="tw">${t.cap0||cont?`<div class="tcap">${esc(t.cap)}${cont?' (suite)':''}</div>`:''}<table class="tt"><colgroup>${t.head.map((x,i)=>`<col${t.w[i]?` style="width:${t.w[i]}mm"`:''}>`).join('')}</colgroup><thead><tr>${t.head.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr${(i+off)%2?' class="z"':''}><th class="rh">${esc(r[0])}</th>${r.slice(1).map(c=>`<td>${tCell(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
  /* relais : schéma des zones redessiné (d’après l’image du modèle) */
  const ZONES=`<div class="zn"><div class="zt">Zones de transmission</div><div class="zb"><span class="za-l">Zone d’accélération (ZA = 10 m)</span><div class="lane"></div><div class="za"></div><div class="zend"></div><div class="br"></div><span class="ze-l">Zone d’échange (ZE = 20 m)</span></div></div>`;
- const blk=b=>b.k==='S'?`<h2 class="S">${esc(b.t)}</h2>`:b.k==='h'?`<h3 class="h">${esc(b.t)}</h3>`:b.k==='p'?`<p>${b.h}</p>`:b.k==='li'?`<div class="li l${Math.min(2,b.lvl||0)}"><i></i><span>${b.h}</span></div>`:
+ const blk=b=>b.k==='S'?`<h2 class="S">${esc(b.t)}</h2>`:b.k==='h'?`<h3 class="h">${esc(b.t)}</h3>`:b.k==='n'?`<h4 class="n">${esc(b.t)}</h4>`:b.k==='m'?`<h5 class="m">${esc(b.t)}</h5>`:b.k==='p'?`<p>${b.h}</p>`:b.k==='li'?`<div class="li l${Math.min(2,b.lvl||0)}${b.d?' dash':''}"><i></i><span>${b.h}</span></div>`:
   b.k==='img'?(IMG[b.src]?`<div class="im"><img src="${IMG[b.src]}" alt=""></div>`:''):b.k==='tbl'?`<table class="at">${b.rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')}</table>`:b.k==='Z'?ZONES:b.k==='T'?tbl(b,b.rows,false,0):'';
  const flows=[];const flow=(id,title,sub,picto,L)=>{flows.push({at:pages.length,id,title,sub,picto,html:L.map(b=>({h:blk(b),T:b.k==='T'?b:null,rows:b.rows,off:0})).filter(x=>x.h)});pages.push(null);};
  flow('sport','Le sport scolaire','Sport scolaire · éducation physique et sportive',PI_BOOK,X.sport);
@@ -1231,7 +1235,7 @@ async function ass(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(){
     if(sp&&sp.r<rest[sp.k].rows.length){const it=rest[sp.k],a=it.rows.slice(0,sp.r),b=it.rows.slice(sp.r);
      take=rest.slice(0,sp.k).concat([{h:tbl(it.T,a,it.off>0,it.off),T:it.T,rows:a,off:it.off}]);
      rest=[{h:tbl(it.T,b,true,it.off+sp.r),T:it.T,rows:b,off:it.off+sp.r}].concat(rest.slice(sp.k+1));}
-    else{while(k>1&&k<ch.length&&/^H[23]$/.test(ch[k-1].tagName))k--;if(k<1)k=1;take=rest.slice(0,k);rest=rest.slice(k);}
+    else{while(k>1&&k<ch.length&&/^H[2-5]$/.test(ch[k-1].tagName))k--;if(k<1)k=1;take=rest.slice(0,k);rest=rest.slice(k);}
     const pt=part,th=J(take);out.push({id:F.id+'-'+part,lazy:nn=>FT(H.frame(T,F.title+(pt?' <small style="font-size:10pt">(suite)</small>':''),F.sub,F.picto,'<div class="asf">'+th+'</div>',nn))});
     part++;}}
   /* numérotation : comme le cahier de texte (couverture et S.M. le Roi sans numéro, informations = p. 3) */
