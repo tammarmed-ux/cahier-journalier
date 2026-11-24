@@ -1104,6 +1104,26 @@ const ASS_CSS=`
 .asf table.at{width:100%;border-collapse:collapse;margin:1mm 0 3mm;font-size:8.4pt;line-height:1.35}
 .asf table.at td{border:.3mm solid #B8C4D6;padding:1.2mm 1.6mm;vertical-align:top}
 .asf table.at tr:first-child td{background:#0A3768;color:#fff;font-weight:700;text-align:center;vertical-align:middle}
+.asf .tw{margin:1.2mm 0 3.6mm}
+.asf .tcap{display:inline-block;background:#E85D04;color:#fff;font:800 8.2pt/1.2 'Poppins';padding:1mm 3.2mm;border-radius:1.8mm 1.8mm 0 0}
+.asf table.tt{width:100%;border-collapse:collapse;table-layout:fixed;font:400 8.3pt/1.4 'Poppins';color:#1C2430}
+.asf table.tt thead th{background:#0A3768;color:#fff;font:700 8.4pt/1.25 'Poppins';padding:1.8mm 1.6mm;border:.25mm solid #0A3768;text-align:center;vertical-align:middle}
+.asf table.tt thead th:first-child{background:#E85D04;border-color:#E85D04}
+.asf table.tt td{font:400 8.2pt/1.34 'Poppins';color:#1C2430}.asf table.tt td,.asf table.tt th.rh{border:.25mm solid #C9D3E1;padding:1.2mm 1.7mm .7mm;vertical-align:top;text-align:left}
+.asf table.tt th.rh{background:#EEF3FA;color:#0A3768;font:800 8.4pt/1.3 'Poppins';text-align:center;vertical-align:middle}
+.asf table.tt tr.z td{background:#F6F8FC}.asf table.tt tr.z th.rh{background:#E3EAF5}
+.asf .aq-l{font:800 7.4pt/1.3 'Poppins';color:#E85D04;margin:1mm 0 .5mm}.asf .aq-l:first-child{margin-top:0}
+.asf .aq-i{display:flex;gap:1.5mm;margin:0 0 .55mm}.asf .aq-i i{flex:none;width:1.3mm;height:1.3mm;border-radius:50%;background:#E85D04;margin-top:1.4mm}
+.asf .aq-p{margin:0 0 .55mm}
+.asf .zn{margin:1mm 0 4mm;border:.3mm solid var(--line);border-radius:2.5mm;padding:2.2mm 4mm 3mm}
+.asf .zt{font:800 8.4pt 'Poppins';color:#E85D04;margin-bottom:1.5mm}
+.asf .zb{position:relative;height:25mm}
+.asf .zb .lane{position:absolute;left:0;right:0;top:8mm;height:8mm;border-top:.5mm solid #0A3768;border-bottom:.5mm solid #0A3768;background:#F6F8FC}
+.asf .zb .za{position:absolute;left:14%;width:18%;top:8mm;height:8mm;background:#0A3768}
+.asf .zb .zend{position:absolute;left:74%;width:.7mm;top:5.5mm;height:13mm;background:#0A3768}
+.asf .zb .br{position:absolute;left:14%;width:60%;top:18.6mm;height:1.6mm;border:.45mm solid #E85D04;border-top:0}
+.asf .zb .za-l{position:absolute;left:14%;top:1.4mm;font:700 8pt 'Poppins';color:#0A3768}
+.asf .zb .ze-l{position:absolute;left:14%;width:60%;top:20.8mm;text-align:center;font:700 8pt 'Poppins';color:#E85D04}
 .as-ar{direction:rtl;text-align:right;font-family:'Cairo','NaskhAr';color:#1C2430;margin-top:6mm}
 .as-ar h2{font:700 15pt/1.8 'Cairo','NaskhAr';color:#0A3768;margin:0 0 5mm;padding-bottom:2mm;border-bottom:.6mm solid #E85D04}
 .as-ar p{font:400 13pt/2.05 'Cairo','NaskhAr';margin:0 0 5mm}
@@ -1149,9 +1169,15 @@ async function ass(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(){
  /* préambule de la loi 30-09 (arabe, RTL) */
  add('ar',FT(H.frame(T,'Loi n° 30-09','Éducation physique et sports · extrait du préambule',PI_BOOK,`<div class="as-ar" dir="rtl" lang="ar"><h2>${esc(X.ar.t)}</h2>${X.ar.p.map(p=>`<p>${esc(p)}</p>`).join('')}</div><p class="as-ref">Extrait du préambule de la loi n° 30-09 relative à l’éducation physique et aux sports.</p>`,++n)));
  /* pages de texte : découpage automatique en pages (mesure dans le cadre de rendu) */
+/* 1.29.22 (consigne du propriétaire, t406u) : tableaux du modèle (tableaux Word et images collées) refaits en vrais tableaux, style du cahier ;
+    texte repris du modèle et reformulé (cj-ass-data.js). « #… » : intertitre, « =… » : phrase, sinon puce. Zébrage léger, bordures fines. */
+ const tCell=c=>c.map(x=>x[0]==='#'?`<div class="aq-l">${esc(x.slice(1))}</div>`:x[0]==='='?`<div class="aq-p">${esc(x.slice(1))}</div>`:`<div class="aq-i"><i></i><span>${esc(x)}</span></div>`).join('');
+ const tbl=(t,rows,cont,off)=>`<div class="tw">${t.cap0||cont?`<div class="tcap">${esc(t.cap)}${cont?' (suite)':''}</div>`:''}<table class="tt"><colgroup>${t.head.map((x,i)=>`<col${t.w[i]?` style="width:${t.w[i]}mm"`:''}>`).join('')}</colgroup><thead><tr>${t.head.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr${(i+off)%2?' class="z"':''}><th class="rh">${esc(r[0])}</th>${r.slice(1).map(c=>`<td>${tCell(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+ /* relais : schéma des zones redessiné (d’après l’image du modèle) */
+ const ZONES=`<div class="zn"><div class="zt">Zones de transmission</div><div class="zb"><span class="za-l">Zone d’accélération (ZA = 10 m)</span><div class="lane"></div><div class="za"></div><div class="zend"></div><div class="br"></div><span class="ze-l">Zone d’échange (ZE = 20 m)</span></div></div>`;
  const blk=b=>b.k==='S'?`<h2 class="S">${esc(b.t)}</h2>`:b.k==='h'?`<h3 class="h">${esc(b.t)}</h3>`:b.k==='p'?`<p>${b.h}</p>`:b.k==='li'?`<div class="li l${Math.min(2,b.lvl||0)}"><i></i><span>${b.h}</span></div>`:
-  b.k==='img'?(IMG[b.src]?`<div class="im"><img src="${IMG[b.src]}" alt=""></div>`:''):b.k==='tbl'?`<table class="at">${b.rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')}</table>`:'';
- const flows=[];const flow=(id,title,sub,picto,L)=>{flows.push({at:pages.length,id,title,sub,picto,html:L.map(blk).filter(Boolean)});pages.push(null);};
+  b.k==='img'?(IMG[b.src]?`<div class="im"><img src="${IMG[b.src]}" alt=""></div>`:''):b.k==='tbl'?`<table class="at">${b.rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')}</table>`:b.k==='Z'?ZONES:b.k==='T'?tbl(b,b.rows,false,0):'';
+ const flows=[];const flow=(id,title,sub,picto,L)=>{flows.push({at:pages.length,id,title,sub,picto,html:L.map(b=>({h:blk(b),T:b.k==='T'?b:null,rows:b.rows,off:0})).filter(x=>x.h)});pages.push(null);};
  flow('sport','Le sport scolaire','Sport scolaire · éducation physique et sportive',PI_BOOK,X.sport);
  flow('assoc','Association sportive scolaire','L’ASS : rôle, objectifs, activités',PI_CUP,X.ass);
  const apic=a=>ctxPicto(A,a.act,'','');
@@ -1191,15 +1217,23 @@ async function ass(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(){
   const out=[];
   for(let i=0;i<pages.length;i++){const p=pages[i];
    if(p!==null){out.push(p);continue;}
-   const F=flows.find(x=>x.at===i);let rest=F.html.slice(),part=0;
-   while(rest.length){const mk=k=>FT(H.frame(T,F.title+(part?' <small style="font-size:10pt">(suite)</small>':''),F.sub,F.picto,'<div class="asf">'+rest.slice(0,k).join('')+'</div>',0));
+   const F=flows.find(x=>x.at===i);let rest=F.html.slice(),part=0;const J=L=>L.map(x=>x.h).join('');
+   while(rest.length){const mk=k=>FT(H.frame(T,F.title+(part?' <small style="font-size:10pt">(suite)</small>':''),F.sub,F.picto,'<div class="asf">'+J(rest.slice(0,k))+'</div>',0));
     const root=await layout(fp,{id:'m',h:FLATTEN(mk(rest.length))}),box=root.querySelector('.asf'),ft=root.querySelector('.ft');
     const lim=ft.getBoundingClientRect().top-(4*96/25.4);let k=0;const ch=box.children;
     while(k<ch.length&&ch[k].getBoundingClientRect().bottom<=lim)k++;
-    while(k>1&&k<ch.length&&/^H[23]$/.test(ch[k-1].tagName))k--;
-    if(k<1)k=1;fp.contentDocument.body.innerHTML='';
-    const take=rest.slice(0,k),pt=part;out.push({id:F.id+'-'+part,lazy:nn=>FT(H.frame(T,F.title+(pt?' <small style="font-size:10pt">(suite)</small>':''),F.sub,F.picto,'<div class="asf">'+take.join('')+'</div>',nn))});
-    rest=rest.slice(k);part++;}}
+    /* 1.29.22 : un tableau n’est jamais coupé s’il tient sur une page (il passe entier à la page suivante, avec son titre) ;
+       plus haut qu’une page : coupé entre deux lignes, en-tête répété et « (suite) » */
+    let sp=null;if(k<ch.length&&rest[k].T){const el=ch[k],full=lim-box.getBoundingClientRect().top;
+     if(el.getBoundingClientRect().height>full){const trs=el.querySelectorAll('tbody tr');let r=0;while(r<trs.length&&trs[r].getBoundingClientRect().bottom<=lim)r++;
+      if(r>=1&&r<trs.length)sp={k,r};else if(k===0)sp={k:0,r:Math.max(1,Math.min(r,trs.length-1))};}}
+    fp.contentDocument.body.innerHTML='';let take;
+    if(sp&&sp.r<rest[sp.k].rows.length){const it=rest[sp.k],a=it.rows.slice(0,sp.r),b=it.rows.slice(sp.r);
+     take=rest.slice(0,sp.k).concat([{h:tbl(it.T,a,it.off>0,it.off),T:it.T,rows:a,off:it.off}]);
+     rest=[{h:tbl(it.T,b,true,it.off+sp.r),T:it.T,rows:b,off:it.off+sp.r}].concat(rest.slice(sp.k+1));}
+    else{while(k>1&&k<ch.length&&/^H[23]$/.test(ch[k-1].tagName))k--;if(k<1)k=1;take=rest.slice(0,k);rest=rest.slice(k);}
+    const pt=part,th=J(take);out.push({id:F.id+'-'+part,lazy:nn=>FT(H.frame(T,F.title+(pt?' <small style="font-size:10pt">(suite)</small>':''),F.sub,F.picto,'<div class="asf">'+th+'</div>',nn))});
+    part++;}}
   /* numérotation : comme le cahier de texte (couverture et S.M. le Roi sans numéro, informations = p. 3) */
   let num=1;N=out.length;prog(0,N);
   for(let i=0;i<N;i++){const p=out[i];num++;let pg=p;
