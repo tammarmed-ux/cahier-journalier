@@ -148,4 +148,26 @@ function onMQ(){wrap();if(MQ.matches){navTop();photo();upd();setOpen();}else psU
 if(MQ.addEventListener)MQ.addEventListener('change',onMQ);else if(MQ.addListener)MQ.addListener(onMQ);
 window.addEventListener('resize',navTop);
 hh();if(window.ResizeObserver)new ResizeObserver(hh).observe(bar);
+/* 1.29.19 (proposition C choisie par le propriétaire) : indicateur de synchronisation contre la photo du professeur, ordinateur seulement (≥ 1024 px),
+   barre dépliée et repliée. C’est le même bouton #syncPill (classes ok/busy/wait/err posées par la synchro, même infobulle, même clic → Paramètres ›
+   Synchronisation), déplacé dans la barre latérale et posé en pastille en bas à droite de la photo ; l’anneau de la photo prend la couleur de l’état
+   (vert / orange / rouge ; orange actuel en local ou hors connexion). Sous 1024 px, il revient à sa place dans l’en-tête : téléphone inchangé. Affichage seul. */
+(function(){var sp=D.getElementById('syncPill'),ph=side.querySelector('.dk-ph');if(!sp||!hd||!ph)return;
+ var st=D.createElement('style');st.textContent='@media (min-width:1024px){'+
+  'html.cj-dk #dkSide>#syncPill{position:absolute!important;z-index:5;display:block;width:12px;height:12px;margin:0!important;padding:0!important;transform:none!important;border-radius:50%;box-sizing:border-box;border:2px solid var(--sb-bg,#0B3A6E)!important;background:var(--sb-bg,#0B3A6E)!important;cursor:pointer}'+
+  'html.cj-dk #dkSide>#syncPill .lbl{display:none!important}html.cj-dk #dkSide>#syncPill .dot{display:block;width:100%;height:100%;border-radius:50%}'+
+  'html.cj-dk #dkSide>#syncPill:focus-visible{outline:2px solid #fff;outline-offset:2px}'+
+  'html.cj-dk:has(#dkSide>#syncPill.ok) .dk-ph{box-shadow:0 0 0 2px var(--sb-bg,#0B3A6E),0 0 0 4.5px #4ade80}'+
+  'html.cj-dk:has(#dkSide>#syncPill.busy) .dk-ph,html.cj-dk:has(#dkSide>#syncPill.wait) .dk-ph{box-shadow:0 0 0 2px var(--sb-bg,#0B3A6E),0 0 0 4.5px #fbbf24}'+
+  'html.cj-dk:has(#dkSide>#syncPill.err) .dk-ph{box-shadow:0 0 0 2px var(--sb-bg,#0B3A6E),0 0 0 4.5px #f87171}}';
+ D.head.appendChild(st);
+ var raf=0;function place(){raf=0;
+  if(!MQ.matches){if(sp.parentNode!==hd)hd.insertBefore(sp,hd.firstChild);sp.style.left=sp.style.top='';return;}
+  if(sp.parentNode!==side)side.appendChild(sp);
+  var s=side.getBoundingClientRect(),r=ph.getBoundingClientRect();if(!r.width)return;
+  sp.style.left=Math.round(r.right-s.left-sp.offsetWidth+1)+'px';sp.style.top=Math.round(r.bottom-s.top-sp.offsetHeight+1)+'px';}
+ function later(){if(!raf)raf=requestAnimationFrame(place);}
+ place();new MutationObserver(later).observe(H,{attributes:true,attributeFilter:['class']});
+ window.addEventListener('resize',later);if(MQ.addEventListener)MQ.addEventListener('change',later);else if(MQ.addListener)MQ.addListener(later);
+ if(window.ResizeObserver)new ResizeObserver(later).observe(side);})();
 H.classList.add('cj-dk','dk-sbA');navTop();fitAll();window.CJDesk={v:3};})();
