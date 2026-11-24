@@ -944,7 +944,7 @@ function texteBuild(H,TD){const {T,frame,esc,cc,PF,CIV,TNAME}=H;H.setCur('');let
  const D3=d=>d?d.slice(8,10)+' / '+d.slice(5,7)+' / '+d.slice(0,4):'… / … / ……';
  const DW=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
  const dd=d=>{if(!d)return '';const x=new Date(d+'T12:00:00');return DW[x.getDay()]+' '+d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4);};
- const LEG=`<div class="ctx-leg"><b>TO</b> = test d’observation · <b>TB</b> = test bilan · 10 séances par cycle, classes dans l’ordre de passage de la semaine · <b>Date en gras</b> : séance effectuée (registre de l’application) · <span class="pl">date en gris</span> : date prévue d’après l’emploi du temps · <span class="rq">Remarque</span> : séance comptée mais non effectuée (jour férié, réunion, absence collective…) · vacances non comptées.</div>`;
+ const LEG=`<div class="ctx-leg"><b>TO</b> = test d’observation · <b>TB</b> = test bilan · 10 séances par cycle, classes dans l’ordre de passage de la semaine · <b>Date en gras</b> : séance effectuée (registre de l’application) · <span class="pl">date en gris</span> : date prévue d’après l’emploi du temps.</div>`;
  const HEAD='<table class="ctx"><colgroup><col style="width:17mm"><col style="width:25mm"><col style="width:26mm"><col><col style="width:46mm"></colgroup><thead><tr><th>SÉANCES</th><th>CLASSE</th><th>DATES</th><th>OBJECTIFS</th><th>REMARQUES</th></tr></thead><tbody>';
  const SIG=`<div class="ctx-sig"><div>LE DIRECTEUR<span>(Signature)</span></div><div>L’INSPECTEUR<span>(Signature)</span></div></div><div class="ctx-name">${esc((CIV+' '+TNAME).trim())}</div>`;
  const RH=6,CAP=222,SIGH=38;
