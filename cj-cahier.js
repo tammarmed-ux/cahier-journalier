@@ -88,7 +88,7 @@ function classLevelSort(list){var nm=function(c){return typeof c==='string'?c:(c
   return list.slice().sort(function(a,b){var x=classKey(nm(a)),y=classKey(nm(b));
     return x.lv-y.lv||(x.fil<y.fil?-1:x.fil>y.fil?1:0)||x.num-y.num||x.raw.localeCompare(y.raw,'fr',{numeric:true});});}
 
-function R3(D,GR,PH,LOGO,KING,FONTCSS){
+function R3(D,GR,PH,LOGO,KING,FONTCSS,ALT){
 let PHOTOS=PH||{};const okPh=d=>typeof d==='string'&&/^data:image\/(jpeg|webp|png);base64,/.test(d);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dmy=d=>d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'';
@@ -345,13 +345,21 @@ function service(k,n){const hm=x=>{const[h,m]=String(x).split(':').map(Number);r
  <div class="stats"><div class="card"><b>${(svc.cm||0)/60} h</b><small>enseignement</small></div><div class="card"><b>${(svc.am||0)/60} h</b><small>ASS (sport scolaire)</small></div><div class="card"><b>${(svc.tot||0)/60} h</b><small>total / semaine</small></div><div class="card"><b>${(svc.ob||0)/60} h</b><small>service dû</small></div></div>
  <div class="cleg"><div class="clt">Couleurs des classes</div><div class="clg">${D.classes.map(c=>{const C=cc(c.name),hh=TT.filter(t=>t.cls===c.name).reduce((a,t)=>a+hm(t.end)-hm(t.start),0);return `<span style="background:${C[1]};color:${C[2]};border:.4mm solid ${C[0]};border-left:1.6mm solid ${C[0]}"><b>${esc(c.name)}</b> · ${String(hh).replace('.',',')} h</span>`;}).join('')}<span style="background:#082B53;color:#fff;font-size:7pt;padding-right:.8mm"><b>ASS</b> · Association sportive</span></div></div>`;
  return frame(k,'Tableau de service','Emploi du temps hebdomadaire · '+YEAR,'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',body,n);}
-function vacances(k,n){const H=D.holidays.slice().sort((a,b)=>a.from<b.from?-1:a.from>b.from?1:0);
+/* 1.29.16 (consigne du propriétaire) : le tableau « Vacances et jours fériés » ne montre que les vacances scolaires et les jours fériés officiels
+   (note ministérielle). Filtre d’affichage seul (données, grilles, registre et calcul des séances inchangés) :
+   exclu si indisponibilité (horaire), si le libellé contient un mot de la liste noire (absence, réunion, mauvais temps…) ;
+   gardé ensuite seulement si vacances (classement de l’app) ou libellé d’un jour férié officiel (liste blanche). */
+const HOL_NO=/absence|reunion|mauvais temps|meteo|intemperie|indisponib|greve|formation|examen|conseil|seminaire|sortie|competition|stage|visite|panne|travaux|maladie|conge (de )?maladie/;
+const HOL_OK=/unite|wahda|marche verte|independance|nouvel an|amazigh|yennayer|travail|1er mai|trone|revolution du roi|jeunesse|oued|dahab|\baid\b|moharram|muharram|hegire|mawlid|mouloud|naissance du prophete|ferie/;
+const holOfficial=h=>{if(h.tm)return false;const l=String(h.label||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,' ');
+ if(HOL_NO.test(l))return false;return !!h.vac||HOL_OK.test(l);};
+function vacances(k,n){const H=D.holidays.filter(holOfficial).sort((a,b)=>a.from<b.from?-1:a.from>b.from?1:0);
  const days=h=>{const a=new Date(h.from),b=new Date(h.to&&h.to>=h.from?h.to:h.from);return Math.round((b-a)/864e5)+1;};
  const kind=h=>h.tm?'t':h.vac?'v':'f';const KL={v:'Vacances',f:'Jour férié',t:'Indisponibilité'},KC={v:'#1098AD',f:'#E8590C',t:'#7048E8'};
  const tot=x=>H.filter(h=>kind(h)===x).reduce((a,h)=>a+days(h),0),cnt=x=>H.filter(h=>kind(h)===x).length;
  const body=`<table class="t hol"><thead><tr><th style="width:8mm">N°</th><th>Nom</th><th style="width:24mm">Du</th><th style="width:24mm">Au</th><th style="width:16mm">Jours</th><th style="width:30mm">Type</th></tr></thead><tbody>${H.map((h,i)=>{const k2=kind(h);return `<tr><td>${i+1}</td><td class="hn">${esc(h.label)}${h.approx?' <span class="ap">date approximative</span>':''}${h.tm?' <span class="ap">'+esc(h.tm)+'</span>':''}</td><td>${dmy(h.from)}</td><td>${h.to&&h.to!==h.from?dmy(h.to):'—'}</td><td style="font-weight:800">${days(h)}</td><td><span class="ty" style="--k:${KC[k2]}">${KL[k2]}</span></td></tr>`;}).join('')}</tbody></table>
  <div class="stats"><div class="card"><b style="color:${KC.v}">${cnt('v')}</b><small>périodes de vacances</small></div><div class="card"><b style="color:${KC.v}">${tot('v')} j</b><small>jours de vacances</small></div><div class="card"><b style="color:${KC.f}">${cnt('f')}</b><small>jours fériés / dates</small></div><div class="card"><b style="color:${KC.f}">${tot('f')} j</b><small>jours fériés</small></div></div>
- <p style="font-size:7.5pt;color:#6b7280;margin-top:3mm">Liste de l’app (Paramètres › Vacances et jours fériés), même classement vacances / férié que les grilles et le registre. Jours = du premier au dernier jour inclus (week-ends compris). Les créneaux de cours tombant ces jours-là ne sont pas comptés.</p>`;
+ <p style="font-size:7.5pt;color:#6b7280;margin-top:3mm">Vacances scolaires et jours fériés officiels du calendrier de l’année (Paramètres › Vacances et jours fériés) ; absences, réunions, intempéries et indisponibilités n’y figurent pas (elles restent indiquées dans le registre). Jours = du premier au dernier jour inclus (week-ends compris). Les créneaux de cours tombant ces jours-là ne sont pas comptés.</p>`;
  return frame(k,'Vacances et jours fériés','Calendrier scolaire '+YEAR+' · '+H.length+' dates','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M2.5 12h2M19.5 12h2M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>',body,n);}
 function repart(k,n){const C=D.cycles,a=new Date(D.year[0]),z=new Date(D.year[1]),T=(z-a)/864e5;let seg='',prev=a;
  C.forEach((c,i)=>{const s=new Date(c.start),e=new Date(c.end);if(s>prev)seg+=`<i class="v" style="flex:${(s-prev)/864e5}"></i>`;seg+=`<i style="flex:${(e-s)/864e5+1};background:${CYC[i]}">C${i+1}</i>`;prev=new Date(+e+864e5);});
@@ -411,7 +419,8 @@ function build(){const k='V',T=THEMES[k];let n=0;const P=[];const add=(id,h)=>{P
  D.classes.forEach((c,ci)=>{CUR=c.name;add('cls'+ci,clsTitle(k,c));n++;add('anthro'+ci,anthro(k,c,++n));add('grp'+ci,groups(k,c,++n));for(let p=0;p<6;p++)add('reg'+ci+'_'+p,registre(k,c,p,++n));});
  CUR='';add('back',back(k));
  return {css:baseCss(T),pages:P,PF,CIV,TNAME,YEAR};}
-return build();
+/* 1.29.11 : ALT (cahier de texte) reçoit les mêmes outils de mise en page ; sans ALT, rendu du cahier journalier inchangé */
+return ALT?ALT({T:THEMES.V,frame,baseCss,esc,cc,back,king,info,service,vacances,repart,LOGO,CYC,PF,CIV,TNAME,YEAR,setCur:v=>{CUR=v;}}):build();
 }
 
 /* ---------- données : lecture seule depuis l’app (même calcul que les écrans) ---------- */
@@ -854,5 +863,210 @@ async function make(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function()
 function fixOrdering(u){const A=Array.from('/Ordering (Identity-H)').map(c=>c.charCodeAt(0)),B=Array.from('/Ordering (Identity)  ').map(c=>c.charCodeAt(0)),n=A.length;
  for(let i=0;i<=u.length-n;i++){if(u[i]!==47||u[i+1]!==79)continue;let k=2;while(k<n&&u[i+k]===A[k])k++;if(k===n){u.set(B,i);i+=n-1;}}}
 
-window.CJCahier={make,extract,pages:function(pf){const x=extract(pf||null);return Promise.all([photos(),assets()]).then(([PH,AS])=>pagesOf(x.D,x.GR,PH,AS));},render:R3,classLevelSort};
+/* ---------- 1.29.11 : « Cahier de texte » (PDF A4, même style que le cahier journalier : couverture, polices Poppins/Cairo, couleurs, en-têtes).
+   Une page (ou plus) par cycle et par groupe de classes (même niveau, même APS / même épreuve) : SÉANCES | CLASSE | DATES | OBJECTIFS | REMARQUES,
+   un bloc par séance : TO (test d’observation), 2…n−1, TB (test bilan) ; dans chaque bloc les classes dans l’ordre de passage (date puis heure du créneau).
+   LECTURE SEULE (window.CJR) : cycles et dates (cal), activité du cycle (Répartition cyclique) et APS / épreuve par classe (evals, mêmes fonctions que l’app),
+   nombre de séances et dates = colonnes du registre (colsOf / sessDate : date réelle de la séance enregistrée, sinon date prévue par l’emploi du temps,
+   vacances et jours fériés exclus). Aucun objectif n’est stocké par l’app : colonne OBJECTIFS en lignes pointillées, REMARQUES vide.
+   Rien n’est écrit ; le cahier journalier (make) n’est pas modifié. ---------- */
+/* 1.29.14 : pictogramme d’activité (vectoriel, même famille que ceux de l’app : viewBox 24, tête pleine, traits .b épais / .g fins).
+   1) pictogramme de l’app (actPicto) ; 2) variantes de libellé (« course de durée »…) et épreuve d’athlétisme ; 3) dessins ajoutés ci-dessous pour les APS
+   que l’app n’illustre pas ; 4) famille d’APS (athlétisme / sport collectif / gymnastique). */
+const CTX_PI={
+ relais:'<circle cx="7.4" cy="4.6" r="2"/><path d="M7.6 7L6.6 12.6L10.4 15.6L9.6 21M6.6 12.6L3.4 16.4M7.4 8.2L11.6 9.6L14 7.4M7.4 8.2L4.2 10.6" class="b"/><path d="M14 7.4L18.6 3.4" class="b" style="stroke-width:3"/><path d="M15 22h7M2 22h4" class="g"/>',
+ natation:'<circle cx="17.6" cy="7.4" r="2"/><path d="M3.4 12.6L9 9.6L13.8 11.4L15.6 9.6M9 9.6L11.6 5.6L16 4.2" class="b"/><path d="M2 16.4q2.5-2 5 0t5 0t5 0t5 0M2 20.4q2.5-2 5 0t5 0t5 0t5 0" class="g"/>',
+ judo:'<circle cx="12" cy="4.4" r="2.05"/><path d="M12 7v7.2M12 8.6L6.4 12.2M12 8.6L17.6 12.2M12 14.2L8.4 21M12 14.2L15.6 21" class="b"/><path d="M8.6 13h6.8M10.4 13l-1.4 3M13.6 13l1.4 3" class="g"/>',
+ tennisdetable:'<circle cx="9.4" cy="9.4" r="6"/><path d="M13.6 13.6L19.6 19.6" class="b" style="stroke-width:3.2"/><circle cx="19" cy="5" r="1.9"/>',
+ tennis:'<ellipse cx="10" cy="8.6" rx="5.4" ry="6.4" transform="rotate(-35 10 8.6)" class="b" style="fill:none"/><path d="M6.6 4.4l7 8M4.6 7.8l7 8M8.4 2.8l5.2 8.6M13.4 13.4L20 20.6" class="g"/><path d="M13.6 13.6L20.2 20.8" class="b" style="stroke-width:3"/><circle cx="19.4" cy="5" r="2"/>',
+ badminton:'<ellipse cx="8" cy="8.4" rx="4.2" ry="5.4" transform="rotate(-45 8 8.4)" class="b" style="fill:none"/><path d="M5.6 6l4.8 4.8M8 4.2l3.8 3.8M4.2 8.6l3.8 3.8" class="g"/><path d="M11.2 11.6L19.6 20" class="b" style="stroke-width:3"/><circle cx="18" cy="11.4" r="1.9"/><path d="M17 10L13.4 3.4M18.4 9.6L18.6 2.6M19.6 10.2L22.2 4.4M13.4 3.4h8.8" class="g"/>',
+ rugby:'<ellipse cx="12" cy="12" rx="9" ry="5.6" transform="rotate(-35 12 12)" class="b" style="fill:none"/><path d="M8.6 15.4L15.4 8.6M10 12.4l1.6 1.6M11.4 11l1.6 1.6M12.8 9.6l1.6 1.6" class="g"/>',
+ ballon:'<circle cx="12" cy="12" r="8.6" class="b" style="fill:none"/><path d="M12 3.4v17.2M3.4 12h17.2M6 6q6 6 12 0M6 18q6-6 12 0" class="g"/>'};
+function ctxSvg(k){return '<svg class="act-pi" data-pi="'+k+'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+CTX_PI[k]+'</svg>';}
+function ctxPicto(A,name,aps,evt){const t=x=>{try{return x&&A.actPicto?A.actPicto(x)||'':'';}catch(e){return '';}};
+ let s=t(name);if(s)return s;const n=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ if(/duree|endurance|demi.?fond|cross/.test(n))s=t('endurance');else if(/sprint|vitesse|haies/.test(n))s=t('vitesse');else if(/lancer|poids/.test(n))s=t('poids');else if(/saut/.test(n))s=t('saut en longueur');
+ if(s)return s;
+ const own=[[/relais/,'relais'],[/natation|nage/,'natation'],[/judo|lutte|karate|combat/,'judo'],[/tennis de table|ping/,'tennisdetable'],[/tennis/,'tennis'],[/badminton/,'badminton'],[/rugby/,'rugby']];
+ for(const [re,k] of own)if(re.test(n))return ctxSvg(k);
+ const ev=evt&&A.OPA&&A.OPA.events&&A.OPA.events[evt]?A.OPA.events[evt].l:'';s=t(ev);if(s)return s;
+ return aps==='athle'?t('endurance'):aps==='gym'?t('gymnastique'):ctxSvg('ballon');}
+function texteData(sel){const A=window.CJR,Db=A.db(),C=A.cal(),per=Db.periods||[];
+ const ord={},cls=classLevelSort((Db.classes||[]).map(c=>({id:c.id,name:c.name,level:A.levelOf(c.name)||''})));cls.forEach((c,i)=>{ord[c.id]=i;});
+ const evL=e=>A.OPA&&A.OPA.events&&A.OPA.events[e]?A.OPA.events[e].l:'',apL=a=>A.APS&&A.APS[a]?A.APS[a].l:'';
+ const cycles=[];
+ C.cycles.forEach((cy,p)=>{if(sel&&sel.indexOf(p)<0)return;const act=String(per[p]||'').trim(),base=A.cycAps(p),guess=A.evtGuess?A.evtGuess(act):'';
+  const gm={},groups=[];
+  cls.forEach(c=>{if(!(A.colsOf(c.id,p).n>0))return;/* classe sans séance dans ce cycle (créneaux ajoutés plus tard) : absente de la page */
+   const a=A.apsOf(c.id,p)||'',e=a==='athle'?(A.evtOf(c.id,p)||''):'',key=c.level+'|'+a+'|'+e;
+   let g=gm[key];if(!g){g=gm[key]={level:c.level,aps:a,evt:e,classes:[]};groups.push(g);}g.classes.push(c);});
+  const kinds={};groups.forEach(g=>{kinds[g.aps+'|'+g.evt]=1;});const mixed=Object.keys(kinds).length>1;
+  groups.forEach(g=>{let t=act,src=act?'cycle':'';
+   if(mixed&&(g.aps!==base||(g.aps==='athle'&&g.evt&&guess&&g.evt!==guess))){t=evL(g.evt)||apL(g.aps)||act;src='classe';}
+   g.title=t;g.src=src;g.picto=ctxPicto(A,t,g.aps,g.evt);
+   /* 1.29.13 (consigne du propriétaire) : 10 séances par cycle et par classe (TO, 2…9, TB), de la 1re à la dernière semaine d’après l’emploi du temps.
+      Vacances : sautées, ni affichées ni comptées. Jour férié, réunion, absence collective… (calendrier de l’app) : séance comptée à sa date,
+      motif (libellé de l’app) écrit dans REMARQUES. Au-delà de 10 créneaux dans le cycle : non imprimés (TB = 10e). Moins de 10 (cycle court) : date vide, remarque « Aucun créneau dans le cycle ». */
+   const NS=10,why=h=>{let l=String(h&&h.label||'').trim();if(l.length>34)l=l.replace(/\s*\([^)]*\)\s*/g,' ').trim();return l||A.holShort(h);};/* libellé de l’app ; précision entre parenthèses retirée s’il est trop long pour la case */
+   const rows=g.classes.map(c=>{const L=A.colsOf(c.id,p).filter(x=>!(x.hol&&A.isVacH(x.hol)));
+    const list=L.slice(0,NS).map(x=>x.hol?{date:x.date||'',held:false,t:x.slot?x.slot.start:'',why:why(x.hol)}:{date:A.sessDate(c.id,p,x.s)||x.date||'',held:!!A.rec(c.id,p,x.s),t:x.slot?x.slot.start:'',why:''});
+    return {c,list,total:L.length};});
+   g.N=NS;g.seances=[];g.count=rows.map(r=>({name:r.c.name,total:r.total,motifs:r.list.filter(x=>x.why).length}));
+   const srt=it=>it.sort((a,b)=>(a.date||'9999')<(b.date||'9999')?-1:(a.date||'9999')>(b.date||'9999')?1:a.t<b.t?-1:a.t>b.t?1:a.o-b.o);
+   for(let k=0;k<NS;k++)g.seances.push({k,label:k===0?'TO':k===NS-1?'TB':String(k+1),items:srt(rows.map(r=>Object.assign({name:r.c.name,o:ord[r.c.id]},r.list[k]||{date:'',held:false,t:'',why:'',miss:1})))});
+   g.classes=g.classes.map(c=>c.name);});
+  cycles.push({p,name:A.cycleName(p),act,aps:base,start:cy.start||'',end:cy.end||'',emoji:ctxPicto(A,act,base,groups[0]&&groups[0].evt),groups});});
+ return {cycles};}
+const CTX_CSS=`
+.mdx{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-top:1mm}
+.mdx h3.sh{margin:0 0 2.4mm;font:800 italic 12.5pt 'Poppins';color:#0A3768;border-bottom:.6mm solid #E85D04;padding-bottom:1mm}
+.mdx h3 b{display:inline-block;margin-left:1.5mm;background:#E85D04;color:#fff;font:800 8pt 'Poppins';padding:.4mm 2mm;border-radius:2mm;font-style:normal;vertical-align:middle}
+.mdx .md{margin-bottom:4mm}
+.mdx h4{margin:0 0 1.4mm;font:800 10pt/1.3 'Poppins';color:#E85D04}
+.mdx .li{display:flex;gap:1.8mm;font:400 9pt/1.42 'Poppins';color:#1C2430;margin-bottom:.9mm}
+.mdx .li i{flex:none;width:1.5mm;height:1.5mm;border-radius:50%;background:#0A3768;margin-top:1.7mm}
+.mdx .oti{background:#EEF3FA;border-left:1.6mm solid #0A3768;border-radius:0 2.5mm 2.5mm 0;padding:2.6mm 3.4mm}
+.mdx .oti h3{margin:0 0 1.4mm;font:800 italic 10.5pt 'Poppins';color:#0A3768}
+.mdx p{margin:0;font:400 9pt/1.45 'Poppins';color:#1C2430}
+.mdx .ot{display:flex;gap:2.6mm;margin-bottom:3.6mm}
+.mdx .ot em{flex:none;width:6.6mm;height:6.6mm;border-radius:50%;background:#E85D04;color:#fff;font:800 normal 9.5pt/6.6mm 'Poppins';text-align:center;box-shadow:0 .6mm 0 #0A3768}
+.mdx .ot h4{margin-top:.8mm}
+.mdx .cg{background:#0A3768;border-radius:3mm;padding:3mm 3.6mm 2mm;margin-top:1mm;box-shadow:0 1mm 0 #E85D04}
+.mdx .cg h3{margin:0 0 2mm;font:800 italic 10.5pt 'Poppins';color:#fff;border-bottom:.5mm solid #E85D04;padding-bottom:1mm}
+.mdx .cg .li{color:#fff}.mdx .cg .li i{background:#E85D04}
+.mref{margin:3mm 0 0;text-align:right;font:700 italic 8pt 'Poppins';color:#667085}
+.ctxCy .big{top:64mm}.ctxCy .big .k{font:900 italic 30pt/1 'Poppins';letter-spacing:.12em;padding-left:.12em}.ctxCy .big h1{font-size:32pt;line-height:1.1}
+.ctxCy .pic{position:absolute;left:50%;top:126mm;width:50mm;height:50mm;margin-left:-25mm;border-radius:50%;background:#0A3768;padding:3mm;box-shadow:0 1.6mm 0 #E85D04}
+.ctxCy .pic .ring{width:100%;height:100%;border-radius:50%;background:#E85D04;display:flex;align-items:center;justify-content:center;color:#fff;border:1.2mm solid #fff}
+.ctxCy .pic .ring svg{width:27mm;height:27mm;color:#fff}
+.ctxCy .facts{top:186mm}.ctxCy .cyh{top:214mm}
+.ctxCy .grs{position:absolute;left:22mm;right:22mm;top:221mm;display:flex;flex-direction:column;gap:2.6mm}
+.ctxCy .grs .g{display:flex;align-items:center;gap:3.5mm;background:#fff;border:.35mm solid #D7DFEA;border-left:2mm solid var(--cyc);border-radius:3mm;padding:2.4mm 3.5mm}
+.ctxCy .grs .gp{flex:none;width:11mm;height:11mm;border-radius:50%;background:#0A3768;display:flex;align-items:center;justify-content:center;color:#fff}
+.ctxCy .grs .gp svg{width:7.4mm;height:7.4mm;color:#fff}
+.ctxCy .grs .gt b{display:block;font:800 10pt 'Poppins';color:#0A3768;margin-bottom:1.2mm}
+.ctxCy .grs .ch i{display:inline-block;font:700 italic 8pt 'Poppins';color:#1C2430;border-left:1.4mm solid;padding:.4mm 2mm;margin:0 1.6mm 1mm 0;background:#EEF3FA;border-radius:0 1mm 1mm 0}
+.ctx-leg{font-size:7pt;color:#4B5563;margin:0 0 2mm;line-height:1.35}.ctx-leg b{color:#0A3768}.ctx-leg .pl{color:#8A94A6;font-style:italic}
+table.ctx{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7.6pt}
+table.ctx th{background:#0A3768;color:#fff;font-weight:800;font-size:7.4pt;letter-spacing:.3pt;height:7mm;padding:0 1mm;border:.25mm solid #0A3768;text-align:center}
+table.ctx td{border:.25mm solid #C9D3E1;height:var(--rh,5mm);padding:0 1.2mm;line-height:1;vertical-align:middle}
+table.ctx tr.b0 td{border-top:.55mm solid #0A3768}
+table.ctx td.se{text-align:center;background:#EEF3FA;color:#0A3768;font-weight:900;font-size:13pt;padding:0 .5mm}
+table.ctx td.se small{display:block;font-size:5.6pt;font-weight:600;color:#E85D04;margin-top:.8mm;line-height:1.1;letter-spacing:0}
+table.ctx td.cl{font-weight:700;font-size:7.2pt;color:#1C2430;border-left-width:1.1mm;white-space:nowrap;overflow:hidden}
+table.ctx td.dt{white-space:nowrap;font-size:7pt;text-align:center;color:#8A94A6;font-style:italic}
+table.ctx td.dt.h{color:#0A3768;font-weight:700;font-style:normal}
+table.ctx td.ob{padding:.8mm 3mm;vertical-align:top}
+table.ctx td.ob .ln{border-bottom:.3mm dashed #8FA3BF;height:calc(var(--rh,5mm) - .4mm)}
+table.ctx td.rm{font-size:6.3pt;line-height:1.05;color:#B4490A;font-weight:600;padding:0 1.2mm;overflow:hidden}table.ctx td.dt.x{color:#B4490A}table.ctx td.rm.ms{color:#8A94A6;font-style:italic;font-weight:400}.ctx-leg .rq{color:#B4490A;font-weight:700}
+.ctx-sig{display:grid;grid-template-columns:1fr 1fr;gap:16mm;margin-top:5mm;padding:0 4mm}
+.ctx-sig div{font-size:9pt;font-weight:800;color:#0A3768;letter-spacing:.4pt;height:19mm;border-bottom:.35mm solid #0A3768;position:relative}
+.ctx-sig div span{position:absolute;left:0;bottom:-4.6mm;font-size:7pt;font-weight:500;color:#6b7280;letter-spacing:0}
+.ctx-name{text-align:center;margin-top:7mm;font:italic 600 11pt 'Poppins','Cairo';color:#1F5FA8}
+`;
+/* 1.29.17 (consigne du propriétaire) : 3 fiches « Modules et compétences » (TC, 1BAC, 2BAC), cahier de texte seulement, avant le cycle 1.
+   Texte repris des fiches fournies (réf. : les OP 2007), fautes de frappe évidentes corrigées. Contenu fixe : rien n’est lu ni écrit dans les données. */
+const CTX_MODS=[
+ {lv:'TC',t:'Modules et compétences du TC',s:'Fiche présentative du tronc commun',
+  mods:[['Module 1 : L’équilibre moteur et l’intégration par le sport',['Conserver l’équilibre et la correction des positions de corps dans les activités pratiquées.','Renforcer les conditions physiques générales.','Utilisation de l’espace et du matériel lors des situations d’apprentissage.','Etre discipliné et respecter l’autrui.','L’intégration dans un groupe à partir de la participation aux activités physiques et sportives.']],
+   ['Module 2 : Gestion de l’effort physique',['Gestion des ressources individuelles pour une meilleure réalisation possible.','Proposition d’une stratégie pour la préparation physique des activités physiques et sportives.','Application des principales lois de la sécurité et de la compétition concernant les APS.','Utilisation des informations de l’environnement lors de l’apprentissage.','Avoir des différents rôles et missions à partir de l’organisation de la classe et de l’activité physique et sportive.','Faire montrer toutes les capacités lors de l’expression et de la présentation pendant la compétition avec l’autrui.']]],
+  oti:'L’élève du T.C doit pouvoir maîtriser les composantes du comportement moteur et pouvoir s’adapter aux différentes situations et faire face à ses défis et accepter l’intégration dans le groupe.',
+  otc:[['Gymnastique','L’élève du T.C doit pouvoir présenter un projet individuel ou collectif d’expression motrice sous forme d’enchaînement d’éléments gymniques devant le groupe classe composé de 2A+3B+2C.'],
+   ['Athlétisme','L’élève du T.C doit maîtriser l’organisation de son corps et la gestion de l’effort et l’adéquation de la réalisation d’une façon globale et correcte pour mobiliser un certain niveau d’habileté ou de performance pour réduire le temps ou élargir l’espace.'],
+   ['Sport co de mar/démar','Rechercher le gain de la rencontre par l’utilisation de moyens adaptés pour conserver la balle jusqu’à la zone adverse devant une défense organisée qui cherche à récupérer la balle et défendre sa cible.'],
+   ['Sport co de renvoi','Rechercher le gain de la rencontre par la mise en œuvre d’un jeu basé sur l’organisation collective pour défendre la cible pour faciliter la progression de la balle vers la zone avant et la renvoyer dans la limite de 2 ou 3 touches de balle.']],
+  cg:['Mobilisation des ressources techniques, motrices et sportives acquises pour la résolution des problèmes dans les différentes situations.','Capacité d’analyse, de critique et de questionnement, pour permettre à l’élève de comprendre le domaine des APS.','La mobilisation des habiletés et des capacités personnelles, et leur gestion.','Procéder à une méthodologie qui permet à l’élève de faire la différence entre la théorie et la pratique, et l’intersection entre les deux pour l’atteinte des objectifs.']},
+ {lv:'1BAC',t:'Modules et compétences du 1BAC',s:'Fiche présentative de la 1re année Bac',
+  mods:[['Module 3 : Effort physique et performance sportive',['Utilisation d’une stratégie individuelle lors de l’apprentissage et déterminer sa réaction sur la performance.','Contrôle des émotions et connaitre leurs effets sur le produit.','Etre capable d’évaluer et d’estimer l’effort fourni.','Adapter les positions et les mouvements du corps aux conditions du contexte.','Contrôle des différents rôles à partir de la pratique et de l’organisation dans le groupe.','Dévoiler et accepter les critiques.','Savoir l’influence du comportement individuel sur le produit collectif.']],
+   ['Module 4 : Engagement moteur et efficience sportive',['Apprendre des spécialités et des capacités de contrôle dans des positions complexes.','Savoir des connaissances scientifiques concernant les APS.','Utiliser les lois d’organisation, de sécurité et de compétition dans les activités pratiquées.','Avoir l’audace et la compétence de faire face aux difficultés rencontrées.','Avoir l’esprit de coopération dans le groupe (participation, entraide…).','Préparation et application des projets collectifs.']]],
+  oti:'L’élève de la première année doit pouvoir confronter et analyser différentes situations motrices et améliorer ses réalisations et faire progresser son efficacité motrice et sa performance sportive.',
+  otc:[['Gymnastique','L’élève de 1re année doit pouvoir organiser, présenter et réaliser un projet individuel ou collectif d’expression motrice sous forme d’enchaînement d’éléments gymniques devant le groupe classe composé de : 2B+3C+2D.'],
+   ['Athlétisme','L’élève de 1re année doit maîtriser l’organisation de son corps et la gestion de l’effort et l’adéquation de la réalisation pour mobiliser un certain niveau d’habileté et augmenter l’efficacité de la performance.'],
+   ['Sport co de mar/démar','Rechercher le gain de la rencontre par la mise en œuvre de choix tactiques collectifs, fondés sur la vitesse d’exécution (trouver le moyen d’arriver le plus tôt possible à la cible adverse, entre 2 ou plusieurs joueurs) avec une bonne gestion des ressources devant une défense qui réduit l’espace de jeu.'],
+   ['Sport co de renvoi','Rechercher le gain de la rencontre par la mise en œuvre d’un jeu basé sur l’organisation collective pour récupérer la balle, la faire progresser et la renvoyer dans la limite de 3 touches de balles.']],
+  cg:['Capacité d’utiliser les matériels et les moyens de communication et d’expression (corporelle, mimique) et son application pour l’affirmation de soi dans les différentes situations.','Etre conscient de la communication au sein du groupe, et à l’intérieur d’une activité physique et sportive.','Capacité d’utiliser les outils technologiques, pour permettre l’accès aux connaissances relatives au champ du sport.','L’utilisation des outils et matériels qui permettent de connaître le domaine culturel de l’acte moteur.']},
+ {lv:'2BAC',t:'Modules et compétences du 2BAC',s:'Fiche présentative de la 2e année Bac',
+  mods:[['Module 5 : Prise d’initiative et pratique physique responsable',['Utiliser un projet individuel dans les activités physiques et sportives pratiquées.','Savoir et maîtriser les conditions biologiques, biomécaniques et psychologiques pour exécuter les meilleurs résultats.','Etre indépendant et prendre l’initiative.','Ouverture sur d’autres APS non pratiquées dans l’établissement.','Etre responsable dans le groupe (savoir ses droits et ses devoirs).','Respect des principes d’assiduité lors de la pratique physique et sportive.']],
+   ['Module 6 : Efficacité et créativité motrice et sportive',['L’observation, l’évaluation, la concentration, l’analyse et la prise de décision au bon moment.','Savoir les points forts et les points faibles et essayer de les corriger.','Avoir l’esprit de créativité et d’inventions.','Réalisation de l’efficience sportive.','L’indépendance lors de l’apprentissage pour assurer la continuation de la pratique des APS.','Contrôler les influences du contexte.','Etre capable d’avoir une influence sur le contexte sociale à partir de la pratique des activités sportives.','Exécution des importants rôles selon le niveau des capacités.']]],
+  oti:'L’élève de la 2ème année doit pouvoir analyser différentes situations et interactions motrices et s’intégrer volontairement dans la planification et la réalisation de projets individuels et collectifs.',
+  otc:[['Gymnastique','L’élève de 2e année doit pouvoir concevoir et réaliser et juger un projet individuel ou collectif d’expression motrice sous forme d’enchaînement d’éléments variés en figure et en rythme devant le groupe classe composé de : 2C + 3D + 2E.'],
+   ['Athlétisme','L’élève de 2e année doit maîtriser l’organisation des conditions de défi par l’utilisation de moyens et de méthodes stratégiques pour mobiliser un certain niveau de performance suivant un projet collectif ou individuel.'],
+   ['Sport co de mar/démar','Rechercher le gain de la rencontre par la mise en place d’une attaque basée sur la maîtrise des rôles et l’occupation permanente et raisonnée de l’espace par un projet collectif devant une défense organisée qui cherche à récupérer la balle et défendre sa cible.'],
+   ['Sport co de renvoi','Rechercher le gain de la rencontre par la mise en œuvre d’un jeu basé sur l’organisation collective pour récupérer la balle et la conserver et organiser les conditions adéquates pour marquer des points dans la limite de 3 touches de balle.']],
+  cg:['L’acquisition et le développement des capacités sensorielles, motrices, et professionnelles.','Le développement des comportements relatifs à l’activité physique et sportive, et la capacité à les appliquer dans les différentes activités sportives.','L’acquisition des connaissances relatives au patrimoine culturel (provincial, régional, national), et l’ouverture sur les autres cultures à travers la pratique de l’activité physique et sportive.']}];
+function texteBuild(H,TD){const {T,frame,esc,cc,PF,CIV,TNAME}=H;H.setCur('');let n=1;const P=[];
+ const add=(id,h)=>{P.push({id,h:h.replace('<section ','<section data-id="'+id+'" ')});};
+ const D3=d=>d?d.slice(8,10)+' / '+d.slice(5,7)+' / '+d.slice(0,4):'… / … / ……';
+ const DW=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+ const dd=d=>{if(!d)return '';const x=new Date(d+'T12:00:00');return DW[x.getDay()]+' '+d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4);};
+ const LEG=`<div class="ctx-leg"><b>TO</b> = test d’observation · <b>TB</b> = test bilan · 10 séances par cycle, classes dans l’ordre de passage de la semaine · <b>Date en gras</b> : séance effectuée (registre de l’application) · <span class="pl">date en gris</span> : date prévue d’après l’emploi du temps.</div>`;
+ const HEAD='<table class="ctx"><colgroup><col style="width:17mm"><col style="width:25mm"><col style="width:26mm"><col><col style="width:46mm"></colgroup><thead><tr><th>SÉANCES</th><th>CLASSE</th><th>DATES</th><th>OBJECTIFS</th><th>REMARQUES</th></tr></thead><tbody>';
+ const SIG=`<div class="ctx-sig"><div>LE DIRECTEUR<span>(Signature)</span></div><div>L’INSPECTEUR<span>(Signature)</span></div></div><div class="ctx-name">${esc((CIV+' '+TNAME).trim())}</div>`;
+ const RH=6,CAP=222,SIGH=38;
+ let pi=0;
+ /* 1.29.14 : pages 2 à 6 du cahier journalier (mêmes fonctions : S.M. le Roi, informations, tableau de service, vacances, répartition cyclique), pied de page « Cahier de texte » */
+ const FT=h=>h.replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·');
+ n++;add('king',H.king('V'));add('info',FT(H.info('V',++n)));add('service',FT(H.service('V',++n)));add('vac',FT(H.vacances('V',++n)));add('repart',FT(H.repart('V',++n)));
+ /* 1.29.17 : fiches « Modules et compétences » TC, 1BAC, 2BAC (toujours les 3), avant le cycle 1 */
+ const UL=l=>l.map(x=>`<div class="li"><i></i><span>${esc(x)}</span></div>`).join('');
+ const MPI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>';
+ CTX_MODS.forEach(M=>{const body=`<div class="mdx"><div class="c1"><h3 class="sh">Modules</h3>${M.mods.map(m=>`<div class="md"><h4>${esc(m[0])}</h4>${UL(m[1])}</div>`).join('')}
+  <div class="oti"><h3>Objectif terminal d’intégration <b>OTI</b></h3><p>${esc(M.oti)}</p></div></div>
+  <div class="c2"><h3 class="sh">Objectif terminal du cycle <b>OTC</b></h3>${M.otc.map((o,i)=>`<div class="ot"><em>${i+1}</em><div><h4>${esc(o[0])}</h4><p>${esc(o[1])}</p></div></div>`).join('')}
+  <div class="cg"><h3>Les compétences générales de l’EPS</h3>${UL(M.cg)}</div></div></div><p class="mref">Réf. : les OP 2007</p>`;
+  add('mod'+M.lv,FT(frame(T,esc(M.t),esc(M.s),MPI,body,++n)));});
+ /* 1.29.14 : page de présentation avant chaque cycle (même style que la page « Classe » du cahier journalier) */
+ const DM=d=>d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'…';
+ const cyPage=cy=>{const cl=[],lv=[];cy.groups.forEach(g=>{g.classes.forEach(c=>{if(cl.indexOf(c)<0)cl.push(c);});if(g.level&&lv.indexOf(g.level)<0)lv.push(g.level);});
+  const col=H.CYC[cy.p%6],act=cy.act?esc(cy.act):'……………………';
+  const grp=cy.groups.map(g=>`<div class="g"><span class="gp">${g.picto}</span><span class="gt"><b>${esc(g.level||'')}${g.title&&g.title!==cy.act?' · '+esc(g.title):''}</b><span class="ch">${g.classes.map(c=>`<i style="border-color:${cc(c)[0]}">${esc(c)}</i>`).join('')}</span></span></div>`).join('');
+  return `<section class="pg clsV ctxCy" style="--cyc:${col}"><svg class="dec" viewBox="0 0 210 297"><g>${SPL.bigCorner(31)}</g><g transform="translate(210 0) scale(-1 1)">${SPL.bigCorner(37)}</g><g transform="translate(0 288) scale(1 -1)">${SPL.lightCorner(41)}</g><g transform="translate(210 288) scale(-1 -1)">${SPL.lightCorner(43)}</g></svg>
+ <div class="lg"><img src="${H.LOGO}" alt=""></div>
+ <div class="big"><div class="k">CYCLE ${cy.p+1}</div><div class="bw"><h1>${act}</h1></div><br><span class="lv">Du ${DM(cy.start)} au ${DM(cy.end)} · Année scolaire ${H.YEAR}</span></div>
+ <div class="pic"><div class="ring">${cy.emoji||''}</div></div>
+ <div class="facts"><div><b>10</b>séances</div><div><b>${cl.length}</b>classe${cl.length>1?'s':''}</div><div><b>${lv.length}</b>niveau${lv.length>1?'x':''}</div></div>
+ <div class="cyh">CLASSES CONCERNÉES</div><div class="grs">${grp}</div>
+ <div class="foot"><i></i>CAHIER DE TEXTE · ÉDUCATION PHYSIQUE ET SPORTIVE ☆ TATABO3<i></i></div></section>`;};
+ TD.cycles.forEach(cy=>{if(cy.groups.length){n++;add('cy'+cy.p,cyPage(cy));}cy.groups.forEach((g,gi)=>{
+  /* 1.29.13 (consigne du propriétaire) : 5 séances par page — page 1 : TO à 5, page 2 : 6 à TB + signatures ; hauteur de ligne réduite si beaucoup de classes */
+  const R=Math.max(6,g.classes.length+2),rh=Math.min(RH,Math.floor((((CAP-SIGH)/5-.6)/R)*100)/100);
+  const blocks=g.seances.map(s=>{let h='';for(let r=0;r<R;r++){const it=s.items[r],c=it?cc(it.name)[0]:'#C9D3E1';
+    h+=`<tr${r===0?' class="b0"':''}>${r===0?`<td class="se" rowspan="${R}">${esc(s.label)}${s.label==='TO'?'<small>test d’observation</small>':s.label==='TB'?'<small>test bilan</small>':''}</td>`:''}<td class="cl" style="border-left-color:${c}">${it?esc(it.name):''}</td><td class="dt${it&&it.held?' h':''}${it&&it.why?' x':''}">${it?dd(it.date):''}</td>${r===0?`<td class="ob" rowspan="${R}">${'<div class="ln"></div>'.repeat(R)}</td>`:''}<td class="rm${it&&it.miss?' ms':''}">${it&&it.why?esc(it.why):it&&it.miss?'Aucun créneau dans le cycle':''}</td></tr>`;}
+   return h;});
+  /* pages : blocs entiers, signatures sur la dernière page */
+  const pages=[];for(let i=0;i<blocks.length;i+=5)pages.push(blocks.slice(i,i+5));
+  const act=g.title?esc(g.title.toLocaleUpperCase('fr-FR')):'……………………………';
+  const sub=`DU ${D3(cy.start)} AU ${D3(cy.end)} · ${esc(g.level||'')}${g.level?' : ':''}${g.classes.map(esc).join(' · ')}`;
+  pages.forEach((bl,j)=>{const last=j===pages.length-1;
+   const body=LEG+HEAD.replace('<table class="ctx">','<table class="ctx" style="--rh:'+rh+'mm">')+bl.join('')+'</tbody></table>'+(last?SIG:'');
+   let h=frame(T,`CYCLE ${cy.p+1} : ${act}${j?' <small style="font-size:10pt">(suite)</small>':''}`,sub,cy.emoji,body,++n);
+   h=h.replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·');add('ctx'+(pi++),h);});});});
+ if(!P.length)throw new Error('Aucune classe ni séance à imprimer');
+ add('back',H.back('V').replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·'));
+ return {css:H.baseCss(T)+CTX_CSS,pages:P,PF,CIV,TNAME,YEAR:H.YEAR};}
+async function texte(o){o=o||{};const t0=Date.now(),prog=o.onProgress||function(){};
+ if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('jsPDF absent');
+ const sel=Array.isArray(o.cycles)&&o.cycles.length?o.cycles:null;
+ const {D,GR}=extract(o.pf||null),TD=texteData(sel);const [PH,AS]=await Promise.all([photos(),assets()]);
+ const R=R3(D,GR,PH,AS.logo,AS.king,AS.fontCss,H=>texteBuild(H,TD));R.D=D;const css=FLATTEN(R.css);
+ const AS2=Object.assign({},AS,{cover:String(AS.cover).replace(/(<span class="c">CAHIER<\/span>)\s*JOURNALIER/,'$1 DE TEXTE')});
+ const pages=[coverPage(AS2,R,PH)].concat(R.pages.map(p=>({id:p.id,h:FLATTEN(p.h),css})));const N=pages.length;prog(0,N);
+ const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true,precision:3,floatPrecision:3});
+ pdf.setProperties({title:'Cahier de texte d’EPS',subject:'Cahier de texte d’EPS',creator:'TATABO3',author:''});
+ const ev=pdf.internal.events,tp=ev.getTopics();Object.keys(tp.preProcessText||{}).forEach(id=>ev.unsubscribe(id));
+ Object.keys(tp.postProcessText||{}).forEach(id=>{if(/isInputVisual/.test(String(tp.postProcessText[id][0])))ev.unsubscribe(id);});
+ AS.faces.forEach(f=>{pdf.addFileToVFS(f.file,binStr(f.ab));pdf.addFont(f.file,f.name,'normal','normal','Identity-H');});
+ const FR=fontReg(AS.faces);PainterImgCache.clear();
+ const stats={shapes:0,texts:0,images:0,raster:0,blur:0,grad:0,bgimg:0,pseudo:0,transforms:0,arMiss:0};
+ let fc=null,fp=null;
+ try{fc=await frame(pages[0].css);fp=await frame(pages[1].css);await fontsReady(fc,AS.faces);await fontsReady(fp,AS.faces);
+  for(let i=0;i<N;i++){const f=i===0?fc:fp;const root=await layout(f,pages[i]);
+   if(i)pdf.addPage('a4','portrait');Painter(pdf,f.contentWindow,FR,stats).page(root);
+   f.contentDocument.body.innerHTML='';pages[i]=null;prog(i+1,N);await tick();}}
+ finally{[fc,fp].forEach(f=>{if(f&&f.parentNode)f.parentNode.removeChild(f);});}
+ const u=new Uint8Array(pdf.output('arraybuffer'));fixOrdering(u);
+ const y=(D.year[0]||'').slice(0,4),name='Cahier-de-texte-EPS'+(y?'-'+y+'-'+(+y+1):'')+(sel&&sel.length===1?'-cycle-'+(sel[0]+1):'')+'.pdf';
+ return {blob:new Blob([u],{type:'application/pdf'}),name,pages:N,ms:Date.now()-t0,stats};}
+
+window.CJCahier={make,texte,texteData,extract,pages:function(pf){const x=extract(pf||null);return Promise.all([photos(),assets()]).then(([PH,AS])=>pagesOf(x.D,x.GR,PH,AS));},render:R3,classLevelSort};
 })();

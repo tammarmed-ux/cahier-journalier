@@ -148,4 +148,38 @@ function onMQ(){wrap();if(MQ.matches){navTop();photo();upd();setOpen();}else psU
 if(MQ.addEventListener)MQ.addEventListener('change',onMQ);else if(MQ.addListener)MQ.addListener(onMQ);
 window.addEventListener('resize',navTop);
 hh();if(window.ResizeObserver)new ResizeObserver(hh).observe(bar);
+/* 1.29.19 (proposition C choisie par le propriétaire) : indicateur de synchronisation contre la photo du professeur, ordinateur seulement (≥ 1024 px),
+   barre dépliée et repliée. C’est le même bouton #syncPill (classes ok/busy/wait/err posées par la synchro, même infobulle, même clic → Paramètres ›
+   Synchronisation), déplacé dans la barre latérale et posé en pastille en bas à droite de la photo ; l’anneau de la photo prend la couleur de l’état
+   (vert / orange / rouge ; orange actuel en local ou hors connexion). Sous 1024 px, il revient à sa place dans l’en-tête : téléphone inchangé. Affichage seul. */
+(function(){var sp=D.getElementById('syncPill'),ph=side.querySelector('.dk-ph');if(!sp||!hd||!ph)return;
+ var st=D.createElement('style');st.textContent='@media (min-width:1024px){'+
+  'html.cj-dk #dkSide>#syncPill{position:absolute!important;z-index:5;display:block;width:12px;height:12px;margin:0!important;padding:0!important;transform:none!important;border-radius:50%;box-sizing:border-box;border:2px solid var(--sb-bg,#0B3A6E)!important;background:var(--sb-bg,#0B3A6E)!important;cursor:pointer}'+
+  'html.cj-dk #dkSide>#syncPill .lbl{display:none!important}html.cj-dk #dkSide>#syncPill .dot{display:block;width:100%;height:100%;border-radius:50%}'+
+  'html.cj-dk #dkSide>#syncPill:focus-visible{outline:2px solid #fff;outline-offset:2px}'+
+  'html.cj-dk.dk-mini nav.tabs{bottom:var(--dk-nb,150px)!important}'+
+  'html.cj-dk.dk-mini.dk-tight nav.tabs button{min-height:30px!important;padding-top:0!important;padding-bottom:0!important}'+
+  'html.cj-dk:has(#dkSide>#syncPill.ok) .dk-ph{box-shadow:0 0 0 2px var(--sb-bg,#0B3A6E),0 0 0 4.5px #4ade80}'+
+  'html.cj-dk:has(#dkSide>#syncPill.busy) .dk-ph,html.cj-dk:has(#dkSide>#syncPill.wait) .dk-ph{box-shadow:0 0 0 2px var(--sb-bg,#0B3A6E),0 0 0 4.5px #fbbf24}'+
+  'html.cj-dk:has(#dkSide>#syncPill.err) .dk-ph{box-shadow:0 0 0 2px var(--sb-bg,#0B3A6E),0 0 0 4.5px #f87171}}';
+ D.head.appendChild(st);
+ var raf=0;function place(){raf=0;
+  if(!MQ.matches){if(sp.parentNode!==hd)hd.insertBefore(sp,hd.firstChild);sp.style.left=sp.style.top='';return;}
+  if(sp.parentNode!==side)side.appendChild(sp);
+  var s=side.getBoundingClientRect(),r=ph.getBoundingClientRect();if(!r.width)return;
+  sp.style.left=Math.round(r.right-s.left-sp.offsetWidth+1)+'px';sp.style.top=Math.round(r.bottom-s.top-sp.offsetHeight+1)+'px';}
+ /* 1.29.20 : barre repliée — le menu (défilant, barre de défilement masquée) s’arrêtait 150 px au-dessus du bas, place prévue pour l’ancien pied
+    (Synchro + Thème + bouton replier). Depuis 1.29.19 ce pied est plus court : sur un écran peu haut, « Paramètres » (dernier bouton, en bas du menu)
+    était rogné ou caché par le bas du menu alors que de la place restait libre. Le bas du menu suit désormais le haut réel du pied. Affichage seul. */
+ function navBot(){if(!MQ.matches||!H.classList.contains('dk-mini')){H.style.removeProperty('--dk-nb');H.classList.remove('dk-tight');return;}
+  var t=Infinity,cb=side.querySelector('.dk-col');[hd,cb].forEach(function(e){if(e&&getComputedStyle(e).display!=='none'){var r=e.getBoundingClientRect();if(r.height)t=Math.min(t,r.top);}});
+  if(t<Infinity)H.style.setProperty('--dk-nb',Math.max(0,Math.round(window.innerHeight-t+4))+'px');
+  /* écran très peu haut : si le menu déborde encore, boutons resserrés (icônes inchangées) pour garder « Paramètres » visible */
+  var nv=D.querySelector('nav.tabs');H.classList.remove('dk-tight');if(nv&&nv.scrollHeight>nv.clientHeight+1)H.classList.add('dk-tight');}
+ var place0=place;place=function(){place0();navBot();};
+ function later(){if(!raf)raf=requestAnimationFrame(place);}
+ var cK=function(v){return String(v||'').split(/\s+/).filter(function(c){return c&&c!=='dk-tight';}).sort().join(' ');};
+ place();new MutationObserver(function(l){for(var i=0;i<l.length;i++)if(cK(l[i].oldValue)!==cK(H.className)){later();return;}}).observe(H,{attributes:true,attributeFilter:['class'],attributeOldValue:true});
+ window.addEventListener('resize',later);if(MQ.addEventListener)MQ.addEventListener('change',later);else if(MQ.addListener)MQ.addListener(later);
+ if(window.ResizeObserver)new ResizeObserver(later).observe(side);})();
 H.classList.add('cj-dk','dk-sbA');navTop();fitAll();window.CJDesk={v:3};})();

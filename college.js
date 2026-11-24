@@ -381,10 +381,10 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
 (function(){var L=document.getElementById('psList'),g=L&&L.querySelector('[data-ps-open="pdf"]'),V=document.getElementById('view-settings'),pc=V&&V.querySelector(':scope>.card[data-ps="pdf"]');if(!g||!pc||!window.CJPS||document.getElementById('cjcRow'))return;
  /* 1.29.2 (za) : ligne ordinaire (icône, titre, chevron) ouvrant une sous-page « Mon Cahier Journalier » qui porte le bouton (sur une ligne) ; même gestionnaire, cj-cahier.js toujours chargé au toucher du bouton seulement */
  var st=document.createElement('style');st.textContent='#cjcCard .cjc-btn{display:block;width:100%;max-width:100%;min-height:44px;padding:9px 6px;font-size:min(14px,3.3vw);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}.cjc-btn:disabled{opacity:.75;cursor:progress}.cjc-btn.cjc-ready{background:#16a34a;border-color:#16a34a;color:#fff}';document.head.appendChild(st);
- var card=document.createElement('div');card.className='card';card.id='cjcCard';card.innerHTML='<h2>📘 Mon Cahier Journalier</h2><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger la version physique (PAPERASSE) ⬇️</button>';
- pc.parentNode.insertBefore(card,pc);CJPS.add('cjc',card,'📘','Mon Cahier Journalier');
+ var card=document.createElement('div');card.className='card';card.id='cjcCard';card.innerHTML='<h2>📘 Mes cahiers paperasse</h2><button type="button" class="btn cjc-btn" id="cjcBtn">Télécharger le cahier journalier ⬇️</button><button type="button" class="btn cjc-btn" id="ctxBtn" style="margin-top:10px">Télécharger le cahier de texte ⬇️</button>';
+ pc.parentNode.insertBefore(card,pc);CJPS.add('cjc',card,'📘','Mes cahiers paperasse');
  var row=document.createElement('button');row.type='button';row.className='ps-row';row.id='cjcRow';row.setAttribute('data-ps-open','cjc');
- row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mon Cahier Journalier</b></span><span class="ps-val"></span><span class="ps-chev" aria-hidden="true">›</span>';
+ row.innerHTML='<span class="ps-ico ps-i-pdf" aria-hidden="true">📘</span><span class="ps-tx"><b>Mes cahiers paperasse</b></span><span class="ps-val"></span><span class="ps-chev" aria-hidden="true">›</span>';
  g.parentNode.insertBefore(row,g);
  /* 1.29.10 : « Prêt à imprimer ? » (proposition C choisie par le propriétaire) sous le bouton : état des rubriques du cahier + liens « Compléter › » vers les écrans existants.
     LECTURE SEULE : lu par window.CJR (studentsIn, photoAll, hasPhys, grpOf, gradeOf, cyNow, cal) et pfGet ; rien n’est écrit ; le PDF ne change pas.
@@ -433,6 +433,44 @@ var tries=0,iv=setInterval(function(){if(asked){clearInterval(iv);return;}if(!wi
   .then(function(r){var ua=navigator.userActivation;if(r&&r.blob&&!IOS&&!(ua&&ua.isActive)){ready(r);return;}end();if(r&&r.blob){P.deliver(r.blob,r.name);}else if(r&&r.printed)toast2('Choisissez « Enregistrer en PDF » dans la fenêtre d’impression');})
   .catch(function(e){end();try{console.warn('Cahier',e);}catch(x){}var why=String(e&&e.message||e||'').replace(/\s+/g,' ').slice(0,140);/* 1.29.2a : la raison s’affiche (capture d’écran utile) */
    toast2('⚠ Impossible de créer le cahier journalier'+(navigator.onLine===false?' hors ligne\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.')+(why?' ('+why+')':''));});});
+ /* 1.29.11 : « Cahier de texte » (PDF, module cj-cahier.js : CJCahier.texte). Lecture seule : rien n’est écrit, aucune clé, aucune synchro.
+    Téléphone : 2e bouton de la carte « Mes cahiers paperasse » (tous les cycles). Ordinateur : bouton « Cahier de texte » sous « Note procéd. »
+    dans la barre latérale (#ctxTab, masqué sur téléphone) → fenêtre avec choix du cycle (ou tous les cycles). Même remise du PDF que le cahier journalier. */
+ (function(){var IOS2=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  function run(btn,cycles){if(btn._rdy){var x=btn._rdy;btn._rdy=null;btn.classList.remove('cjc-ready');btn.textContent=btn._lbl;R.pdf.deliver(x.blob,x.name);return;}
+   if(btn._busy)return;var P=R.pdf;if(!P){toast2('⚠ Mettez l’application à jour pour créer le cahier de texte');return;}
+   btn._lbl=btn._lbl||btn.textContent;btn._busy=1;btn.disabled=true;btn.textContent='Génération… préparation';
+   function end(){btn._busy=0;btn.disabled=false;btn.textContent=btn._lbl;}
+   P.lib().then(function(){return window.CJCahier&&CJCahier.texte?0:js('cj-cahier.js');}).then(function(){var p=null;try{p=pfGet().p;}catch(x){}
+    return CJCahier.texte({pf:p,cycles:cycles,onProgress:function(i,n){btn.textContent='Génération… page '+i+'/'+n;}});})
+   .then(function(r){var ua=navigator.userActivation;if(r&&r.blob&&!IOS2&&!(ua&&ua.isActive)){btn._busy=0;btn._rdy=r;btn.disabled=false;btn.classList.add('cjc-ready');btn.textContent='⬇️ Enregistrer le cahier de texte (PDF · '+Math.max(1,Math.round(r.blob.size/1048576))+' Mo)';toast2('Cahier de texte prêt\u00a0: touchez « Enregistrer le cahier de texte »');return;}
+    end();if(r&&r.blob)P.deliver(r.blob,r.name);})
+   .catch(function(e){end();try{console.warn('Cahier de texte',e);}catch(x){}var why=String(e&&e.message||e||'').replace(/\s+/g,' ').slice(0,140);
+    toast2('⚠ Impossible de créer le cahier de texte'+(navigator.onLine===false?' hors ligne\u00a0: ouvrez l’application une fois en ligne.':'. Réessayez.')+(why?' ('+why+')':''));});}
+  var tb=card.querySelector('#ctxBtn');tb.addEventListener('click',function(){run(tb,null);});
+  /* ordinateur */
+  var st3=document.createElement('style');st3.textContent='html:not(.cj-dk) #ctxTab{display:none!important}#ctxDlg .ctx-p{font-size:13.5px;color:var(--muted);margin:4px 0 12px;line-height:1.45}#ctxDlg select{width:100%}#ctxDlg .ctx-row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}#ctxDlg .ctx-row .btn{width:auto;min-width:130px}#ctxDlg .cjc-btn{white-space:nowrap}';document.head.appendChild(st3);
+  var tabs=document.getElementById('tabs'),pt=tabs&&tabs.querySelector('button[data-tab="proc"]');if(!pt)return;
+  var t=document.createElement('button');t.type='button';t.id='ctxTab';t.setAttribute('aria-label','Cahier de texte');t.title='Cahier de texte (PDF)';
+  t.innerHTML='<span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6M9 11h6"/></svg></span>Cahier de texte';
+  pt.parentNode.insertBefore(t,pt.nextSibling);
+  var dlg=document.createElement('div');dlg.className='modal';dlg.id='ctxDlg';dlg.setAttribute('role','dialog');dlg.setAttribute('aria-modal','true');dlg.setAttribute('aria-labelledby','ctxTitle');
+  dlg.innerHTML='<div class="sheet"><div class="sheet-head"><h2 id="ctxTitle">📗 Cahier de texte</h2><button type="button" class="x" data-ctx="x" aria-label="Fermer">×</button></div>'+
+   '<p class="ctx-p">PDF A4, même présentation que le cahier journalier : une page par cycle et par niveau, séances TO (test d’observation), 2… et TB (test bilan), classes dans l’ordre de passage avec leurs dates (séances effectuées, sinon dates prévues par l’emploi du temps). Objectifs et remarques à compléter à la main.</p>'+
+   '<label class="f" for="ctxCyc">Cycles</label><select id="ctxCyc"></select>'+
+   '<div class="ctx-row"><button type="button" class="btn ghost" data-ctx="x">Fermer</button><button type="button" class="btn cjc-btn" id="ctxGo">Générer le PDF ⬇️</button></div></div>';
+  document.body.appendChild(dlg);var sel=dlg.querySelector('#ctxCyc'),go=dlg.querySelector('#ctxGo');
+  function dmy(d){return d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'';}
+  function fill(){var C=R.cal(),P=R.db().periods||[],v=sel.value,h='<option value="all">Tous les cycles</option>';
+   (C.cycles||[]).forEach(function(c,i){var a=String(P[i]||'').trim();h+='<option value="'+i+'">'+R.cycleName(i)+(a?' – '+E2(a):'')+(c.start?' · du '+dmy(c.start)+' au '+dmy(c.end):'')+'</option>';});
+   sel.innerHTML=h;if(v&&sel.querySelector('option[value="'+v+'"]'))sel.value=v;}
+  function E2(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function close(){dlg.classList.remove('open');if(!document.querySelector('.modal.open'))document.body.style.overflow='';}
+  t.addEventListener('click',function(ev){ev.stopPropagation();fill();dlg.classList.add('open');document.body.style.overflow='hidden';setTimeout(function(){try{sel.focus();}catch(e){}},0);});
+  dlg.addEventListener('click',function(ev){if(ev.target===dlg||ev.target.closest('[data-ctx="x"]'))close();});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&dlg.classList.contains('open'))close();});
+  sel.addEventListener('change',function(){if(go._rdy){go._rdy=null;go.classList.remove('cjc-ready');go.textContent=go._lbl;}});
+  go.addEventListener('click',function(){var v=sel.value;run(go,v==='all'?null:[+v]);});})();
 })();
 })();
 /* 1.29.2 (p) : barre d’onglets et bouton + épinglés sans position:fixed sur mobile.
