@@ -412,7 +412,7 @@ function build(){const k='V',T=THEMES[k];let n=0;const P=[];const add=(id,h)=>{P
  CUR='';add('back',back(k));
  return {css:baseCss(T),pages:P,PF,CIV,TNAME,YEAR};}
 /* 1.29.11 : ALT (cahier de texte) reçoit les mêmes outils de mise en page ; sans ALT, rendu du cahier journalier inchangé */
-return ALT?ALT({T:THEMES.V,frame,baseCss,esc,cc,back,PF,CIV,TNAME,YEAR,setCur:v=>{CUR=v;}}):build();
+return ALT?ALT({T:THEMES.V,frame,baseCss,esc,cc,back,king,info,service,vacances,repart,LOGO,CYC,PF,CIV,TNAME,YEAR,setCur:v=>{CUR=v;}}):build();
 }
 
 /* ---------- données : lecture seule depuis l’app (même calcul que les écrans) ---------- */
@@ -862,6 +862,27 @@ function fixOrdering(u){const A=Array.from('/Ordering (Identity-H)').map(c=>c.ch
    nombre de séances et dates = colonnes du registre (colsOf / sessDate : date réelle de la séance enregistrée, sinon date prévue par l’emploi du temps,
    vacances et jours fériés exclus). Aucun objectif n’est stocké par l’app : colonne OBJECTIFS en lignes pointillées, REMARQUES vide.
    Rien n’est écrit ; le cahier journalier (make) n’est pas modifié. ---------- */
+/* 1.29.14 : pictogramme d’activité (vectoriel, même famille que ceux de l’app : viewBox 24, tête pleine, traits .b épais / .g fins).
+   1) pictogramme de l’app (actPicto) ; 2) variantes de libellé (« course de durée »…) et épreuve d’athlétisme ; 3) dessins ajoutés ci-dessous pour les APS
+   que l’app n’illustre pas ; 4) famille d’APS (athlétisme / sport collectif / gymnastique). */
+const CTX_PI={
+ relais:'<circle cx="7.4" cy="4.6" r="2"/><path d="M7.6 7L6.6 12.6L10.4 15.6L9.6 21M6.6 12.6L3.4 16.4M7.4 8.2L11.6 9.6L14 7.4M7.4 8.2L4.2 10.6" class="b"/><path d="M14 7.4L18.6 3.4" class="b" style="stroke-width:3"/><path d="M15 22h7M2 22h4" class="g"/>',
+ natation:'<circle cx="17.6" cy="7.4" r="2"/><path d="M3.4 12.6L9 9.6L13.8 11.4L15.6 9.6M9 9.6L11.6 5.6L16 4.2" class="b"/><path d="M2 16.4q2.5-2 5 0t5 0t5 0t5 0M2 20.4q2.5-2 5 0t5 0t5 0t5 0" class="g"/>',
+ judo:'<circle cx="12" cy="4.4" r="2.05"/><path d="M12 7v7.2M12 8.6L6.4 12.2M12 8.6L17.6 12.2M12 14.2L8.4 21M12 14.2L15.6 21" class="b"/><path d="M8.6 13h6.8M10.4 13l-1.4 3M13.6 13l1.4 3" class="g"/>',
+ tennisdetable:'<circle cx="9.4" cy="9.4" r="6"/><path d="M13.6 13.6L19.6 19.6" class="b" style="stroke-width:3.2"/><circle cx="19" cy="5" r="1.9"/>',
+ tennis:'<ellipse cx="10" cy="8.6" rx="5.4" ry="6.4" transform="rotate(-35 10 8.6)" class="b" style="fill:none"/><path d="M6.6 4.4l7 8M4.6 7.8l7 8M8.4 2.8l5.2 8.6M13.4 13.4L20 20.6" class="g"/><path d="M13.6 13.6L20.2 20.8" class="b" style="stroke-width:3"/><circle cx="19.4" cy="5" r="2"/>',
+ badminton:'<ellipse cx="8" cy="8.4" rx="4.2" ry="5.4" transform="rotate(-45 8 8.4)" class="b" style="fill:none"/><path d="M5.6 6l4.8 4.8M8 4.2l3.8 3.8M4.2 8.6l3.8 3.8" class="g"/><path d="M11.2 11.6L19.6 20" class="b" style="stroke-width:3"/><circle cx="18" cy="11.4" r="1.9"/><path d="M17 10L13.4 3.4M18.4 9.6L18.6 2.6M19.6 10.2L22.2 4.4M13.4 3.4h8.8" class="g"/>',
+ rugby:'<ellipse cx="12" cy="12" rx="9" ry="5.6" transform="rotate(-35 12 12)" class="b" style="fill:none"/><path d="M8.6 15.4L15.4 8.6M10 12.4l1.6 1.6M11.4 11l1.6 1.6M12.8 9.6l1.6 1.6" class="g"/>',
+ ballon:'<circle cx="12" cy="12" r="8.6" class="b" style="fill:none"/><path d="M12 3.4v17.2M3.4 12h17.2M6 6q6 6 12 0M6 18q6-6 12 0" class="g"/>'};
+function ctxSvg(k){return '<svg class="act-pi" data-pi="'+k+'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+CTX_PI[k]+'</svg>';}
+function ctxPicto(A,name,aps,evt){const t=x=>{try{return x&&A.actPicto?A.actPicto(x)||'':'';}catch(e){return '';}};
+ let s=t(name);if(s)return s;const n=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ if(/duree|endurance|demi.?fond|cross/.test(n))s=t('endurance');else if(/sprint|vitesse|haies/.test(n))s=t('vitesse');else if(/lancer|poids/.test(n))s=t('poids');else if(/saut/.test(n))s=t('saut en longueur');
+ if(s)return s;
+ const own=[[/relais/,'relais'],[/natation|nage/,'natation'],[/judo|lutte|karate|combat/,'judo'],[/tennis de table|ping/,'tennisdetable'],[/tennis/,'tennis'],[/badminton/,'badminton'],[/rugby/,'rugby']];
+ for(const [re,k] of own)if(re.test(n))return ctxSvg(k);
+ const ev=evt&&A.OPA&&A.OPA.events&&A.OPA.events[evt]?A.OPA.events[evt].l:'';s=t(ev);if(s)return s;
+ return aps==='athle'?t('endurance'):aps==='gym'?t('gymnastique'):ctxSvg('ballon');}
 function texteData(sel){const A=window.CJR,Db=A.db(),C=A.cal(),per=Db.periods||[];
  const ord={},cls=classLevelSort((Db.classes||[]).map(c=>({id:c.id,name:c.name,level:A.levelOf(c.name)||''})));cls.forEach((c,i)=>{ord[c.id]=i;});
  const evL=e=>A.OPA&&A.OPA.events&&A.OPA.events[e]?A.OPA.events[e].l:'',apL=a=>A.APS&&A.APS[a]?A.APS[a].l:'';
@@ -874,7 +895,7 @@ function texteData(sel){const A=window.CJR,Db=A.db(),C=A.cal(),per=Db.periods||[
   const kinds={};groups.forEach(g=>{kinds[g.aps+'|'+g.evt]=1;});const mixed=Object.keys(kinds).length>1;
   groups.forEach(g=>{let t=act,src=act?'cycle':'';
    if(mixed&&(g.aps!==base||(g.aps==='athle'&&g.evt&&guess&&g.evt!==guess))){t=evL(g.evt)||apL(g.aps)||act;src='classe';}
-   g.title=t;g.src=src;
+   g.title=t;g.src=src;g.picto=ctxPicto(A,t,g.aps,g.evt);
    /* 1.29.13 (consigne du propriétaire) : 10 séances par cycle et par classe (TO, 2…9, TB), de la 1re à la dernière semaine d’après l’emploi du temps.
       Vacances : sautées, ni affichées ni comptées. Jour férié, réunion, absence collective… (calendrier de l’app) : séance comptée à sa date,
       motif (libellé de l’app) écrit dans REMARQUES. Au-delà de 10 créneaux dans le cycle : non imprimés (TB = 10e). Moins de 10 (cycle court) : date vide, remarque « Aucun créneau dans le cycle ». */
@@ -886,9 +907,20 @@ function texteData(sel){const A=window.CJR,Db=A.db(),C=A.cal(),per=Db.periods||[
    const srt=it=>it.sort((a,b)=>(a.date||'9999')<(b.date||'9999')?-1:(a.date||'9999')>(b.date||'9999')?1:a.t<b.t?-1:a.t>b.t?1:a.o-b.o);
    for(let k=0;k<NS;k++)g.seances.push({k,label:k===0?'TO':k===NS-1?'TB':String(k+1),items:srt(rows.map(r=>Object.assign({name:r.c.name,o:ord[r.c.id]},r.list[k]||{date:'',held:false,t:'',why:'',miss:1})))});
    g.classes=g.classes.map(c=>c.name);});
-  cycles.push({p,name:A.cycleName(p),act,aps:base,start:cy.start||'',end:cy.end||'',emoji:A.actPicto(per[p])||A.actEmoji(per[p],base)||'',groups});});
+  cycles.push({p,name:A.cycleName(p),act,aps:base,start:cy.start||'',end:cy.end||'',emoji:ctxPicto(A,act,base,groups[0]&&groups[0].evt),groups});});
  return {cycles};}
 const CTX_CSS=`
+.ctxCy .big{top:64mm}.ctxCy .big .k{font:900 italic 30pt/1 'Poppins';letter-spacing:.12em;padding-left:.12em}.ctxCy .big h1{font-size:32pt;line-height:1.1}
+.ctxCy .pic{position:absolute;left:50%;top:126mm;width:50mm;height:50mm;margin-left:-25mm;border-radius:50%;background:#0A3768;padding:3mm;box-shadow:0 1.6mm 0 #E85D04}
+.ctxCy .pic .ring{width:100%;height:100%;border-radius:50%;background:#E85D04;display:flex;align-items:center;justify-content:center;color:#fff;border:1.2mm solid #fff}
+.ctxCy .pic .ring svg{width:27mm;height:27mm;color:#fff}
+.ctxCy .facts{top:186mm}.ctxCy .cyh{top:214mm}
+.ctxCy .grs{position:absolute;left:22mm;right:22mm;top:221mm;display:flex;flex-direction:column;gap:2.6mm}
+.ctxCy .grs .g{display:flex;align-items:center;gap:3.5mm;background:#fff;border:.35mm solid #D7DFEA;border-left:2mm solid var(--cyc);border-radius:3mm;padding:2.4mm 3.5mm}
+.ctxCy .grs .gp{flex:none;width:11mm;height:11mm;border-radius:50%;background:#0A3768;display:flex;align-items:center;justify-content:center;color:#fff}
+.ctxCy .grs .gp svg{width:7.4mm;height:7.4mm;color:#fff}
+.ctxCy .grs .gt b{display:block;font:800 10pt 'Poppins';color:#0A3768;margin-bottom:1.2mm}
+.ctxCy .grs .ch i{display:inline-block;font:700 italic 8pt 'Poppins';color:#1C2430;border-left:1.4mm solid;padding:.4mm 2mm;margin:0 1.6mm 1mm 0;background:#EEF3FA;border-radius:0 1mm 1mm 0}
 .ctx-leg{font-size:7pt;color:#4B5563;margin:0 0 2mm;line-height:1.35}.ctx-leg b{color:#0A3768}.ctx-leg .pl{color:#8A94A6;font-style:italic}
 table.ctx{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7.6pt}
 table.ctx th{background:#0A3768;color:#fff;font-weight:800;font-size:7.4pt;letter-spacing:.3pt;height:7mm;padding:0 1mm;border:.25mm solid #0A3768;text-align:center}
@@ -917,7 +949,22 @@ function texteBuild(H,TD){const {T,frame,esc,cc,PF,CIV,TNAME}=H;H.setCur('');let
  const SIG=`<div class="ctx-sig"><div>LE DIRECTEUR<span>(Signature)</span></div><div>L’INSPECTEUR<span>(Signature)</span></div></div><div class="ctx-name">${esc((CIV+' '+TNAME).trim())}</div>`;
  const RH=6,CAP=222,SIGH=38;
  let pi=0;
- TD.cycles.forEach(cy=>{cy.groups.forEach((g,gi)=>{
+ /* 1.29.14 : pages 2 à 6 du cahier journalier (mêmes fonctions : S.M. le Roi, informations, tableau de service, vacances, répartition cyclique), pied de page « Cahier de texte » */
+ const FT=h=>h.replace('Cahier journalier d’EPS ·','Cahier de texte d’EPS ·');
+ n++;add('king',H.king('V'));add('info',FT(H.info('V',++n)));add('service',FT(H.service('V',++n)));add('vac',FT(H.vacances('V',++n)));add('repart',FT(H.repart('V',++n)));
+ /* 1.29.14 : page de présentation avant chaque cycle (même style que la page « Classe » du cahier journalier) */
+ const DM=d=>d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'…';
+ const cyPage=cy=>{const cl=[],lv=[];cy.groups.forEach(g=>{g.classes.forEach(c=>{if(cl.indexOf(c)<0)cl.push(c);});if(g.level&&lv.indexOf(g.level)<0)lv.push(g.level);});
+  const col=H.CYC[cy.p%6],act=cy.act?esc(cy.act):'……………………';
+  const grp=cy.groups.map(g=>`<div class="g"><span class="gp">${g.picto}</span><span class="gt"><b>${esc(g.level||'')}${g.title&&g.title!==cy.act?' · '+esc(g.title):''}</b><span class="ch">${g.classes.map(c=>`<i style="border-color:${cc(c)[0]}">${esc(c)}</i>`).join('')}</span></span></div>`).join('');
+  return `<section class="pg clsV ctxCy" style="--cyc:${col}"><svg class="dec" viewBox="0 0 210 297"><g>${SPL.bigCorner(31)}</g><g transform="translate(210 0) scale(-1 1)">${SPL.bigCorner(37)}</g><g transform="translate(0 288) scale(1 -1)">${SPL.lightCorner(41)}</g><g transform="translate(210 288) scale(-1 -1)">${SPL.lightCorner(43)}</g></svg>
+ <div class="lg"><img src="${H.LOGO}" alt=""></div>
+ <div class="big"><div class="k">CYCLE ${cy.p+1}</div><div class="bw"><h1>${act}</h1></div><br><span class="lv">Du ${DM(cy.start)} au ${DM(cy.end)} · Année scolaire ${H.YEAR}</span></div>
+ <div class="pic"><div class="ring">${cy.emoji||''}</div></div>
+ <div class="facts"><div><b>10</b>séances</div><div><b>${cl.length}</b>classe${cl.length>1?'s':''}</div><div><b>${lv.length}</b>niveau${lv.length>1?'x':''}</div></div>
+ <div class="cyh">CLASSES CONCERNÉES</div><div class="grs">${grp}</div>
+ <div class="foot"><i></i>CAHIER DE TEXTE · ÉDUCATION PHYSIQUE ET SPORTIVE ☆ TATABO3<i></i></div></section>`;};
+ TD.cycles.forEach(cy=>{if(cy.groups.length){n++;add('cy'+cy.p,cyPage(cy));}cy.groups.forEach((g,gi)=>{
   /* 1.29.13 (consigne du propriétaire) : 5 séances par page — page 1 : TO à 5, page 2 : 6 à TB + signatures ; hauteur de ligne réduite si beaucoup de classes */
   const R=Math.max(6,g.classes.length+2),rh=Math.min(RH,Math.floor((((CAP-SIGH)/5-.6)/R)*100)/100);
   const blocks=g.seances.map(s=>{let h='';for(let r=0;r<R;r++){const it=s.items[r],c=it?cc(it.name)[0]:'#C9D3E1';
